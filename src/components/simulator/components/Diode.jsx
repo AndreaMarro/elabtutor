@@ -18,7 +18,8 @@ const Diode = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id }
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="diode" role="img"
        aria-label={`Diodo ${id}${conducting ? ', conduce' : ''}`}>
-      <rect x="-24" y="-12" width="48" height="24" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum height for WCAG touch target */}
+      <rect x="-24" y="-22" width="48" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
       {/* Wire leads — thin neutral gray (Tinkercad style) */}
       <line x1="-20" y1="0" x2="-12.5" y2="0"

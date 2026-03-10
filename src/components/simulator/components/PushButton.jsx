@@ -17,7 +17,8 @@ const PushButton = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       onClick={() => onInteract && onInteract(id, 'toggle')}
       style={{ cursor: 'pointer' }}
     >
-      <rect x="-15" y="-15" width="30" height="30" fill="transparent" />
+      {/* S115: Hit area — 44px minimum for WCAG touch target */}
+      <rect x="-22" y="-22" width="44" height="44" fill="transparent" pointerEvents="all" />
 
       {/* Pin legs — metallic silver, extending from body to pin positions */}
       {/* Top-left */}

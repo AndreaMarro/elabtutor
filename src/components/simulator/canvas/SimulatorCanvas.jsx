@@ -219,6 +219,54 @@ function snapComponentToHole(compType, newX, newY, bbX, bbY, bbType = 'breadboar
 }
 
 /**
+ * S115: Compute per-pin snap hole positions for visual preview during drag.
+ * Returns [{x, y, occupied}] for each pin that would land on a breadboard hole.
+ * `occupied` is true if another component already has a pin on that hole.
+ */
+function getSnapPinHoles(compType, compX, compY, bbX, bbY, bbType, dragCompId, experiment) {
+  const registered = getComponent(compType);
+  if (!registered || !registered.pins || registered.pins.length === 0) return [];
+
+  const holes = [];
+  const threshold = getSnapThreshold(bbType);
+
+  // Build set of occupied hole positions (from other components' layouts)
+  const occupiedSet = new Set();
+  if (experiment?.components && experiment?.layout) {
+    for (const comp of experiment.components) {
+      if (comp.id === dragCompId) continue; // skip the dragged component
+      const noSnap = ['breadboard-half', 'breadboard-full', 'battery9v', 'nano-r4'];
+      if (noSnap.includes(comp.type)) continue;
+      const pos = experiment.layout[comp.id];
+      if (!pos) continue;
+      const reg = getComponent(comp.type);
+      if (!reg?.pins) continue;
+      for (const pin of reg.pins) {
+        const pinAbsX = pos.x + pin.x;
+        const pinAbsY = pos.y + pin.y;
+        // Snap this pin to nearest hole to determine which hole it occupies
+        const snap = snapToNearestHole(pinAbsX, pinAbsY, bbX, bbY, bbType);
+        if (snap) {
+          occupiedSet.add(`${Math.round(snap.x * 10)},${Math.round(snap.y * 10)}`);
+        }
+      }
+    }
+  }
+
+  for (const pin of registered.pins) {
+    const pinAbsX = compX + pin.x;
+    const pinAbsY = compY + pin.y;
+    const snap = snapToNearestHole(pinAbsX, pinAbsY, bbX, bbY, bbType);
+    if (snap && Math.hypot(pinAbsX - snap.x, pinAbsY - snap.y) < threshold * 2.5) {
+      const key = `${Math.round(snap.x * 10)},${Math.round(snap.y * 10)}`;
+      holes.push({ x: snap.x, y: snap.y, occupied: occupiedSet.has(key) });
+    }
+  }
+
+  return holes;
+}
+
+/**
  * Calculate a viewbox that fits all components with padding.
  * Optionally accepts the container DOM element to use its real aspect ratio
  * instead of a hardcoded 4:3. This prevents drift on oddly-shaped containers.
@@ -463,7 +511,9 @@ const SimulatorCanvas = ({
   // S101: Touch drag dead zone — prevents accidental drags on tap
   const dragDeadZonePassedRef = useRef(false);
   const dragStartClientRef = useRef(null); // { clientX, clientY } at drag start
-  const DRAG_DEAD_ZONE = 5; // px in screen space before drag actually moves component
+  // S115: Touch-aware dead zone — touch is less precise than mouse
+  const DRAG_DEAD_ZONE_MOUSE = 5; // px in screen space (mouse/pen)
+  const DRAG_DEAD_ZONE_TOUCH = 10; // px in screen space (touch — prevents accidental drags)
 
   // --- WIRE DRAG STATE (V4) ---
   // { wireIndex, waypointIndex, action: 'move-waypoint' | 'split-segment', originalWaypoints }
@@ -493,6 +543,7 @@ const SimulatorCanvas = ({
   // Sprint 2 Task 2.4: Highlighted breadboard holes during guided drag
   const [highlightedHoles, setHighlightedHoles] = useState([]); // Guided mode holes
   const [snapGhost, setSnapGhost] = useState(null); // { x, y, w, h } — snap ghost preview
+  const [snapPinHoles, setSnapPinHoles] = useState([]); // S115: [{x, y, occupied}] — per-pin hole highlights during drag
   const dragStartPosRef = useRef(null); // Track starting point to revert invalid drops
 
   // --- PIN HOVER TOOLTIP STATE (Task 5: touch-friendly) ---
@@ -1217,11 +1268,12 @@ const SimulatorCanvas = ({
 
     // --- DRAG MOVE (single or multi-move) ---
     if (isDragging && dragCompId && experiment) {
-      // S101: Dead zone check — don't move component until 5px threshold passed
+      // S101+S115: Dead zone check — touch uses larger threshold to prevent accidental drags
       if (!dragDeadZonePassedRef.current && dragStartClientRef.current) {
         const ddx = e.clientX - dragStartClientRef.current.clientX;
         const ddy = e.clientY - dragStartClientRef.current.clientY;
-        if (Math.hypot(ddx, ddy) < DRAG_DEAD_ZONE) return;
+        const deadZone = (pointerTypeRef.current === 'touch') ? DRAG_DEAD_ZONE_TOUCH : DRAG_DEAD_ZONE_MOUSE;
+        if (Math.hypot(ddx, ddy) < deadZone) return;
         dragDeadZonePassedRef.current = true;
       }
       dragMovedRef.current = true;
@@ -1248,12 +1300,16 @@ const SimulatorCanvas = ({
             snappedBbId = bb.id;
             const sz = COMP_SIZES[draggedComp.type] || { w: 30, h: 30 };
             setSnapGhost({ x: newX, y: newY, w: sz.w, h: sz.h });
+            // S115: Compute per-pin hole highlights
+            const pinHoles = getSnapPinHoles(draggedComp.type, newX, newY, bbPos.x, bbPos.y, bb.type, dragCompId, experiment);
+            setSnapPinHoles(pinHoles);
             break;
           }
         }
       }
       if (!snapFound) {
         setSnapGhost(null);
+        setSnapPinHoles([]);
       }
 
       if (onLayoutChange) {
@@ -1448,6 +1504,7 @@ const SimulatorCanvas = ({
     setIsDragging(false);
     setDragCompId(null);
     setSnapGhost(null);
+    setSnapPinHoles([]); // S115: clear per-pin hole highlights
     setDragOffset({ x: 0, y: 0 });
     dragMovedRef.current = false;
     potRotatingRef.current = null;
@@ -2167,7 +2224,7 @@ const SimulatorCanvas = ({
           onContextMenu={(e) => handleComponentContextMenu(comp.id, e)}
           onFocus={() => { if (!selectedComponent) handleComponentPointerDown(comp.id, { button: 0, stopPropagation: () => {}, preventDefault: () => {} }); }}
           style={{
-            cursor: isBeingDragged ? 'grabbing' : 'pointer',
+            cursor: isBeingDragged ? 'grabbing' : 'grab',
             // S101: Visual drag feedback — scale + shadow + opacity
             opacity: isBeingDragged ? 0.85 : 1,
             filter: isBeingDragged ? 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' : 'none',
@@ -2699,6 +2756,25 @@ const SimulatorCanvas = ({
             opacity={0.6}
             pointerEvents="none"
           />
+        )}
+
+        {/* S115: Per-pin snap hole highlights during drag */}
+        {snapPinHoles.length > 0 && isDragging && (
+          <g pointerEvents="none">
+            {snapPinHoles.map((hole, i) => (
+              <circle
+                key={`snap-pin-${i}`}
+                cx={hole.x}
+                cy={hole.y}
+                r={3.5}
+                fill={hole.occupied ? '#E54B3D' : '#7CB342'}
+                fillOpacity={hole.occupied ? 0.5 : 0.6}
+                stroke={hole.occupied ? '#E54B3D' : '#7CB342'}
+                strokeWidth={1.2}
+                strokeOpacity={0.8}
+              />
+            ))}
+          </g>
         )}
 
         {/* Sprint 2 Task 2.4: Drop zone highlighted holes */}

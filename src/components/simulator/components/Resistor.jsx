@@ -49,7 +49,8 @@ const Resistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, v
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="resistor" role="img"
        aria-label={`Resistore ${id}: ${formatValue(value)}`}>
-      <rect x="-30" y="-10" width="60" height="20" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum height for WCAG touch target */}
+      <rect x="-30" y="-22" width="60" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
       {/* Wire leads — thin neutral gray (Tinkercad style) */}
       <line x1="-26.25" y1="0" x2="-14.2" y2="0"

@@ -32,8 +32,8 @@ const Led = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, color 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="led" role="img"
        aria-label={`LED ${id}: ${color}${burned ? ', bruciato' : isOn ? ', acceso' : ''}`}>
-      {/* Click/hover area */}
-      <rect x="-14" y="-16" width="28" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum on both dimensions for WCAG touch target */}
+      <rect x="-22" y="-22" width="44" height="50" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
        {/* Radial glow halo when LED is ON — dramatic Tinkercad-style bloom */}
        {isOn && (

@@ -19,8 +19,8 @@ const Phototransistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInte
        aria-label={`Fototransistor ${id}: luce ${Math.round(lightLevel * 100)}%`}
       style={{ cursor: 'pointer' }}
     >
-      {/* Click area */}
-      <rect x="-16" y="-24" width="32" height="48" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum width for WCAG touch target */}
+      <rect x="-22" y="-24" width="44" height="48" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
       {/* Wire leads — vertical, matching original pin positions */}
       <line x1="0" y1="-8" x2="0" y2="-18"

@@ -26,7 +26,8 @@ const RgbLed = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="rgb-led" role="img"
        aria-label={`LED RGB ${id}${isOn ? `: rgb(${mixR},${mixG},${mixB})` : ''}`}>
-      <rect x="-18" y="-22" width="36" height="54" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum width for WCAG touch target */}
+      <rect x="-22" y="-22" width="44" height="54" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
       {/* Radial glow halo when RGB LED is ON — dramatic Tinkercad-style bloom */}
       {isOn && (

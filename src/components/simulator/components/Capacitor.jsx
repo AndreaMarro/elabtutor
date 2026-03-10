@@ -25,7 +25,8 @@ const Capacitor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="capacitor" role="img"
        aria-label={`Condensatore ${id}: ${formatCapValue(value)}`}>
-      <rect x="-14" y="-20" width="28" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
+      {/* S115: Hit area — 44px minimum on both dimensions for WCAG touch target */}
+      <rect x="-22" y="-22" width="44" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
       {/* Gradient for cylindrical body effect */}
       <defs>

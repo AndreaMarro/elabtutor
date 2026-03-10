@@ -20,7 +20,8 @@ const ReedSwitch = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       onClick={() => onInteract && onInteract(id, 'toggle')}
       style={{ cursor: 'pointer' }}
     >
-      <rect x="-28" y="-14" width="56" height="28" fill="transparent" pointerEvents="all" />
+      {/* S115: Hit area — 44px minimum height for WCAG touch target */}
+      <rect x="-28" y="-22" width="56" height="44" fill="transparent" pointerEvents="all" />
 
       {/* Gradient for glass effect */}
       <defs>
