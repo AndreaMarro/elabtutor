@@ -2,7 +2,7 @@
 
 **Data**: 10/03/2026
 **Autore**: Andrea Marro + Claude
-**Commit**: `6205c9f`
+**Commits**: `6205c9f` (LCD blocks), `69a2747` (Scratch crash fix + toolbox cleanup)
 
 ## Problema
 L'unico P1 rimasto nel simulatore ELAB: gli esperimenti LCD (come `v3-extra-lcd-hello`) richiedevano C++ puro. Gli studenti in modalità Scratch/Blockly non potevano programmare il display LCD 16x2 perché mancavano i blocchi corrispondenti. Il messaggio nella tab Scratch diceva "L'LCD richiede Arduino C++".
@@ -87,10 +87,38 @@ Nuovi (4): arduino_lcd_init, arduino_lcd_print, arduino_lcd_set_cursor, arduino_
 - [x] 4 generatori C++ in scratchGenerator.js
 - [x] Categoria LCD in ScratchEditor.jsx toolbox + ELAB_THEME
 - [x] scratchXml per v3-extra-lcd-hello (3 step progressivi)
-- [x] Build: 0 errori (ScratchEditor 2026 KB gzip 909 KB)
+- [x] Fix: `Blockly.utils.string.quote` crash → manual quoting
+- [x] Fix: Toolbox dual-attribute warnings (colour + categorystyle)
+- [x] Build: 0 errori (ScratchEditor 1998 KB gzip 898 KB)
 - [x] Deploy: Vercel production (https://www.elabtutor.school)
-- [x] GitHub: commit `6205c9f` pushed
-- [x] Report: questo file
+- [x] GitHub: commits `6205c9f` + `69a2747` pushed
+- [x] Report: questo file (aggiornato con FASE 5)
+
+## FASE 5 — Fix Scratch Crash (commit `69a2747`)
+
+### Bug: `Blockly.utils.string.quote is not a function`
+
+**Root cause**: Il generatore del blocco `text` in scratchGenerator.js usava `Blockly.utils.string.quote()`, funzione rimossa nelle versioni recenti di Blockly. Questo causava il crash di TUTTA la generazione codice — qualsiasi blocco con testo (lcd_print, serial_print, text, text_join) generava `"// Errore generazione codice"` invece del C++ corretto.
+
+**Sintomo**: "Scratch crasha appena sposti un blocco, spesso non compila" — 500+ errori in console.
+
+**Fix**: Sostituito con quoting manuale:
+```javascript
+const text = block.getFieldValue('TEXT') || '';
+const escaped = text.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+const code = `"${escaped}"`;
+```
+
+### Fix: Toolbox dual-attribute warnings
+
+Rimosso attributo `colour` da tutte le 11 categorie toolbox che avevano sia `colour` che `categorystyle`. Blockly emetteva warning per ogni categoria. Ora solo `categorystyle` referenzia ELAB_THEME.
+
+### File Modificati (commit `69a2747`)
+- `scratchGenerator.js`: Fix `text` generator — manual quoting
+- `ScratchEditor.jsx`: Remove `colour` from 11 toolbox categories
 
 ## P1 Risolto
 **LCD Blockly blocks**: da "LCD richiede C++" → pieno supporto Scratch con 4 blocchi, generazione C++ corretta, e 3 step Passo Passo per l'esperimento LCD Hello World.
+
+## Bug Pre-Esistente Risolto
+**Scratch code generation crash**: `Blockly.utils.string.quote` rimosso in Blockly recenti — causava fallimento totale della generazione codice per tutti i blocchi con testo.
