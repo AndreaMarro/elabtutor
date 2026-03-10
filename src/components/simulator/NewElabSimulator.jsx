@@ -3029,6 +3029,7 @@ const NewElabSimulator = ({
     let finalX = dropX;
     let finalY = dropY;
     let newPinAssignments = {};
+    let snappedBbId = null; // S109: Track which breadboard the component snapped to
 
     if (!noSnapTypes.includes(type) && mergedExperiment) {
       const breadboards = (mergedExperiment.components || []).filter(
@@ -3042,6 +3043,7 @@ const NewElabSimulator = ({
           finalX = result.componentX;
           finalY = result.componentY;
           newPinAssignments = result.pinAssignments;
+          snappedBbId = bb.id; // S109: Capture parent breadboard ID
           break;
         }
       }
@@ -3050,7 +3052,11 @@ const NewElabSimulator = ({
     setCustomComponents(prev => [...prev, newComp]);
     setCustomLayout(prev => ({
       ...prev,
-      [id]: { x: finalX, y: finalY },
+      [id]: {
+        x: finalX,
+        y: finalY,
+        ...(snappedBbId ? { parentId: snappedBbId } : {}), // S109: Antigravity — palette-dropped components follow breadboard
+      },
     }));
 
     // Merge new pin assignments
