@@ -2,7 +2,7 @@
 
 **Data**: 10/03/2026
 **Autore**: Andrea Marro + Claude
-**Commit**: (pending)
+**Commit**: `2fcf024` — "S110: Fix battery wire routing — visual separation"
 
 ## Problema
 I fili della batteria 9V (rosso + e nero −) si sovrapponevano visivamente perché entrambi partivano da pin a x:0 (positive y:32, negative y:58). In `buildRoutedPath()`, i fili quasi-verticali ricevevano lo STESSO `sagX = sag * 0.5` (sempre positivo), causando sovrapposizione totale.
@@ -71,10 +71,10 @@ Battery [−] ──────── Bus−                         ╰──�
 - [x] Fix applicato (WireRenderer.jsx)
 - [x] Skill creata: `.claude/skills/wire-visual-test.md`
 - [x] Build: 0 errori
-- [ ] Deploy: Vercel production
-- [ ] GitHub: commit + push
-- [ ] Report scritto
-- [ ] Session 111 prompt
+- [x] Deploy: Vercel production (https://www.elabtutor.school)
+- [x] GitHub: commit `2fcf024` pushed
+- [x] Report scritto
+- [x] Session 111 prompt
 
 ## Prossima Sessione
-**Session 111** — (TBD, da definire a fine sessione)
+**Session 111 — LCD Blockly Blocks** — Add lcd_init, lcd_print, lcd_setCursor, lcd_clear blocks to scratchBlocks.js + scratchGenerator.js for LCD experiments in Scratch mode. Currently P1 feature gap: students must use C++ for LCD experiments.
