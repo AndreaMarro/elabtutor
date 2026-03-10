@@ -22,6 +22,7 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
         arduino_servo:   { colourPrimary: '#27AE60', colourSecondary: '#1E9050', colourTertiary: '#167240' },
         arduino_time:    { colourPrimary: '#E67E22', colourSecondary: '#CC6A18', colourTertiary: '#B25710' },
         arduino_serial:  { colourPrimary: '#34495E', colourSecondary: '#2C3E50', colourTertiary: '#243342' },
+        arduino_lcd:     { colourPrimary: '#5C6BC0', colourSecondary: '#4A58A8', colourTertiary: '#394690' },
     },
     categoryStyles: {
         logic_category:    { colour: '#4A7FB5' },
@@ -34,6 +35,7 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
         arduino_servo_cat: { colour: '#27AE60' },
         arduino_time_cat:  { colour: '#E67E22' },
         arduino_serial_cat:{ colour: '#34495E' },
+        arduino_lcd_cat:   { colour: '#5C6BC0' },
     },
     componentStyles: {
         workspaceBackgroundColour: '#1E2530',
@@ -124,6 +126,14 @@ const TOOLBOX_XML = `
       <value name="ANGLE"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
     </block>
     <block type="arduino_servo_read"></block>
+  </category>
+  <category name="📺 LCD Display" colour="#5C6BC0" categorystyle="arduino_lcd_cat">
+    <block type="arduino_lcd_init"></block>
+    <block type="arduino_lcd_print">
+      <value name="TEXT"><shadow type="text"><field name="TEXT">Hello!</field></shadow></value>
+    </block>
+    <block type="arduino_lcd_set_cursor"></block>
+    <block type="arduino_lcd_clear"></block>
   </category>
   <category name="⏱ Tempo" colour="#E67E22" categorystyle="arduino_time_cat">
     <block type="arduino_delay">

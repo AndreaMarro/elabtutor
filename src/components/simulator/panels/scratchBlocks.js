@@ -10,6 +10,7 @@ const STYLES = {
     SERIAL: 'arduino_serial',  // Serial print
     SOUND: 'arduino_sound',    // Tone / Buzzer
     SERVO: 'arduino_servo',    // Servo motor
+    LCD: 'arduino_lcd',        // Display LCD
     VARS: 'variable_blocks',   // Variables
     MATH_EXT: 'math_blocks',   // Map, constrain
 };
@@ -197,8 +198,8 @@ Blockly.Blocks['arduino_no_tone'] = {
 
 // ─── SERVO ─── //
 
-// 13. Servo attach
 // © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// 13. Servo attach
 Blockly.Blocks['arduino_servo_attach'] = {
     init: function () {
         this.appendDummyInput()
@@ -240,6 +241,76 @@ Blockly.Blocks['arduino_servo_read'] = {
         this.setOutput(true, "Number");
         this.setStyle(STYLES.SERVO);
         this.setTooltip("Legge l'angolo corrente del servo");
+    }
+};
+
+// ─── LCD DISPLAY ─── //
+
+// 16. LCD Init — Inizializza display LCD 16x2 con pin specificati
+Blockly.Blocks['arduino_lcd_init'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("LCD Init  RS#")
+            .appendField(new Blockly.FieldNumber(12, 0, 19), "RS")
+            .appendField(" E#")
+            .appendField(new Blockly.FieldNumber(11, 0, 19), "E");
+        this.appendDummyInput()
+            .appendField("  D4#")
+            .appendField(new Blockly.FieldNumber(5, 0, 19), "D4")
+            .appendField(" D5#")
+            .appendField(new Blockly.FieldNumber(10, 0, 19), "D5")
+            .appendField(" D6#")
+            .appendField(new Blockly.FieldNumber(3, 0, 19), "D6")
+            .appendField(" D7#")
+            .appendField(new Blockly.FieldNumber(6, 0, 19), "D7");
+        this.appendDummyInput()
+            .appendField("  Colonne")
+            .appendField(new Blockly.FieldNumber(16, 1, 40), "COLS")
+            .appendField(" Righe")
+            .appendField(new Blockly.FieldNumber(2, 1, 4), "ROWS");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setStyle(STYLES.LCD);
+        this.setTooltip("Inizializza il display LCD con i pin specificati");
+    }
+};
+
+// 17. LCD Print — Stampa testo su LCD
+Blockly.Blocks['arduino_lcd_print'] = {
+    init: function () {
+        this.appendValueInput("TEXT")
+            .appendField("LCD Print");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setStyle(STYLES.LCD);
+        this.setTooltip("Stampa testo sul display LCD");
+    }
+};
+
+// 18. LCD Set Cursor — Posiziona cursore
+Blockly.Blocks['arduino_lcd_set_cursor'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("LCD Cursore  col")
+            .appendField(new Blockly.FieldNumber(0, 0, 39), "COL")
+            .appendField(" riga")
+            .appendField(new Blockly.FieldNumber(0, 0, 3), "ROW");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setStyle(STYLES.LCD);
+        this.setTooltip("Posiziona il cursore LCD alla colonna e riga specificate");
+    }
+};
+
+// 19. LCD Clear — Pulisci display
+Blockly.Blocks['arduino_lcd_clear'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("LCD Pulisci");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setStyle(STYLES.LCD);
+        this.setTooltip("Pulisci il display LCD");
     }
 };
 

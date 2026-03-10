@@ -37,11 +37,14 @@ arduinoGenerator.forBlock['arduino_base'] = function (block) {
     // Reset include flags before each generation pass
     arduinoGenerator._servoIncludes = false;
     arduinoGenerator._servoNames = new Set();
+    arduinoGenerator._lcdIncludes = false;
+    arduinoGenerator._lcdPins = null;
+    arduinoGenerator._lcdBegin = null;
 
     const setupCode = arduinoGenerator.statementToCode(block, 'SETUP') || '';
     const loopCode = arduinoGenerator.statementToCode(block, 'LOOP') || '';
 
-    // Build header: #include + global declarations for Servo
+    // Build header: #include + global declarations for Servo / LCD
     let header = '';
     if (arduinoGenerator._servoIncludes && arduinoGenerator._servoNames.size > 0) {
         header += '#include <Servo.h>\n';
@@ -50,9 +53,21 @@ arduinoGenerator.forBlock['arduino_base'] = function (block) {
         }
         header += '\n';
     }
+    if (arduinoGenerator._lcdIncludes && arduinoGenerator._lcdPins) {
+        const p = arduinoGenerator._lcdPins;
+        header += '#include <LiquidCrystal.h>\n';
+        header += `LiquidCrystal lcd(${p.rs}, ${p.e}, ${p.d4}, ${p.d5}, ${p.d6}, ${p.d7});\n\n`;
+    }
+
+    // Insert lcd.begin() at the start of setup if LCD is used
+    let lcdSetupCode = '';
+    if (arduinoGenerator._lcdIncludes && arduinoGenerator._lcdBegin) {
+        const b = arduinoGenerator._lcdBegin;
+        lcdSetupCode = `  lcd.begin(${b.cols}, ${b.rows});\n`;
+    }
 
     return `${header}void setup() {
-${setupCode}}
+${lcdSetupCode}${setupCode}}
 
 void loop() {
 ${loopCode}}`;
@@ -183,6 +198,7 @@ arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const code = (argument0 || defaultArgument) + ' ' + operator + ' ' + (argument1 || defaultArgument);
     return [code, order];
 };
+// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['logic_boolean'] = function (block) {
     const code = block.getFieldValue('BOOL') === 'TRUE' ? 'true' : 'false';
@@ -198,7 +214,6 @@ arduinoGenerator.forBlock['controls_repeat_ext'] = function (block) {
     const repeats = arduinoGenerator.valueToCode(block, 'TIMES', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
     const branch = arduinoGenerator.statementToCode(block, 'DO') || '';
     const loopVar = Blockly.Variables.generateUniqueName(block.workspace);
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
     return `  for (int ${loopVar} = 0; ${loopVar} < ${repeats}; ${loopVar}++) {
 ${branch}  }\n`;
 };
@@ -276,6 +291,39 @@ arduinoGenerator.forBlock['arduino_servo_read'] = function (block) {
     arduinoGenerator._servoIncludes = true;
     arduinoGenerator._servoNames?.add(name);
     return [`${name}.read()`, arduinoGenerator.ORDER_ATOMIC];
+};
+
+// --- LCD Display --- //
+
+arduinoGenerator.forBlock['arduino_lcd_init'] = function (block) {
+    const rs = block.getFieldValue('RS');
+    const e = block.getFieldValue('E');
+    const d4 = block.getFieldValue('D4');
+    const d5 = block.getFieldValue('D5');
+    const d6 = block.getFieldValue('D6');
+    const d7 = block.getFieldValue('D7');
+    const cols = block.getFieldValue('COLS');
+    const rows = block.getFieldValue('ROWS');
+    arduinoGenerator._lcdIncludes = true;
+    arduinoGenerator._lcdPins = { rs, e, d4, d5, d6, d7 };
+    arduinoGenerator._lcdBegin = { cols, rows };
+    // lcd.begin() is emitted automatically in header by arduino_base
+    return '';
+};
+
+arduinoGenerator.forBlock['arduino_lcd_print'] = function (block) {
+    const text = arduinoGenerator.valueToCode(block, 'TEXT', arduinoGenerator.ORDER_ATOMIC) || '""';
+    return `  lcd.print(${text});\n`;
+};
+
+arduinoGenerator.forBlock['arduino_lcd_set_cursor'] = function (block) {
+    const col = block.getFieldValue('COL');
+    const row = block.getFieldValue('ROW');
+    return `  lcd.setCursor(${col}, ${row});\n`;
+};
+
+arduinoGenerator.forBlock['arduino_lcd_clear'] = function (block) {
+    return '  lcd.clear();\n';
 };
 
 // --- Variables --- //

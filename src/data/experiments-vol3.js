@@ -2602,15 +2602,27 @@ void loop() {
   // Nulla da fare nel loop
 }`,
       hexFile: "/hex/v3-extra-lcd-hello.hex",
-      // S102: Scratch steps — LCD requires LiquidCrystal library not available in Blockly
+      // S111: LCD Blockly blocks — full Scratch support
       scratchSteps: [
         {
-          label: "L'LCD richiede Arduino C++",
-          description: "Il display LCD usa la libreria LiquidCrystal che non è disponibile nell'editor a blocchi. Per questo esperimento, passa alla tab 'Arduino C++' cliccando in alto!",
-          explanation: "Alcuni componenti avanzati come l'LCD necessitano di librerie speciali (LiquidCrystal.h) che l'editor a blocchi non supporta. Questo è un ottimo motivo per imparare il codice Arduino C++! Le librerie sono come ricette pronte: qualcuno le ha scritte per te, e tu le usi con #include.",
-          xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"></block></xml>`,
+          label: "Inizializza LCD",
+          description: "Trascina il blocco 'LCD Init' dalla categoria LCD Display nel Setup. I pin sono già impostati: RS=12, E=11, D4=5, D5=10, D6=3, D7=6.",
+          explanation: "Il display LCD 16x2 usa il protocollo HD44780 in modalità 4-bit. Servono 6 pin: RS (Register Select) per distinguere dati/comandi, E (Enable) per validare i dati, e D4-D7 per i 4 bit di dati. lcd.begin(16,2) dice al display le sue dimensioni.",
+          xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_lcd_init"><field name="RS">12</field><field name="E">11</field><field name="D4">5</field><field name="D5">10</field><field name="D6">3</field><field name="D7">6</field><field name="COLS">16</field><field name="ROWS">2</field></block></statement></block></xml>`,
         },
 // © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+        {
+          label: "Scrivi Hello World!",
+          description: "Aggiungi 'LCD Cursore col 0 riga 0' e poi 'LCD Print \"Hello World!\"' dopo l'init nel Setup.",
+          explanation: "lcd.setCursor(0,0) posiziona il cursore alla prima colonna della prima riga (entrambe partono da 0). lcd.print() stampa il testo dalla posizione corrente del cursore.",
+          xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_lcd_init"><field name="RS">12</field><field name="E">11</field><field name="D4">5</field><field name="D5">10</field><field name="D6">3</field><field name="D7">6</field><field name="COLS">16</field><field name="ROWS">2</field><next><block type="arduino_lcd_set_cursor"><field name="COL">0</field><field name="ROW">0</field><next><block type="arduino_lcd_print"><value name="TEXT"><shadow type="text"><field name="TEXT">Hello World!</field></shadow></value></block></next></block></next></block></statement></block></xml>`,
+        },
+        {
+          label: "Seconda riga: ELAB Simulator",
+          description: "Aggiungi 'LCD Cursore col 0 riga 1' e 'LCD Print \"ELAB Simulator\"' per scrivere sulla seconda riga.",
+          explanation: "Il display LCD 16x2 ha 2 righe (0 e 1) e 16 colonne (0-15). Spostando il cursore alla riga 1 scriviamo sulla seconda riga. Il codice generato è identico al C++ dell'esperimento!",
+          xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_lcd_init"><field name="RS">12</field><field name="E">11</field><field name="D4">5</field><field name="D5">10</field><field name="D6">3</field><field name="D7">6</field><field name="COLS">16</field><field name="ROWS">2</field><next><block type="arduino_lcd_set_cursor"><field name="COL">0</field><field name="ROW">0</field><next><block type="arduino_lcd_print"><value name="TEXT"><shadow type="text"><field name="TEXT">Hello World!</field></shadow></value><next><block type="arduino_lcd_set_cursor"><field name="COL">0</field><field name="ROW">1</field><next><block type="arduino_lcd_print"><value name="TEXT"><shadow type="text"><field name="TEXT">ELAB Simulator</field></shadow></value></block></next></block></next></block></next></block></next></block></statement></block></xml>`,
+        },
       ],
       concept: "Display LCD 16x2, protocollo HD44780, modalità 4-bit, LiquidCrystal",
       layer: "schema",
@@ -2799,6 +2811,7 @@ void loop() {
           text: "Prendi il servomotore e posizionalo accanto alla breadboard",
           componentId: "servo1",
           componentType: "servo",
+// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: {
             "servo1:signal": "bb1:a20",
             "servo1:vcc": "bb1:bus-bot-plus-20",
@@ -2811,7 +2824,6 @@ void loop() {
           text: "Collega un filo ROSSO dal pin 5V dell'Arduino al binario + della breadboard",
           wireFrom: "nano1:5V",
           wireTo: "bb1:bus-bot-plus-1",
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Il servo si alimenta dai 5V."
         },
@@ -3000,6 +3012,7 @@ void accendi(int idx, int ms) {
 }
 
 void mostraSequenza() {
+// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
   for (int i = 0; i <= livello; i++) {
     accendi(seq[i], 400);
   }
@@ -3012,7 +3025,6 @@ int leggiPulsante() {
       if (digitalRead(BTN[i]) == LOW) {
         accendi(i, 200);
         while (digitalRead(BTN[i]) == LOW) {}
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
         delay(50);
         return i;
       }
@@ -3201,6 +3213,7 @@ void loop() {
           scratchXml: SIMON_SCRATCH_STEP16
         },
         /* === PULSANTE ROSSO (btn1) === */
+// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 17,
           text: "Posiziona il pulsante ROSSO a cavallo del gap — pin nel foro E17 e F17",
@@ -3213,7 +3226,6 @@ void loop() {
           step: 18,
           text: "Collega un filo ROSSO dal pin D3 al foro A17 (ingresso pulsante 1)",
           wireFrom: "nano1:W_D3",
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bb1:a17",
           wireColor: "red",
           hint: "D3 legge il pulsante rosso — usiamo INPUT_PULLUP, quindi niente resistenza esterna!"
@@ -3402,6 +3414,7 @@ void loop() {
           explanation: "random(0, 4) restituisce un numero intero tra 0 e 3 inclusi (il limite superiore è escluso). Ogni numero corrisponde a un LED: 0=rosso, 1=verde, 2=blu, 3=giallo."
         },
         {
+// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
           question: "Cosa succede se il giocatore preme il pulsante sbagliato?",
           options: ["Il LED giusto lampeggia come suggerimento", "Tutti e 4 i LED lampeggiano con un suono grave (Game Over)", "Il gioco si mette in pausa per 5 secondi"],
           correct: 1,
@@ -3414,7 +3427,6 @@ void loop() {
           explanation: "tone() genera un segnale a onda quadra alla frequenza specificata. L'array NOTE[] contiene 4 frequenze diverse: Do=262Hz (rosso), Mi=330Hz (verde), Sol=392Hz (blu), Do alto=523Hz (giallo). Ogni colore ha la sua nota!"
         }
       ]
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
   ]
 };
