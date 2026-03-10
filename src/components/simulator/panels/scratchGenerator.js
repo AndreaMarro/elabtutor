@@ -206,7 +206,10 @@ arduinoGenerator.forBlock['logic_boolean'] = function (block) {
 };
 
 arduinoGenerator.forBlock['text'] = function (block) {
-    const code = Blockly.utils.string.quote(block.getFieldValue('TEXT'));
+    // Manual quoting — Blockly.utils.string.quote was removed in newer Blockly versions
+    const text = block.getFieldValue('TEXT') || '';
+    const escaped = text.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    const code = `"${escaped}"`;
     return [code, arduinoGenerator.ORDER_ATOMIC];
 };
 

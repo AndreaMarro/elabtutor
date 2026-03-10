@@ -61,14 +61,14 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
 // ─── Toolbox XML (ELAB palette colours) ──────────────────────
 const TOOLBOX_XML = `
 <xml xmlns="https://developers.google.com/blockly/xml">
-  <category name="⚡ Logica" colour="#4A7FB5" categorystyle="logic_category">
+  <category name="⚡ Logica" categorystyle="logic_category">
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
     <block type="logic_operation"></block>
     <block type="logic_negate"></block>
     <block type="logic_boolean"></block>
   </category>
-  <category name="🔁 Cicli" colour="#7CB342" categorystyle="loop_category">
+  <category name="🔁 Cicli" categorystyle="loop_category">
     <block type="controls_repeat_ext">
       <value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
     </block>
@@ -79,7 +79,7 @@ const TOOLBOX_XML = `
       <value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
   </category>
-  <category name="🔢 Matematica" colour="#5C86C1" categorystyle="math_category">
+  <category name="🔢 Matematica" categorystyle="math_category">
     <block type="math_number"><field name="NUM">0</field></block>
     <block type="math_arithmetic">
       <value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
@@ -96,38 +96,38 @@ const TOOLBOX_XML = `
       <value name="MAX"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
     </block>
   </category>
-  <category name="📦 Variabili" colour="#E57373" categorystyle="variable_category">
+  <category name="📦 Variabili" categorystyle="variable_category">
     <block type="arduino_variable_set">
       <value name="VALUE"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
     </block>
     <block type="arduino_variable_get"></block>
   </category>
-  <category name="📝 Testo" colour="#5BA5A5" categorystyle="text_category">
+  <category name="📝 Testo" categorystyle="text_category">
     <block type="text"></block>
     <block type="text_join"></block>
   </category>
   <sep gap="16"></sep>
-  <category name="📡 Input / Output" colour="#00979C" categorystyle="arduino_io_cat">
+  <category name="📡 Input / Output" categorystyle="arduino_io_cat">
     <block type="arduino_pin_mode"></block>
     <block type="arduino_digital_write"></block>
     <block type="arduino_digital_read"></block>
     <block type="arduino_analog_write"></block>
     <block type="arduino_analog_read"></block>
   </category>
-  <category name="🔊 Suono" colour="#9B59B6" categorystyle="arduino_sound_cat">
+  <category name="🔊 Suono" categorystyle="arduino_sound_cat">
     <block type="arduino_tone">
       <value name="FREQ"><shadow type="math_number"><field name="NUM">440</field></shadow></value>
     </block>
     <block type="arduino_no_tone"></block>
   </category>
-  <category name="🎯 Servo" colour="#27AE60" categorystyle="arduino_servo_cat">
+  <category name="🎯 Servo" categorystyle="arduino_servo_cat">
     <block type="arduino_servo_attach"></block>
     <block type="arduino_servo_write">
       <value name="ANGLE"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
     </block>
     <block type="arduino_servo_read"></block>
   </category>
-  <category name="📺 LCD Display" colour="#5C6BC0" categorystyle="arduino_lcd_cat">
+  <category name="📺 LCD Display" categorystyle="arduino_lcd_cat">
     <block type="arduino_lcd_init"></block>
     <block type="arduino_lcd_print">
       <value name="TEXT"><shadow type="text"><field name="TEXT">Hello!</field></shadow></value>
@@ -135,13 +135,13 @@ const TOOLBOX_XML = `
     <block type="arduino_lcd_set_cursor"></block>
     <block type="arduino_lcd_clear"></block>
   </category>
-  <category name="⏱ Tempo" colour="#E67E22" categorystyle="arduino_time_cat">
+  <category name="⏱ Tempo" categorystyle="arduino_time_cat">
     <block type="arduino_delay">
       <value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
     </block>
     <block type="arduino_millis"></block>
   </category>
-  <category name="💬 Seriale" colour="#34495E" categorystyle="arduino_serial_cat">
+  <category name="💬 Seriale" categorystyle="arduino_serial_cat">
     <block type="arduino_serial_begin"></block>
     <block type="arduino_serial_print"></block>
   </category>
