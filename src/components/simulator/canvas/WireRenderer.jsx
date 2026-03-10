@@ -445,16 +445,64 @@ function getEdgeLane(pinY, bbY) {
 
 /**
  * Route from off-board component (battery) directly to a breadboard pin (bus or main section)
- * V4 Zero-crossing topology:
- *   Plus-rail (lane 0): RIGHT to far channel → UP/DOWN to clearance → RIGHT to pin col → into pin
- *   Minus-rail (lane 1): DIP perpendicular → RIGHT to edge channel → UP/DOWN to pin row → into pin
- *   Row pins (lane 2+): standard edge-channel L-shape
- * Plus goes RIGHT-first, Minus goes DOWN-first → paths diverge immediately, zero crossings.
+ * V5 Lane-separated L-shape routing:
+ *   - Each battery wire (+/−) routes through its own "lane" (vertical or horizontal riser)
+ *   - Lanes are separated by LANE_SEP pixels, preventing overlap and crossings
+ *   - Positive wire uses the inner lane (closer to breadboard)
+ *   - Negative wire uses the outer lane (closer to battery)
+ *   - Path adapts to battery position relative to breadboard (left/right/above/below)
+ *   - 4-point path → orthogonal-with-rounded-corners rendering in buildRoutedPath
  */
 function routeToBreadboardPin(offPos, bbPinPos, bbX, bbY) {
-  // Direct 2-point path → natural Bézier catenary
-  // Polarity-based separation is handled by sagDirection + polarity in buildRoutedPath()
-  return [offPos, bbPinPos];
+  // Only apply smart L-shape routing for battery wires
+  if (offPos.compType !== 'battery9v') {
+    return [offPos, bbPinPos];
+  }
+
+  const isPositive = (offPos.pinId || '').includes('positive');
+  const LANE_SEP = 14; // Guaranteed separation between + and − wire lanes (≥10px requirement)
+
+  const dx = bbPinPos.x - offPos.x;
+  const dy = bbPinPos.y - offPos.y;
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+
+  // If endpoints are very close, direct 2-point Bézier is sufficient
+  if (absDx + absDy < 30) {
+    return [offPos, bbPinPos];
+  }
+
+  if (absDx >= absDy) {
+    // ── Horizontal dominant: L-shape with vertical riser ──
+    // Use bbX (shared breadboard left) as anchor — bbPinPos.x differs per wire (bus columns vary)
+    // so using bbX guarantees exactly LANE_SEP separation between + and − risers
+    const sign = dx > 0 ? 1 : -1;
+    const riserX = isPositive
+      ? bbX - LANE_SEP * sign        // Positive: 1× LANE_SEP from BB edge toward battery
+      : bbX - LANE_SEP * 2 * sign;   // Negative: 2× LANE_SEP from BB edge toward battery
+
+    return [
+      offPos,
+      { x: riserX, y: offPos.y },      // Horizontal exit from battery
+      { x: riserX, y: bbPinPos.y },     // Vertical riser to bus rail level
+      bbPinPos                           // Horizontal approach to bus pin
+    ];
+  } else {
+    // ── Vertical dominant: L-shape with horizontal riser ──
+    // Use bbY (shared breadboard top) as anchor — bbPinPos.y differs per wire (bus rails 7.5px apart)
+    // so using bbY guarantees exactly LANE_SEP separation between + and − risers
+    const sign = dy > 0 ? 1 : -1;
+    const riserY = isPositive
+      ? bbY - LANE_SEP * sign        // Positive: 1× LANE_SEP from BB top toward battery
+      : bbY - LANE_SEP * 2 * sign;   // Negative: 2× LANE_SEP from BB top toward battery
+
+    return [
+      offPos,
+      { x: offPos.x, y: riserY },       // Vertical exit from battery
+      { x: bbPinPos.x, y: riserY },      // Horizontal riser to bus pin column
+      bbPinPos                            // Vertical approach to bus pin
+    ];
+  }
 }
 
 /**
