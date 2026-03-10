@@ -4,7 +4,7 @@
 // (c) Andrea Marro — 28/02/2026 — ELAB Tutor — Tutti i diritti riservati
 // ============================================
 
-const API_BASE_URL = import.meta.env.VITE_AUTH_URL || '';
+const API_BASE_URL = (import.meta.env.VITE_AUTH_URL || '').trim();
 const TOKEN_KEY = 'elab_auth_token';
 const TOKEN_EXPIRY_BUFFER = 60 * 1000; // 1 minuto di margine
 

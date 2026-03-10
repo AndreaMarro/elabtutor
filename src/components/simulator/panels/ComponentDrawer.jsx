@@ -420,7 +420,7 @@ const ComponentDrawer = ({
                         label={SHORT_LABELS[step.componentType] || step.componentType}
                         icon={STEP_ICONS[step.componentType] || '\u{1F9E9}'}
                       />
-                      <span style={{ fontSize: 14, color: 'var(--color-sim-text-muted)', fontFamily: 'var(--font-sans)' }}>trascina</span>
+                      <span style={{ fontSize: 12, color: 'var(--color-text-gray-400, #666)', fontFamily: 'var(--font-sans)', fontWeight: 600, letterSpacing: '0.3px' }}>trascina</span>
                     </div>
                   ) : (
                     <span style={{ fontSize: 20, flexShrink: 0 }}>{stepIcon}</span>
@@ -527,14 +527,15 @@ const styles = {
     position: 'absolute',
     top: 12,
     right: 12,
-    width: 'clamp(230px, 25vw, 300px)',
+    width: 'clamp(270px, 28vw, 340px)',
+    maxWidth: 'calc(100% - 24px)', // Safety: prevent overflow on narrow viewports (iPad slide-over)
     background: 'var(--color-bg, #FFFFFF)',
     borderRadius: 'var(--radius-lg, 14px)',
     boxShadow: 'var(--shadow-lg, 0 10px 20px rgba(0,0,0,0.07)), 0 0 0 1px var(--color-border, #E5E5EA)',
     zIndex: 30,
     display: 'flex',
     flexDirection: 'column',
-    maxHeight: 'clamp(180px, 45vh, 320px)',
+    maxHeight: 'clamp(200px, 48vh, 360px)',
     fontFamily: "var(--font-sans, 'Open Sans', sans-serif)",
     overflow: 'hidden',
     touchAction: 'none', // S89: prevent scroll interference when dragging
@@ -692,21 +693,25 @@ const styles = {
     transition: 'width var(--transition-slow)',
   },
 
-  /* Guided body */
+  /* Guided body — flex column for proper overflow scrolling */
   guidedBody: {
-    padding: '4px 16px 10px',
+    padding: '8px 16px 12px',
     flex: 1,
     overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0, // flex child needs this for bounded overflow
   },
 
   stepCounter: {
-    fontSize: 'var(--font-size-sm, 14px)',
+    fontSize: '13px',
     fontWeight: 700,
     color: 'var(--color-primary, #1E4D8C)',
     fontFamily: "var(--font-display, 'Oswald', sans-serif)",
     textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    marginBottom: 4,
+    letterSpacing: '0.8px',
+    marginBottom: 6,
+    flexShrink: 0, // Don't compress in flex column
   },
 
   stepContent: {
@@ -720,9 +725,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    fontSize: 'var(--font-size-sm, 14px)',
-    color: 'var(--color-text-gray-700, #333)',
-    lineHeight: 1.45,
+    fontSize: '15px',
+    color: 'var(--color-text, #1A1A2E)',
+    lineHeight: 1.5,
   },
 
   stepRow: {
@@ -732,32 +737,34 @@ const styles = {
   },
 
   stepText: {
-    fontSize: 'var(--font-size-sm, 14px)',
-    lineHeight: 1.45,
-    color: 'var(--color-text-gray-700, #333)',
+    fontSize: '15px',
+    lineHeight: 1.5,
+    color: 'var(--color-text, #1A1A2E)',
     fontWeight: 500,
   },
 
   hint: {
-    fontSize: 'var(--font-size-sm, 14px)',
-    color: 'var(--color-text-gray-400, #666)',
-    fontStyle: 'italic',
-    lineHeight: 1.4,
-    padding: '3px 8px',
+    fontSize: '14px',
+    color: 'var(--color-text-gray-600, #444)',
+    fontStyle: 'normal',
+    lineHeight: 1.45,
+    padding: '6px 10px',
     background: 'var(--color-warning-light, #FFF9C4)',
     borderRadius: 'var(--radius-sm, 6px)',
-    marginTop: 4,
+    borderLeft: '3px solid var(--color-warning, #F59E0B)',
+    marginTop: 6,
   },
 
   scratchHint: {
-    fontSize: 'var(--font-size-sm, 14px)',
-    color: 'var(--color-primary)',
-    fontStyle: 'italic',
-    lineHeight: 1.4,
-    padding: '3px 8px',
+    fontSize: '14px',
+    color: 'var(--color-primary, #1E4D8C)',
+    fontStyle: 'normal',
+    lineHeight: 1.45,
+    padding: '6px 10px',
     background: 'var(--color-primary-light)',
     borderRadius: 'var(--radius-sm, 6px)',
-    marginTop: 4,
+    borderLeft: '3px solid var(--color-primary, #1E4D8C)',
+    marginTop: 6,
   },
 
   /* S86: Scratch step explanation (educational insight) */
@@ -794,8 +801,8 @@ const styles = {
   },
   completionSubtitle: {
     fontSize: 'var(--font-size-sm, 14px)',
-    color: 'var(--color-text-gray-500, #555)',
-    lineHeight: 1.4,
+    color: 'var(--color-text-gray-600, #444)',
+    lineHeight: 1.45,
     marginTop: 2,
   },
   compilePlayBtn: {
