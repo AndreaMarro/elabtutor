@@ -3,7 +3,7 @@
  * Batteria 9V PP3 — HORIZONTAL layout matching book Fritzing diagrams exactly.
  * - Body: landscape (wide), dark black left (~60%) + orange/copper right (~40%)
  * - Snap connector: TWO SEPARATE gray metallic clips (top & bottom) with gap
- * - Terminals/signs matching the book screenshot: (−) upper, (+) lower
+ * - Terminals/signs: (+) upper, (−) lower — pins aligned to minimize wire crossing
  * - "9V" text: upright on the dark body section
  * - Wire leads: red (+) and black (−) from connector to pins
  * Pin names: positive / negative — UNCHANGED (solver-safe).
@@ -32,18 +32,18 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
   const SEP_X = 0;
   const SEP_W = 3;
 
-  /* Two separate snap connector clips — upper (−) and lower (+) */
+  /* Two separate snap connector clips — upper (+) and lower (−) */
   const CLIP_X = SEP_X + SEP_W;  /* = 3 */
   const CLIP_W = 10;
   const CLIP_GAP = 5;            /* gap between the two clips */
   const CLIP_H = (BODY_H - CLIP_GAP) / 2; /* each clip height */
-  const CLIP_TOP_Y = BODY_TOP;   /* upper clip top — (−) */
-  const CLIP_BOT_Y = BODY_MID_Y + CLIP_GAP / 2; /* lower clip top — (+) */
+  const CLIP_TOP_Y = BODY_TOP;   /* upper clip top — (+) */
+  const CLIP_BOT_Y = BODY_MID_Y + CLIP_GAP / 2; /* lower clip top — (−) */
 
   /* Terminal positions — centered on each clip face */
   const TERM_X = CLIP_X + CLIP_W * 0.35;
-  const TERM_MINUS_Y = CLIP_TOP_Y + CLIP_H / 2;  /* (−) on upper clip */
-  const TERM_PLUS_Y = CLIP_BOT_Y + CLIP_H / 2;   /* (+) on lower clip */
+  const TERM_PLUS_Y = CLIP_TOP_Y + CLIP_H / 2;   /* (+) on upper clip */
+  const TERM_MINUS_Y = CLIP_BOT_Y + CLIP_H / 2;  /* (−) on lower clip */
 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="battery9v" role="img"
@@ -60,18 +60,18 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
       <rect x={BODY_LEFT + BODY_W - 2.5} y={BODY_TOP + 0.25} width="2.5" height={BODY_H - 0.5}
         fill="#C9884B" />
 
-      {/* ── Orange section: (−) upper and (+) lower imprint — matching book screenshot ── */}
+      {/* ── Orange section: (+) upper and (−) lower imprint ── */}
       <circle cx={BODY_LEFT + DARK_W + ORANGE_W * 0.55} cy={BODY_TOP + BODY_H * 0.28} r="3.4"
         fill="none" stroke="#A06830" strokeWidth="0.6" opacity="0.6" />
-      <text x={BODY_LEFT + DARK_W + ORANGE_W * 0.55} y={BODY_TOP + BODY_H * 0.28 + 1.8}
-        textAnchor="middle" fontSize="5.5" fill="#8B5E28" fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif">{'\u2212'}</text>
+      <text x={BODY_LEFT + DARK_W + ORANGE_W * 0.55} y={BODY_TOP + BODY_H * 0.28 + 2}
+        textAnchor="middle" fontSize="6.5" fill="#8B5E28" fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif">+</text>
 
       <circle cx={BODY_LEFT + DARK_W + ORANGE_W * 0.55} cy={BODY_TOP + BODY_H * 0.72} r="3.4"
         fill="none" stroke="#A06830" strokeWidth="0.6" opacity="0.6" />
-      <text x={BODY_LEFT + DARK_W + ORANGE_W * 0.55} y={BODY_TOP + BODY_H * 0.72 + 2}
-        textAnchor="middle" fontSize="6.5" fill="#8B5E28" fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif">+</text>
+      <text x={BODY_LEFT + DARK_W + ORANGE_W * 0.55} y={BODY_TOP + BODY_H * 0.72 + 1.8}
+        textAnchor="middle" fontSize="5.5" fill="#8B5E28" fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif">{'\u2212'}</text>
 
       {/* ── "9V" text — upright on dark body ── */}
       <text
@@ -91,7 +91,7 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
       <rect x={SEP_X} y={BODY_TOP} width={SEP_W} height={BODY_H}
         fill="#0E0E0E" />
 
-      {/* ── UPPER CLIP (−) — gray metallic tab ── */}
+      {/* ── UPPER CLIP (+) — gray metallic tab ── */}
       <rect x={CLIP_X} y={CLIP_TOP_Y} width={CLIP_W} height={CLIP_H} rx="1.5"
         fill="#A0A0A0" stroke="#808080" strokeWidth="0.5" />
       <line x1={CLIP_X + 1} y1={CLIP_TOP_Y + CLIP_H * 0.35}
@@ -101,25 +101,7 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
         x2={CLIP_X + CLIP_W - 1} y2={CLIP_TOP_Y + CLIP_H * 0.65}
         stroke="#909090" strokeWidth="0.4" opacity="0.5" />
 
-      {/* (−) Terminal — smaller metallic nub on upper clip */}
-      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="4.5"
-        fill="#808080" stroke="#6A6A6A" strokeWidth="0.4" />
-      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="3.5"
-        fill="#B0B0B0" />
-      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="2"
-        fill="#D0D0D0" stroke="#999" strokeWidth="0.3" />
-
-      {/* ── LOWER CLIP (+) — gray metallic tab ── */}
-      <rect x={CLIP_X} y={CLIP_BOT_Y} width={CLIP_W} height={CLIP_H} rx="1.5"
-        fill="#A0A0A0" stroke="#808080" strokeWidth="0.5" />
-      <line x1={CLIP_X + 1} y1={CLIP_BOT_Y + CLIP_H * 0.35}
-        x2={CLIP_X + CLIP_W - 1} y2={CLIP_BOT_Y + CLIP_H * 0.35}
-        stroke="#909090" strokeWidth="0.4" opacity="0.5" />
-      <line x1={CLIP_X + 1} y1={CLIP_BOT_Y + CLIP_H * 0.65}
-        x2={CLIP_X + CLIP_W - 1} y2={CLIP_BOT_Y + CLIP_H * 0.65}
-        stroke="#909090" strokeWidth="0.4" opacity="0.5" />
-
-      {/* (+) Terminal — larger ring/socket on lower clip */}
+      {/* (+) Terminal — larger ring/socket on upper clip */}
       <circle cx={TERM_X} cy={TERM_PLUS_Y} r="5.5"
         fill="#808080" stroke="#6A6A6A" strokeWidth="0.4" />
       <circle cx={TERM_X} cy={TERM_PLUS_Y} r="4.2"
@@ -129,24 +111,42 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
       <circle cx={TERM_X} cy={TERM_PLUS_Y} r="1.5"
         fill="#1A1A1A" />
 
-      {/* Black wire (−) — from upper clip down to pin negative (0, 58) */}
-      <path
-        d={`M ${TERM_X} ${CLIP_TOP_Y + CLIP_H + 1} C ${TERM_X} 10, 2 40, 0 58`}
-        stroke="#000" strokeWidth="3.2" fill="none" strokeLinecap="round" opacity="0.2"
-      />
-      <path
-        d={`M ${TERM_X} ${CLIP_TOP_Y + CLIP_H + 1} C ${TERM_X} 10, 2 40, 0 58`}
-        stroke="#1A1A1A" strokeWidth="2.4" fill="none" strokeLinecap="round"
-      />
+      {/* ── LOWER CLIP (−) — gray metallic tab ── */}
+      <rect x={CLIP_X} y={CLIP_BOT_Y} width={CLIP_W} height={CLIP_H} rx="1.5"
+        fill="#A0A0A0" stroke="#808080" strokeWidth="0.5" />
+      <line x1={CLIP_X + 1} y1={CLIP_BOT_Y + CLIP_H * 0.35}
+        x2={CLIP_X + CLIP_W - 1} y2={CLIP_BOT_Y + CLIP_H * 0.35}
+        stroke="#909090" strokeWidth="0.4" opacity="0.5" />
+      <line x1={CLIP_X + 1} y1={CLIP_BOT_Y + CLIP_H * 0.65}
+        x2={CLIP_X + CLIP_W - 1} y2={CLIP_BOT_Y + CLIP_H * 0.65}
+        stroke="#909090" strokeWidth="0.4" opacity="0.5" />
 
-      {/* Red wire (+) — from lower clip to pin positive (0, 32) */}
+      {/* (−) Terminal — smaller metallic nub on lower clip */}
+      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="4.5"
+        fill="#808080" stroke="#6A6A6A" strokeWidth="0.4" />
+      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="3.5"
+        fill="#B0B0B0" />
+      <circle cx={TERM_X} cy={TERM_MINUS_Y} r="2"
+        fill="#D0D0D0" stroke="#999" strokeWidth="0.3" />
+
+      {/* Red wire (+) — from upper clip down to pin positive (0, 32) */}
       <path
-        d={`M ${TERM_X + 5} ${CLIP_BOT_Y + CLIP_H + 1} C ${TERM_X + 5} 12, 2 24, 0 32`}
+        d={`M ${TERM_X} ${CLIP_TOP_Y + CLIP_H + 1} C ${TERM_X} 5, 2 20, 0 32`}
         stroke="#8B1B1B" strokeWidth="3.2" fill="none" strokeLinecap="round" opacity="0.2"
       />
       <path
-        d={`M ${TERM_X + 5} ${CLIP_BOT_Y + CLIP_H + 1} C ${TERM_X + 5} 12, 2 24, 0 32`}
+        d={`M ${TERM_X} ${CLIP_TOP_Y + CLIP_H + 1} C ${TERM_X} 5, 2 20, 0 32`}
         stroke="#D32F2F" strokeWidth="2.4" fill="none" strokeLinecap="round"
+      />
+
+      {/* Black wire (−) — from lower clip down to pin negative (0, 58) */}
+      <path
+        d={`M ${TERM_X} ${CLIP_BOT_Y + CLIP_H + 1} C ${TERM_X} 20, 2 42, 0 58`}
+        stroke="#000" strokeWidth="3.2" fill="none" strokeLinecap="round" opacity="0.2"
+      />
+      <path
+        d={`M ${TERM_X} ${CLIP_BOT_Y + CLIP_H + 1} C ${TERM_X} 20, 2 42, 0 58`}
+        stroke="#1A1A1A" strokeWidth="2.4" fill="none" strokeLinecap="round"
       />
 
       {/* ── Interaction area ── */}

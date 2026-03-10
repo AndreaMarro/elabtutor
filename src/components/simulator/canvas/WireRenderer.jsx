@@ -225,9 +225,11 @@ function buildRoutedPath(points, opts = {}) {
 
   const style = opts.style || 'smooth'; // 'smooth' | 'orthogonal'
   const enableSag = opts.enableSag !== false;
-  // sagDirection: +1 (right) or -1 (left) for nearly-vertical wires.
+  // sagDirection: +1 (right) or -1 (left) for polarity-aware lateral sag.
   // Prevents battery +/- wires from overlapping by sagging in opposite directions.
   const sagDirection = opts.sagDirection || 1;
+  // polarity: +1 (positive), -1 (negative), 0 (none) — controls sag depth separation
+  const polarity = opts.polarity || 0;
 
   // ── Book/Fritzing style: hard polyline path ──
   if (style === 'orthogonal') {
@@ -263,13 +265,17 @@ function buildRoutedPath(points, opts = {}) {
 
     if (absDx < absDy * 0.3) {
       // Nearly vertical: lateral sag — direction controlled by sagDirection
-      // This prevents battery +/- wires from overlapping (positive sags right, negative sags left)
       sagX = sag * 0.5 * sagDirection;
       sagY = 0;
     } else if (absDx < absDy) {
       // Steep diagonal: mixed sag
       sagX = sag * 0.3 * sagDirection;
       sagY = sag * 0.7;
+    } else if (polarity !== 0) {
+      // Horizontal/diagonal with polarity: vary sag depth + small lateral offset
+      // Positive wires droop more, negative wires droop less → visible vertical separation
+      sagX = sag * 0.2 * sagDirection;
+      sagY = polarity > 0 ? sag * 1.4 : sag * 0.4;
     }
 
     return `M ${p0.x} ${p0.y} Q ${(midX + sagX).toFixed(1)} ${(midY + sagY).toFixed(1)} ${p1.x} ${p1.y}`;
@@ -392,14 +398,11 @@ function computeRoutedWire(fromPos, toPos, components, layout, fromRef, toRef) {
   }
 
   // Case 4: Off-board (battery) → breadboard pin
-  // Detect polarity to jog positive wires right, negative wires left (prevents overlap)
   if (toIsBBPin && !fromIsBBPin) {
-    const polarity = detectPolarity(fromRef, toRef);
-    return routeToBreadboardPin(fromPos, toPos, bbX, bbY, polarity);
+    return routeToBreadboardPin(fromPos, toPos, bbX, bbY);
   }
   if (fromIsBBPin && !toIsBBPin) {
-    const polarity = detectPolarity(fromRef, toRef);
-    const reversed = routeToBreadboardPin(toPos, fromPos, bbX, bbY, polarity);
+    const reversed = routeToBreadboardPin(toPos, fromPos, bbX, bbY);
     return reversed.reverse();
   }
 
@@ -448,19 +451,9 @@ function getEdgeLane(pinY, bbY) {
  *   Row pins (lane 2+): standard edge-channel L-shape
  * Plus goes RIGHT-first, Minus goes DOWN-first → paths diverge immediately, zero crossings.
  */
-function routeToBreadboardPin(offPos, bbPinPos, bbX, bbY, polarity = 0) {
-  // When polarity is known (battery wires), create L-shaped 3-point path
-  // to separate positive (+right jog) from negative (-left jog) visually
-  if (polarity !== 0) {
-    const jogX = polarity > 0 ? 15 : -15; // 15px lateral offset
-    const midY = (offPos.y + bbPinPos.y) / 2;
-    return [
-      offPos,
-      { x: offPos.x + jogX, y: midY },
-      bbPinPos,
-    ];
-  }
-  // Flex mode: non-polarized wires use direct 2-point path → natural Bézier catenary
+function routeToBreadboardPin(offPos, bbPinPos, bbX, bbY) {
+  // Direct 2-point path → natural Bézier catenary
+  // Polarity-based separation is handled by sagDirection + polarity in buildRoutedPath()
   return [offPos, bbPinPos];
 }
 
@@ -962,11 +955,11 @@ const WireRenderer = ({
         ? conn.waypoints
         : computeRoutedWire(fromPos, toPos, components, layout, conn.from, conn.to);
 
-      // Collision avoidance is useful in flex mode, but in book mode we keep
-      // deterministic geometry aligned with textbook/Fritzing routes.
-      // However, component avoidance MUST run in both modes to prevent UI overlap.
+      // Battery wires (off-board → bus rail) skip component avoidance to keep clean
+      // 2-point Bézier catenary. A* waypoints tangle with polarity-based sag separation.
+      const isBatteryWire = conn.from.startsWith('bat') || conn.to.startsWith('bat');
       const shouldAvoidCollisions = !hasCustomWaypoints && routingMode !== 'book';
-      const hasComponentAvoidance = !hasCustomWaypoints;
+      const hasComponentAvoidance = !hasCustomWaypoints && !isBatteryWire;
 
       let waypoints = hasComponentAvoidance
         ? applyComponentAvoidance(baseWaypoints, components, layout)
@@ -983,6 +976,7 @@ const WireRenderer = ({
         style: pathStyle,
         enableSag: true,
         sagDirection: polarity !== 0 ? polarity : 1,
+        polarity,
       });
 
       if (!path) return null;
