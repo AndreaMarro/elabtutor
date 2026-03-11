@@ -10,6 +10,7 @@ function obfuscateChunks(obfuscatorOptions = {}) {
         'react-vendor', 'mammoth', 'codemirror', 'avr-',
         'html2canvas', 'react-pdf', 'DashboardGestionale',
         'ElabTutorV4',  // S47: RC4+CFG causes TDZ crash on this 3.5MB chunk — still minified by Vite
+        'ScratchEditor', // S112: Blockly is already Closure-compiled — 2nd obfuscator breaks internal refs (removeElem$module$ ReferenceError)
     ];
 
     return {
