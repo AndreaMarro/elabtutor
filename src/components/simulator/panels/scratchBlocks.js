@@ -198,7 +198,7 @@ Blockly.Blocks['arduino_no_tone'] = {
 
 // ─── SERVO ─── //
 
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
 // 13. Servo attach
 Blockly.Blocks['arduino_servo_attach'] = {
     init: function () {

@@ -198,7 +198,7 @@ export async function getExperimentHints(experimentId, currentStep = 0, difficul
             body: JSON.stringify({ experimentId, currentStep, difficulty }),
         });
         if (!res.ok) return null;
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
         const data = await res.json();
         if (data.success && data.hints) {
             const { filtered } = filterAIResponse(data.hints);
@@ -399,7 +399,7 @@ async function postChatWithRetry(payload, externalSignal) {
                 externalSignal.removeEventListener('abort', abortHandler);
             }
         }
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     throw new Error('Backend error: retry exhausted');
@@ -600,7 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
             success: true,
             response: safeContent,
             source: 'backend',
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
             actions: extractActions(safeContent)
         };
 
@@ -801,7 +801,7 @@ export async function analyzeImage(imageData, question = "Analizza questa immagi
     const mimeType = imageData.includes('data:')
         ? imageData.split(';')[0].split(':')[1]
         : 'image/png';
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     return await sendChat(question, [{ base64, mimeType }], { signal });
 }

@@ -198,7 +198,7 @@ export async function register(data) {
             error: `Troppi tentativi. Riprova tra ${Math.ceil(rateCheck.waitSec / 60)} minuti.`,
         };
     }
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     try {
         const passwordValidation = validatePassword(data.password);
@@ -399,7 +399,7 @@ export function stopAutoRefresh() {
 export async function createClass(name) {
     try {
         const result = await apiCall('/auth-create-class', {
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
             method: 'POST',
             body: JSON.stringify({ name }),
         });

@@ -198,7 +198,7 @@
   color: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -399,7 +399,7 @@
   z-index: 300;
   background: #FFFFFF;
   border-radius: 16px;
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -600,7 +600,7 @@
 }
 
 .chat-msg.error .chat-bubble {
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-left: 3px solid #ef4444;
   background: rgba(239, 68, 68, 0.05);
 }
@@ -801,7 +801,7 @@
   display: flex;
   gap: 6px;
   padding: 8px 14px;
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   overflow-x: auto;
   border-top: 1px solid #F1F5F9;
   flex-shrink: 0;
@@ -1002,7 +1002,7 @@
   .topbar-mascot {
     width: 28px;
     height: 28px;
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 
   .topbar-title {
@@ -1203,7 +1203,7 @@
 
   .topbar-title {
     font-size: 1.15rem;
-/* © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 }
 

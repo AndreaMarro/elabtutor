@@ -198,7 +198,7 @@ export function findVideo(query) {
 }
 
 /**
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
  * Get a YouTube search URL for fallback
  * @param {string} query
  * @returns {string}

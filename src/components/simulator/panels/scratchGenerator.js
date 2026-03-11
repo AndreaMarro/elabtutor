@@ -198,7 +198,7 @@ arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const code = (argument0 || defaultArgument) + ' ' + operator + ' ' + (argument1 || defaultArgument);
     return [code, order];
 };
-// © Andrea Marro — 10/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['logic_boolean'] = function (block) {
     const code = block.getFieldValue('BOOL') === 'TRUE' ? 'true' : 'false';
