@@ -36,8 +36,8 @@ import '../components/Servo';
 import '../components/LCD16x2';
 
 const DEFAULT_VIEWBOX = { x: 10, y: -15, width: 570, height: 290 };
-const MIN_ZOOM = 0.2;
-const MAX_ZOOM = 4;
+const MIN_ZOOM = 0.3;  // S116: raised from 0.2 — prevents canvas becoming too small on iPad
+const MAX_ZOOM = 3.0;  // S116: lowered from 4 — prevents excessive pixelation on pinch-zoom
 const PIN_HIT_TOLERANCE = 6; // Unified pin hit-test base tolerance (px in SVG-space)
 
 // ─── Component approximate bounding boxes (width x height from center) ───
@@ -585,6 +585,7 @@ const SimulatorCanvas = ({
   const [isPinching, setIsPinching] = useState(false);
   const pinchStartDistRef = useRef(0);
   const pinchStartZoomRef = useRef(1);
+  const pinchEndTimeRef = useRef(0); // S116: timestamp when pinch ended — debounce pinch→drag
 
   // S101: Double-tap to reset zoom (touch only)
   const lastTapRef = useRef({ time: 0, x: 0, y: 0 });
@@ -1004,6 +1005,17 @@ const SimulatorCanvas = ({
   const handlePointerDown = useCallback((e) => {
     pointerTypeRef.current = e.pointerType || 'mouse';
 
+    // S116: Palm rejection — ignore large-area touches (palm resting on iPad screen)
+    // radiusX > 20px indicates a wide contact area (palm/wrist), force > 0.5 indicates heavy press
+    if (e.pointerType === 'touch' && ((e.radiusX && e.radiusX > 20) || (e.force && e.force > 0.5))) {
+      return; // Ignore palm touches
+    }
+
+    // S116: Debounce pinch→drag — ignore single-touch events within 200ms after pinch end
+    if (e.pointerType === 'touch' && pinchEndTimeRef.current && (Date.now() - pinchEndTimeRef.current < 200)) {
+      return;
+    }
+
     // Track all touch pointers for pinch-zoom detection
     if (e.pointerType === 'touch') {
       activeTouchesRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -1203,6 +1215,9 @@ const SimulatorCanvas = ({
 
   // === UNIFIED POINTER MOVE (replaces handleMouseMove + handleTouchMove) ===
   const handlePointerMove = useCallback((e) => {
+    // S116: Palm rejection on move — ignore large-area touches
+    if (e.pointerType === 'touch' && ((e.radiusX && e.radiusX > 20) || (e.force && e.force > 0.5))) return;
+
     // Track pointer position for paste
     if (svgRef.current) {
       const mp = clientToSVG(svgRef.current, e.clientX, e.clientY);
@@ -1441,6 +1456,7 @@ const SimulatorCanvas = ({
         setIsPinching(false);
         touchRef.current.lastMid = null;
         pinchStartDistRef.current = 0;
+        pinchEndTimeRef.current = Date.now(); // S116: record pinch end for debounce
       }
       // If fingers still down, don't finalize anything yet
       if (activeTouchesRef.current.size > 0) return;
@@ -1480,14 +1496,25 @@ const SimulatorCanvas = ({
 
     selectionStartRef.current = null;
 
-    // S101: Double-tap to reset zoom (touch only, on background — no component drag)
+    // S101+S116: Double-tap zoom toggle (touch only, on background — no component drag)
+    // S116: Toggle between 1.0 → 1.5 → 1.0 instead of resetting to fit
     if (e && (e.pointerType === 'touch') && !compClickedRef.current && panDistRef.current < 15) {
       const now = Date.now();
       const last = lastTapRef.current;
       const tapDist = Math.hypot(e.clientX - last.x, e.clientY - last.y);
       if (now - last.time < 300 && tapDist < 30) {
-        // Double-tap detected → reset zoom to fit
-        if (resetViewRef.current) resetViewRef.current();
+        // Double-tap detected → toggle zoom 1.0 ↔ 1.5
+        const targetZoom = zoom < 1.25 ? 1.5 : 1.0;
+        // Zoom toward tap position
+        const svgPt = clientToSVG(svgRef.current, e.clientX, e.clientY);
+        setViewBox(prev => {
+          const oldW = prev.width / zoom;
+          const oldH = prev.height / zoom;
+          const newW = prev.width / targetZoom;
+          const newH = prev.height / targetZoom;
+          return { ...prev, x: prev.x + (svgPt.x - prev.x) * (1 - newW / oldW), y: prev.y + (svgPt.y - prev.y) * (1 - newH / oldH) };
+        });
+        setZoom(targetZoom);
         lastTapRef.current = { time: 0, x: 0, y: 0 };
         setIsPanning(false);
         return;
@@ -1707,6 +1734,10 @@ const SimulatorCanvas = ({
   const handleComponentPointerDown = useCallback((componentId, e) => {
     // Right-click handled by context menu handler
     if (e.button !== 0) return;
+    // S116: Palm rejection — large-area touch (palm/wrist on iPad screen)
+    if (e.pointerType === 'touch' && ((e.radiusX && e.radiusX > 20) || (e.force && e.force > 0.5))) return;
+    // S116: Debounce pinch→drag transition
+    if (e.pointerType === 'touch' && pinchEndTimeRef.current && (Date.now() - pinchEndTimeRef.current < 200)) return;
     // Palm rejection: ignore non-primary pointers, BUT allow if it is the only active touch
     // (iOS may briefly report isPrimary=false for a valid single-finger touch or Apple Pencil)
     if (!e.isPrimary && !((e.pointerType === 'touch' || e.pointerType === 'pen') && activeTouchesRef.current.size <= 1)) return;
