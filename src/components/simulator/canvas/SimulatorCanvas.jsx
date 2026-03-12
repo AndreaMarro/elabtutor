@@ -2204,7 +2204,7 @@ const SimulatorCanvas = ({
     return componentsList.map((comp) => {
       const registered = getComponent(comp.type);
       const rawPos = experiment.layout?.[comp.id] || {};
-      const pos = { x: rawPos.x ?? 0, y: rawPos.y ?? 0, rotation: rawPos.rotation, parentId: rawPos.parentId };
+      const pos = { x: Number.isFinite(rawPos.x) ? rawPos.x : 0, y: Number.isFinite(rawPos.y) ? rawPos.y : 0, rotation: rawPos.rotation, parentId: rawPos.parentId };
       const rotation = pos.rotation || 0;
 
       if (!registered) {
