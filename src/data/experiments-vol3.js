@@ -198,7 +198,7 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 </block></value>
 <statement name="DO0">
 <block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
 <next><block type="arduino_tone"><field name="PIN">8</field><value name="FREQ"><shadow type="math_number"><field name="NUM">523</field></shadow></value>
 <next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
 <value name="CONTENT"><shadow type="text"><field name="TEXT">Giallo!</field></shadow></value>
@@ -399,7 +399,7 @@ const SIRENA_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
 <next><block type="arduino_digital_write"><field name="PIN">10</field><field name="STATE">LOW</field>
 <next><block type="arduino_digital_write"><field name="PIN">9</field><field name="STATE">HIGH</field>
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
 </block></next></block></next></block></next></block></next></block></next></block>
 </statement>
 </block></xml>`;
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL3 = {
       connections: [
         { from: "nano1:W_D13", to: "bb1:a18", color: "orange" },
         { from: "bb1:d25", to: "bb1:d27", color: "green" },
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:a28", to: "bb1:bus-bot-minus-28", color: "black" },
         { from: "nano1:GND_R", to: "bb1:bus-bot-minus-1", color: "black" },
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
@@ -801,7 +801,7 @@ void setup() {
 void loop() {
   digitalWrite(5, HIGH);
   delay(1000);
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
   digitalWrite(5, LOW);
   delay(1000);
 }`,
@@ -1002,7 +1002,7 @@ void loop() {
           componentType: "led",
           targetPins: { "led1:anode": "bb1:d27", "led1:cathode": "bb1:d28" },
           hint: "LED spostato di 2 colonne a destra del resistore per chiarezza."
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 3,
@@ -1203,7 +1203,7 @@ void loop() {
           componentType: "resistor",
           targetPins: { "r2:pin1": "bb1:g18", "r2:pin2": "bb1:g25" },
           hint: "R2 protegge il LED blu. Va nella fila G (parte bassa)."
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 5,
@@ -1404,7 +1404,7 @@ void loop() {
   delay(3000);
 }`,
       hexFile: "/hex/v3-cap6-semaforo.hex",
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       scratchXml: SEMAFORO_SCRATCH,
       concept: "Sequenza stati, semaforo reale, timing multiplo",
       layer: "schema",
@@ -1605,7 +1605,7 @@ void loop() {
       title: "Cap. 7 Esp. 1 - Pulsante INPUT_PULLUP",
       desc: "Collegamento base del pulsante con INPUT_PULLUP. Solo pulsante e GND, nessun LED.",
       chapter: "Capitolo 7 - I pin di input",
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       difficulty: 1,
       icon: "\u{1F518}",
       simulationMode: "avr",
@@ -1806,7 +1806,7 @@ void loop() {
       hexFile: "/hex/v3-cap7-pulsante.hex",
       scratchXml: PULSANTE_SCRATCH,
       concept: "Input + output, if/else, logica invertita pull-up",
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       layer: "schema",
       buildSteps: [
         {
@@ -2007,7 +2007,7 @@ void loop() {
       observe: "All'avvio il LED verde è acceso e il rosso spento. Ogni volta che premi il pulsante, si scambiano: il verde si spegne e il rosso si accende, o viceversa. Il codice usa il debounce per evitare rimbalzi meccanici del pulsante.",
       galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento '2 LED + Pulsante (toggle)' del Volume 3 — Arduino Programmato. Questo è l'esperimento più avanzato del capitolo 7! Il codice usa variabili booleane (statoVerde e ultimoPulsante) per ricordare lo stato tra un ciclo e l'altro. Rileva la transizione HIGH->LOW del pulsante (il momento esatto della pressione) e usa il debounce con delay(50) per evitare falsi contatti. Poi con if/else alterna quale LED è acceso. È come un interruttore che ogni volta che lo premi cambia stanza! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: `// 2 LED + Pulsante Toggle
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
 // D6 (W_D6) = pulsante, D10 (W_D10) = verde, D9 (W_D9) = rosso
 // Premi per alternare: verde <-> rosso
 
@@ -2208,7 +2208,7 @@ void loop() {
     },
 
     // ═══════════════════════════════════════════════════
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
     // CAPITOLO 8 — I pin analogici (3 esperimenti)
     // ═══════════════════════════════════════════════════
     {
@@ -2409,7 +2409,7 @@ void loop() {
         { from: "nano1:GND_R", to: "bb1:bus-bot-minus-1", color: "black" },
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
       ],
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       // Same pot layout as cap8-pot
       // vcc col 22 → 5V bus, signal col 23 → A0, gnd col 24 → GND bus
       layout: {
@@ -2610,7 +2610,7 @@ void loop() {
           explanation: "Il display LCD 16x2 usa il protocollo HD44780 in modalità 4-bit. Servono 6 pin: RS (Register Select) per distinguere dati/comandi, E (Enable) per validare i dati, e D4-D7 per i 4 bit di dati. lcd.begin(16,2) dice al display le sue dimensioni.",
           xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_lcd_init"><field name="RS">12</field><field name="E">11</field><field name="D4">5</field><field name="D5">10</field><field name="D6">3</field><field name="D7">6</field><field name="COLS">16</field><field name="ROWS">2</field></block></statement></block></xml>`,
         },
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           label: "Scrivi Hello World!",
           description: "Aggiungi 'LCD Cursore col 0 riga 0' e poi 'LCD Print \"Hello World!\"' dopo l'init nel Setup.",
@@ -2811,7 +2811,7 @@ void loop() {
           text: "Prendi il servomotore e posizionalo accanto alla breadboard",
           componentId: "servo1",
           componentType: "servo",
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: {
             "servo1:signal": "bb1:a20",
             "servo1:vcc": "bb1:bus-bot-plus-20",
@@ -3012,7 +3012,7 @@ void accendi(int idx, int ms) {
 }
 
 void mostraSequenza() {
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
   for (int i = 0; i <= livello; i++) {
     accendi(seq[i], 400);
   }
@@ -3213,7 +3213,7 @@ void loop() {
           scratchXml: SIMON_SCRATCH_STEP16
         },
         /* === PULSANTE ROSSO (btn1) === */
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 17,
           text: "Posiziona il pulsante ROSSO a cavallo del gap — pin nel foro E17 e F17",
@@ -3414,7 +3414,7 @@ void loop() {
           explanation: "random(0, 4) restituisce un numero intero tra 0 e 3 inclusi (il limite superiore è escluso). Ogni numero corrisponde a un LED: 0=rosso, 1=verde, 2=blu, 3=giallo."
         },
         {
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
           question: "Cosa succede se il giocatore preme il pulsante sbagliato?",
           options: ["Il LED giusto lampeggia come suggerimento", "Tutti e 4 i LED lampeggiano con un suono grave (Game Over)", "Il gioco si mette in pausa per 5 secondi"],
           correct: 1,

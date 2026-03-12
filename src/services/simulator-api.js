@@ -198,7 +198,7 @@ function createPublicAPI() {
     /**
      * Move a component to new coordinates
      * @param {string} componentId
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
      * @param {number} x - horizontal position
      * @param {number} y - vertical position
      */
@@ -399,7 +399,7 @@ function createPublicAPI() {
         buildPhase = 'hardware'; // default — could be refined with scratchSteps info
       }
 
-// © Andrea Marro — 11/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       // Compact component list
       const components = (circuitState.components || []).map(c => ({
         type: c.type,
