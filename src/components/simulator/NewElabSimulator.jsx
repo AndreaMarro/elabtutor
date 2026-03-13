@@ -30,6 +30,8 @@ import CircuitSolver from './engine/CircuitSolver';
 import { findExperimentById } from '../../data/experiments-index';
 import { compileCode as apiCompileCode, sendChat as apiSendChat, preloadExperiment } from '../../services/api';
 import { registerSimulatorInstance, unregisterSimulatorInstance, emitSimulatorEvent } from '../../services/simulator-api';
+import { pushActivity } from '../../services/activityBuffer';
+import { sessionMetrics } from '../../services/sessionMetrics';
 import { sendAnalyticsEvent, EVENTS } from './api/AnalyticsWebhook'; /* Andrea Marro — 12/02/2026 */
 import useUndoRedo from './hooks/useUndoRedo';
 import useCircuitStorage from './hooks/useCircuitStorage';
@@ -677,8 +679,8 @@ const NewElabSimulator = ({
      NOTE: definita qui per evitare TDZ (usata in shortcut hook)
      ═══════════════════════════════════════════════════════════════ */
   const handleCompileOnly = useCallback(async () => {
-    // S93: mode-aware — compile the code from the active editor mode
-    const codeToCompile = editorMode === 'scratch' ? scratchGeneratedCode : editorCode;
+    // S112: use refs to avoid stale closure (same pattern as S116 ScratchCompileBar)
+    const codeToCompile = editorModeRef.current === 'scratch' ? scratchGeneratedCodeRef.current : editorCodeRef.current;
     if (!codeToCompile) return;
 
     // Guard: prevent multiple simultaneous compilations
@@ -755,7 +757,7 @@ const NewElabSimulator = ({
     } finally {
       compilingRef.current = false;
     }
-  }, [editorCode, scratchGeneratedCode, editorMode, trackedTimeout]);
+  }, [trackedTimeout]); // S112: refs used instead of state — no stale closure
 
   // ─── Code Persistence: localStorage auto-save ───
   const EDITOR_STORAGE_KEY = 'elab_editor_code';
@@ -846,6 +848,12 @@ const NewElabSimulator = ({
     };
   }, [compilationStatus, compilationErrors, compilationWarnings, compilationSize]);
 
+  // Sprint 1 Context Mastery: Refs for serial output + selected component (for Galileo)
+  const serialOutputRef = useRef('');
+  useEffect(() => { serialOutputRef.current = serialOutput; }, [serialOutput]);
+  const selectedComponentIdRef = useRef(null);
+  useEffect(() => { selectedComponentIdRef.current = selectedComponentId; }, [selectedComponentId]);
+
   // ─── RIGHT-SIDE PANEL MUTUAL EXCLUSION ───
   // Only one right-side panel (BOM, Notes, Quiz) can be open at a time.
   // Opening one automatically closes the others to prevent overlap.
@@ -891,10 +899,14 @@ const NewElabSimulator = ({
   // Refs per API circuit state (evitano dependency nei callback)
   const circuitStatusRef = useRef({ status: 'idle', warnings: [], errors: [] });
   const buildStepIndexRef = useRef(0);
+  const canUndoRef = useRef(false);  // S115-FIX: avoid stale closure in apiInstance
+  const canRedoRef = useRef(false);  // S115-FIX: avoid stale closure in apiInstance
 
   // Sync refs con lo state corrispondente:
   useEffect(() => { circuitStatusRef.current = circuitStatus; }, [circuitStatus]);
   useEffect(() => { buildStepIndexRef.current = buildStepIndex; }, [buildStepIndex]);
+  useEffect(() => { canUndoRef.current = canUndo; }, [canUndo]);   // S115-FIX
+  useEffect(() => { canRedoRef.current = canRedo; }, [canRedo]);   // S115-FIX
 
   const canvasContainerRef = useRef(null);
   const editorPanelRef = useRef(null); // S101: for swipe-to-close gesture
@@ -917,6 +929,7 @@ const NewElabSimulator = ({
   const handleComponentAddRef = useRef(null);
   const handleComponentDeleteRef = useRef(null);
   const handleLayoutChangeRef = useRef(null); // Galileo Onnipotente: moveComponent API
+  const handleBuildModeSwitchRef = useRef(null); // S115: Galileo build mode control
   const avrLoadingRef = useRef(false); // Synchronous guard for async AVR setup
   const onCodeSelectRef = useRef(onCodeSelect);
   const onOpenSimulatorRef = useRef(onOpenSimulator);
@@ -1215,12 +1228,12 @@ const NewElabSimulator = ({
   // Undo/Redo button callbacks (for ControlBar UI buttons)
   const handleUndoBtn = useCallback(() => {
     const snapshot = undoHistory(getCurrentSnapshot());
-    if (snapshot) restoreSnapshotRef.current(snapshot);
+    if (snapshot) { restoreSnapshotRef.current(snapshot); pushActivity('undo'); }
   }, [undoHistory, getCurrentSnapshot]);
 
   const handleRedoBtn = useCallback(() => {
     const snapshot = redoHistory(getCurrentSnapshot());
-    if (snapshot) restoreSnapshotRef.current(snapshot);
+    if (snapshot) { restoreSnapshotRef.current(snapshot); pushActivity('redo'); }
   }, [redoHistory, getCurrentSnapshot]);
 
   // Keyboard shortcuts: Ctrl+Z (undo), Ctrl+Y / Ctrl+Shift+Z (redo)
@@ -1254,7 +1267,11 @@ const NewElabSimulator = ({
           if (handlePlayRef.current) handlePlayRef.current();
         }
       } else if (e.key === 'Escape') {
-        // Escape = exit wire mode
+        // Escape = exit Scratch fullscreen first, then wire mode
+        if (scratchFullscreen) {
+          setScratchFullscreen(false);
+          return;
+        }
         setWireMode(false);
         setSelectedComponent(null);
         setSelectedWireIndex(-1);
@@ -1356,6 +1373,8 @@ const NewElabSimulator = ({
   useEffect(() => { scratchGeneratedCodeRef.current = scratchGeneratedCode; }, [scratchGeneratedCode]);
   const editorModeRef = useRef(editorMode); // S93: for getEditorCode API
   useEffect(() => { editorModeRef.current = editorMode; }, [editorMode]);
+  const showCodeEditorRef = useRef(showCodeEditor); // S116: for isEditorVisible API
+  useEffect(() => { showCodeEditorRef.current = showCodeEditor; }, [showCodeEditor]);
 
   // ─── SIMON SOUNDS: Web Audio for LED state changes ───
   const simonAudioRef = useRef({ ctx: null, oscillators: {} });
@@ -1722,7 +1741,7 @@ const NewElabSimulator = ({
       addComponent: (type, pos) => handleComponentAddRef.current?.(type, pos),
       removeComponent: (id) => handleComponentDeleteRef.current?.(id),
       getEditorCode: () => editorModeRef?.current === 'scratch' ? scratchGeneratedCodeRef.current : editorCodeRef.current, // S93: mode-aware
-      setEditorCode: (code) => setEditorCode(code),
+      setEditorCode: (code) => { setEditorCode(code); codeNeedsCompileRef.current = true; }, // S116: mark dirty
       /* Andrea Marro — 12/02/2026 — Galileo API bridge */
       setHighlightedComponents: (ids) => setApiHighlightedComponents(Array.isArray(ids) ? ids : (ids ? [ids] : [])),
       setHighlightedPins: (refs) => setApiHighlightedPins(Array.isArray(refs) ? refs : (refs ? [refs] : [])),
@@ -1735,6 +1754,7 @@ const NewElabSimulator = ({
         // Save undo snapshot before clearing
         const snap = getCurrentSnapshotRef.current?.();
         if (snap) pushSnapshotRef.current?.(snap);
+        pushActivity('clearall', currentExperimentRef.current?.id || '');
         setCustomComponents([]);
         setCustomConnections([]);
         setCustomLayout({});
@@ -1766,10 +1786,73 @@ const NewElabSimulator = ({
       // S76: Scratch Universale — editor control for Galileo action tags
       showEditor: () => setShowCodeEditor(true),
       hideEditor: () => setShowCodeEditor(false),
-      setEditorMode: (mode) => { if (mode === 'scratch' || mode === 'arduino') setEditorMode(mode); },
+      setEditorMode: (mode) => { if (mode === 'scratch' || mode === 'arduino') { setEditorMode(mode); pushActivity('editor_switch', mode); } },
       getEditorMode: () => editorModeRef.current, // S93: use ref to avoid stale closure
-      isEditorVisible: () => showCodeEditor,
+      isEditorVisible: () => showCodeEditorRef.current, // S116: ref avoids stale closure
       loadScratchWorkspace: (xml) => { setScratchXml(xml); setEditorMode('scratch'); setShowCodeEditor(true); },
+      // S115: Galileo Onnipotente v2 — extended API surface
+      undo: () => {
+        const snapshot = undoHistory(getCurrentSnapshot());
+        if (snapshot) restoreSnapshotRef.current?.(snapshot);
+      },
+      redo: () => {
+        const snapshot = redoHistory(getCurrentSnapshot());
+        if (snapshot) restoreSnapshotRef.current?.(snapshot);
+      },
+      canUndo: () => canUndoRef.current,   // S115-FIX: ref avoids stale closure
+      canRedo: () => canRedoRef.current,   // S115-FIX: ref avoids stale closure
+      highlightPin: (refs) => setApiHighlightedPins(Array.isArray(refs) ? refs : (refs ? [refs] : [])),
+      serialWrite: (text) => { if (avrRef.current) avrRef.current.serialWrite?.(text); },
+      setBuildMode: (mode) => handleBuildModeSwitchRef.current?.(mode),
+      getBuildMode: () => currentExperimentRef.current?.buildMode || false,
+      nextStep: () => {
+        const steps = currentExperimentRef.current?.buildSteps || [];
+        setBuildStepIndex(prev => {
+          const next = steps.length > 0 ? Math.min(prev + 1, steps.length - 1) : prev;
+          if (next !== prev) pushActivity('build_step_next', `step ${next + 1}/${steps.length}`);
+          return next;
+        });
+      },
+      prevStep: () => setBuildStepIndex(prev => {
+        const next = Math.max(-1, prev - 1);
+        if (next !== prev) pushActivity('build_step_prev', `step ${next + 1}`);
+        return next;
+      }),
+      getBuildStepIndex: () => buildStepIndexRef.current,
+      showBom: () => setShowBom(true),
+      hideBom: () => setShowBom(false),
+      showSerialMonitor: () => { setShowCodeEditor(true); setBottomPanel('monitor'); },
+      hideSerialMonitor: () => { setShowCodeEditor(false); }, // S115-FIX: actually hides editor panel
+      isSimulating: () => isRunningRef.current || false,
+      getSimulationStatus: () => isRunningRef.current ? 'running' : 'stopped',
+      // Sprint 1 Context Mastery: expose selected component + serial output for Galileo
+      getSelectedComponent: () => {
+        const id = selectedComponentIdRef.current;
+        if (!id) return null;
+        const circuit = buildStructuredState();
+        const comp = circuit?.components?.find(c => c.id === id);
+        return comp ? { id: comp.id, type: comp.type, state: comp.state || {} } : { id };
+      },
+      getSerialOutput: () => {
+        const text = serialOutputRef.current || '';
+        if (!text) return null;
+        const lines = text.split('\n').filter(Boolean);
+        return { lastLines: lines.slice(-10), lineCount: lines.length };
+      },
+      // S115: Code control — Galileo può scrivere/leggere codice Arduino
+      appendEditorCode: (code) => { setEditorCode(prev => (prev || '') + '\n' + code); codeNeedsCompileRef.current = true; }, // S116: mark dirty
+      resetEditorCode: () => {
+        const orig = currentExperimentRef.current?.code || '';
+        setEditorCode(orig);
+      },
+      getExperimentOriginalCode: () => currentExperimentRef.current?.code || '',
+      // S116: Full compile+load via handleCompile (updates UI state, loads hex into AVR)
+      compileAndLoad: async (code) => {
+        if (handleCompileRef.current) {
+          return await handleCompileRef.current(code);
+        }
+        return null;
+      },
     };
     registerSimulatorInstance(apiInstance);
     return () => unregisterSimulatorInstance();
@@ -1849,6 +1932,8 @@ const NewElabSimulator = ({
 
     setCircuitStatus({ status: 'idle', warnings: [], errors: [] });
     setCurrentExperiment(experiment);
+    pushActivity('experiment_loaded', `${experiment.id} "${experiment.title || experiment.name || ''}"`.trim());
+    sessionMetrics.trackExperimentLoad(experiment.id);
     recordEvent('experiment_loaded', { experimentId: experiment.id, experimentName: experiment.name || experiment.id });
     if (onExperimentChangeRef.current) onExperimentChangeRef.current(experiment);
     setIsRunning(false);
@@ -1898,8 +1983,9 @@ const NewElabSimulator = ({
     setScratchXml(savedScratch || experiment.scratchXml || '');
     // S93: Load scratch generated code from localStorage (invisible to user)
     setScratchGeneratedCode(isAvr ? localStorage.getItem(`elab_scratch_code_${experiment.id}`) || '' : '');
-    // Default to scratch mode only if experiment has pre-built scratchXml; otherwise arduino
-    setEditorMode(hasScratchXml && (savedScratch || experiment.scratchXml) ? 'scratch' : 'arduino');
+    // Default to scratch mode for ALL AVR experiments (Scratch Universale S81);
+    // only fallback to arduino if NOT avr mode
+    setEditorMode(isAvr ? 'scratch' : 'arduino');
     // Se il codice salvato in localStorage è diverso dall'originale dell'esperimento,
     // l'hex pre-compilato NON corrisponde — serve ricompilare prima di avviare
     const originalCode = (experiment.code || '').trim();
@@ -1968,8 +2054,8 @@ const NewElabSimulator = ({
         if (loaded) {
           avrRef.current = bridge;
           setAvrReady(true);
-          // Auto-show serial monitor panel for AVR experiments
-          setShowBottomPanel(true);
+          // Auto-show serial monitor panel for AVR experiments (skip on short viewports — iPad landscape)
+          if (window.innerHeight > 820) setShowBottomPanel(true);
 
           // Configure LCD pins if experiment has an LCD component
           const lcdMapping = buildLCDPinMapping(experiment);
@@ -2185,8 +2271,8 @@ const NewElabSimulator = ({
     // CoVe Fix #5: Auto-compile se il codice è stato modificato (AVR mode)
     if (currentExperiment.simulationMode === 'avr' && codeNeedsCompileRef.current && handleCompileRef.current) {
       // Il codice è stato modificato → compila prima di avviare
-      // S93: mode-aware — compile from active editor mode
-      const codeToCompile = editorMode === 'scratch' ? scratchGeneratedCodeRef.current : editorCode;
+      // S112: use refs to avoid stale closure
+      const codeToCompile = editorModeRef.current === 'scratch' ? scratchGeneratedCodeRef.current : editorCodeRef.current;
       await handleCompileRef.current(codeToCompile);
       // Se codeNeedsCompileRef è ancora true, la compilazione è fallita
       // (handleCompile lo resetta a false solo su successo)
@@ -2203,6 +2289,7 @@ const NewElabSimulator = ({
       solverRef.current.start();
     }
     setIsRunning(true);
+    pushActivity('play', currentExperiment?.id || '');
     setSimulationAnnouncement('Simulazione avviata'); // S161.3
     recordEvent('simulation_started');
     /* Andrea Marro — 12/02/2026 — Analytics + Events */
@@ -2216,6 +2303,7 @@ const NewElabSimulator = ({
     setComponentStates(prev => ({ ...prev, _avrRunning: false, _txActive: false, _rxActive: false }));
     if (avrPollRef.current) { clearInterval(avrPollRef.current); avrPollRef.current = null; }
     setIsRunning(false);
+    pushActivity('pause');
     setSimulationAnnouncement('Simulazione in pausa'); // S161.3
     recordEvent('simulation_stopped');
     /* Andrea Marro — 12/02/2026 — Analytics + Events */
@@ -2225,6 +2313,7 @@ const NewElabSimulator = ({
 
   const handleReset = useCallback(() => {
     handlePause();
+    pushActivity('reset', currentExperiment?.id || '');
     setSimulationAnnouncement('Simulazione resettata'); // S161.3: overrides "in pausa" from handlePause
     avrTxLenRef.current = 0;
     if (currentExperiment) {
@@ -2251,6 +2340,17 @@ const NewElabSimulator = ({
       setEditorCode(originalCode);
       codeNeedsCompileRef.current = false;
       setCompilationStatus(null);
+      setCompilationErrors(null);   // S116: clear stale errors
+      setCompilationWarnings(null); // S116: clear stale warnings
+      setCompilationSize(null);     // S116: clear stale size
+      // S116: Reset Scratch state for mode independence
+      setScratchXml(currentExperiment.scratchXml || '');
+      setScratchGeneratedCode('');
+      // S116: Clear persisted Scratch workspace
+      if (currentExperiment.id) {
+        localStorage.removeItem(`elab_scratch_${currentExperiment.id}`);
+        localStorage.removeItem(`elab_scratch_code_${currentExperiment.id}`);
+      }
 
       if (currentExperiment.simulationMode === 'avr' && avrRef.current) {
         avrRef.current.reset();
@@ -2746,9 +2846,11 @@ const NewElabSimulator = ({
 
       for (const c of (mergedExperiment.components || [])) {
         if (c.id === componentId) continue;
-        if (containerTypes.includes(c.type)) continue;
         const cLayout = mergedExperiment.layout?.[c.id];
         if (!cLayout) continue;
+        // Skip other containers UNLESS they are children of the dragged component
+        // (e.g., dragging breadboard should cascade its child nano-r4)
+        if (containerTypes.includes(c.type) && cLayout.parentId !== componentId) continue;
         // Primary: parentId match
         if (cLayout.parentId === componentId) {
           childIds.add(c.id);
@@ -2760,6 +2862,19 @@ const NewElabSimulator = ({
         if (cLayout.x >= bbPos.x - MARGIN && cLayout.x <= bbPos.x + bbW + MARGIN &&
           cLayout.y >= bbPos.y - MARGIN && cLayout.y <= bbPos.y + bbH + MARGIN) {
           childIds.add(c.id);
+        }
+      }
+
+      // Reverse cascade: if the dragged container has a parentId, also drag its
+      // parent and all siblings (e.g., dragging nano1 → cascade bb1 + all components on bb1)
+      const myLayout = mergedExperiment.layout?.[componentId];
+      if (myLayout?.parentId) {
+        const parentId = myLayout.parentId;
+        childIds.add(parentId);
+        for (const c of (mergedExperiment.components || [])) {
+          if (c.id === componentId || childIds.has(c.id)) continue;
+          const cL = mergedExperiment.layout?.[c.id];
+          if (cL?.parentId === parentId) childIds.add(c.id);
         }
       }
 
@@ -2918,6 +3033,7 @@ const NewElabSimulator = ({
     pushSnapshot(getCurrentSnapshot()); // Save for undo
     const color = getAutoWireColor(fromPinRef, toPinRef);
     const newConn = { from: fromPinRef, to: toPinRef, color, id: `conn-${Date.now()}-${Math.random().toString(36).substr(2, 5)}` };
+    pushActivity('wire_added', `${fromPinRef}→${toPinRef}`);
     setCustomConnections(prev => [...prev, newConn]);
     /* Andrea Marro — 12/02/2026 — Events */
     try { emitSimulatorEvent('circuitChange', { action: 'wireAdded', from: fromPinRef, to: toPinRef }); } catch { }
@@ -2980,6 +3096,7 @@ const NewElabSimulator = ({
     const allConns = mergedExperiment.connections || [];
     const conn = allConns[wireIndex];
     if (!conn) return;
+    pushActivity('wire_removed', `${conn.from}→${conn.to}`);
 
     // Find and remove from customConnections (user-added wires)
     // The wire index refers to the merged array: baseConnections + customConnections
@@ -3069,6 +3186,7 @@ const NewElabSimulator = ({
       }
     }
 
+    pushActivity('component_added', `${type} (${id})`);
     setCustomComponents(prev => [...prev, newComp]);
     setCustomLayout(prev => ({
       ...prev,
@@ -3095,6 +3213,7 @@ const NewElabSimulator = ({
      ═══════════════════════════════════════════════════════════════ */
   const handleComponentDelete = useCallback((componentId) => {
     pushSnapshot(getCurrentSnapshot()); // Save for undo
+    pushActivity('component_removed', componentId);
     // Rimuovi componenti user-added
     const isUserAdded = customComponents.some(c => c.id === componentId);
     if (isUserAdded) {
@@ -3160,6 +3279,7 @@ const NewElabSimulator = ({
   useEffect(() => { handleComponentAddRef.current = handleComponentAdd; }, [handleComponentAdd]);
   useEffect(() => { handleComponentDeleteRef.current = handleComponentDelete; }, [handleComponentDelete]);
   useEffect(() => { handleLayoutChangeRef.current = handleLayoutChange; }, [handleLayoutChange]);
+  useEffect(() => { handleBuildModeSwitchRef.current = handleBuildModeSwitch; }, [handleBuildModeSwitch]);
 
   /* ═══════════════════════════════════════════════════════════════
      NEW: Reset experiment to original state
@@ -3247,8 +3367,8 @@ const NewElabSimulator = ({
         // ✅ Compilation succeeded — load hex into AVR emulator
         setCompilationStatus('success');
         codeNeedsCompileRef.current = false; // hex ora corrisponde al codice
-        // Auto-show serial panel on successful compile & run
-        setShowBottomPanel(true);
+        // Auto-show serial panel on successful compile & run (skip on short viewports — iPad landscape)
+        if (window.innerHeight > 820) setShowBottomPanel(true);
 
         // Calculate binary size from hex or API response
         const FLASH_TOTAL = 32256; // ATmega328p usable flash
@@ -3317,6 +3437,8 @@ const NewElabSimulator = ({
           }
         }
 
+        pushActivity('compile_success', `${hexBytes}/${FLASH_TOTAL}B`);
+        sessionMetrics.trackCompilation(true);
         // Extract warnings from compiler output (even on success)
         if (result.output) {
           const warnLines = result.output.split('\n').filter(l => /warning:/i.test(l));
@@ -3341,6 +3463,8 @@ const NewElabSimulator = ({
           else errorLines.push(line);
         }
         const rawErrors = errorLines.join('\n').trim() || fullText;
+        pushActivity('compile_error', rawErrors.slice(0, 120));
+        sessionMetrics.trackCompilation(false);
         setCompilationErrors(translateCompilationErrors(rawErrors));
         if (warnLines.length > 0) setCompilationWarnings(translateCompilationErrors(warnLines.join('\n')));
         /* Andrea Marro — 12/02/2026 — Analytics */
@@ -3827,6 +3951,7 @@ const NewElabSimulator = ({
                 {showGuide && currentExperiment && (!currentExperiment.buildMode || currentExperiment.buildMode === 'sandbox') && (
                   <ExperimentGuide
                     experiment={currentExperiment}
+                    buildMode={currentExperiment.buildMode || 'complete'}
                     onClose={() => setShowGuide(false)}
                     onSendToGalileo={onSendToGalileo}
                   />
@@ -3944,7 +4069,7 @@ const NewElabSimulator = ({
                   display: 'flex', flexDirection: 'column',
                   overflow: 'hidden',
                   transition: 'max-height 200ms ease',
-                  maxHeight: showBottomPanel ? 'min(280px, 40dvh)' : 40,
+                  maxHeight: showBottomPanel ? 'min(220px, 30dvh)' : 40,
                   flexShrink: 0,
                 }}>
                   {/* S79: Collapsed tab handle — always visible 40px bar */}
@@ -4152,17 +4277,26 @@ const NewElabSimulator = ({
               {editorMode === 'scratch' && (
                 <button
                   onClick={() => setScratchFullscreen(f => !f)}
-                  title={scratchFullscreen ? 'Esci da schermo intero' : 'Schermo intero'}
+                  title={scratchFullscreen ? 'Esci da schermo intero (Esc)' : 'Schermo intero'}
+                  aria-label={scratchFullscreen ? 'Esci da schermo intero' : 'Schermo intero'}
                   style={{
-                    padding: '7px 12px', border: 'none', cursor: 'pointer', minHeight: 44, minWidth: 44,
-                    fontFamily: "var(--font-sans)", fontSize: 18,
-                    background: 'var(--color-editor-bg, #161B22)',
-                    color: scratchFullscreen ? 'var(--color-tab-scratch, #E67E22)' : 'var(--color-text-gray-400, #666)',
-                    borderLeft: '1px solid var(--color-blockly-grid, #2a3040)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: scratchFullscreen ? '7px 16px' : '7px 12px', border: 'none', cursor: 'pointer', minHeight: 44, minWidth: 44,
+                    fontFamily: "var(--font-sans)", fontSize: scratchFullscreen ? 14 : 18, fontWeight: scratchFullscreen ? 600 : 400,
+                    background: scratchFullscreen ? 'var(--color-tab-scratch, #E67E22)' : 'var(--color-editor-bg, #161B22)',
+                    color: scratchFullscreen ? '#fff' : 'var(--color-text-gray-400, #666)',
+                    borderLeft: scratchFullscreen ? 'none' : '1px solid var(--color-blockly-grid, #2a3040)',
+                    borderRadius: scratchFullscreen ? '6px' : 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   }}
                 >
-                  {scratchFullscreen ? '⊡' : '⊞'}
+                  {scratchFullscreen ? (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 2h4v4M6 14H2v-4M14 2L9.5 6.5M2 14l4.5-4.5"/></svg>
+                      Esci
+                    </>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 6V2h4M14 10v4h-4M2 2l4.5 4.5M14 14L9.5 9.5"/></svg>
+                  )}
                 </button>
               )}
             </div>
@@ -4227,7 +4361,7 @@ const NewElabSimulator = ({
                 </div>
                 {/* S93: Compile bar for Scratch mode */}
                 <ScratchCompileBar
-                  onCompile={() => handleCompile(scratchGeneratedCode)}
+                  onCompile={() => handleCompile(scratchGeneratedCodeRef.current)} // S116: ref avoids stale closure
                   compilationStatus={compilationStatus}
                   compilationErrors={compilationErrors}
                   compilationWarnings={compilationWarnings}

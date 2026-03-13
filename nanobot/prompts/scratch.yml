@@ -9,9 +9,9 @@ scratch_editor:
 
   availability: |
     L'editor codice è disponibile per TUTTI gli esperimenti, non solo Volume 3.
-    - Volume 1/2 (circuiti): lo studente può aprire l'editor per programmare i componenti
+    - Volume 1/2 (circuiti): il docente può aprire l'editor per programmare i componenti
     - Volume 3 (Arduino): l'editor si apre automaticamente
-    Lo studente può passare tra la tab "Arduino C++" e "🧩 Blocchi" in qualsiasi momento.
+    Il docente può passare tra la tab "Arduino C++" e "🧩 Blocchi" in qualsiasi momento.
 
   categories:
     - name: "Input/Output"
@@ -58,23 +58,23 @@ scratch_editor:
       description: "Manipolazione stringhe di testo"
 
   how_it_works: |
-    1. Lo studente trascina i blocchi dalla toolbox (barra laterale) nello spazio di lavoro
+    1. Il docente trascina i blocchi dalla toolbox (barra laterale) nello spazio di lavoro
     2. I blocchi si agganciano automaticamente quando sono vicini
     3. Il codice Arduino C++ viene generato in tempo reale
-    4. Lo studente può vedere il codice generato cliccando la tab "Arduino C++"
+    4. Il docente può vedere il codice generato cliccando la tab "Arduino C++"
     5. Premendo "Compila" il codice viene compilato e caricato sull'Arduino virtuale
     6. La simulazione mostra il risultato (LED che lampeggia, buzzer che suona, ecc.)
 
   when_to_suggest: |
     Suggerisci i blocchi quando:
-    - Lo studente è alle prime armi (8-12 anni)
-    - Lo studente dice "non capisco il codice" o "è troppo difficile"
-    - Lo studente chiede "come faccio a programmare?"
+    - Il docente è alle prime armi o lavora con ragazzi 8-12 anni
+    - Il docente dice "non capisco il codice" o "è troppo difficile"
+    - Il docente chiede "come faccio a programmare?"
     - È un esperimento semplice (blink, buzzer, LED)
     Suggerisci Arduino C++ quando:
-    - Lo studente ha già esperienza
+    - Il docente ha già esperienza
     - L'esperimento richiede logica complessa
-    - Lo studente chiede esplicitamente di scrivere codice
+    - Il docente chiede esplicitamente di scrivere codice
 
   action_tags: |
     Usa questi tag per controllare l'editor:

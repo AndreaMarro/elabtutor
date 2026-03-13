@@ -12,12 +12,14 @@
 
 import React from 'react';
 
-const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, onClose, onSendToGalileo }) {
+const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildMode, onClose, onSendToGalileo }) {
   // S84: Auto-collapse on iPad/tablet (all breakpoints ≤1365px) to maximize canvas space
   const isTabletOrSmaller = typeof window !== 'undefined' && window.innerWidth <= 1365;
   const [expanded, setExpanded] = React.useState(!isTabletOrSmaller);
   if (!experiment) return null;
-  const steps = experiment.steps || [];
+  // S112: In "Già Montato" (complete) mode, hide wiring steps — circuit is pre-assembled
+  const isComplete = buildMode === 'complete';
+  const steps = isComplete ? [] : (experiment.steps || []);
   const observe = experiment.observe || experiment.note || '';
   const desc = experiment.desc || '';
 

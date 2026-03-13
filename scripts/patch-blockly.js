@@ -2,22 +2,23 @@
 /**
  * patch-blockly.js — Safe disposal patch for Blockly 12.4.1
  *
- * Blockly 12.4.1 has an InsertionMarkerPreviewer bug: during workspace
- * disposal or React DOM removal, block.dispose() calls removeTypedBlock()
- * and removeTopBlock() on insertion marker blocks whose type entries
- * have already been cleaned from typedBlocksDB. This causes:
- *   - TypeError: Cannot read properties of undefined (reading 'indexOf')
- *   - Error: Block not present in workspace's list of top-most blocks
+ * Blockly 12.4.1 has an InsertionMarkerPreviewer bug: during block
+ * drag/drop, disposal, or React DOM removal, Blockly throws in 3 places:
+ *   1. removeTypedBlock() — undefined type map entry
+ *   2. removeTopBlock()   — "Block not present in workspace's top blocks"
+ *   3. removeConnection() — "Unable to find connection in connectionDB"
  *
- * This script patches the two methods to be safe (guard + no-throw).
+ * All three are the same pattern: InsertionMarker blocks are partially
+ * cleaned up before the disposal chain reaches these methods.
+ *
+ * This script patches all three methods to be safe (guard + no-throw).
  * Run automatically via postinstall, or manually: node scripts/patch-blockly.js
  *
- * v3: INLINES the removeElem logic directly instead of calling the
- *     removeElem$$module$... Closure Compiler symbol. This avoids
- *     Vite's dev server converting $$ → $ when serving pre-bundled deps,
- *     which caused ReferenceError at runtime.
+ * v3: INLINES removeElem logic (avoids Vite $$ → $ corruption)
+ * v4: Adds Patch 3 for ConnectionDB.removeConnection() — the root cause
+ *     of "Errore nell'editor blocchi" when clicking/dragging Scratch blocks
  *
- * © Andrea Marro — ELAB Tutor — Sprint 161.5 / S114
+ * © Andrea Marro — ELAB Tutor — S114-S115
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -28,19 +29,20 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const BLOCKLY_PATH = resolve(__dirname, '../node_modules/blockly/blockly_compressed.js');
 
 // Sentinel to detect if patch was already applied
-const PATCH_SENTINEL = '/* ELAB-PATCHED:safe-disposal-v3 */';
+const PATCH_SENTINEL = '/* ELAB-PATCHED:safe-disposal-v4 */';
 // Also detect old sentinels to force re-patch
 const OLD_SENTINELS = [
     '/* ELAB-PATCHED:safe-disposal */',
     '/* ELAB-PATCHED:safe-disposal-v2 */',
+    '/* ELAB-PATCHED:safe-disposal-v3 */',
 ];
 
 try {
     let code = readFileSync(BLOCKLY_PATH, 'utf8');
 
-    // Already patched with v3?
+    // Already patched with v4?
     if (code.includes(PATCH_SENTINEL)) {
-        console.log('[patch-blockly] Already patched (v3) — skipping.');
+        console.log('[patch-blockly] Already patched (v4) — skipping.');
         process.exit(0);
     }
 
@@ -111,11 +113,27 @@ try {
         console.warn('[patch-blockly] ⚠️  removeTopBlock pattern not found — may already be patched or Blockly version changed');
     }
 
+    // ── Patch 3: ConnectionDB.removeConnection — silent return instead of throw ──
+    // Bug: "Unable to find connection in connectionDB." when dragging/clicking blocks
+    // InsertionMarkerPreviewer.hideInsertionMarker → block.dispose() → connection.dispose()
+    //   → ConnectionDB.removeConnection() throws because marker connections already removed
+    const ORIG_RC =
+        'removeConnection(a,b){a=this.findIndexOfConnection(a,b);if(a===-1)throw Error("Unable to find connection in connectionDB.");this.connections.splice(a,1)}';
+    if (code.includes(ORIG_RC)) {
+        const NEW_RC =
+            'removeConnection(a,b){a=this.findIndexOfConnection(a,b);if(a===-1)return;this.connections.splice(a,1)}';
+        code = code.split(ORIG_RC).join(NEW_RC);
+        patchCount++;
+        console.log('[patch-blockly] ✅ Patched removeConnection (silent return instead of throw)');
+    } else {
+        console.warn('[patch-blockly] ⚠️  removeConnection pattern not found — may already be patched or Blockly version changed');
+    }
+
     if (patchCount > 0) {
         // Add sentinel at top
         code = PATCH_SENTINEL + '\n' + code;
         writeFileSync(BLOCKLY_PATH, code, 'utf8');
-        console.log(`[patch-blockly] ✅ ${patchCount}/2 patches applied to blockly_compressed.js`);
+        console.log(`[patch-blockly] ✅ ${patchCount}/3 patches applied to blockly_compressed.js`);
     } else {
         console.log('[patch-blockly] No patches applied.');
     }

@@ -41,11 +41,13 @@ arduinoGenerator.forBlock['arduino_base'] = function (block) {
     arduinoGenerator._lcdPins = null;
     arduinoGenerator._lcdBegin = null;
     arduinoGenerator._declaredVars = new Set(); // Reset variable declarations
+    arduinoGenerator._globalVarDecls = new Map(); // S116: Global var declarations (name → type)
+    arduinoGenerator._loopVarCounter = 0; // S116: Deterministic loop variable counter
 
     const setupCode = arduinoGenerator.statementToCode(block, 'SETUP') || '';
     const loopCode = arduinoGenerator.statementToCode(block, 'LOOP') || '';
 
-    // Build header: #include + global declarations for Servo / LCD
+    // Build header: #include + global declarations for Servo / LCD / Variables
     let header = '';
     if (arduinoGenerator._servoIncludes && arduinoGenerator._servoNames.size > 0) {
         header += '#include <Servo.h>\n';
@@ -58,6 +60,13 @@ arduinoGenerator.forBlock['arduino_base'] = function (block) {
         const p = arduinoGenerator._lcdPins;
         header += '#include <LiquidCrystal.h>\n';
         header += `LiquidCrystal lcd(${p.rs}, ${p.e}, ${p.d4}, ${p.d5}, ${p.d6}, ${p.d7});\n\n`;
+    }
+    // S116: Emit global variable declarations (for Blockly variables used across setup/loop)
+    if (arduinoGenerator._globalVarDecls.size > 0) {
+        for (const [name, type] of arduinoGenerator._globalVarDecls) {
+            header += `${type} ${name};\n`;
+        }
+        header += '\n';
     }
 
     // Insert lcd.begin() at the start of setup if LCD is used
@@ -189,6 +198,7 @@ arduinoGenerator.forBlock['logic_compare'] = function (block) {
 
 arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const operator = block.getFieldValue('OP') === 'AND' ? '&&' : '||';
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     const order = operator === '&&' ? arduinoGenerator.ORDER_LOGICAL_AND : arduinoGenerator.ORDER_LOGICAL_OR;
     const argument0 = arduinoGenerator.valueToCode(block, 'A', order);
     const argument1 = arduinoGenerator.valueToCode(block, 'B', order);
@@ -198,7 +208,6 @@ arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const defaultArgument = operator === '&&' ? 'true' : 'false';
     const code = (argument0 || defaultArgument) + ' ' + operator + ' ' + (argument1 || defaultArgument);
     return [code, order];
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
 };
 
 arduinoGenerator.forBlock['logic_boolean'] = function (block) {
@@ -217,7 +226,8 @@ arduinoGenerator.forBlock['text'] = function (block) {
 arduinoGenerator.forBlock['controls_repeat_ext'] = function (block) {
     const repeats = arduinoGenerator.valueToCode(block, 'TIMES', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
     const branch = arduinoGenerator.statementToCode(block, 'DO') || '';
-    const loopVar = Blockly.Variables.generateUniqueName(block.workspace);
+    // S116: Deterministic loop var — no collision with user variables
+    const loopVar = `_loop${arduinoGenerator._loopVarCounter++}`;
     return `  for (int ${loopVar} = 0; ${loopVar} < ${repeats}; ${loopVar}++) {
 ${branch}  }\n`;
 };
@@ -231,7 +241,11 @@ arduinoGenerator.forBlock['controls_whileUntil'] = function (block) {
 };
 
 arduinoGenerator.forBlock['controls_for'] = function (block) {
-    const varName = Blockly.Variables.generateUniqueName(block.workspace);
+    // S112: Use user's variable name from FieldVariable so it's accessible inside the loop body.
+    // Register in _declaredVars to prevent variables_set from re-declaring it as global.
+    const varField = block.getField('VAR');
+    const varName = varField ? varField.getText() : `_loop${arduinoGenerator._loopVarCounter++}`;
+    arduinoGenerator._declaredVars.add(varName);
     const from = arduinoGenerator.valueToCode(block, 'FROM', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
     const to = arduinoGenerator.valueToCode(block, 'TO', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
     const by = arduinoGenerator.valueToCode(block, 'BY', arduinoGenerator.ORDER_ASSIGNMENT) || '1';
@@ -333,11 +347,18 @@ arduinoGenerator.forBlock['arduino_lcd_clear'] = function (block) {
 // --- Variables --- //
 
 // Custom ELAB variable blocks (with TYPE field for explicit declaration)
+// S112: Global declaration pattern — variable is declared once in header (like variables_set S116),
+// so it's accessible in both setup() and loop(). Prevents redeclaration errors.
 arduinoGenerator.forBlock['arduino_variable_set'] = function (block) {
     const varName = block.getFieldValue('VAR') || 'x';
     const type = block.getFieldValue('TYPE') || 'int';
     const value = arduinoGenerator.valueToCode(block, 'VALUE', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
-    return `  ${type} ${varName} = ${value};\n`;
+    if (!arduinoGenerator._declaredVars.has(varName)) {
+        arduinoGenerator._declaredVars.add(varName);
+        arduinoGenerator._globalVarDecls?.set(varName, type);
+    }
+    // Always emit plain assignment — declaration is global in header
+    return `  ${varName} = ${value};\n`;
 };
 
 arduinoGenerator.forBlock['arduino_variable_get'] = function (block) {
@@ -355,11 +376,13 @@ arduinoGenerator.forBlock['variables_set'] = function (block) {
     const varField = block.getField('VAR');
     const varName = varField ? varField.getText() : 'x';
     const value = arduinoGenerator.valueToCode(block, 'VALUE', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
-    // Declare with int on first use, plain assignment thereafter
+    // S116: Register as global declaration (emitted in header by arduino_base)
+    // This ensures variables used across setup()/loop() are accessible in both scopes
     if (!arduinoGenerator._declaredVars.has(varName)) {
         arduinoGenerator._declaredVars.add(varName);
-        return `  int ${varName} = ${value};\n`;
+        arduinoGenerator._globalVarDecls?.set(varName, 'int');
     }
+    // Always emit plain assignment — declaration is global in header
     return `  ${varName} = ${value};\n`;
 };
 
@@ -376,6 +399,7 @@ arduinoGenerator.forBlock['math_modulo'] = function (block) {
     const divisor = arduinoGenerator.valueToCode(block, 'DIVISOR', arduinoGenerator.ORDER_MULTIPLICATION) || '1';
     return [`${dividend} % ${divisor}`, arduinoGenerator.ORDER_MULTIPLICATION];
 };
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['math_constrain'] = function (block) {
     const value = arduinoGenerator.valueToCode(block, 'VALUE', arduinoGenerator.ORDER_ATOMIC) || '0';
@@ -399,7 +423,6 @@ arduinoGenerator.forBlock['controls_flow_statements'] = function (block) {
 
 // --- Procedures (Blockly built-in function blocks) --- //
 
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
 arduinoGenerator.forBlock['procedures_defnoreturn'] = function (block) {
     const funcName = block.getFieldValue('NAME') || 'myFunction';
     const branch = arduinoGenerator.statementToCode(block, 'STACK') || '';

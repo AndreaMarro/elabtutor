@@ -419,7 +419,7 @@ const ControlBar = ({
           <ToolbarButton
             icon={<CodeIcon />}
             label="Editor"
-            tooltip={showCodeEditor ? 'Nascondi editor' : 'Mostra editor Arduino'}
+            tooltip={showCodeEditor ? 'Nascondi editor codice' : 'Mostra editor codice (Blocchi / C++)'}
             active={showCodeEditor}
             onClick={onToggleCodeEditor}
           />

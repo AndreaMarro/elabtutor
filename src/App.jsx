@@ -313,6 +313,9 @@ const topBarStyles = {
         padding: '8px 12px',
         borderRadius: '4px',
         fontWeight: '500',
+        minHeight: 44,
+        display: 'flex',
+        alignItems: 'center',
     },
     linkGreen: {
         background: 'rgba(145,191,69,0.2)',
@@ -323,6 +326,9 @@ const topBarStyles = {
         padding: '8px 12px',
         borderRadius: '4px',
         fontWeight: '600',
+        minHeight: 44,
+        display: 'flex',
+        alignItems: 'center',
     },
     linkTeacher: {
         background: 'rgba(30,77,140,0.2)',
@@ -333,6 +339,9 @@ const topBarStyles = {
         padding: '8px 12px',
         borderRadius: '4px',
         fontWeight: '600',
+        minHeight: 44,
+        display: 'flex',
+        alignItems: 'center',
     },
     linkAdmin: {
         background: 'rgba(239,68,68,0.2)',
@@ -343,6 +352,9 @@ const topBarStyles = {
         padding: '8px 12px',
         borderRadius: '4px',
         fontWeight: '600',
+        minHeight: 44,
+        display: 'flex',
+        alignItems: 'center',
     },
     hamburger: {
         background: 'none',

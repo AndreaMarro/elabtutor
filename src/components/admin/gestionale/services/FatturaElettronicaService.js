@@ -198,7 +198,7 @@ function generateXML(fattura, azienda) {
                     },
                     Sede: {
                         Indirizzo: azienda.indirizzo || '',
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
                         CAP: azienda.cap || '00000',
                         Comune: azienda.citta || '',
                         Provincia: azienda.provincia || '',

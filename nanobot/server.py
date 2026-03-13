@@ -923,6 +923,39 @@ _CLOSE_EDITOR_RE = re.compile(
     re.IGNORECASE
 )
 
+# S115: Undo/Redo/BuildStep/Serial/BOM/ResetCode fallback patterns
+_UNDO_RE = re.compile(
+    r'\b(annulla|undo|annulla\s+l.azione)\b',
+    re.IGNORECASE
+)
+_REDO_RE = re.compile(
+    r'\b(rifai|redo|ripeti\s+l.azione|ripristina\s+l.azione)\b',
+    re.IGNORECASE
+)
+_NEXTSTEP_RE = re.compile(
+    r'\b(prossimo\s+passo|avanti\s+(?:un\s+)?passo|next\s+step|passo\s+successivo|prossimo\s+step)\b',
+    re.IGNORECASE
+)
+_PREVSTEP_RE = re.compile(
+    r'\b(passo\s+precedente|torna\s+(?:al\s+)?(?:passo|step)\s+(?:precedente|prima)|prev(?:ious)?\s+step|step\s+precedente|indietro\s+(?:di\s+)?(?:un\s+)?passo)\b',
+    re.IGNORECASE
+)
+_SHOWBOM_RE = re.compile(
+    r'\b(mostra(?:mi)?\s+(?:i\s+)?(?:materiali|componenti\s+necessari)|'
+    r'apri\s+(?:la\s+)?(?:lista\s+(?:dei\s+)?componenti|bom|distinta(?:\s+materiali)?)|'
+    r'(?:cosa|quali)\s+componenti?\s+(?:mi\s+)?serv(?:e|ono))\b',
+    re.IGNORECASE
+)
+_SHOWSERIAL_RE = re.compile(
+    r'\b(mostra(?:mi)?\s+(?:il\s+)?(?:serial(?:e)?(?:\s+monitor)?|monitor\s+seriale)|'
+    r'apri\s+(?:il\s+)?(?:serial(?:e)?(?:\s+monitor)?|monitor\s+seriale))\b',
+    re.IGNORECASE
+)
+_RESETCODE_RE = re.compile(
+    r'\b(ripristina\s+(?:il\s+)?codice|reset(?:ta)?\s+(?:il\s+)?codice|codice\s+originale)\b',
+    re.IGNORECASE
+)
+
 # S105: Code explanation fallback
 _EXPLAIN_CODE_RE = re.compile(
     r'\b(spiega(?:mi)?\s+(?:il\s+)?(?:codice|programma|codice\s+arduino)|'
@@ -1006,6 +1039,31 @@ def deterministic_action_fallback(user_message: str, response: str) -> str:
     if _QUIZ_RE.search(msg_lower) and '[AZIONE:quiz]' not in response.upper():
         response = response.rstrip() + '\n\n[AZIONE:quiz]'
         print("[Tutor] Deterministic fallback: injected [AZIONE:quiz]")
+    # S115: undo/redo/nextstep/prevstep/showbom/showserial/resetcode
+    # S115-FIX: undo and redo are mutually exclusive — redo takes precedence if both match
+    _wants_undo = _UNDO_RE.search(msg_lower) and '[AZIONE:undo]' not in response.upper()
+    _wants_redo = _REDO_RE.search(msg_lower) and '[AZIONE:redo]' not in response.upper()
+    if _wants_redo:
+        response = response.rstrip() + '\n\n[AZIONE:redo]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:redo]")
+    elif _wants_undo:
+        response = response.rstrip() + '\n\n[AZIONE:undo]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:undo]")
+    if _NEXTSTEP_RE.search(msg_lower) and '[AZIONE:nextstep]' not in response.upper():
+        response = response.rstrip() + '\n\n[AZIONE:nextstep]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:nextstep]")
+    if _PREVSTEP_RE.search(msg_lower) and '[AZIONE:prevstep]' not in response.upper():
+        response = response.rstrip() + '\n\n[AZIONE:prevstep]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:prevstep]")
+    if _SHOWBOM_RE.search(msg_lower) and '[AZIONE:showbom]' not in response.upper():
+        response = response.rstrip() + '\n\n[AZIONE:showbom]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:showbom]")
+    if _SHOWSERIAL_RE.search(msg_lower) and '[AZIONE:showserial]' not in response.upper():
+        response = response.rstrip() + '\n\n[AZIONE:showserial]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:showserial]")
+    if _RESETCODE_RE.search(msg_lower) and '[AZIONE:resetcode]' not in response.upper():
+        response = response.rstrip() + '\n\n[AZIONE:resetcode]'
+        print("[Tutor] Deterministic fallback: injected [AZIONE:resetcode]")
     return response
 
 

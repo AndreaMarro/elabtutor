@@ -12,6 +12,8 @@ import { sendChat, analyzeImage, checkRateLimit, diagnoseCircuit, getExperimentH
 import { getTotalExperiments, EXPERIMENTS_VOL1, EXPERIMENTS_VOL2, EXPERIMENTS_VOL3 } from '../../data/experiments-index';
 import { validateMessage, sanitizeOutput } from '../../utils/contentFilter';
 import { galileoMemory } from '../../services/galileoMemory'; // Galileo Onnipotente: persistent memory
+import { formatForContext as formatActivityContext, pushActivity } from '../../services/activityBuffer'; // Sprint 1 Context Mastery
+import { sessionMetrics } from '../../services/sessionMetrics'; // Sprint 1 Context Mastery: session metrics
 import { findVideo, getYouTubeSearchUrl } from '../../data/galileo-videos'; // Galileo Onnipotente: curated YouTube DB
 import { TabHint } from './ContextualHints';
 import NewElabSimulator from '../simulator/NewElabSimulator';
@@ -115,7 +117,10 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     // (CodePanel rimosso — editor Arduino eliminato)
 
     // Context Panel State
-    const [activeTab, setActiveTab] = useState('manual');
+    const [activeTab, _setActiveTab] = useState('manual');
+    const setActiveTab = useCallback((tab) => {
+      _setActiveTab(prev => { if (prev !== tab) pushActivity('tab_switch', `${prev}→${tab}`); return tab; });
+    }, []);
     const [pendingExperimentId, setPendingExperimentId] = useState(null);
     const [pdfZoom, setPdfZoom] = useState(1);
     const [fitMode, setFitMode] = useState('width');
@@ -169,6 +174,15 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     const buildStepIndexRef = useRef(-1);
     const inactivityTimerRef = useRef(null);
     const proactiveCooldownRef = useRef(0); // prevent spam: last proactive auto-send timestamp
+
+    // Sprint 1 Context Mastery: track tab switches
+    const prevTabRef = useRef(activeTab);
+    useEffect(() => {
+        if (activeTab !== prevTabRef.current) {
+            pushActivity('tab_switch', activeTab);
+            prevTabRef.current = activeTab;
+        }
+    }, [activeTab]);
 
     // ── GALILEO ONNIPOTENTE: Experiment change handler with memory tracking ──
     const handleExperimentChange = useCallback((experiment) => {
@@ -1126,6 +1140,39 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         const sessionMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000);
         if (sessionMinutes > 0) parts.push(`durata=${sessionMinutes}min`);
 
+        // ── Sprint 1 Context Mastery: 5 new context blocks ──
+        try {
+            const api = typeof window !== 'undefined' && window.__ELAB_API;
+            if (api) {
+                // G2: Selected Component
+                const sel = api.getSelectedComponent?.();
+                if (sel) parts.push(`componente_selezionato=${sel.id}(${sel.type})`);
+                // G3: Compilation Result
+                const comp = api.getCompilationSnapshot?.();
+                if (comp && comp.status && comp.status !== 'idle') {
+                    parts.push(`compilazione=${comp.status}`);
+                    if (comp.errors) parts.push(`errore_compilazione=${String(comp.errors).slice(0, 150)}`);
+                    if (comp.warnings) parts.push(`warning_compilazione=${String(comp.warnings).slice(0, 100)}`);
+                }
+                // G4: Serial Output (last 10 lines)
+                const serial = api.getSerialOutput?.();
+                if (serial && serial.lastLines.length > 0) {
+                    parts.push(`serial_output=[${serial.lastLines.slice(-5).join(' | ')}] (${serial.lineCount} righe totali)`);
+                }
+                // G8: Editor Mode
+                const edMode = api.getEditorMode?.();
+                if (edMode) parts.push(`editor=${edMode}`);
+                const edVis = api.isEditorVisible?.();
+                if (edVis !== undefined) parts.push(`editor_visibile=${edVis ? 'si' : 'no'}`);
+            }
+        } catch { /* silent */ }
+        // G1: Activity Ring Buffer (last 5 actions with timestamps)
+        const activityBlock = formatActivityContext(5);
+        if (activityBlock) parts.push(activityBlock);
+        // G9: Session Metrics (time on experiment, compilations, idle time)
+        const metricsBlock = sessionMetrics.formatForContext();
+        if (metricsBlock) parts.push(metricsBlock);
+
         // Student memory context (from galileoMemory service)
         let memoryContext = '';
         try {
@@ -1255,6 +1302,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         const userMessage = messageOverride || input;
         if (!userMessage.trim() || isLoading) return;
 
+        pushActivity('message_sent', userMessage.slice(0, 60));
+        sessionMetrics.trackInteraction();
         const validation = validateMessage(userMessage);
         if (!validation.allowed) {
             setMessages(prev => [...prev,
@@ -1409,7 +1458,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const api = typeof window !== 'undefined' && window.__ELAB_API;
             const executedActions = []; // track what was executed for badge display
             const actionFailures = [];
-            const actionIntentRegex = /\b(carica|apri|vai|metti|aggiungi|costruisci|collega|rimuovi|togli|evidenzia|mostra|mostrami|sposta|premi|gira|avvia|ferma|reset|compila|imposta|setta|cancella|pulisci|interagisci)\b/i;
+            const actionIntentRegex = /\b(carica|apri|vai|metti|aggiungi|costruisci|collega|rimuovi|togli|evidenzia|mostra|mostrami|sposta|premi|gira|avvia|ferma|reset|compila|imposta|setta|cancella|pulisci|interagisci|annulla|ripeti|indietro|avanti|prossimo|precedente|scrivi|elenca|stato|misura|diagnostica|programma|codice|codifica|ripristina)\b/i;
 
             // Ralph Loop hardening: if user asked for an action but AI omitted tags,
             // do a silent second-pass request to recover missing [AZIONE:...] commands.
@@ -1801,18 +1850,23 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         executedActions.push(`interact:${compId}:${action}`);
                     }
                     else if (cmd === 'compile') {
-                        if (!api?.compile || !api?.getEditorCode) throw new Error('compile non disponibile');
+                        if (!api?.getEditorCode) throw new Error('compile non disponibile');
                         const code = api.getEditorCode();
                         if (code) {
-                            api.compile(code).then(compileResult => {
-                                setMessages(prev => [...prev, {
-                                    id: Date.now(),
-                                    role: 'assistant',
-                                    content: compileResult.success
-                                        ? '\u2705 Compilazione riuscita!'
-                                        : `\u274C Errore: ${compileResult.errors || 'sconosciuto'}`,
-                                    proactive: true,
-                                }]);
+                            // S116: Use compileAndLoad (updates UI + loads hex into AVR)
+                            // Falls back to raw api.compile if compileAndLoad not available
+                            const compileFn = api.compileAndLoad || api.compile;
+                            compileFn(code).then(compileResult => {
+                                // compileAndLoad returns undefined on success, raw compile returns {success, errors}
+                                if (compileResult && !compileResult.success) {
+                                    setMessages(prev => [...prev, {
+                                        id: Date.now(),
+                                        role: 'assistant',
+                                        content: `\u274C Errore: ${compileResult.errors || 'sconosciuto'}`,
+                                        proactive: true,
+                                    }]);
+                                }
+                                // Success message is already shown by compilationStatus UI
                             }).catch(() => {
                                 recordActionFailure(tagText, 'compilazione fallita');
                             });
@@ -1848,16 +1902,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         handleYouTubeSearch(query);
                         executedActions.push(`youtube:${query.slice(0, 20)}`);
                     }
-                    else if (cmd === 'setcode') {
-                        if (!api?.setEditorCode) throw new Error('setEditorCode non disponibile');
-                        const code = parts.slice(1).join(':').replace(/\\n/g, '\n');
-                        if (code) {
-                            api.setEditorCode(code);
-                            executedActions.push('setcode');
-                        } else {
-                            throw new Error('codice mancante');
-                        }
-                    }
+                    // S115-FIX: old setcode handler REMOVED — replaced by S115 version below with showEditor+setEditorMode
                     // S66: create notebook from chat — "crea un taccuino chiamato X"
                     else if (cmd === 'createnotebook') {
                         const notebookName = parts.slice(1).join(' ').trim();
@@ -1944,6 +1989,144 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         if (!xml) throw new Error('XML workspace mancante');
                         api.loadScratchWorkspace(xml);
                         executedActions.push('loadblocks');
+                    }
+                    // ── S115: Galileo Onnipotente v2 — 12 nuove azioni ──
+                    else if (cmd === 'undo') {
+                        if (!api?.undo) throw new Error('undo non disponibile');
+                        api.undo();
+                        executedActions.push('undo');
+                    }
+                    else if (cmd === 'redo') {
+                        if (!api?.redo) throw new Error('redo non disponibile');
+                        api.redo();
+                        executedActions.push('redo');
+                    }
+                    else if (cmd === 'highlightpin') {
+                        // [AZIONE:highlightpin:r1:pin1,led1:anode]
+                        if (!api?.highlightPin) throw new Error('highlightPin non disponibile');
+                        const rawPins = (parts.slice(1).join(':') || '').split(',').map(s => s.trim()).filter(Boolean);
+                        if (!rawPins.length) throw new Error('pin da evidenziare mancanti');
+                        api.highlightPin(rawPins);
+                        setTimeout(() => api.highlightPin([]), 4000); // S115-FIX: clear pin highlights, not component highlights
+                        executedActions.push(`highlightpin:${rawPins.join(',')}`);
+                    }
+                    else if (cmd === 'serialwrite') {
+                        // [AZIONE:serialwrite:testo] — scrive nel monitor seriale
+                        if (!api?.serialWrite) throw new Error('serialWrite non disponibile');
+                        const text = parts.slice(1).join(':');
+                        if (!text) throw new Error('testo seriale mancante');
+                        api.serialWrite(text);
+                        executedActions.push('serialwrite');
+                    }
+                    else if (cmd === 'setbuildmode') {
+                        // [AZIONE:setbuildmode:guided] — cambia modalità costruzione
+                        if (!api?.setBuildMode) throw new Error('setBuildMode non disponibile');
+                        const modeMap = {
+                            montato: 'complete', 'già montato': 'complete', giamontato: 'complete', complete: 'complete',
+                            passopasso: 'guided', 'passo passo': 'guided', guided: 'guided',
+                            libero: 'sandbox', costruisci: 'sandbox', sandbox: 'sandbox',
+                        };
+                        const mode = modeMap[(parts[1] || '').toLowerCase().replace(/[\s_-]+/g, '')] || parts[1];
+                        if (!mode) throw new Error('modalità mancante (montato/passopasso/libero)');
+                        api.setBuildMode(mode);
+                        executedActions.push(`setbuildmode:${mode}`);
+                    }
+                    else if (cmd === 'nextstep') {
+                        // [AZIONE:nextstep] — avanza di un passo in Passo Passo
+                        if (!api?.nextStep) throw new Error('nextStep non disponibile');
+                        api.nextStep();
+                        executedActions.push('nextstep');
+                    }
+                    else if (cmd === 'prevstep') {
+                        // [AZIONE:prevstep] — torna indietro di un passo
+                        if (!api?.prevStep) throw new Error('prevStep non disponibile');
+                        api.prevStep();
+                        executedActions.push('prevstep');
+                    }
+                    else if (cmd === 'showbom') {
+                        // [AZIONE:showbom] — mostra lista componenti (Bill of Materials)
+                        if (!api?.showBom) throw new Error('showBom non disponibile');
+                        api.showBom();
+                        executedActions.push('showbom');
+                    }
+                    else if (cmd === 'showserial') {
+                        // [AZIONE:showserial] — apre il monitor seriale
+                        if (!api?.showSerialMonitor) throw new Error('showSerialMonitor non disponibile');
+                        api.showSerialMonitor();
+                        executedActions.push('showserial');
+                    }
+                    else if (cmd === 'listcomponents') {
+                        // [AZIONE:listcomponents] — elenca componenti piazzati come messaggio
+                        const components = getLiveComponents();
+                        if (components.length === 0) {
+                            setMessages(prev => [...prev, {
+                                id: Date.now() + 2, role: 'assistant',
+                                content: '📋 **Componenti**: Nessun componente piazzato.', proactive: true,
+                            }]);
+                        } else {
+                            const list = components.map(c => `• **${c.id}** (${c.type})`).join('\n');
+                            setMessages(prev => [...prev, {
+                                id: Date.now() + 2, role: 'assistant',
+                                content: `📋 **Componenti piazzati** (${components.length}):\n${list}`, proactive: true,
+                            }]);
+                        }
+                        executedActions.push('listcomponents');
+                    }
+                    else if (cmd === 'getstate') {
+                        // [AZIONE:getstate] — mostra stato completo del circuito
+                        const circuitState = api?.getCircuitState?.() || api?.galileo?.getCircuitState?.();
+                        if (!circuitState) throw new Error('stato circuito non disponibile');
+                        const comps = (circuitState.components || []).length;
+                        const wires = (circuitState.connections || []).length;
+                        const simState = circuitState.isSimulating ? '▶ In esecuzione' : '⏸ Fermata';
+                        const expName = circuitState.experiment?.title || 'Nessuno';
+                        setMessages(prev => [...prev, {
+                            id: Date.now() + 2, role: 'assistant',
+                            content: `📊 **Stato Circuito**:\n• Esperimento: **${expName}**\n• Componenti: **${comps}**\n• Fili: **${wires}**\n• Simulazione: **${simState}**`,
+                            proactive: true,
+                        }]);
+                        executedActions.push('getstate');
+                    }
+                    // ── S115: Code Control — Galileo scrive/legge codice Arduino e Scratch ──
+                    else if (cmd === 'setcode') {
+                        // [AZIONE:setcode:CODE] — sostituisce tutto il codice nell'editor
+                        const arg = parts.slice(1).join(':').replace(/\\n/g, '\n');
+                        if (!arg) throw new Error('codice mancante');
+                        if (!api?.setEditorCode) throw new Error('setEditorCode non disponibile');
+                        api.showEditor?.();
+                        api.setEditorMode?.('arduino');
+                        api.setEditorCode(arg);
+                        executedActions.push('setcode');
+                    }
+                    else if (cmd === 'appendcode') {
+                        // [AZIONE:appendcode:CODE] — aggiunge codice alla fine dell'editor
+                        const arg = parts.slice(1).join(':').replace(/\\n/g, '\n');
+                        if (!arg) throw new Error('codice mancante');
+                        if (!api?.appendEditorCode) throw new Error('appendEditorCode non disponibile');
+                        api.showEditor?.();
+                        api.setEditorMode?.('arduino');
+                        api.appendEditorCode(arg);
+                        executedActions.push('appendcode');
+                    }
+                    else if (cmd === 'getcode') {
+                        // [AZIONE:getcode] — legge il codice corrente e lo mostra nel chat
+                        const code = api?.getEditorCode?.() || '';
+                        const mode = api?.getEditorMode?.() || 'arduino';
+                        const displayCode = code ? code.substring(0, 500) + (code.length > 500 ? '\n// ... (troncato)' : '') : '(vuoto)';
+                        setMessages(prev => [...prev, {
+                            id: Date.now() + 2, role: 'assistant',
+                            content: `📝 **Codice ${mode === 'scratch' ? 'Scratch (generato)' : 'Arduino'}**:\n\`\`\`cpp\n${displayCode}\n\`\`\``,
+                            proactive: true,
+                        }]);
+                        executedActions.push('getcode');
+                    }
+                    else if (cmd === 'resetcode') {
+                        // [AZIONE:resetcode] — ripristina il codice originale dell'esperimento
+                        if (!api?.resetEditorCode) throw new Error('resetEditorCode non disponibile');
+                        api.showEditor?.();
+                        api.setEditorMode?.('arduino');
+                        api.resetEditorCode();
+                        executedActions.push('resetcode');
                     }
                 } catch (err) {
                     recordActionFailure(tagText, err?.message || 'errore sconosciuto');

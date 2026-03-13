@@ -1564,22 +1564,21 @@ const SimulatorCanvas = ({
         pending.compType === 'reed-switch'
       );
 
+      const isInteractiveOnClick = (
+        isToggleComponent ||
+        pending.compType === 'photo-resistor' ||
+        pending.compType === 'phototransistor' ||
+        pending.compType === 'potentiometer'
+      );
+
       if (pending.wasAlreadySelected) {
-        if (isToggleComponent) {
-          if (onComponentClick) onComponentClick(pending.componentId);
-        } else if (
-          pending.compType === 'photo-resistor' ||
-          pending.compType === 'phototransistor'
-        ) {
+        if (isInteractiveOnClick) {
           if (onComponentClick) onComponentClick(pending.componentId);
         } else {
           setSelectedComponent(null);
         }
       } else {
-        if (
-          pending.compType === 'photo-resistor' ||
-          pending.compType === 'phototransistor'
-        ) {
+        if (isInteractiveOnClick) {
           if (onComponentClick) onComponentClick(pending.componentId);
         }
       }
@@ -1889,53 +1888,26 @@ const SimulatorCanvas = ({
       return;
     }
 
-    // FIX P0-5: Potentiometer — drag rotates knob, click opens overlay
-    // S72 P1-CTXMENU-1: On touch/pen, delay rotation activation by 150ms
-    // so the long-press timer (500ms) has a chance to fire for context menu.
-    // If user moves before 150ms, rotation starts immediately (no delay for mouse).
+    // FIX P0-5: Potentiometer — drag moves component, click opens overlay
+    // In free mode, potentiometer behaves like any other component: drag to move,
+    // click to interact (opens PotOverlay for knob rotation).
     if (compType === 'potentiometer') {
       setSelectedComponent(componentId);
-      const pos = experiment?.layout?.[componentId] || { x: 0, y: 0 };
-      potRotatingRef.current = { componentId, centerX: pos.x, centerY: pos.y };
-      let potDragged = false;
-      let potMoveActive = e.pointerType === 'mouse'; // mouse: immediate, touch/pen: delayed
-
-      const handlePotMove = (moveEvt) => {
-        if (!potMoveActive) {
-          // Touch/pen: first movement activates rotation and cancels long-press
-          potMoveActive = true;
-          if (longPressTimerRef.current) {
-            clearTimeout(longPressTimerRef.current);
-            longPressTimerRef.current = null;
-            longPressStartRef.current = null;
-          }
-        }
-        potDragged = true;
-        const ref = potRotatingRef.current;
-        if (!ref) return;
-        const pt = clientToSVG(svgRef.current, moveEvt.clientX, moveEvt.clientY);
-        const mdx = pt.x - ref.centerX;
-        const mdy = pt.y - ref.centerY;
-        const mAngle = Math.atan2(mdy, mdx) * 180 / Math.PI;
-        let pAngle = mAngle + 90;
-        if (pAngle > 180) pAngle -= 360;
-        let val = (pAngle + 135) / 270;
-        val = Math.max(0, Math.min(1, val));
-        if (onComponentValueChange) onComponentValueChange(ref.componentId, val);
-      };
-
-      const handlePotUp = () => {
-        potRotatingRef.current = null;
-        window.removeEventListener('pointermove', handlePotMove);
-        window.removeEventListener('pointerup', handlePotUp);
-        if (!potDragged && onComponentClick) {
-          onComponentClick(componentId);
-        }
-      };
-
-      window.addEventListener('pointermove', handlePotMove);
-      window.addEventListener('pointerup', handlePotUp);
+      dragMovedRef.current = false;
       pendingClickRef.current = { componentId, compType, wasAlreadySelected };
+
+      // Set up drag-to-move (same as other components)
+      if (!wireMode || !wireStart) {
+        const svgPt = clientToSVG(svgRef.current, e.clientX, e.clientY);
+        const pos = experiment?.layout?.[componentId] || { x: 0, y: 0 };
+        dragStartPosRef.current = pos;
+        setDragOffset({ x: svgPt.x - pos.x, y: svgPt.y - pos.y });
+        setDragCompId(componentId);
+        setIsDragging(true);
+        // S101: Initialize dead zone tracking
+        dragDeadZonePassedRef.current = false;
+        dragStartClientRef.current = { clientX: e.clientX, clientY: e.clientY };
+      }
       return;
     }
 

@@ -198,7 +198,7 @@ export function buildPinComponentMap(experiment) {
 }
 
 /**
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
  * Build LCD pin mapping for AVRBridge.configureLCDPins().
  * Traces which Arduino pins are connected to the LCD's RS, E, D4-D7 pins
  * through the breadboard wiring.

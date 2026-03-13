@@ -198,7 +198,7 @@ function clearLocalData() {
     // Raccoglie tutte le chiavi elab_
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         if (key && key.startsWith('elab_')) {
             keysToRemove.push(key);
         }
@@ -399,7 +399,7 @@ function isDataExpired(date, maxDays = 730) { // 2 anni default
     const dataDate = new Date(date);
     const expiryDate = new Date(dataDate.getTime() + (maxDays * 24 * 60 * 60 * 1000));
     return new Date() > expiryDate;
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 }
 
 // ============================================

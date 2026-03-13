@@ -198,7 +198,7 @@
   --color-syntax-variable: #E5E7EB;
 
   /* --- S161.2: Volume gradient backgrounds --- */
-/* © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   --color-vol1-gradient: linear-gradient(135deg, #f1f8e9, #e8f5e9);
   --color-vol2-gradient: linear-gradient(135deg, #fff8e1, #fff3e0);
   --color-vol3-gradient: linear-gradient(135deg, #fce4ec, #ffebee);
@@ -399,7 +399,7 @@
 
 /* Global focus-visible for ALL interactive elements (keyboard only) */
 :focus-visible {
-/* © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: var(--shadow-focus);

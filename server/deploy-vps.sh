@@ -39,6 +39,12 @@ else
     echo "  ✅ arduino:avr installato"
 fi
 
+# ─── 2b. Installa librerie Arduino richieste ───
+echo ""
+echo "Step 2b: Installazione librerie Arduino (Servo, LiquidCrystal)..."
+arduino-cli lib install Servo LiquidCrystal 2>/dev/null || true
+echo "  Librerie installate"
+
 # ─── 3. Test compilazione ───
 echo ""
 echo "🔧 Step 3: Test compilazione..."

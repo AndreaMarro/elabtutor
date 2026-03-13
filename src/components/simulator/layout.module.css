@@ -198,7 +198,7 @@
 
   .galileoBackdrop {
     padding: 0;
-/* © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     align-items: flex-end;
   }
 
@@ -296,11 +296,11 @@
     max-width: 35%;
   }
 
-  /* S93+S96: Scratch wider panel — iPad landscape */
+  /* S93+S96+S112: Scratch panel — iPad landscape — reduced to give canvas more space */
   .codeEditorPanelScratch {
-    width: clamp(400px, 45vw, 580px);
-    min-width: 360px;
-    max-width: 55%;
+    width: clamp(360px, 40vw, 520px);
+    min-width: 320px;
+    max-width: 48%;
   }
 }
 

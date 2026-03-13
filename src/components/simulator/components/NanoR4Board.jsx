@@ -1,9 +1,13 @@
 /**
- * ELAB NanoBreakout V1.1 GP — SVG Component (High-Fidelity Rewrite)
- * Yellow breakout PCB: semicircle left (Nano module) + wing right (connector)
- * Based on DWG ground truth (SSOT_context.json) + real hardware photos.
+ * ELAB NanoBreakout V1.1 GP — SVG Component (7-Order Redesign)
+ * C-shape PCB with full semicircle left + upper arm + notch + lower tab:
+ *   - Left: full semicircle (R = BOARD_H/2 = 49.5), ELAB branding
+ *   - Body: Nano socket + header pins (x=0..130, full height)
+ *   - Upper arm: wing breakout pins + morsettiera (y=0..25, full width)
+ *   - Right: notch cutout (x=130..168, y=25..84)
+ *   - Lower tab: +/- power pads (x=130..155, y=84..99)
+ * Based on KiCad PCB layout + 3D render ground truth.
  * PIN_PITCH aligned to breadboard grid (7.5). Pin IDs/positions UNCHANGED.
- * © Andrea Marro — 11/03/2026
  */
 
 import React, { useMemo } from 'react';
@@ -65,60 +69,78 @@ const WING_PINS = [
   { id: 'W_D11', label: '~D11/MOSI', type: 'pwm', arduino: 11, mapsTo: 'D11' },
   { id: 'W_D10', label: '~D10', type: 'pwm', arduino: 10, mapsTo: 'D10' },
   { id: 'W_D8', label: 'D8', type: 'digital', arduino: 8, mapsTo: 'D8' },
+  { id: 'W_GND1', label: 'GND', type: 'power', mapsTo: 'GND' },
+  { id: 'W_VCC1', label: '5V', type: 'power', mapsTo: '5V' },
+  { id: 'W_GND2', label: 'GND', type: 'power', mapsTo: 'GND' },
+  { id: 'W_VCC2', label: '5V', type: 'power', mapsTo: '5V' },
 ];
 
 // ─── Layout constants — IMMUTABLE (pin positions used by all experiments) ──
 
 const PIN_PITCH = 7.5;        // MUST match BB_HOLE_PITCH for grid alignment
-const PIN_START_X = 20;       // first header pin X (inside semicircle area)
+const PIN_START_X = 20;       // first header pin X
 const BOARD_W = 168;          // matches COMP_SIZES (167.58 rounded)
 const BOARD_H = 99;           // matches COMP_SIZES
 const TOP_PIN_Y = 35;         // top header row Y
 const BOTTOM_PIN_Y = 64;      // bottom header row Y
 
-// Breakout shape: semicircle left + body + wing right
-const SEMI_R = BOARD_H / 2;   // 49.5 — true semicircle
-const SEMI_CX = SEMI_R;       // semicircle center X
+// ─── C-shape geometry (ORDINE 1) ──────────────────────────────────────────
 
-// Wing area (connector protrusion on right side)
-const WING_X = 125;           // wing junction X (where main body meets wing)
-const WING_TOP = 16;          // wing top edge Y
-const WING_BOT = 83;          // wing bottom edge Y
-const WING_R = 4;             // wing corner radius (closer to real R=2mm)
+const R = 6;                    // corner radius (all corners, per spec)
+const SEMI_R = BOARD_H / 2;    // 49.5 — semicircle radius = half board height
+const NOTCH_LEFT = 130;         // notch left edge (right of last header pin x=125 + margin)
+const ARM_H = 25;               // upper arm height (~25% of BOARD_H)
+const NOTCH_BOT = 84;           // notch bottom edge (BOARD_H - 15%)
+const TAB_RIGHT = 155;          // lower tab right extent
 
-// Nano slot (internal notch showing where Arduino Nano plugs in)
-const SLOT_X = 118;           // slot junction X (left wall of slot)
-const SLOT_TOP = 20;          // slot top Y
-const SLOT_BOT = 79;          // slot bottom Y
-const SLOT_R = 2.5;           // slot corner radius
+// Nano module socket area — between header pin rows, right of semicircle branding area
+const SOCKET_X = 14;
+const SOCKET_Y = 36;
+const SOCKET_W = 114;
+const SOCKET_H = 27;
 
-// Wing connector pins (17 pins along the wing area)
-const WING_PIN_PITCH = 5.0;
-const WING_PIN_START_X = 62;
-const WING_PIN_Y = 78;        // near bottom of wing
+// Nano module visual (navy board inside socket)
+const NANO_X = 16;
+const NANO_Y = 37;
+const NANO_W = 110;
+const NANO_H = 25;
 
-// Nano module visual (blue rectangle inside breakout)
-const NANO_X = 10;
-const NANO_Y = 22;
-const NANO_W = 105;
-const NANO_H = 55;
+// USB-C connector (protrudes from semicircle left edge)
+const USB_W = 8;
+const USB_H = 8;
+const USB_X = -4;
+const USB_Y = BOARD_H / 2 - USB_H / 2;
 
-// ─── Colors — ELAB NanoBreakout ───────────────────────────────────────────
+// Wing connector pins (ORDINE 2 — on upper arm)
+const WING_PIN_PITCH = 4.2;
+const WING_PIN_START_X = 76;    // after morsettiera (ends at x=72)
+const WING_PIN_Y = 13;          // center of arm height
+const WING_HOUSING_PAD = 4;
 
-const PCB_YELLOW = '#E8D86C';
-const PCB_YELLOW_DARK = '#D4C45A';
-const PCB_YELLOW_LIGHT = '#F0E48A';
-const PCB_BORDER = '#1E4D8C';
-const PAD_GOLD = '#D4A04A';
+// VIN morsettiera (ORDINE 5 — far left of upper arm)
+const JACK_X = 52;
+const JACK_Y = 4;
+
+// ─── Colors (ORDINE 3 + user spec) ────────────────────────────────────────
+
+const PCB_FILL = '#EEEEF5';           // light lavender PCB (ORDINE 1)
+const PCB_FILL_DARK = '#D5D5DF';
+const PCB_FILL_LIGHT = '#F5F5FB';
+const PCB_BORDER = '#1a1a2e';          // dark navy border (ORDINE 1)
+const PAD_GOLD = '#c8a84b';            // gold pads (ORDINE 3)
 const PAD_STROKE = '#8B7430';
-const BOARD_BLUE = '#1A8FAB';     // Arduino Nano R4 teal
-const BOARD_BLUE_DARK = '#0D6B82';
-const BOARD_BLUE_LIGHT = '#2BB8D6';
+const BOARD_BLUE = '#1a3a6e';          // Nano body navy (ORDINE 3)
+const BOARD_BLUE_DARK = '#0D2A52';
+const BOARD_BLUE_LIGHT = '#3A6A9E';
 const HOLE_DARK = '#2A2E33';
-const CHIP_BLACK = '#111317';
-const SILK_WHITE = '#F5F0E0';
+const CHIP_BLACK = '#111111';          // central chip (ORDINE 3)
+const SILK_DARK = '#1a1a2e';           // silkscreen (matches border)
+const SILK_GRAY = '#333';
 const CONNECTOR_BODY = '#2C2F33';
 const CONNECTOR_DARK = '#1A1C1F';
+const LED_BLUE = '#4488ff';            // power LED (ORDINE 3)
+const LED_BLUE_GLOW = '#6699ff';
+const SOCKET_BG = '#3A3D42';
 
 // ─── Important pins to label ──────────────────────────────────────────────
 
@@ -128,7 +150,7 @@ const IMPORTANT_PIN_IDS = new Set([
   'A5', 'A6', 'A7', '3V3', 'AREF', 'RST_R', 'MINUS',
 ]);
 
-// ─── Pin coordinate helpers (UNCHANGED) ─────────────────────────────────
+// ─── Pin coordinate helpers (UNCHANGED) ───────────────────────────────────
 
 function xAt(index) {
   return PIN_START_X + index * PIN_PITCH;
@@ -155,53 +177,39 @@ function computeWingPinPositions() {
   }));
 }
 
-// ─── Board outline path (DWG-inspired shape) ────────────────────────────
-// Shape: semicircle left → top edge → nano slot notch → wing tab → bottom → semicircle
+// ─── Board outline path (C-shape with full semicircle) ────────────────────
+// Clockwise from top of semicircle:
+//   top edge → arm right → arm bottom → notch left → notch bottom →
+//   tab right → tab bottom → bottom edge → semicircle arc back to top
 
 const BOARD_PATH = (() => {
-  const wingRight = BOARD_W;
-  return `
-    M ${SEMI_CX} 0
-    L ${SLOT_X} 0
-    L ${SLOT_X} ${SLOT_TOP}
-    Q ${SLOT_X} ${SLOT_TOP - SLOT_R} ${SLOT_X + SLOT_R} ${SLOT_TOP - SLOT_R}
-    L ${WING_X - SLOT_R} ${SLOT_TOP - SLOT_R}
-    Q ${WING_X} ${SLOT_TOP - SLOT_R} ${WING_X} ${WING_TOP}
-    L ${wingRight - WING_R} ${WING_TOP}
-    Q ${wingRight} ${WING_TOP} ${wingRight} ${WING_TOP + WING_R}
-    L ${wingRight} ${WING_BOT - WING_R}
-    Q ${wingRight} ${WING_BOT} ${wingRight - WING_R} ${WING_BOT}
-    L ${WING_X} ${WING_BOT}
-    Q ${WING_X} ${BOARD_H - SLOT_TOP + SLOT_R} ${WING_X - SLOT_R} ${BOARD_H - SLOT_TOP + SLOT_R}
-    L ${SLOT_X + SLOT_R} ${BOARD_H - SLOT_TOP + SLOT_R}
-    Q ${SLOT_X} ${BOARD_H - SLOT_TOP + SLOT_R} ${SLOT_X} ${BOARD_H - SLOT_TOP}
-    L ${SLOT_X} ${BOARD_H}
-    L ${SEMI_CX} ${BOARD_H}
-    A ${SEMI_R} ${SEMI_R} 0 0 1 ${SEMI_CX} 0
-    Z
-  `;
-})();
+  const r = R;          // 6
+  const sr = SEMI_R;    // 49.5
+  const W = BOARD_W;    // 168
+  const H = BOARD_H;    // 99
+  const NL = NOTCH_LEFT; // 130
+  const AH = ARM_H;     // 25
+  const NB = NOTCH_BOT;  // 84
+  const TR = TAB_RIGHT;  // 155
 
-// Simpler fallback outline for inner border highlight
-const INNER_PATH = (() => {
-  const inset = 2;
-  const wingRight = BOARD_W - inset;
   return `
-    M ${SEMI_CX + inset} ${inset}
-    L ${SLOT_X - inset} ${inset}
-    L ${SLOT_X - inset} ${SLOT_TOP + inset}
-    L ${WING_X - inset} ${WING_TOP + inset}
-    L ${wingRight - WING_R} ${WING_TOP + inset}
-    Q ${wingRight} ${WING_TOP + inset} ${wingRight} ${WING_TOP + WING_R + inset}
-    L ${wingRight} ${WING_BOT - WING_R - inset}
-    Q ${wingRight} ${WING_BOT - inset} ${wingRight - WING_R} ${WING_BOT - inset}
-    L ${WING_X - inset} ${WING_BOT - inset}
-    L ${SLOT_X - inset} ${BOARD_H - SLOT_TOP - inset}
-    L ${SLOT_X - inset} ${BOARD_H - inset}
-    L ${SEMI_CX + inset} ${BOARD_H - inset}
-    A ${SEMI_R - inset} ${SEMI_R - inset} 0 0 1 ${SEMI_CX + inset} ${inset}
+    M ${sr} 0
+    L ${W - r} 0
+    Q ${W} 0 ${W} ${r}
+    L ${W} ${AH - r}
+    Q ${W} ${AH} ${W - r} ${AH}
+    L ${NL + r} ${AH}
+    Q ${NL} ${AH} ${NL} ${AH + r}
+    L ${NL} ${NB - r}
+    Q ${NL} ${NB} ${NL + r} ${NB}
+    L ${TR - r} ${NB}
+    Q ${TR} ${NB} ${TR} ${NB + r}
+    L ${TR} ${H - r}
+    Q ${TR} ${H} ${TR - r} ${H}
+    L ${sr} ${H}
+    A ${sr} ${sr} 0 1 1 ${sr} 0
     Z
-  `;
+  `.trim();
 })();
 
 // ─── Pin pad subcomponents ────────────────────────────────────────────────
@@ -209,44 +217,36 @@ const INNER_PATH = (() => {
 function HeaderPinPad({ pin, stateValue }) {
   const isHigh = stateValue === 'HIGH' || stateValue === 1 || stateValue === true;
   const isActive = stateValue !== undefined && stateValue !== null;
-  const showLabel = IMPORTANT_PIN_IDS.has(pin.id);
 
-  // Color-code power pins
   const isPower5V = pin.id === '5V' || pin.id === '3V3' || pin.id === 'VIN';
   const isGround = pin.id === 'GND' || pin.id === 'GND_R' || pin.id === 'MINUS';
   const padColor = isPower5V ? '#E85040' : isGround ? '#333' : PAD_GOLD;
 
   return (
     <g data-pin={pin.id} className="pin-pad">
-      {/* Solder pad */}
       <rect
         x={pin.x - 2.4} y={pin.y - 2.4} width="4.8" height="4.8" rx="0.7"
         fill={padColor} stroke={PAD_STROKE} strokeWidth="0.35"
       />
-      {/* Through-hole */}
       <circle
         cx={pin.x} cy={pin.y} r="1.0"
         fill={isHigh ? '#F3A500' : HOLE_DARK}
         stroke={isActive ? '#F5C244' : '#555'}
         strokeWidth={isActive ? '0.35' : '0.2'}
       />
-      {/* Active glow */}
       {isHigh && <circle cx={pin.x} cy={pin.y} r="3.6" fill="#F3C65C" opacity="0.2" />}
-      {/* Pin label */}
-      {showLabel && (
-        <text
-          x={pin.x}
-          y={pin.side === 'top' ? pin.y - 4.0 : pin.y + 5.2}
-          textAnchor="middle"
-          fontSize="1.5"
-          fontFamily="Fira Code, monospace"
-          fill={SILK_WHITE}
-          opacity="0.95"
-          fontWeight="600"
-        >
-          {pin.label}
-        </text>
-      )}
+      <text
+        x={pin.x}
+        y={pin.side === 'top' ? pin.y - 4.5 : pin.y + 6.0}
+        textAnchor="middle"
+        fontSize="1.8"
+        fontFamily="Fira Code, monospace"
+        fill={SILK_DARK}
+        opacity="0.95"
+        fontWeight="700"
+      >
+        {pin.label}
+      </text>
     </g>
   );
 }
@@ -255,214 +255,207 @@ function WingPinPad({ pin, stateValue }) {
   const isHigh = stateValue === 'HIGH' || stateValue === 1 || stateValue === true;
   const isActive = stateValue !== undefined && stateValue !== null;
 
+  const isPowerVCC = pin.id === 'W_VCC1' || pin.id === 'W_VCC2';
+  const isPowerGND = pin.id === 'W_GND1' || pin.id === 'W_GND2';
+  const padFill = isPowerVCC ? '#E85040' : isPowerGND ? '#333' : PAD_GOLD;
+
   return (
     <g data-pin={pin.id} className="pin-pad">
-      {/* Solder pad */}
-      <rect
-        x={pin.x - 2.0} y={pin.y - 2.0} width="4.0" height="4.0" rx="0.5"
-        fill={PAD_GOLD} stroke={PAD_STROKE} strokeWidth="0.3"
-      />
-      {/* Through-hole */}
+      {/* Circular through-hole pad (real hardware) */}
       <circle
-        cx={pin.x} cy={pin.y} r="0.8"
+        cx={pin.x} cy={pin.y} r="2.5"
+        fill={padFill} stroke={PAD_STROKE} strokeWidth="0.3"
+      />
+      <circle
+        cx={pin.x} cy={pin.y} r="1.0"
         fill={isHigh ? '#F3A500' : HOLE_DARK}
         stroke={isActive ? '#F5C244' : '#555'}
         strokeWidth="0.2"
       />
-      {/* Active glow */}
-      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.0" fill="#F3C65C" opacity="0.2" />}
-      {/* Pin label (rotated 90° like real board silkscreen) */}
+      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.5" fill="#F3C65C" opacity="0.2" />}
+      {/* Label rotated -90° above pin (ORDINE 2) */}
       <text
         x={pin.x}
-        y={pin.y + 4.5}
-        textAnchor="middle"
-        fontSize="1.1"
+        y={pin.y - 5}
+        textAnchor="start"
+        fontSize="1.5"
         fontFamily="Fira Code, monospace"
-        fill={SILK_WHITE}
-        opacity="0.85"
-        fontWeight="500"
+        fill={SILK_DARK}
+        opacity="0.9"
+        fontWeight="600"
+        transform={`rotate(-90, ${pin.x}, ${pin.y - 5})`}
       >
-        {pin.label.replace(/^[~]/, '')}
+        {pin.label}
       </text>
     </g>
   );
 }
 
-// ─── Sub-component: Arduino Nano R4 module ──────────────────────────────
+// ─── Sub-component: Nano socket outline (dark recess in PCB) ──────────────
 
-function NanoModule({ x, y, w, h, leds, running, onReset }) {
+function NanoSocket() {
+  return (
+    <g>
+      <rect x={SOCKET_X} y={SOCKET_Y} width={SOCKET_W} height={SOCKET_H} rx="2"
+        fill={SOCKET_BG} stroke="#2A2D31" strokeWidth="0.8" />
+      <rect x={SOCKET_X + 0.8} y={SOCKET_Y + 0.8}
+        width={SOCKET_W - 1.6} height={SOCKET_H - 1.6} rx="1.5"
+        fill="none" stroke="#555" strokeWidth="0.3" opacity="0.4" />
+      {[SOCKET_Y + 8, SOCKET_Y + SOCKET_H - 8].map((ny, i) => (
+        <rect key={`notch-${i}`}
+          x={SOCKET_X - 1} y={ny - 1.5} width="2" height="3" rx="0.5"
+          fill="#555" opacity="0.3" />
+      ))}
+    </g>
+  );
+}
+
+// ─── Sub-component: USB-C connector (rendered outside clipPath) ───────────
+
+function UsbConnector() {
+  return (
+    <g>
+      <rect x={USB_X} y={USB_Y} width={USB_W} height={USB_H} rx="1.8"
+        fill="#C0C6CC" stroke="#888E96" strokeWidth="0.6" />
+      <rect x={USB_X + 0.8} y={USB_Y + 1.2} width={USB_W - 1.6} height={USB_H - 2.4} rx="1.0"
+        fill="#888E96" />
+      <rect x={USB_X + 1.8} y={USB_Y + 2.0} width={USB_W - 3.6} height={USB_H - 4.0} rx="0.6"
+        fill="#2A2E33" />
+    </g>
+  );
+}
+
+// ─── Sub-component: Arduino Nano R4 module (navy board in socket) ─────────
+
+function NanoModule({ leds, running, onReset }) {
+  const x = NANO_X;
+  const y = NANO_Y;
+  const w = NANO_W;
+  const h = NANO_H;
   const { power = false, d13 = false, tx = false, rx = false } = leds;
-
-  // Renesas RA4M1 MCU position (centered)
-  const mcuX = x + w * 0.36;
-  const mcuY = y + h * 0.15;
-  const mcuW = w * 0.26;
-  const mcuH = h * 0.65;
-
-  // ESP32-S3 WiFi module (right of MCU)
-  const wifiX = x + w * 0.68;
-  const wifiY = y + h * 0.22;
-  const wifiW = w * 0.13;
-  const wifiH = h * 0.42;
-
-  // Crystal oscillator
-  const crystalX = x + w * 0.13;
-  const crystalY = y + h * 0.32;
-  const crystalW = w * 0.07;
-  const crystalH = h * 0.36;
-
-  // Reset button
-  const resetX = x + w * 0.30;
-  const resetY = y + h * 0.55;
+  const cy = y + h / 2; // vertical center
 
   return (
     <g>
-      {/* PCB board */}
-      <rect x={x} y={y} width={w} height={h} rx="2.5"
-        fill={BOARD_BLUE} stroke={BOARD_BLUE_DARK} strokeWidth="0.9" />
-      {/* PCB inner edge highlight */}
-      <rect x={x + 1.2} y={y + 1.2} width={w - 2.4} height={h - 2.4} rx="1.8"
-        fill="none" stroke={BOARD_BLUE_LIGHT} strokeWidth="0.4" opacity="0.4" />
+      {/* Nano R4 board (ORDINE 3 — navy #1a3a6e) */}
+      <rect x={x} y={y} width={w} height={h} rx="1.5"
+        fill={BOARD_BLUE} stroke={BOARD_BLUE_DARK} strokeWidth="0.6" />
+      <rect x={x + 0.6} y={y + 0.6} width={w - 1.2} height={h - 1.2} rx="1"
+        fill="none" stroke={BOARD_BLUE_LIGHT} strokeWidth="0.25" opacity="0.3" />
 
-      {/* USB-C connector (left edge, protruding beyond board) */}
-      <rect x={-3.5} y={BOARD_H / 2 - 5} width="9" height="10" rx="1.8"
-        fill="#AEB5BC" stroke="#6E7780" strokeWidth="0.5" />
-      <rect x={-1.5} y={BOARD_H / 2 - 3.2} width="5.5" height="6.4" rx="1"
-        fill="#5D636A" />
-      {/* USB-C inner slot */}
-      <rect x={-0.5} y={BOARD_H / 2 - 1.5} width="3.5" height="3" rx="0.6"
-        fill="#3A3F44" />
-
-      {/* Mounting holes (4 corners) */}
-      {[[x + 4, y + 4], [x + w - 4, y + 4], [x + 4, y + h - 4], [x + w - 4, y + h - 4]].map(([hx, hy], i) => (
-        <g key={`mount-${i}`}>
-          <circle cx={hx} cy={hy} r="2.2" fill="none" stroke="#90A0AD" strokeWidth="0.6" opacity="0.5" />
-          <circle cx={hx} cy={hy} r="1.0" fill={HOLE_DARK} opacity="0.4" />
-        </g>
-      ))}
-
-      {/* Renesas RA4M1 MCU (main processor) */}
-      <rect x={mcuX} y={mcuY} width={mcuW} height={mcuH} rx="1.2"
-        fill={CHIP_BLACK} stroke="#2A2F35" strokeWidth="0.45" />
-      {/* Pin 1 dot marker */}
-      <circle cx={mcuX + 2} cy={mcuY + 2} r="0.7" fill="#444" />
-      {/* MCU silkscreen text */}
-      <text x={mcuX + mcuW / 2} y={mcuY + mcuH / 2 - 1.5}
-        textAnchor="middle" fontSize="1.6" fill="#555" fontFamily="Arial, sans-serif" fontWeight="700">
+      {/* MCU — RA4M1 (ORDINE 3 — chip #111111) */}
+      <rect x={x + 30} y={y + 3} width={22} height={h - 6} rx="0.8"
+        fill={CHIP_BLACK} stroke="#2A2F35" strokeWidth="0.35" />
+      <circle cx={x + 32} cy={y + 5} r="0.5" fill="#444" />
+      <text x={x + 41} y={cy - 1}
+        textAnchor="middle" fontSize="1.4" fill="#555" fontFamily="Arial, sans-serif" fontWeight="700">
         RA4M1
       </text>
-      <text x={mcuX + mcuW / 2} y={mcuY + mcuH / 2 + 1.5}
-        textAnchor="middle" fontSize="1.0" fill="#444" fontFamily="Arial, sans-serif">
+      <text x={x + 41} y={cy + 1.5}
+        textAnchor="middle" fontSize="0.9" fill="#444" fontFamily="Arial, sans-serif">
         RENESAS
       </text>
 
-      {/* ESP32-S3 WiFi/BLE module (metal shield) */}
-      <rect x={wifiX} y={wifiY} width={wifiW} height={wifiH} rx="0.8"
-        fill="#B0B8C0" stroke="#7C8893" strokeWidth="0.35" />
-      <text x={wifiX + wifiW / 2} y={wifiY + wifiH / 2}
-        textAnchor="middle" fontSize="0.9" fill="#555" fontFamily="Arial, sans-serif">
+      {/* WiFi module — ESP32-S3 */}
+      <rect x={x + 60} y={y + 4} width={12} height={h - 8} rx="0.6"
+        fill="#B0B8C0" stroke="#7C8893" strokeWidth="0.25" />
+      <text x={x + 66} y={cy - 0.5}
+        textAnchor="middle" fontSize="0.8" fill="#555" fontFamily="Arial, sans-serif">
         ESP32
+      </text>
+      <text x={x + 66} y={cy + 1.5}
+        textAnchor="middle" fontSize="0.6" fill="#666" fontFamily="Arial, sans-serif">
+        S3
       </text>
 
       {/* Crystal oscillator */}
-      <rect x={crystalX} y={crystalY} width={crystalW} height={crystalH} rx="0.8"
-        fill="#C4CCD3" stroke="#7C8893" strokeWidth="0.3" />
+      <rect x={x + 10} y={cy - 4} width={5} height={8} rx="0.6"
+        fill="#C4CCD3" stroke="#7C8893" strokeWidth="0.2" />
 
-      {/* Voltage regulator (small SOT-23 package) */}
-      <rect x={x + w * 0.85} y={y + h * 0.35} width={w * 0.06} height={h * 0.30} rx="0.5"
-        fill={CHIP_BLACK} stroke="#333" strokeWidth="0.25" />
+      {/* Voltage regulator */}
+      <rect x={x + 80} y={cy - 4} width={5} height={8} rx="0.4"
+        fill={CHIP_BLACK} stroke="#333" strokeWidth="0.2" />
 
-      {/* Small passive components (capacitors, resistors — cosmetic) */}
-      {[0.20, 0.25, 0.30].map((py, i) => (
-        <rect key={`cap-${i}`} x={x + w * 0.62} y={y + h * py} width={2.5} height={1.2} rx="0.3"
-          fill="#A08860" stroke="#806840" strokeWidth="0.15" opacity="0.7" />
+      {/* Capacitors */}
+      {[-3, 0, 3].map((dy, i) => (
+        <rect key={`cap-${i}`} x={x + 55} y={cy + dy - 0.5} width={2} height={1} rx="0.2"
+          fill="#A08860" stroke="#806840" strokeWidth="0.12" opacity="0.7" />
       ))}
 
-      {/* Reset button (interactive) */}
+      {/* Reset button */}
       <g style={{ cursor: 'pointer' }} onClick={() => onReset && onReset({ action: 'reset' })}>
-        <rect x={resetX - 2.8} y={resetY - 2.8} width="5.6" height="5.6" rx="0.8"
-          fill="#C7CCD2" stroke="#7B838D" strokeWidth="0.4" />
-        <circle cx={resetX} cy={resetY} r="1.5"
-          fill="#9DA5AD" stroke="#666E77" strokeWidth="0.3" />
-        <text x={resetX} y={resetY + 5} textAnchor="middle" fontSize="0.9" fill="#0C6F88"
-          fontFamily="Fira Code, monospace">RST</text>
+        <rect x={x + 22} y={cy - 2} width="4" height="4" rx="0.5"
+          fill="#C7CCD2" stroke="#7B838D" strokeWidth="0.3" />
+        <circle cx={x + 24} cy={cy} r="1.0"
+          fill="#9DA5AD" stroke="#666E77" strokeWidth="0.2" />
       </g>
 
-      {/* Status LEDs */}
+      {/* LEDs */}
       <g>
-        {/* Power LED (green) */}
-        <circle cx={x + 8} cy={y + h * 0.14} r="1.0"
+        <circle cx={x + 4} cy={y + 4} r="0.8"
           fill={power ? '#49D35C' : '#2B5A34'} />
-        {power && <circle cx={x + 8} cy={y + h * 0.14} r="2.5" fill="#6DFF85" opacity="0.25" />}
-        <text x={x + 11.5} y={y + h * 0.15 + 0.4} fontSize="1.0" fill="#0D6B40"
+        {power && <circle cx={x + 4} cy={y + 4} r="2" fill="#6DFF85" opacity="0.25" />}
+        <text x={x + 7} y={y + 4.5} fontSize="0.7" fill="#0D6B40"
           fontFamily="Fira Code, monospace" fontWeight="600">PWR</text>
 
-        {/* D13 LED (amber/orange) */}
-        <circle cx={x + w - 8} cy={y + h * 0.14} r="1.0"
+        <circle cx={x + w - 6} cy={y + 4} r="0.8"
           fill={d13 ? '#F3A500' : '#6A4A1F'} />
-        {d13 && <circle cx={x + w - 8} cy={y + h * 0.14} r="2.5" fill="#F9C75D" opacity="0.25" />}
-        <text x={x + w - 12} y={y + h * 0.15 + 0.4} fontSize="1.0" fill="#553C1A"
+        {d13 && <circle cx={x + w - 6} cy={y + 4} r="2" fill="#F9C75D" opacity="0.25" />}
+        <text x={x + w - 9} y={y + 4.5} fontSize="0.7" fill="#553C1A"
           fontFamily="Fira Code, monospace" fontWeight="600">L</text>
 
-        {/* TX LED */}
-        <circle cx={x + 8} cy={y + h * 0.84} r="0.8"
+        <circle cx={x + 4} cy={y + h - 4} r="0.6"
           fill={tx ? '#F28F2D' : '#6A4A1F'} />
-        {tx && <circle cx={x + 8} cy={y + h * 0.84} r="2" fill="#F9AA4D" opacity="0.2" />}
-        <text x={x + 11} y={y + h * 0.85 + 0.3} fontSize="0.8" fill="#6A4A1F"
+        <text x={x + 6.5} y={y + h - 3.5} fontSize="0.6" fill="#6A4A1F"
           fontFamily="Fira Code, monospace">TX</text>
 
-        {/* RX LED */}
-        <circle cx={x + 8} cy={y + h * 0.91} r="0.8"
+        <circle cx={x + 14} cy={y + h - 4} r="0.6"
           fill={rx ? '#F28F2D' : '#6A4A1F'} />
-        {rx && <circle cx={x + 8} cy={y + h * 0.91} r="2" fill="#F9AA4D" opacity="0.2" />}
-        <text x={x + 11} y={y + h * 0.92 + 0.3} fontSize="0.8" fill="#6A4A1F"
+        <text x={x + 16.5} y={y + h - 3.5} fontSize="0.6" fill="#6A4A1F"
           fontFamily="Fira Code, monospace">RX</text>
       </g>
 
-      {/* Board silkscreen: ARDUINO + NANO R4 */}
-      <text x={x + w / 2} y={y + 6.5} textAnchor="middle"
-        fontSize="3.0" fill="#DDF4FA" fontFamily="Oswald, Arial, sans-serif"
-        fontWeight="700" letterSpacing="0.8">
+      {/* Board text */}
+      <text x={x + w / 2} y={y + 4.5} textAnchor="middle"
+        fontSize="2.2" fill="#DDF4FA" fontFamily="Oswald, Arial, sans-serif"
+        fontWeight="700" letterSpacing="0.6">
         ARDUINO
       </text>
-      <text x={x + w / 2} y={y + 10} textAnchor="middle"
-        fontSize="1.8" fill="#B0DCE8" fontFamily="Oswald, Arial, sans-serif"
-        fontWeight="500" letterSpacing="0.5">
+      <text x={x + w / 2} y={y + 7.5} textAnchor="middle"
+        fontSize="1.3" fill="#B0DCE8" fontFamily="Oswald, Arial, sans-serif"
+        fontWeight="500" letterSpacing="0.4">
         NANO R4
       </text>
 
-      {/* Pin header rows (visual only — two gold strips along the Nano edges) */}
-      <rect x={x + 2} y={y + h * 0.20} width={w - 4} height="1.8" rx="0.3"
-        fill={PAD_GOLD} opacity="0.3" />
-      <rect x={x + 2} y={y + h * 0.76} width={w - 4} height="1.8" rx="0.3"
-        fill={PAD_GOLD} opacity="0.3" />
+      {/* Side pin contacts (gold traces connecting to header pins) */}
+      {Array.from({length: 15}, (_, i) => {
+        const px = x + 5 + i * ((w - 10) / 14);
+        return (
+          <React.Fragment key={`nano-pin-${i}`}>
+            <rect x={px - 0.8} y={y} width="1.6" height="2.5" rx="0.2"
+              fill={PAD_GOLD} stroke={PAD_STROKE} strokeWidth="0.1" />
+            <rect x={px - 0.8} y={y + h - 2.5} width="1.6" height="2.5" rx="0.2"
+              fill={PAD_GOLD} stroke={PAD_STROKE} strokeWidth="0.1" />
+          </React.Fragment>
+        );
+      })}
     </g>
   );
 }
 
-// ─── Sub-component: Wing connector area ─────────────────────────────────
+// ─── Sub-component: Wing breakout connector (ORDINE 2 — on upper arm) ─────
 
 function WingConnector({ wingPins, pinStateFor }) {
-  const firstPin = WING_PIN_START_X;
-  const lastPin = WING_PIN_START_X + (WING_PINS.length - 1) * WING_PIN_PITCH;
-  const connW = lastPin - firstPin + 8;
-  const connX = firstPin - 4;
-  const connY = WING_PIN_Y - 5;
-  const connH = 10;
+  const midX = WING_PIN_START_X + (WING_PINS.length - 1) * WING_PIN_PITCH / 2;
 
   return (
     <g>
-      {/* Connector housing (dark plastic body) */}
-      <rect x={connX} y={connY} width={connW} height={connH} rx="1.2"
-        fill={CONNECTOR_BODY} stroke={CONNECTOR_DARK} strokeWidth="0.5" />
-      {/* Top edge highlight (3D effect) */}
-      <line x1={connX + 1} y1={connY + 0.5} x2={connX + connW - 1} y2={connY + 0.5}
-        stroke="#484B50" strokeWidth="0.4" opacity="0.6" />
-      {/* Bottom shadow */}
-      <line x1={connX + 1} y1={connY + connH - 0.3} x2={connX + connW - 1} y2={connY + connH - 0.3}
-        stroke="#0E0F10" strokeWidth="0.4" opacity="0.4" />
-
-      {/* Individual pin pads */}
+      {/* Subtle label below pin row */}
+      <text x={midX} y={WING_PIN_Y + 8} textAnchor="middle"
+        fontSize="1.0" fill={SILK_DARK} fontFamily="Fira Code, monospace"
+        opacity="0.4">
+        BREAKOUT PINS
+      </text>
       {wingPins.map((pin) => (
         <WingPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
       ))}
@@ -470,138 +463,195 @@ function WingConnector({ wingPins, pinStateFor }) {
   );
 }
 
-// ─── Sub-component: Power bus pads ──────────────────────────────────────
+// ─── Sub-component: VIN Morsettiera (ORDINE 5 — green terminal on arm) ────
 
-function PowerBusPads() {
-  // 4 pads: +top, -top, +bottom, -bottom near the wing junction
-  const padX = WING_X - 6;
-  const pads = [
-    { y: 10, label: '+', color: '#D32F2F' },
-    { y: 17, label: '-', color: '#212121' },
-    { y: BOARD_H - 17, label: '+', color: '#D32F2F' },
-    { y: BOARD_H - 10, label: '-', color: '#212121' },
-  ];
-
+function PowerSection() {
   return (
     <g>
-      {pads.map((pad, i) => (
-        <g key={`pbus-${i}`}>
-          {/* Solder pad ring */}
-          <circle cx={padX} cy={pad.y} r="2.2"
-            fill={PAD_GOLD} stroke={PAD_STROKE} strokeWidth="0.3" />
-          {/* Through-hole */}
-          <circle cx={padX} cy={pad.y} r="1.0" fill={HOLE_DARK} />
-          {/* Color indicator ring */}
-          <circle cx={padX} cy={pad.y} r="2.7"
-            fill="none" stroke={pad.color} strokeWidth="0.5" opacity="0.7" />
-          {/* Label */}
-          <text x={padX + 4.5} y={pad.y + 0.5} fontSize="2.0" fill={PCB_BORDER}
-            fontFamily="Fira Code, monospace" fontWeight="700">
-            {pad.label}
-          </text>
+      {/* Green 2-pole screw terminal (20x14px, fill #2d6a2d) */}
+      <rect x={JACK_X} y={JACK_Y} width="20" height="14" rx="1"
+        fill="#2d6a2d" stroke="#1E4D1E" strokeWidth="0.6" />
+      {/* Top edge highlight */}
+      <rect x={JACK_X + 0.5} y={JACK_Y + 0.5} width="19" height="1.5" rx="0.5"
+        fill="#3A8A3A" opacity="0.5" />
+      {/* Screw hole 1 */}
+      <circle cx={JACK_X + 6} cy={JACK_Y + 8} r="3"
+        fill="#1E4D1E" stroke="#0F3A0F" strokeWidth="0.3" />
+      <circle cx={JACK_X + 6} cy={JACK_Y + 8} r="1.2"
+        fill="#8A8A8A" stroke="#666" strokeWidth="0.2" />
+      <line x1={JACK_X + 5} y1={JACK_Y + 8} x2={JACK_X + 7} y2={JACK_Y + 8}
+        stroke="#555" strokeWidth="0.4" />
+      <line x1={JACK_X + 6} y1={JACK_Y + 7} x2={JACK_X + 6} y2={JACK_Y + 9}
+        stroke="#555" strokeWidth="0.4" />
+      {/* Screw hole 2 */}
+      <circle cx={JACK_X + 14} cy={JACK_Y + 8} r="3"
+        fill="#1E4D1E" stroke="#0F3A0F" strokeWidth="0.3" />
+      <circle cx={JACK_X + 14} cy={JACK_Y + 8} r="1.2"
+        fill="#8A8A8A" stroke="#666" strokeWidth="0.2" />
+      <line x1={JACK_X + 13} y1={JACK_Y + 8} x2={JACK_X + 15} y2={JACK_Y + 8}
+        stroke="#555" strokeWidth="0.4" />
+      <line x1={JACK_X + 14} y1={JACK_Y + 7} x2={JACK_X + 14} y2={JACK_Y + 9}
+        stroke="#555" strokeWidth="0.4" />
+      {/* VIN 5-20V label */}
+      <text x={JACK_X + 10} y={JACK_Y - 1} textAnchor="middle"
+        fontSize="1.5" fill={SILK_DARK} fontFamily="Fira Code, monospace"
+        fontWeight="700" opacity="0.8">
+        VIN 5-20V
+      </text>
+    </g>
+  );
+}
+
+// ─── Sub-component: Board silkscreen & PCB details ────────────────────────
+
+function BoardSilkscreen() {
+  return (
+    <g>
+      {/* ORDINE 4 — ELAB branding on semicircle, rotated -90° */}
+      {/* Positioned at x=8 to stay on exposed PCB (socket starts at x=14) */}
+      <text
+        x={8} y={BOARD_H / 2}
+        textAnchor="middle" dominantBaseline="central"
+        fontSize="12" fill={PCB_BORDER} fontFamily="Oswald, Arial, sans-serif"
+        fontWeight="800" letterSpacing="1.5"
+        transform={`rotate(-90, 8, ${BOARD_H / 2})`}
+      >
+        ELAB
+      </text>
+      {/* "Electronics Laboratory" — rotated -90° on far-left semicircle */}
+      <text
+        x={3} y={BOARD_H / 2}
+        textAnchor="middle" dominantBaseline="central"
+        fontSize="4" fill={SILK_GRAY} fontFamily="Fira Code, monospace"
+        fontWeight="400"
+        transform={`rotate(-90, 3, ${BOARD_H / 2})`}
+      >
+        Electronics Laboratory
+      </text>
+
+      {/* Version text on arm area */}
+      <text x={NOTCH_LEFT - 2} y={ARM_H - 3} textAnchor="end"
+        fontSize="1.5" fill={SILK_DARK} fontFamily="Fira Code, monospace"
+        fontWeight="600" opacity="0.6">
+        NANO BREAKOUT V1.1 GP
+      </text>
+
+      {/* Mounting holes (body corners + arm corner + tab corner) */}
+      {[
+        [SEMI_R + 5, 8],           // top-left body (right of semicircle)
+        [NOTCH_LEFT - 5, 8],       // top-right body
+        [SEMI_R + 5, BOARD_H - 8], // bottom-left body
+        [BOARD_W - 8, 8],          // arm far-right
+        [TAB_RIGHT - 5, BOARD_H - 8], // tab corner
+      ].map(([hx, hy], i) => (
+        <g key={`pcb-mount-${i}`}>
+          <circle cx={hx} cy={hy} r="2.0" fill={PAD_GOLD} stroke={PAD_STROKE}
+            strokeWidth="0.3" opacity="0.4" />
+          <circle cx={hx} cy={hy} r="1.0" fill={HOLE_DARK} opacity="0.5" />
+        </g>
+      ))}
+
+      {/* PCB traces (subtle connections from header to wing) */}
+      <g opacity="0.10" stroke={PCB_FILL_DARK} strokeWidth="0.5">
+        {[35, 42, 49.5, 57, 64].map((ty, i) => (
+          <line key={`trace-h-${i}`}
+            x1={SOCKET_X + SOCKET_W + 2} y1={ty}
+            x2={NOTCH_LEFT - 2} y2={ty} />
+        ))}
+        {[70, 80, 90, 100, 110, 120].map((tx, i) => (
+          <line key={`trace-v-${i}`}
+            x1={tx} y1={BOTTOM_PIN_Y + 4}
+            x2={tx} y2={BOARD_H - 10} />
+        ))}
+      </g>
+
+      {/* Board status LEDs (decorative, on PCB surface) */}
+      {[[SOCKET_X + SOCKET_W + 6, ARM_H + 8], [SOCKET_X + SOCKET_W + 6, NOTCH_BOT - 8]].map(([lx, ly], i) => (
+        <g key={`brd-led-${i}`}>
+          <circle cx={lx} cy={ly} r="1.2" fill="#3498db" opacity="0.5" />
+          <circle cx={lx} cy={ly} r="0.5" fill="#5DADE2" />
         </g>
       ))}
     </g>
   );
 }
 
-// ─── Sub-component: Board silkscreen & decorations ─────────────────────
+// ─── Sub-component: Power LED (ORDINE 3 — blue #4488ff with glow) ─────────
 
-function BoardSilkscreen() {
-  // Silkscreen matches real hardware: "ELAB" on semicircle (left), version on wing
-  const semiCenterX = SEMI_CX;
-  const semiCenterY = BOARD_H / 2;
-  const wingCenterX = (WING_X + BOARD_W) / 2;
-  const wingCenterY = (WING_TOP + WING_BOT) / 2;
+function PowerLed({ on }) {
+  const ledX = NOTCH_LEFT - 10;
+  const ledY = ARM_H + 8;
 
   return (
     <g>
-      {/* ELAB label on semicircle area (matching real PCB — vertical left side) */}
-      <text
-        x={semiCenterX - 18} y={semiCenterY}
-        textAnchor="middle" dominantBaseline="central"
-        fontSize="7.0" fill={PCB_BORDER} fontFamily="Oswald, Arial, sans-serif"
-        fontWeight="800" letterSpacing="3.0" opacity="0.85"
-        transform={`rotate(-90, ${semiCenterX - 18}, ${semiCenterY})`}
-      >
-        ELAB
+      <circle cx={ledX} cy={ledY} r="2.5" fill={PCB_BORDER} opacity="0.3" />
+      <circle cx={ledX} cy={ledY} r="2.0"
+        fill={on ? LED_BLUE : '#1E3A6E'}
+        stroke="#0D2A52"
+        strokeWidth="0.4"
+      />
+      {on && (
+        <>
+          <circle cx={ledX} cy={ledY} r="3.5" fill={LED_BLUE_GLOW} opacity="0.4" />
+          <circle cx={ledX} cy={ledY} r="5.0" fill={LED_BLUE_GLOW} opacity="0.2" />
+        </>
+      )}
+      <text x={ledX} y={ledY - 4} textAnchor="middle" fontSize="1.0"
+        fill={SILK_DARK} fontFamily="Fira Code, monospace" opacity="0.7">
+        POWER
       </text>
+    </g>
+  );
+}
 
-      {/* "Electronics Laboratory" below ELAB (matching photo silkscreen) */}
-      <text
-        x={semiCenterX - 10} y={semiCenterY}
-        textAnchor="middle" dominantBaseline="central"
-        fontSize="2.0" fill={PCB_BORDER} fontFamily="Fira Code, monospace"
-        fontWeight="500" opacity="0.55"
-        transform={`rotate(-90, ${semiCenterX - 10}, ${semiCenterY})`}
-      >
-        Electronics Laboratory
-      </text>
+// ─── Sub-component: ON/OFF switch (ORDINE 7) ──────────────────────────────
 
-      {/* Version label on wing area */}
-      <text x={wingCenterX} y={wingCenterY - 4} textAnchor="middle"
-        fontSize="1.6" fill={PCB_BORDER} fontFamily="Fira Code, monospace"
-        fontWeight="600" opacity="0.7">
-        Nano Breakout
-      </text>
-      <text x={wingCenterX} y={wingCenterY} textAnchor="middle"
-        fontSize="1.4" fill={PCB_BORDER} fontFamily="Fira Code, monospace"
-        opacity="0.6">
-        V1.1 GP
-      </text>
+function SwitchOnOff() {
+  const sx = 85;
+  const sy = 76;
 
-      {/* Barrel jack connector (VIN 5-20V — prominent black connector on wing) */}
-      <g>
-        {/* Connector body */}
-        <rect x={WING_X + 1} y={WING_TOP + 2} width="10" height="8" rx="1"
-          fill={CONNECTOR_BODY} stroke={CONNECTOR_DARK} strokeWidth="0.5" />
-        {/* Barrel opening */}
-        <circle cx={WING_X + 6} cy={WING_TOP + 6} r="2.5"
-          fill={HOLE_DARK} stroke="#444" strokeWidth="0.3" />
-        <circle cx={WING_X + 6} cy={WING_TOP + 6} r="1.0"
-          fill="#666" />
-        {/* VIN label */}
-        <text x={WING_X + 6} y={WING_TOP + 13} textAnchor="middle"
-          fontSize="1.2" fill={PCB_BORDER} fontFamily="Fira Code, monospace"
-          fontWeight="600" opacity="0.7">
-          5-20V
-        </text>
-      </g>
+  return (
+    <g>
+      <rect x={sx} y={sy} width="10" height="5" rx="1"
+        fill="#444" stroke="#333" strokeWidth="0.3" />
+      {/* Slider track */}
+      <rect x={sx + 0.8} y={sy + 0.8} width="8.4" height="3.4" rx="0.6"
+        fill="#1A1C1F" />
+      {/* Slider knob (ON position) */}
+      <rect x={sx + 5} y={sy + 1} width="3.8" height="3" rx="0.4"
+        fill="#888" stroke="#666" strokeWidth="0.2" />
+      {/* Labels */}
+      <text x={sx + 3} y={sy - 1.5} textAnchor="middle"
+        fontSize="1.0" fill={SILK_DARK} fontFamily="Fira Code, monospace"
+        fontWeight="600" opacity="0.6">ON</text>
+      <text x={sx + 7.5} y={sy - 1.5} textAnchor="middle"
+        fontSize="1.0" fill={SILK_DARK} fontFamily="Fira Code, monospace"
+        fontWeight="600" opacity="0.6">OFF</text>
+    </g>
+  );
+}
 
-      {/* Blue LEDs on breakout board (3 visible in photos at corners) */}
-      {[[SEMI_CX + 20, TOP_PIN_Y - 8], [SEMI_CX + 20, BOTTOM_PIN_Y + 8],
-        [WING_X - 8, BOARD_H / 2]].map(([lx, ly], i) => (
-        <g key={`brd-led-${i}`}>
-          <circle cx={lx} cy={ly} r="1.3" fill="#3498db" opacity="0.6" />
-          <circle cx={lx} cy={ly} r="0.6" fill="#5DADE2" />
-        </g>
-      ))}
+// ─── Sub-component: Tab power pads (ORDINE 6) ─────────────────────────────
 
-      {/* Copper trace hints on yellow PCB (cosmetic lines) */}
-      <g opacity="0.12" stroke={PCB_YELLOW_DARK} strokeWidth="0.6">
-        {/* Horizontal trace lines connecting header to wing */}
-        {[35, 42, 49.5, 57, 64].map((ty, i) => (
-          <line key={`trace-h-${i}`}
-            x1={NANO_X + NANO_W + 2} y1={ty}
-            x2={WING_X - 3} y2={ty} />
-        ))}
-        {/* Vertical traces on wing */}
-        {[WING_X + 5, WING_X + 15, WING_X + 25].map((tx, i) => (
-          <line key={`trace-v-${i}`}
-            x1={tx} y1={WING_TOP + 5}
-            x2={tx} y2={WING_BOT - 5} />
-        ))}
-      </g>
+function TabPads() {
+  const tabCX = (NOTCH_LEFT + TAB_RIGHT) / 2; // center of tab
+  const tabCY = (NOTCH_BOT + BOARD_H) / 2;    // center of tab vertically
 
-      {/* Mounting holes on breakout board (plated through-holes) */}
-      {[[WING_X + 4, WING_TOP + 5], [BOARD_W - 6, WING_TOP + 5],
-        [WING_X + 4, WING_BOT - 5], [BOARD_W - 6, WING_BOT - 5]].map(([hx, hy], i) => (
-        <g key={`brd-mount-${i}`}>
-          <circle cx={hx} cy={hy} r="1.8" fill={PAD_GOLD} stroke={PAD_STROKE}
-            strokeWidth="0.3" opacity="0.5" />
-          <circle cx={hx} cy={hy} r="0.9" fill={HOLE_DARK} opacity="0.6" />
-        </g>
-      ))}
+  return (
+    <g>
+      {/* + pad (gold, r=3) */}
+      <circle cx={tabCX - 6} cy={tabCY} r="3"
+        fill={PAD_GOLD} stroke="#D32F2F" strokeWidth="0.5" />
+      <circle cx={tabCX - 6} cy={tabCY} r="1.2" fill={HOLE_DARK} />
+      <text x={tabCX - 6} y={tabCY - 5} textAnchor="middle"
+        fontSize="5" fill="#D32F2F" fontFamily="Arial, sans-serif" fontWeight="700">+</text>
+
+      {/* − pad (gold, r=3) */}
+      <circle cx={tabCX + 6} cy={tabCY} r="3"
+        fill={PAD_GOLD} stroke="#212121" strokeWidth="0.5" />
+      <circle cx={tabCX + 6} cy={tabCY} r="1.2" fill={HOLE_DARK} />
+      <text x={tabCX + 6} y={tabCY - 5} textAnchor="middle"
+        fontSize="5" fill="#212121" fontFamily="Arial, sans-serif" fontWeight="700">{'\u2212'}</text>
     </g>
   );
 }
@@ -625,51 +675,64 @@ const NanoR4Board = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="nano-r4" role="img"
        aria-label={`Arduino Nano R4 ${id}`}>
 
-      {/* 1. Yellow breakout PCB (board outline) */}
-      <path d={BOARD_PATH} fill={PCB_YELLOW} stroke={PCB_BORDER} strokeWidth="1.3" />
-      {/* Inner border highlight for 3D depth */}
-      <path d={INNER_PATH} fill="none" stroke={PCB_YELLOW_LIGHT} strokeWidth="0.5" opacity="0.5" />
+      {/* ClipPath for C-shape */}
+      <defs>
+        <clipPath id={`board-clip-${id}`}>
+          <path d={BOARD_PATH} />
+        </clipPath>
+      </defs>
 
-      {/* 2. Nano slot detail groove (darker line showing insertion channel) */}
-      <g opacity="0.25">
-        <line x1={SLOT_X + 1} y1={SLOT_TOP + 2} x2={SLOT_X + 1} y2={SLOT_BOT - 2}
-          stroke={PCB_BORDER} strokeWidth="0.6" />
-        <line x1={WING_X - 1} y1={WING_TOP + 6} x2={WING_X - 1} y2={WING_BOT - 6}
-          stroke={PCB_BORDER} strokeWidth="0.6" />
-      </g>
+      {/* PCB board — C-shape with semicircle (ORDINE 1) */}
+      <path d={BOARD_PATH} fill={PCB_FILL} stroke={PCB_BORDER} strokeWidth="2" />
 
-      {/* 3. Arduino Nano R4 module (blue board inside breakout) */}
-      <NanoModule
-        x={NANO_X} y={NANO_Y} w={NANO_W} h={NANO_H}
-        leds={leds} running={running}
-        onReset={onInteract}
-      />
+      {/* USB-C connector (outside clipPath — protrudes from semicircle) */}
+      <UsbConnector />
 
-      {/* 4. Header pin pads (gold, on breakout board surface) */}
-      {topPins.map((pin) => (
-        <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
-      ))}
-      {bottomPins.map((pin) => (
-        <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
-      ))}
+      {/* All board content clipped to C-shape */}
+      <g clipPath={`url(#board-clip-${id})`}>
 
-      {/* 5. Wing connector (with housing + pin pads) */}
-      <WingConnector wingPins={wingPins} pinStateFor={pinStateFor} />
+        {/* Nano socket recess */}
+        <NanoSocket />
 
-      {/* 6. Power bus pads */}
-      <PowerBusPads />
+        {/* Arduino Nano R4 module */}
+        <NanoModule leds={leds} running={running} onReset={onInteract} />
 
-      {/* 7. Board silkscreen and decorations */}
-      <BoardSilkscreen />
+        {/* Header pin rows (IMMUTABLE positions) */}
+        {topPins.map((pin) => (
+          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
+        ))}
+        {bottomPins.map((pin) => (
+          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
+        ))}
 
-      {/* 8. Running indicator (green pulse on wing) */}
+        {/* Wing breakout connector (ORDINE 2 — on upper arm) */}
+        <WingConnector wingPins={wingPins} pinStateFor={pinStateFor} />
+
+        {/* VIN morsettiera (ORDINE 5 — far left of arm) */}
+        <PowerSection />
+
+        {/* PCB silkscreen & details (ORDINE 4 — branding) */}
+        <BoardSilkscreen />
+
+        {/* Power LED (ORDINE 3 — blue with glow) */}
+        <PowerLed on={leds.power || running} />
+
+        {/* ON/OFF switch (ORDINE 7) */}
+        <SwitchOnOff />
+
+        {/* Tab +/- power pads (ORDINE 6) */}
+        <TabPads />
+
+      </g>{/* end clipPath group */}
+
+      {/* Running indicator */}
       {running && (
-        <circle cx={BOARD_W - 10} cy={WING_BOT - 8} r="1.3" fill="#89E86F">
+        <circle cx={BOARD_W - 10} cy={12} r="1.3" fill="#89E86F">
           <animate attributeName="opacity" values="0.3;1;0.3" dur="1.4s" repeatCount="indefinite" />
         </circle>
       )}
 
-      {/* 9. Selection highlight border */}
+      {/* Highlight outline (selection/hover) */}
       {highlighted && (
         <path
           d={BOARD_PATH}
@@ -726,11 +789,10 @@ NanoR4Board.boardDimensions = {
   breakoutHeight: BOARD_H,
   breakoutOffsetX: 0,
   breakoutOffsetY: 0,
-  wingWidth: BOARD_W - WING_X,
-  wingHeight: WING_BOT - WING_TOP,
-  wingStartX: WING_X,
-  wingY: WING_TOP,
-  semiCircleRadius: SEMI_R,
+  wingWidth: BOARD_W - WING_PIN_START_X + WING_HOUSING_PAD,
+  wingHeight: 10,
+  wingStartX: WING_PIN_START_X - WING_HOUSING_PAD,
+  wingY: WING_PIN_Y - 5,
   boardWidth: BOARD_W,
   boardHeight: BOARD_H,
   version: 'NanoBreakout V1.1 GP',

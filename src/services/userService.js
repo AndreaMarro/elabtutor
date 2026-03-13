@@ -198,7 +198,7 @@ const authService = {
         if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
             return { success: false, error: 'Email già registrata' };
         }
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
         const passwordHash = await hashPassword(password);
         // Ruolo: 'user' (studente) o 'docente' (professore)
@@ -399,7 +399,7 @@ const authService = {
 // ============================================
 const adminService = {
     // Ottieni tutti gli utenti
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     getAllUsers() {
         return dbRead(DB_KEYS.users).map(u => {
             const safe = { ...u };

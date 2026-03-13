@@ -12,14 +12,14 @@
  *   2. Installa arduino-cli sul VPS
  *   3. node compile-server.js   (o pm2 start compile-server.js)
  *
- * Andrea Marro — 10/02/2026
+ * Andrea Marro — 13/03/2026
  */
 
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const { execFile } = require('child_process');
+const { execFile, execFileSync } = require('child_process');
 const os = require('os');
 const crypto = require('crypto');
 
@@ -30,13 +30,18 @@ const DEFAULT_BOARD = 'arduino:avr:nano:cpu=atmega328old';
 const COMPILE_TIMEOUT = 60000; // 60 secondi max
 const MAX_CODE_SIZE = 100000; // 100KB max
 
+// Librerie Arduino richieste dagli esperimenti Vol3
+const REQUIRED_LIBS = ['Servo', 'LiquidCrystal'];
+
 // ─── Middleware ───
 app.use(cors({
   origin: [
+    'https://www.elabtutor.school',
     'https://elab-builder.vercel.app',
-    'https://elab-builder-*.vercel.app',
+    /^https:\/\/elab-builder-.*\.vercel\.app$/,
     'http://localhost:5173',
     'http://localhost:5174',
+    'http://localhost:5179',
     'http://localhost:3000',
   ],
   methods: ['POST', 'OPTIONS'],
@@ -231,6 +236,18 @@ app.post('/compile', async (req, res) => {
   }
 });
 
+// ─── Auto-install librerie mancanti all'avvio ───
+function ensureLibraries() {
+  try {
+    const out = execFileSync(ARDUINO_CLI, ['lib', 'list'], { timeout: 10000, encoding: 'utf-8' });
+    REQUIRED_LIBS.forEach(lib => {
+      if (!out.includes(lib)) {
+        execFileSync(ARDUINO_CLI, ['lib', 'install', lib], { timeout: 30000, encoding: 'utf-8' });
+      }
+    });
+  } catch { /* ignore — will fail at compile time if libs missing */ }
+}
+
 // ─── CORS preflight ───
 app.options('/compile', cors());
 
@@ -238,7 +255,7 @@ app.options('/compile', cors());
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔══════════════════════════════════════════╗
-║   ELAB Arduino Compile Server v1.0.0    ║
+║   ELAB Arduino Compile Server v1.1.0    ║
 ║   Port: ${PORT}                            ║
 ║   Board: ${DEFAULT_BOARD}    ║
 ╚══════════════════════════════════════════╝
@@ -251,7 +268,8 @@ app.listen(PORT, '0.0.0.0', () => {
       console.error('Installa: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh');
       console.error('Poi: arduino-cli core install arduino:avr');
     } else {
-      console.log('arduino-cli:', stdout.trim());
+      // Verifica e installa librerie mancanti (Servo, LiquidCrystal)
+      ensureLibraries();
     }
   });
 });

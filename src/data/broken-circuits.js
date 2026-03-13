@@ -198,7 +198,7 @@ export const BROKEN_CIRCUITS = [
     difficulty: 2,
     layer: 'schema',
     icon: '',
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     description: 'Un servo motore è collegato ad Arduino, ma invece di muoversi fluidamente, trema e scatta in posizioni casuali.',
     experimentId: 'v2-cap8-esp1',
     wokwiId: '377009321625078785',
@@ -399,7 +399,7 @@ Pin 7 → [LED Rosso]
     icon: '',
     description: 'Un sensore collegato ad Arduino legge sempre 1023. Non cambia mai, qualsiasi cosa tu faccia. Perché?',
     experimentId: 'v1-cap9-pot',
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     wokwiId: '376421051626471425',
     schematicText: `[+5V] ──── [Potenziometro] ──── Pin A0
                                           ↑

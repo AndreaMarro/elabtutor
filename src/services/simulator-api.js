@@ -198,7 +198,7 @@ function createPublicAPI() {
     /**
      * Move a component to new coordinates
      * @param {string} componentId
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
      * @param {number} x - horizontal position
      * @param {number} y - vertical position
      */
@@ -377,6 +377,88 @@ function createPublicAPI() {
       _simulatorRef?.loadScratchWorkspace?.(xml);
     },
 
+    // ─── S115: Galileo Onnipotente v2 — Extended Control ───
+
+    /** Undo last action */
+    undo() { _simulatorRef?.undo?.(); },
+
+    /** Redo last undone action */
+    redo() { _simulatorRef?.redo?.(); },
+
+    /** @returns {boolean} Whether undo is available */
+    canUndo() { return _simulatorRef?.canUndo?.() || false; },
+
+    /** @returns {boolean} Whether redo is available */
+    canRedo() { return _simulatorRef?.canRedo?.() || false; },
+
+    /**
+     * Highlight specific pins on the canvas
+     * @param {string|string[]} pinRefs - e.g. "r1:pin1" or ["r1:pin1", "led1:anode"]
+     */
+    highlightPin(pinRefs) {
+      const refs = Array.isArray(pinRefs) ? pinRefs : [pinRefs];
+      _simulatorRef?.highlightPin?.(refs);
+    },
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+
+    /**
+     * Write text to the serial monitor (AVR experiments)
+     * @param {string} text
+     */
+    serialWrite(text) { _simulatorRef?.serialWrite?.(text); },
+
+    /**
+     * Switch build mode
+     * @param {string} mode - 'complete' | 'guided' | 'sandbox'
+     */
+    setBuildMode(mode) { _simulatorRef?.setBuildMode?.(mode); },
+
+    /** @returns {string|false} Current build mode */
+    getBuildMode() { return _simulatorRef?.getBuildMode?.() || false; },
+
+    /** Advance to next build step (Passo Passo) */
+    nextStep() { _simulatorRef?.nextStep?.(); },
+
+    /** Go back to previous build step (Passo Passo) */
+    prevStep() { _simulatorRef?.prevStep?.(); },
+
+    /** @returns {number} Current build step index */
+    getBuildStepIndex() { return _simulatorRef?.getBuildStepIndex?.() ?? -1; },
+
+    /** Show the Bill of Materials panel */
+    showBom() { _simulatorRef?.showBom?.(); },
+
+    /** Hide the Bill of Materials panel */
+    hideBom() { _simulatorRef?.hideBom?.(); },
+
+    /** Show the serial monitor (opens editor + switches to monitor tab) */
+    showSerialMonitor() { _simulatorRef?.showSerialMonitor?.(); },
+
+    /** @returns {boolean} Whether simulation is running */
+    isSimulating() { return _simulatorRef?.isSimulating?.() || false; },
+
+    /** @returns {string} 'running' or 'stopped' */
+    getSimulationStatus() { return _simulatorRef?.getSimulationStatus?.() || 'stopped'; },
+
+    // ─── S115: Code Control — Galileo writes/reads Arduino code ───
+
+    /**
+     * Append code to the existing editor content
+     * @param {string} code - Code to append
+     */
+    appendEditorCode(code) { _simulatorRef?.appendEditorCode?.(code); },
+
+    /**
+     * Reset editor code to experiment's original code
+     */
+    resetEditorCode() { _simulatorRef?.resetEditorCode?.(); },
+
+    /**
+     * Get the experiment's original code (before user edits)
+     * @returns {string}
+     */
+    getExperimentOriginalCode() { return _simulatorRef?.getExperimentOriginalCode?.() || ''; },
+
     // ─── S104: Unified Simulator Context for Galileo ───
 
     /**
@@ -399,7 +481,6 @@ function createPublicAPI() {
         buildPhase = 'hardware'; // default — could be refined with scratchSteps info
       }
 
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
       // Compact component list
       const components = (circuitState.components || []).map(c => ({
         type: c.type,
@@ -519,6 +600,7 @@ function createPublicAPI() {
      */
     on(event, callback) {
       if (!window.__ELAB_EVENTS) window.__ELAB_EVENTS = {};
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       if (!window.__ELAB_EVENTS[event]) window.__ELAB_EVENTS[event] = [];
       window.__ELAB_EVENTS[event].push(callback);
       return () => {

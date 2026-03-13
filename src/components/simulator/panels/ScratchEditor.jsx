@@ -17,33 +17,34 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
     name: 'elab',
     base: Blockly.Themes.Classic,
     blockStyles: {
-        logic_blocks:    { colourPrimary: '#4A7FB5', colourSecondary: '#3A6A9A', colourTertiary: '#2A5580' },
-        loop_blocks:     { colourPrimary: '#7CB342', colourSecondary: '#6A9A38', colourTertiary: '#58812E' },
-        math_blocks:     { colourPrimary: '#5C86C1', colourSecondary: '#4A72A8', colourTertiary: '#3A5F90' },
-        text_blocks:     { colourPrimary: '#5BA5A5', colourSecondary: '#4A8E8E', colourTertiary: '#3A7878' },
+        // Scratch 3.0-inspired saturated colors for maximum visual impact
+        logic_blocks:    { colourPrimary: '#5B80A5', colourSecondary: '#4A6D90', colourTertiary: '#3A5A7A' },
+        loop_blocks:     { colourPrimary: '#59C059', colourSecondary: '#46AD46', colourTertiary: '#389438' },
+        math_blocks:     { colourPrimary: '#59C0C0', colourSecondary: '#46ADAD', colourTertiary: '#389494' },
+        text_blocks:     { colourPrimary: '#5CB1D6', colourSecondary: '#4A9BBF', colourTertiary: '#3A85A8' },
         colour_blocks:   { colourPrimary: '#CF63CF', colourSecondary: '#B84DB8', colourTertiary: '#A040A0' },
-        variable_blocks: { colourPrimary: '#E57373', colourSecondary: '#CC5C5C', colourTertiary: '#B34545' },
-        list_blocks:     { colourPrimary: '#8C6BC1', colourSecondary: '#7558A8', colourTertiary: '#5E4490' },
-        // Arduino custom categories
-        arduino_io:      { colourPrimary: '#00979C', colourSecondary: '#007A80', colourTertiary: '#005E62' },
-        arduino_sound:   { colourPrimary: '#9B59B6', colourSecondary: '#8548A0', colourTertiary: '#6F388A' },
-        arduino_servo:   { colourPrimary: '#27AE60', colourSecondary: '#1E9050', colourTertiary: '#167240' },
-        arduino_time:    { colourPrimary: '#E67E22', colourSecondary: '#CC6A18', colourTertiary: '#B25710' },
-        arduino_serial:  { colourPrimary: '#34495E', colourSecondary: '#2C3E50', colourTertiary: '#243342' },
-        arduino_lcd:     { colourPrimary: '#5C6BC0', colourSecondary: '#4A58A8', colourTertiary: '#394690' },
+        variable_blocks: { colourPrimary: '#FF8C1A', colourSecondary: '#E67A0E', colourTertiary: '#CC6800' },
+        list_blocks:     { colourPrimary: '#FF6680', colourSecondary: '#E64D66', colourTertiary: '#CC3450' },
+        // Arduino custom categories — vivid, distinct colors
+        arduino_io:      { colourPrimary: '#4C97FF', colourSecondary: '#3D87E8', colourTertiary: '#2E77D1' },
+        arduino_sound:   { colourPrimary: '#CF63CF', colourSecondary: '#B84DB8', colourTertiary: '#A040A0' },
+        arduino_servo:   { colourPrimary: '#0FBD8C', colourSecondary: '#0DA87B', colourTertiary: '#0B936A' },
+        arduino_time:    { colourPrimary: '#FFAB19', colourSecondary: '#E69A0E', colourTertiary: '#CC8800' },
+        arduino_serial:  { colourPrimary: '#5B67A5', colourSecondary: '#4A5690', colourTertiary: '#3A457A' },
+        arduino_lcd:     { colourPrimary: '#855CD6', colourSecondary: '#744DBF', colourTertiary: '#633EA8' },
     },
     categoryStyles: {
-        logic_category:    { colour: '#4A7FB5' },
-        loop_category:     { colour: '#7CB342' },
-        math_category:     { colour: '#5C86C1' },
-        text_category:     { colour: '#5BA5A5' },
-        variable_category: { colour: '#E57373' },
-        arduino_io_cat:    { colour: '#00979C' },
-        arduino_sound_cat: { colour: '#9B59B6' },
-        arduino_servo_cat: { colour: '#27AE60' },
-        arduino_time_cat:  { colour: '#E67E22' },
-        arduino_serial_cat:{ colour: '#34495E' },
-        arduino_lcd_cat:   { colour: '#5C6BC0' },
+        logic_category:    { colour: '#5B80A5' },
+        loop_category:     { colour: '#59C059' },
+        math_category:     { colour: '#59C0C0' },
+        text_category:     { colour: '#5CB1D6' },
+        variable_category: { colour: '#FF8C1A' },
+        arduino_io_cat:    { colour: '#4C97FF' },
+        arduino_sound_cat: { colour: '#CF63CF' },
+        arduino_servo_cat: { colour: '#0FBD8C' },
+        arduino_time_cat:  { colour: '#FFAB19' },
+        arduino_serial_cat:{ colour: '#5B67A5' },
+        arduino_lcd_cat:   { colour: '#855CD6' },
     },
     componentStyles: {
         workspaceBackgroundColour: '#1E2530',
@@ -60,10 +61,10 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
     },
     fontStyle: {
         family: "'Open Sans', 'Helvetica Neue', sans-serif",
-        weight: '500',
-        size: 11,
+        weight: '600',
+        size: 12,
     },
-    startHats: false,
+    startHats: true,
 });
 
 // ─── Toolbox XML (ELAB palette colours) ──────────────────────
@@ -86,6 +87,7 @@ const TOOLBOX_XML = `
       <value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
       <value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
+    <block type="controls_flow_statements"></block>
   </category>
   <category name="🔢 Matematica" categorystyle="math_category">
     <block type="math_number"><field name="NUM">0</field></block>
@@ -102,6 +104,15 @@ const TOOLBOX_XML = `
     <block type="arduino_random">
       <value name="MIN"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
       <value name="MAX"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
+    </block>
+    <block type="math_modulo">
+      <value name="DIVIDEND"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+      <value name="DIVISOR"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
+    </block>
+    <block type="math_constrain">
+      <value name="VALUE"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
+      <value name="LOW"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+      <value name="HIGH"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
     </block>
   </category>
   <category name="📦 Variabili" categorystyle="variable_category">

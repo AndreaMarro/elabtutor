@@ -198,7 +198,7 @@ const clientiService = {
         }
         return clienti;
     },
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     async getById(id) {
         return safeCall(() => _utentiNotion.getById(id), null);
@@ -399,7 +399,7 @@ const bustePagaService = {
     async getAll(filters = {}) {
         const result = await safeCall(() => _dipendentiNotion.getAll({ ...filters, entity_type: 'busta_paga' }), { items: [] });
         let buste = result.items || [];
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         if (filters.dipendenteId) buste = buste.filter(b => b.dipendenteId === filters.dipendenteId);
         if (filters.mese) buste = buste.filter(b => b.mese === filters.mese);
         buste.sort((a, b) => new Date(b.mese || 0) - new Date(a.mese || 0));
@@ -600,7 +600,7 @@ const campagneService = {
         if (filters.stato) campagne = campagne.filter(c => c.stato === filters.stato);
         if (filters.canale) campagne = campagne.filter(c => c.canale === filters.canale);
         campagne.sort((a, b) => new Date(b.dataInizio || b.dataCreazione || 0) - new Date(a.dataInizio || a.dataCreazione || 0));
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         return campagne;
     },
 
@@ -801,7 +801,7 @@ const gestionaleAdmin = {
                 aliquotaIvaDefault: 22,
             };
         } catch {
-// © Andrea Marro — 12/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
             return { ragioneSociale: 'ELAB STEM S.r.l.', valuta: 'EUR', aliquotaIvaDefault: 22 };
         }
     },
