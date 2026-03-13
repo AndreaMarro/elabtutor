@@ -1516,9 +1516,23 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         const aiLower = aiResponse.toLowerCase();
         const userLower = userMessage.toLowerCase();
 
+        // ── S116: Strip hallucinated INTENT tags for simple action commands ──
+        const _simpleActionRe = /\b(avvia|start|play|fai\s+partire|ferma|stop|pausa|pause|reset|resetta|riavvia|compila|annulla|undo|rifai|redo)\b/i;
+        const _hasComponentWords = /\b(led|resistor[ei]?|resistenz[ae]|buzzer|pulsante|condensator[ei]?|potenziometr[oi]|servo|motor[ei]|diod[oi]|mosfet|reed|rgb|metti|aggiungi|costruisci|collega)\b/i;
+        let effectiveResponse = aiResponse;
+        if (_simpleActionRe.test(userMessage) && !_hasComponentWords.test(userMessage)) {
+            const hallucinatedIntents = extractIntentTags(aiResponse);
+            if (hallucinatedIntents.length > 0) {
+                logger.log('[S116] Stripping', hallucinatedIntents.length, 'hallucinated INTENT tags for simple action:', userMessage.substring(0, 60));
+                for (const { fullMatch } of hallucinatedIntents) {
+                    effectiveResponse = effectiveResponse.replace(fullMatch, '');
+                }
+            }
+        }
+
         // ── Strip action tags from display text ──
-        let strippedResponse = aiResponse;
-        for (const { fullMatch } of extractIntentTags(aiResponse)) {
+        let strippedResponse = effectiveResponse;
+        for (const { fullMatch } of extractIntentTags(effectiveResponse)) {
             strippedResponse = strippedResponse.replace(fullMatch, '');
         }
         const displayText = strippedResponse
@@ -1528,7 +1542,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             .trim();
 
         // ── Parse action tags ──
-        let actionTags = aiResponse.match(/\[azione:([^\]]+)\]/gi) || [];
+        let actionTags = effectiveResponse.match(/\[azione:([^\]]+)\]/gi) || [];
         const api = typeof window !== 'undefined' && window.__ELAB_API;
         const executedActions = [];
         const actionFailures = [];
@@ -1661,11 +1675,14 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         // ── PlacementEngine intent resolution ──
         const PLACEMENT_ENGINE_ENABLED = true;
         const intentTags = extractIntentTags(aiResponse);
+        console.log('[UNLIM-DEBUG] intentTags:', intentTags.length, 'api:', !!api, 'actionTags:', actionTags.length);
+        if (intentTags.length > 0) console.log('[UNLIM-DEBUG] INTENT json:', intentTags.map(t => t.json));
 
         if (PLACEMENT_ENGINE_ENABLED && intentTags.length > 0 && api) {
             try {
                 const { resolvePlacement } = await import('../simulator/engine/PlacementEngine');
                 const currentLayout = api.getLayout?.() || {};
+                console.log('[UNLIM-DEBUG] Layout: comps=', currentLayout.components?.length, 'pins=', Object.keys(currentLayout.pinAssignments || {}).length);
                 const snapshot = {
                     components: currentLayout.components || [],
                     connections: currentLayout.connections || [],
@@ -1676,7 +1693,9 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 for (const tag of intentTags) {
                     try {
                         const intent = JSON.parse(tag.json);
+                        console.log('[UNLIM-DEBUG] Parsed intent:', intent);
                         const placementResult = resolvePlacement(intent, snapshot);
+                        console.log('[UNLIM-DEBUG] PlacementResult:', placementResult.success, 'actions:', placementResult.actions?.length, 'errors:', placementResult.errors);
                         if (placementResult.success) {
                             peActions.push(...placementResult.actions);
                             for (const action of placementResult.actions) {
@@ -1688,22 +1707,26 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         console.warn('[PlacementEngine] Invalid INTENT JSON:', parseErr.message);
                     }
                 }
+                console.log('[UNLIM-DEBUG] peActions:', peActions.length, peActions.map(a => `${a.type}:${a.tag}`));
                 if (peActions.length > 0) {
                     const peIdMap = {};
                     for (const action of peActions) {
                         if (action.type !== 'addcomponent') continue;
                         try {
                             const tagMatch = action.tag.match(/addcomponent:([^:]+):(-?\d+):(-?\d+)/);
+                            console.log('[UNLIM-DEBUG] tagMatch:', tagMatch, 'from:', action.tag);
                             if (!tagMatch) continue;
                             const type = TYPE_ALIASES[normalizeComponentToken(tagMatch[1])] || tagMatch[1];
                             const x = parseInt(tagMatch[2], 10) || 200;
                             const y = parseInt(tagMatch[3], 10) || 150;
+                            console.log('[UNLIM-DEBUG] addComponent:', type, x, y, 'api.addComponent:', !!api.addComponent);
                             if (api.addComponent) {
                                 const realId = api.addComponent(type, { x, y });
+                                console.log('[UNLIM-DEBUG] addComponent result:', realId);
                                 if (realId && action.componentId) peIdMap[action.componentId] = realId;
                                 executedActions.push(`addcomponent:${realId || type}`);
                             }
-                        } catch (err) { recordActionFailure(action.tag, err.message); }
+                        } catch (err) { console.error('[UNLIM-DEBUG] addComponent error:', err); recordActionFailure(action.tag, err.message); }
                     }
                     for (const action of peActions) {
                         if (action.type !== 'addwire') continue;
@@ -1730,6 +1753,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         }
 
         // ── Execute [AZIONE:cmd:args] tags ──
+        console.log('[UNLIM-DEBUG] AZIONE tags to execute:', actionTags);
         for (const tag of actionTags) {
             const colonIdx = tag.indexOf(':');
             if (colonIdx < 0) continue;
@@ -1737,6 +1761,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const parts = inner.split(':').map(s => s.trim());
             const cmd = parts[0]?.toLowerCase();
             const tagText = `[AZIONE:${inner}]`;
+            console.log('[UNLIM-DEBUG] Executing AZIONE:', cmd, 'parts:', parts, 'api:', !!api);
             try {
                 if (cmd === 'play') {
                     if (!api?.play) throw new Error('API simulatore non disponibile');

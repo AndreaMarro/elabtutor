@@ -1030,6 +1030,85 @@ _QUIZ_RE = re.compile(
 )
 
 
+def fast_action_dispatch(user_message: str) -> str | None:
+    """Pre-LLM fast path: return canned response+tag for simple deterministic commands.
+    Returns None if the message is NOT a simple command (should go to LLM).
+    This prevents the LLM from hallucinating [INTENT:place_and_wire] for simple play/pause/reset.
+    """
+    msg_lower = user_message.lower().strip()
+    # Guard: if the message also mentions components, it's NOT a simple command
+    _HAS_COMPONENT_RE = re.compile(
+        r'\b(led|resistor[ei]?|resistenz[ae]|buzzer|pulsante|condensator[ei]?|'
+        r'potenziometr[oi]|servo|motor[ei]|diod[oi]|mosfet|reed|rgb)\b',
+        re.IGNORECASE
+    )
+    if _HAS_COMPONENT_RE.search(msg_lower):
+        return None  # Mixed request — needs LLM
+
+    # --- Simple action commands ---
+    if _PLAY_RE.search(msg_lower):
+        return "▶️ Avvio la simulazione!\n\n[AZIONE:play]"
+    if _PAUSE_RE.search(msg_lower):
+        return "⏸ Metto in pausa la simulazione.\n\n[AZIONE:pause]"
+    if _RESET_RE.search(msg_lower):
+        return "🔄 Riavvio la simulazione!\n\n[AZIONE:reset]"
+    if _CLEARALL_RE.search(msg_lower) or _CLEARALL_RE2.search(msg_lower) or _CLEARALL_STANDALONE_RE.search(msg_lower):
+        return "🧹 Rimuovo tutti i componenti dal circuito.\n\n[AZIONE:clearall]"
+    if _COMPILE_RE.search(msg_lower):
+        return "⚙️ Compilo il codice!\n\n[AZIONE:compile]"
+    # Undo/Redo (S115)
+    if _REDO_RE.search(msg_lower):
+        return "↪️ Rifaccio l'ultima azione.\n\n[AZIONE:redo]"
+    if _UNDO_RE.search(msg_lower):
+        return "↩️ Annullo l'ultima azione.\n\n[AZIONE:undo]"
+    # Build steps
+    if _NEXTSTEP_RE.search(msg_lower):
+        return "➡️ Prossimo passo!\n\n[AZIONE:nextstep]"
+    if _PREVSTEP_RE.search(msg_lower):
+        return "⬅️ Torno al passo precedente.\n\n[AZIONE:prevstep]"
+    # BOM/Serial/ResetCode
+    if _SHOWBOM_RE.search(msg_lower):
+        return "📋 Ecco la lista dei componenti!\n\n[AZIONE:showbom]"
+    if _SHOWSERIAL_RE.search(msg_lower):
+        return "📟 Apro il monitor seriale.\n\n[AZIONE:showserial]"
+    if _RESETCODE_RE.search(msg_lower):
+        return "🔄 Ripristino il codice originale.\n\n[AZIONE:resetcode]"
+    # Scratch/Arduino editor
+    if _OPEN_SCRATCH_RE.search(msg_lower):
+        return "🧩 Apro l'editor a blocchi!\n\n[AZIONE:openeditor] [AZIONE:switcheditor:scratch]"
+    if _OPEN_ARDUINO_RE.search(msg_lower):
+        return "💻 Apro l'editor del codice!\n\n[AZIONE:openeditor] [AZIONE:switcheditor:arduino]"
+    if _CLOSE_EDITOR_RE.search(msg_lower):
+        return "👋 Chiudo l'editor.\n\n[AZIONE:closeeditor]"
+    # Quiz
+    if _QUIZ_RE.search(msg_lower):
+        return "🧠 Preparati per il quiz!\n\n[AZIONE:quiz]"
+    # Notebook creation
+    if _NOTEBOOK_RE.search(msg_lower):
+        name_match = _NOTEBOOK_NAME_RE.search(user_message.strip())
+        nb_name = name_match.group(1).strip() if name_match else ''
+        return f"📓 Creo un nuovo taccuino{' «' + nb_name + '»' if nb_name else ''}!\n\n[AZIONE:createnotebook:{nb_name}]"
+    # Tab navigation
+    opentab_match = _OPENTAB_RE.search(msg_lower)
+    if opentab_match:
+        raw_tab = opentab_match.group(2).lower().strip()
+        tab_name = _TAB_NAME_MAP.get(raw_tab, raw_tab)
+        return f"📑 Apro la scheda {raw_tab}!\n\n[AZIONE:opentab:{tab_name}]"
+    # Loadexp
+    loadexp_match = _LOADEXP_RE.search(msg_lower)
+    if loadexp_match:
+        exp_id = loadexp_match.group(3).strip()
+        return f"📦 Carico l'esperimento {exp_id}!\n\n[AZIONE:loadexp:{exp_id}]"
+    # Highlight
+    if _HIGHLIGHT_RE.search(msg_lower):
+        target_match = _HIGHLIGHT_TARGET_RE.search(msg_lower)
+        if target_match:
+            target_name = target_match.group(1).lower().strip()
+            return f"🔍 Evidenzio {target_name}!\n\n[AZIONE:highlight:{target_name}]"
+
+    return None  # Not a simple command — proceed to LLM
+
+
 def deterministic_action_fallback(user_message: str, response: str) -> str:
     """Last-resort: inject action tags for unambiguous commands when LLM failed."""
     msg_lower = user_message.lower().strip()
@@ -1438,7 +1517,7 @@ def sanitize_message(message: str) -> str:
 
 # ─── FastAPI App ──────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address)
-app = FastAPI(title="UNLIM Nanobot", version="5.4.0")
+app = FastAPI(title="UNLIM Nanobot", version="5.5.0")
 
 
 # Session cleanup: every 10 minutes
@@ -2839,6 +2918,21 @@ async def tutor_chat(request: Request, req: TutorChatRequest, background_tasks: 
     history = get_session_history(session_id) if session_id else req.conversationHistory
 
     try:
+        # S116: Pre-LLM fast path for simple deterministic commands (play/pause/reset/etc.)
+        # Prevents LLM hallucination of [INTENT:place_and_wire] for simple action requests
+        fast_response = fast_action_dispatch(user_msg)
+        if fast_response:
+            print(f"[Tutor] Fast-action dispatch: bypassed LLM for '{user_msg[:50]}'")
+            if session_id:
+                save_to_session(session_id, "user", req.message)
+                save_to_session(session_id, "assistant", fast_response)
+            return ChatResponse(
+                success=True,
+                response=fast_response,
+                source="deterministic",
+                layer="L0-fast-action",
+            )
+
         # Multi-UNLIM v5: intent + complexity routing
         result = await route_to_specialist_v5(
             message=user_msg,
