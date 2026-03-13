@@ -108,6 +108,9 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     const [isLoading, setIsLoading] = useState(false);
     const [isSocraticMode, setIsSocraticMode] = useState(false);
 
+    // Active Experiment (for AI context) — MUST be declared before useCallbacks that depend on it
+    const [activeExperiment, setActiveExperiment] = useState(null);
+
     // Voice State (UNLIM speaks — realtime via nanobot)
     const [voiceEnabled, setVoiceEnabled] = useState(false);
     const [voiceRecording, setVoiceRecording] = useState(false);
@@ -333,9 +336,6 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     // GALILEO PERVASIVO: Live circuit state from NewElabSimulator (ref = no re-render)
     // Updated via onCircuitStateChange callback, read when user sends chat message
     const circuitStateRef = useRef(null);
-
-    // Active Experiment (for AI context) — MUST be declared before useCallbacks that depend on it
-    const [activeExperiment, setActiveExperiment] = useState(null);
 
     // ── GALILEO ONNIPOTENTE: Tracking refs ──
     const interactionHistoryRef = useRef([]); // last N user interactions with circuit
