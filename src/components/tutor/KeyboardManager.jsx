@@ -87,7 +87,7 @@ export function ShortcutsPanel({ visible, onClose }) {
             { keys: 'Ctrl + G', desc: 'Apri Giochi' },
             { keys: 'Ctrl + B', desc: 'Toggle Barra Laterale' },
         ]},
-        { category: 'Chat Galileo', items: [
+        { category: 'Chat UNLIM', items: [
             { keys: 'Ctrl + K', desc: 'Apri/Focus Chat' },
             { keys: 'Escape', desc: 'Chiudi Chat/Modal' },
         ]},

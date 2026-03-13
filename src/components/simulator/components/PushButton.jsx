@@ -14,8 +14,10 @@ const PushButton = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="push-button" role="img"
        aria-label={`Pulsante ${id}${isPressed ? ', premuto' : ''}`}
-      onClick={() => onInteract && onInteract(id, 'toggle')}
-      style={{ cursor: 'pointer' }}
+      onPointerDown={(e) => { e.stopPropagation(); onInteract && onInteract(id, 'press'); }}
+      onPointerUp={(e) => { e.stopPropagation(); onInteract && onInteract(id, 'release'); }}
+      onPointerLeave={(e) => { if (isPressed) { e.stopPropagation(); onInteract && onInteract(id, 'release'); } }}
+      style={{ cursor: 'pointer', touchAction: 'none' }}
     >
       {/* S115: Hit area — 44px minimum for WCAG touch target */}
       <rect x="-22" y="-22" width="44" height="44" fill="transparent" pointerEvents="all" />

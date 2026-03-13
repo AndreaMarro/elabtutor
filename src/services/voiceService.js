@@ -198,6 +198,7 @@ export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
         clearTimeout(timeoutId);
     }
 }
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 /**
  * Send text to nanobot /tts for speech synthesis only.

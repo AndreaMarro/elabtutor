@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 
-const QuizPanel = React.memo(function QuizPanel({ experiment, onClose, onSendToGalileo, onQuizComplete }) {
+const QuizPanel = React.memo(function QuizPanel({ experiment, onClose, onSendToUNLIM, onQuizComplete }) {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -173,13 +173,13 @@ const QuizPanel = React.memo(function QuizPanel({ experiment, onClose, onSendToG
           </div>
         )}
 
-        {/* Galileo help after wrong answer */}
-        {showExplanation && !isCorrect && onSendToGalileo && (
+        {/* UNLIM help after wrong answer */}
+        {showExplanation && !isCorrect && onSendToUNLIM && (
           <button
-            onClick={() => onSendToGalileo(`Nel quiz dell'esperimento "${experiment.title || experiment.id}", la domanda era: "${q.question}". Ho risposto "${q.options[selectedAnswer]}" ma la risposta corretta è "${q.options[q.correct]}". Spiegami perché.`)}
-            style={S.galileoBtn}
+            onClick={() => onSendToUNLIM(`Nel quiz dell'esperimento "${experiment.title || experiment.id}", la domanda era: "${q.question}". Ho risposto "${q.options[selectedAnswer]}" ma la risposta corretta è "${q.options[q.correct]}". Spiegami perché.`)}
+            style={S.unlimBtn}
           >
-            Galileo, spiegami perché
+            UNLIM, spiegami perché
           </button>
         )}
 
@@ -445,7 +445,7 @@ const S = {
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
   },
 
-  galileoBtn: {
+  unlimBtn: {
     marginTop: 8,
     width: '100%',
     padding: '8px 14px',

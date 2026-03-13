@@ -1,7 +1,7 @@
 /**
  * ELAB Simulator — ControlBar (Modern Toolbar)
  * VS Code / Figma-inspired toolbar with grouped actions, tooltips, and responsive labels
- * Barra controlli: Play, Pausa, Reset, Wire Mode, Panels, Undo/Redo, Galileo
+ * Barra controlli: Play, Pausa, Reset, Wire Mode, Panels, Undo/Redo, UNLIM
  * (c) Andrea Marro -- 13 Febbraio 2026 -- Tutti i diritti riservati.
  */
 
@@ -251,9 +251,9 @@ const ControlBar = ({
   onToggleCodeEditor,
   wireMode = false,
   onToggleWireMode,
-  // Galileo AI
-  onAskGalileo,
-  isAskingGalileo = false,
+  // UNLIM AI
+  onAskUNLIM,
+  isAskingUNLIM = false,
   onDiagnoseCircuit,
   onGetHints,
   // YouTube
@@ -501,7 +501,7 @@ const ControlBar = ({
           onToggleWhiteboard && { label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard },
           /* ── Aiuto ── */
           { type: 'separator', label: 'Aiuto' },
-          experiment && onAskGalileo && { label: isAskingGalileo ? 'Galileo sta pensando...' : 'Chiedi a Galileo', action: onAskGalileo, disabled: isAskingGalileo },
+          experiment && onAskUNLIM && { label: isAskingUNLIM ? 'UNLIM sta pensando...' : 'Chiedi a UNLIM', action: onAskUNLIM, disabled: isAskingUNLIM },
           onDiagnoseCircuit && { label: 'Diagnosi Circuito', action: onDiagnoseCircuit },
           onGetHints && { label: 'Suggerimenti', action: onGetHints },
           experimentName && {
@@ -579,23 +579,23 @@ const ControlBar = ({
         </>
       )}
 
-      {/* ── Group 6: Galileo AI (single button — Diagnosi/Suggerimenti/YouTube in overflow) ── */}
-      {experiment && onAskGalileo && (
+      {/* ── Group 6: UNLIM AI (single button — Diagnosi/Suggerimenti/YouTube in overflow) ── */}
+      {experiment && onAskUNLIM && (
         <>
           <ToolbarSeparator />
           <div className="toolbar-group">
             <button
-              className={`toolbar-btn toolbar-btn--galileo ${isAskingGalileo ? 'toolbar-btn--loading' : ''}`}
-              onClick={onAskGalileo}
-              disabled={isAskingGalileo}
-              title="Chiedi a Galileo di spiegare questo esperimento"
-              aria-label="Chiedi a Galileo"
+              className={`toolbar-btn toolbar-btn--unlim ${isAskingUNLIM ? 'toolbar-btn--loading' : ''}`}
+              onClick={onAskUNLIM}
+              disabled={isAskingUNLIM}
+              title="Chiedi a UNLIM di spiegare questo esperimento"
+              aria-label="Chiedi a UNLIM"
             >
               <span className="toolbar-btn__icon" aria-hidden="true">
-                {isAskingGalileo ? <SpinnerIcon /> : <GalileoIcon />}
+                {isAskingUNLIM ? <SpinnerIcon /> : <UNLIMIcon />}
               </span>
-              <span className="toolbar-btn__label toolbar-btn__label--galileo">
-                {isAskingGalileo ? 'Galileo...' : 'Galileo'}
+              <span className="toolbar-btn__label toolbar-btn__label--unlim">
+                {isAskingUNLIM ? 'UNLIM...' : 'UNLIM'}
               </span>
             </button>
           </div>
@@ -777,7 +777,7 @@ const RestoreIcon = () => (
   </svg>
 );
 
-const GalileoIcon = () => (
+const UNLIMIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 3L1 9l11 6 9-4.91V17" />
     <path d="M5 13.18v4L12 21l7-3.82v-4" />

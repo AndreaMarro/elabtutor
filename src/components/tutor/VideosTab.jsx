@@ -23,8 +23,8 @@ export default function VideosTab({
     onJoinMeet,
     onCopyMeetLink,
     onStopMeet,
-    // Galileo
-    onSendToGalileo,
+    // UNLIM
+    onSendToUNLIM,
 }) {
     return (
         <div className="v4-videos-container">
@@ -61,10 +61,10 @@ export default function VideosTab({
                                     allowFullScreen
                                     style={{ flex: 1 }}
                                 />
-                                {onSendToGalileo && (
+                                {onSendToUNLIM && (
                                     <div style={{ padding: '8px 12px', background: 'var(--color-bg-hover)', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'center' }}>
                                         <button
-                                            onClick={() => onSendToGalileo(`Sto guardando un video YouTube (ID: ${currentVideoId}). Puoi aiutarmi a capire l'argomento trattato?`)}
+                                            onClick={() => onSendToUNLIM(`Sto guardando un video YouTube (ID: ${currentVideoId}). Puoi aiutarmi a capire l'argomento trattato?`)}
                                             style={{
                                                 background: 'none', border: '1px solid var(--color-primary)', borderRadius: 8,
                                                 color: 'var(--color-primary)', padding: '6px 16px', fontSize: '0.875rem',
@@ -72,7 +72,7 @@ export default function VideosTab({
                                                 minHeight: 44,
                                             }}
                                         >
-                                            Chiedi a Galileo
+                                            Chiedi a UNLIM
                                         </button>
                                     </div>
                                 )}

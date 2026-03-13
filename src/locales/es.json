@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "ELAB Tutor",
-    "version": "galileo.1.0",
+    "version": "unlim.1.0",
     "status": "En línea"
   },
   "tabs": {
@@ -12,8 +12,8 @@
     "videos": "Videolecciones"
   },
   "chat": {
-    "placeholder": "Pregunta a Galileo...",
-    "welcome": "**¡Hola! Soy Galileo, tu tutor ELAB! **\n\nEstoy aquí para ayudarte a descubrir el mundo de la electrónica.\n¡Pregúntame cualquier cosa sobre circuitos, LEDs, resistencias, Arduino y mucho más!",
+    "placeholder": "Pregunta a UNLIM...",
+    "welcome": "**¡Hola! Soy UNLIM, tu tutor ELAB! **\n\nEstoy aquí para ayudarte a descubrir el mundo de la electrónica.\n¡Pregúntame cualquier cosa sobre circuitos, LEDs, resistencias, Arduino y mucho más!",
     "analyzing": "Analizando la imagen...",
     "error": "Error"
   },
@@ -52,7 +52,7 @@
       "uploadImage": "Subir imagen",
       "addToSlides": "Añadir a Diapositivas",
       "clear": "Borrar todo",
-      "sendToAI": "Enviar a Galileo"
+      "sendToAI": "Enviar a UNLIM"
     },
     "textHint": "Haz clic donde quieras insertar texto",
     "present": "Presentar"

@@ -141,7 +141,7 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     circuitImage: { width: '100%', maxHeight: 340, objectFit: 'contain', marginVertical: 10, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 4 },
     codeBlock: { backgroundColor: '#F5F5F5', padding: 10, borderRadius: 4, marginVertical: 8 },
     codeText: { fontFamily: 'FiraCode', fontSize: 8, color: '#333333', lineHeight: 1.5 },
-    chatGalileo: { backgroundColor: '#E8EDF4', padding: 8, borderRadius: 6, marginBottom: 6, marginRight: 40 },
+    chatUNLIM: { backgroundColor: '#E8EDF4', padding: 8, borderRadius: 6, marginBottom: 6, marginRight: 40 },
     chatStudent: { backgroundColor: '#F5F5F5', padding: 8, borderRadius: 6, marginBottom: 6, marginLeft: 40 },
     chatRole: { fontFamily: 'Oswald', fontSize: 8, fontWeight: 700, color: '#1E4D8C', marginBottom: 2 },
     chatRoleStudent: { fontFamily: 'Oswald', fontSize: 8, fontWeight: 700, color: '#666666', marginBottom: 2, textAlign: 'right' },
@@ -373,19 +373,19 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     const keyMsgs = selectKeyMessages(sessionData.chatMessages);
     pages.push(
       <PageWrap key="chat">
-        <R.Text style={st.sectionTitle}>La Tua Conversazione con Galileo</R.Text>
+        <R.Text style={st.sectionTitle}>La Tua Conversazione con UNLIM</R.Text>
         <R.Text style={st.narrative}>
           {sessionData.messageCount < 3
             ? 'Hai preferito esplorare da solo — segno di sicurezza!'
-            : `Durante la sessione hai scambiato ${sessionData.messageCount} messaggi con Galileo. Ecco i momenti chiave:`}
+            : `Durante la sessione hai scambiato ${sessionData.messageCount} messaggi con UNLIM. Ecco i momenti chiave:`}
         </R.Text>
         {keyMsgs.map((msg, i) => {
           const isG = msg.role === 'assistant';
           const text = stripHtml(msg.content).slice(0, 200);
           if (!text) return null;
           return (
-            <R.View key={i} style={isG ? st.chatGalileo : st.chatStudent}>
-              <R.Text style={isG ? st.chatRole : st.chatRoleStudent}>{isG ? 'Galileo' : 'Tu'}</R.Text>
+            <R.View key={i} style={isG ? st.chatUNLIM : st.chatStudent}>
+              <R.Text style={isG ? st.chatRole : st.chatRoleStudent}>{isG ? 'UNLIM' : 'Tu'}</R.Text>
               <R.Text style={st.chatText}>{text}{stripHtml(msg.content).length > 200 ? '...' : ''}</R.Text>
             </R.View>
           );

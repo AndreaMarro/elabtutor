@@ -208,9 +208,9 @@
 
   /* --- S77: Animation/highlight --- */
   --color-highlight-pulse: #E3F2FD;
-  --color-galileo-gradient-start: #7CB342;
-  --color-galileo-gradient-end: #558B2F;
-  --color-galileo-dark: #122F57;
+  --color-unlim-gradient-start: #7CB342;
+  --color-unlim-gradient-end: #558B2F;
+  --color-unlim-dark: #122F57;
 
   /* --- S161.1: Chat/tutor semantic tokens --- */
   --color-chat-thinking: #9B9BA8;
@@ -243,8 +243,8 @@
   --color-overlay-black: #000000;
   --color-code-text-light: #E5E7EB;
   --color-wire-active-hover: #D4ECD6;
-  --color-galileo-gradient-pressed-start: #457324;
-  --color-galileo-gradient-pressed-end: #365C1C;
+  --color-unlim-gradient-pressed-start: #457324;
+  --color-unlim-gradient-pressed-end: #365C1C;
   --color-hints-hover: #689F38;
   --color-pin-detail: #AAAABB;
   --color-error-red: #ef4444;

@@ -43,7 +43,7 @@ const FEATURES = [
     { icon: '\u26A1', title: 'Simulazione Tempo-Reale', desc: 'Vedi correnti, tensioni e LED accendersi davvero', accent: '#E8941C' },
     { icon: '\uD83D\uDE80', title: 'Compilatore Arduino', desc: 'Scrivi codice C++ e flashalo sul simulatore ATmega328p', accent: '#1E4D8C' },
     { icon: '\uD83D\uDC63', title: '"Passo Passo" Guidato', desc: 'Assemblaggio step-by-step identico alle illustrazioni del libro', accent: '#7CB342' },
-    { icon: '\uD83E\uDD16', title: 'Galileo AI Tutor', desc: 'Assistente AI che spiega i concetti in modo semplice e chiaro', accent: '#E54B3D' },
+    { icon: '\uD83E\uDD16', title: 'UNLIM AI Tutor', desc: 'Assistente AI che spiega i concetti in modo semplice e chiaro', accent: '#E54B3D' },
     { icon: '\uD83C\uDFC6', title: '53 Sfide Interattive', desc: 'Trova il guasto, prevedi il risultato, decodifica circuiti', accent: '#E8941C' },
 ];
 
@@ -51,7 +51,7 @@ const SHOWCASE = [
     { src: '/assets/showcase/01-simulatore-rgb.png', title: 'Simulatore Circuiti', desc: 'Breadboard interattiva con componenti reali', tag: 'Simulatore' },
     { src: '/assets/showcase/02-simulatore-running.png', title: 'Simulazione Attiva', desc: 'LED accesi, correnti visibili in tempo reale', tag: 'Live' },
     { src: '/assets/showcase/04-gioco-trova-guasto.png', title: 'Circuit Detective', desc: 'Trova il guasto nascosto nel circuito', tag: 'Gioco' },
-    { src: '/assets/showcase/05-galileo-chat.png', title: 'Galileo AI', desc: 'L\'assistente che spiega ogni concetto', tag: 'AI' },
+    { src: '/assets/showcase/05-unlim-chat.png', title: 'UNLIM AI', desc: 'L\'assistente che spiega ogni concetto', tag: 'AI' },
 ];
 
 const COMPONENTS_LIST = [

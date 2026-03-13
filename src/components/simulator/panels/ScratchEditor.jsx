@@ -311,6 +311,7 @@ const ScratchEditor = ({ onChange, initialCode }) => {
     const workspaceRef = useRef(null);
     const onChangeRef = useRef(onChange);
     const isMountedRef = useRef(false);
+    const isReloadingRef = useRef(false); // S112: Guard against onChange during programmatic workspace reloads
     useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
 
     // Inject ELAB CSS overrides once
@@ -363,6 +364,8 @@ const ScratchEditor = ({ onChange, initialCode }) => {
 
         const workspace = workspaceRef.current;
 
+        // S112: Guard — suppress onChange during initial XML load
+        isReloadingRef.current = true;
         // Load initial code if exists as XML
         if (initialCode && initialCode.startsWith('<xml')) {
             try {
@@ -379,10 +382,22 @@ const ScratchEditor = ({ onChange, initialCode }) => {
             </xml>`;
             Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), workspace);
         }
+        isReloadingRef.current = false;
+        // S112: Emit initial onChange with correctly loaded workspace
+        try {
+            const xmlDom = Blockly.Xml.workspaceToDom(workspace);
+            const xmlText = Blockly.Xml.domToText(xmlDom);
+            const code = generateArduinoCode(workspace);
+            // Use setTimeout to ensure change listener is registered first
+            setTimeout(() => onChangeRef.current?.(xmlText, code), 0);
+        } catch (_) { /* ignore */ }
 
         // S83: Wrapped in try-catch to prevent Blockly crash on block move/disconnect
         const onChangeHandler = (event) => {
             if (event?.type === Blockly.Events?.UI || event?.isUiEvent) return;
+            // S112: Skip onChange during programmatic workspace reloads (experiment switch)
+            // to prevent saving intermediate/cleared workspace XML to localStorage
+            if (isReloadingRef.current) return;
             try {
                 const xmlDom = Blockly.Xml.workspaceToDom(workspace);
                 const xmlText = Blockly.Xml.domToText(xmlDom);
@@ -421,7 +436,7 @@ const ScratchEditor = ({ onChange, initialCode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Reload workspace when initialCode changes AFTER mount (e.g., Passo Passo step change)
+    // Reload workspace when initialCode changes AFTER mount (e.g., Passo Passo step change, experiment switch)
     useEffect(() => {
         if (!isMountedRef.current) {
             isMountedRef.current = true;
@@ -429,6 +444,9 @@ const ScratchEditor = ({ onChange, initialCode }) => {
         }
         if (!workspaceRef.current || !initialCode) return;
         const workspace = workspaceRef.current;
+        // S112: Guard — suppress onChange during programmatic clear+load to prevent
+        // saving intermediate (empty/wrong) workspace XML to localStorage
+        isReloadingRef.current = true;
         workspace.clear();
         if (initialCode.startsWith('<xml')) {
             try {
@@ -444,6 +462,14 @@ const ScratchEditor = ({ onChange, initialCode }) => {
             </xml>`;
             Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), workspace);
         }
+        isReloadingRef.current = false;
+        // S112: Emit one final onChange with the correct loaded workspace
+        try {
+            const xmlDom = Blockly.Xml.workspaceToDom(workspace);
+            const xmlText = Blockly.Xml.domToText(xmlDom);
+            const code = generateArduinoCode(workspace);
+            onChangeRef.current?.(xmlText, code);
+        } catch (_) { /* ignore */ }
     }, [initialCode]);
 
     return (

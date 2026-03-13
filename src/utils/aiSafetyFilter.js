@@ -1,6 +1,6 @@
 // ============================================
 // ELAB Tutor - AI Safety Filter
-// Filtro contenuti per output AI Galileo
+// Filtro contenuti per output AI UNLIM
 // Protezione base per piattaforma educativa minori
 // © Andrea Marro — 16/02/2026
 // ============================================
@@ -44,7 +44,7 @@ const BLOCKED_PATTERNS = {
 
 // Messaggio di fallback quando il contenuto viene filtrato
 const FILTERED_MESSAGES = {
-    explicit: 'Galileo non può rispondere a questa domanda. Sono qui per aiutarti con l\'elettronica e la programmazione Arduino!',
+    explicit: 'UNLIM non può rispondere a questa domanda. Sono qui per aiutarti con l\'elettronica e la programmazione Arduino!',
     dangerous: 'Per motivi di sicurezza, non posso fornire istruzioni su questo argomento. Se hai dubbi su un circuito, chiedi aiuto a un adulto esperto.',
     suspiciousLinks: 'Ho rimosso un link esterno dalla risposta. Per la tua sicurezza, uso solo risorse verificate.',
     promptInjection: 'Non posso eseguire questa richiesta. Chiedimi qualcosa sull\'elettronica!',

@@ -24,9 +24,9 @@ export default function CanvasTab({
     onSetShowChat,
     onSetMessages,
     onSetIsLoading,
-    // Galileo text chat
-    onSendToGalileo,
-    onSendImageToGalileo,
+    // UNLIM text chat
+    onSendToUNLIM,
+    onSendImageToUNLIM,
 }) {
     const fileInputRef = useRef(null);
     // Last position ref for per-segment pressure-sensitive drawing
@@ -319,17 +319,17 @@ export default function CanvasTab({
         reader.readAsDataURL(file);
     };
 
-    const askGalileoAboutCanvas = useCallback(() => {
+    const askUNLIMAboutCanvas = useCallback(() => {
         const screenshot = captureWhiteboardScreenshot({ tutorCanvas: canvasRef.current });
-        if (screenshot.dataUrl && onSendImageToGalileo) {
-            onSendImageToGalileo(
+        if (screenshot.dataUrl && onSendImageToUNLIM) {
+            onSendImageToUNLIM(
                 screenshot.dataUrl,
                 'Ho fatto un disegno sulla lavagna. Puoi analizzarlo e darmi un feedback?'
             );
             return;
         }
-        onSendToGalileo?.('Ho fatto un disegno sulla lavagna. Puoi analizzarlo e darmi un feedback?');
-    }, [canvasRef, onSendImageToGalileo, onSendToGalileo]);
+        onSendToUNLIM?.('Ho fatto un disegno sulla lavagna. Puoi analizzarlo e darmi un feedback?');
+    }, [canvasRef, onSendImageToUNLIM, onSendToUNLIM]);
 
     return (
         <div className="v4-canvas-wrapper">
@@ -385,15 +385,15 @@ export default function CanvasTab({
                 <button onClick={clearCanvas} className="tool-btn" title="Cancella tutto">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                 </button>
-                {onSendToGalileo && (
+                {onSendToUNLIM && (
                     <button
                         className="v4-toolbar-btn primary"
-                        onClick={askGalileoAboutCanvas}
-                        title="Chiedi a Galileo di analizzare il disegno"
+                        onClick={askUNLIMAboutCanvas}
+                        title="Chiedi a UNLIM di analizzare il disegno"
                         style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
                     >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/><path d="M8 8l2 2 4-4" strokeWidth="1.5"/></svg>
-                        Chiedi a Galileo
+                        Chiedi a UNLIM
                     </button>
                 )}
                 <input type="file" ref={fileInputRef} hidden onChange={handleImageUpload} accept="image/*" />

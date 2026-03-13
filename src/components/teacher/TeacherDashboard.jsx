@@ -318,9 +318,9 @@ const DEMO_USERS = [
     { id: 'demo-1', nome: 'Marco Rossi', email: 'marco@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Leonardo da Vinci' },
     { id: 'demo-2', nome: 'Sofia Bianchi', email: 'sofia@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Leonardo da Vinci' },
     { id: 'demo-3', nome: 'Luca Ferrari', email: 'luca@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Leonardo da Vinci' },
-    { id: 'demo-4', nome: 'Giulia Esposito', email: 'giulia@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Galileo Galilei' },
-    { id: 'demo-5', nome: 'Alessandro Russo', email: 'ale@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Galileo Galilei' },
-    { id: 'demo-6', nome: 'Emma Colombo', email: 'emma@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC Galileo Galilei' },
+    { id: 'demo-4', nome: 'Giulia Esposito', email: 'giulia@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC UNLIM Galilei' },
+    { id: 'demo-5', nome: 'Alessandro Russo', email: 'ale@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC UNLIM Galilei' },
+    { id: 'demo-6', nome: 'Emma Colombo', email: 'emma@demo.elab', ruolo: 'user', stato: 'attivo', scuola: 'IC UNLIM Galilei' },
 ];
 
 const now = Date.now();

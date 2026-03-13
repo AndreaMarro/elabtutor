@@ -1,7 +1,7 @@
 /**
  * Session Metrics — Sprint 1 Context Mastery
- * Tracks session-level metrics for Galileo's contextual awareness.
- * Galileo can see "how long the teacher has been working" and detect frustration patterns.
+ * Tracks session-level metrics for UNLIM's contextual awareness.
+ * UNLIM can see "how long the teacher has been working" and detect frustration patterns.
  *
  * Usage:
  *   import { sessionMetrics } from './sessionMetrics';
@@ -50,7 +50,7 @@ export function trackInteraction() {
 }
 
 /**
- * Format session metrics as compact context for Galileo.
+ * Format session metrics as compact context for UNLIM.
  * @returns {string} Empty string if no experiment loaded.
  */
 export function formatForContext() {

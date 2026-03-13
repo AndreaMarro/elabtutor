@@ -29,7 +29,7 @@ const STAR_MESSAGES = {
   1: 'Caso risolto! Usa meno indizi la prossima volta.',
 };
 
-export default function CircuitDetective({ onSendToGalileo, onOpenSimulator, logSession }) {
+export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSession }) {
   const { saveScore, getScore, getAllScores } = useGameScore('detective');
   const [selectedCircuit, setSelectedCircuit] = useState(null);
   const [currentHintIndex, setCurrentHintIndex] = useState(-1);
@@ -98,10 +98,10 @@ export default function CircuitDetective({ onSendToGalileo, onOpenSimulator, log
     });
   };
 
-  const askGalileo = () => {
+  const askUNLIM = () => {
     if (selectedCircuit) {
       const msg = `Sono nel Circuit Detective e sto cercando di risolvere "${selectedCircuit.title}". ${selectedCircuit.description} Puoi aiutarmi con una domanda socratica senza darmi la risposta?`;
-      onSendToGalileo?.(msg);
+      onSendToUNLIM?.(msg);
     }
   };
 
@@ -245,8 +245,8 @@ export default function CircuitDetective({ onSendToGalileo, onOpenSimulator, log
               Suggerimento ({currentHintIndex + 1}/{selectedCircuit.hints.length})
             </button>
           )}
-          <button onClick={askGalileo} className="elab-tool__btn elab-tool__btn--navy">
-            Chiedi a Galileo
+          <button onClick={askUNLIM} className="elab-tool__btn elab-tool__btn--navy">
+            Chiedi a UNLIM
           </button>
         </div>
 

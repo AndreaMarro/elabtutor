@@ -11,10 +11,10 @@ import './ElabTutorV4.css';
 import { sendChat, analyzeImage, checkRateLimit, diagnoseCircuit, getExperimentHints } from '../../services/api';
 import { getTotalExperiments, EXPERIMENTS_VOL1, EXPERIMENTS_VOL2, EXPERIMENTS_VOL3 } from '../../data/experiments-index';
 import { validateMessage, sanitizeOutput } from '../../utils/contentFilter';
-import { galileoMemory } from '../../services/galileoMemory'; // Galileo Onnipotente: persistent memory
+import unlimMemory from '../../services/unlimMemory'; // UNLIM Onnipotente: persistent memory
 import { formatForContext as formatActivityContext, pushActivity } from '../../services/activityBuffer'; // Sprint 1 Context Mastery
 import { sessionMetrics } from '../../services/sessionMetrics'; // Sprint 1 Context Mastery: session metrics
-import { findVideo, getYouTubeSearchUrl } from '../../data/galileo-videos'; // Galileo Onnipotente: curated YouTube DB
+import { findVideo, getYouTubeSearchUrl } from '../../data/unlim-videos'; // UNLIM Onnipotente: curated YouTube DB
 import { TabHint } from './ContextualHints';
 import NewElabSimulator from '../simulator/NewElabSimulator';
 const CircuitDetective = lazy(() => import('./CircuitDetective'));
@@ -121,7 +121,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     useEffect(() => {
         if (!isLoading) return;
         const timeout = setTimeout(() => {
-            console.warn('[Galileo] isLoading stuck for 30s — auto-resetting');
+            console.warn('[UNLIM] isLoading stuck for 30s — auto-resetting');
             setIsLoading(false);
         }, 30000);
         return () => clearTimeout(timeout);
@@ -187,6 +187,15 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                     isVoice: true,
                 }]);
 
+                // Collect simulator context for voice (same as text chat path)
+                let simulatorCtx = null;
+                try {
+                    const api = typeof window !== 'undefined' && window.__ELAB_API;
+                    if (api?.getSimulatorContext) {
+                        simulatorCtx = api.getSimulatorContext();
+                    }
+                } catch { /* silent */ }
+
                 // Send to nanobot voice-chat (STT → AI → TTS in one call)
                 const result = await sendVoiceChat(audioBlob, {
                     sessionId: localStorage.getItem('elab_tutor_session') || '',
@@ -194,6 +203,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                     circuitState: circuitStateRef.current?.structured
                         ? { structured: circuitStateRef.current.structured, text: circuitStateRef.current.text }
                         : (circuitStateRef.current ? { raw: circuitStateRef.current } : null),
+                    simulatorContext: simulatorCtx,
                 });
 
                 if (result.success) {
@@ -333,11 +343,11 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     // AbortController for analyzeImage — cancels previous in-flight request (race condition fix)
     const analyzeAbortRef = useRef(null);
 
-    // GALILEO PERVASIVO: Live circuit state from NewElabSimulator (ref = no re-render)
+    // UNLIM PERVASIVO: Live circuit state from NewElabSimulator (ref = no re-render)
     // Updated via onCircuitStateChange callback, read when user sends chat message
     const circuitStateRef = useRef(null);
 
-    // ── GALILEO ONNIPOTENTE: Tracking refs ──
+    // ── UNLIM ONNIPOTENTE: Tracking refs ──
     const interactionHistoryRef = useRef([]); // last N user interactions with circuit
     const errorHistoryRef = useRef([]);       // recent circuit errors (polarita, short, etc.)
     const sessionStartRef = useRef(Date.now());
@@ -358,23 +368,23 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         }
     }, [activeTab]);
 
-    // ── GALILEO ONNIPOTENTE: Experiment change handler with memory tracking ──
+    // ── UNLIM ONNIPOTENTE: Experiment change handler with memory tracking ──
     const handleExperimentChange = useCallback((experiment) => {
         setActiveExperiment(experiment);
         // Track in persistent memory
         if (experiment?.id) {
-            try { galileoMemory.trackExperimentCompletion(experiment.id, 'loaded'); } catch { /* silent */ }
+            try { unlimMemory.trackExperimentCompletion(experiment.id, 'loaded'); } catch { /* silent */ }
         }
     }, []);
 
-    // GALILEO PERVASIVO: Proactive event handler — Galileo intervenes on circuit events
+    // UNLIM PERVASIVO: Proactive event handler — UNLIM intervenes on circuit events
     // Called by NewElabSimulator when critical events happen (LED burned, high current, etc.)
     // S58 FIX: Anti-spam — deduplicate messages, longer cooldowns, suppress repeated success msgs
     const lastProactiveRef = useRef({ message: '', timestamp: 0 }); // dedup tracker
     const handleCircuitEvent = useCallback((event) => {
         if (!event?.message) return;
 
-        // ── GALILEO ONNIPOTENTE: Track interaction history ──
+        // ── UNLIM ONNIPOTENTE: Track interaction history ──
         interactionHistoryRef.current.push({
             type: event.type || 'event',
             summary: `${event.type || 'event'}:${event.componentId || ''}`,
@@ -390,7 +400,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                 errorHistoryRef.current = errorHistoryRef.current.slice(-10);
             }
             // Track mistake in persistent memory
-            try { galileoMemory.trackMistake(event.type, `${event.componentId || 'unknown'}: ${(event.message || '').slice(0, 80)}`); } catch { /* silent */ }
+            try { unlimMemory.trackMistake(event.type, `${event.componentId || 'unknown'}: ${(event.message || '').slice(0, 80)}`); } catch { /* silent */ }
         }
 
         // ── S58 FIX: Anti-spam deduplication ──
@@ -404,7 +414,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         }
         lastProactiveRef.current = { message: msgKey, timestamp: now };
 
-        // ── GALILEO ONNIPOTENTE (Fase 6): Proactive auto-diagnosis on critical errors ──
+        // ── UNLIM ONNIPOTENTE (Fase 6): Proactive auto-diagnosis on critical errors ──
         // After showing the built-in event message, auto-send to AI for deeper analysis
         // S58 FIX: Increased cooldown 10s → 60s to prevent diagnosis spam
         if ((event.type === 'burnout' || event.type === 'short-circuit' || event.type === 'high-current') &&
@@ -416,7 +426,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             }, 2000); // 2s delay so user sees the event first
         }
 
-        // Add Galileo's proactive message to chat
+        // Add UNLIM's proactive message to chat
         setMessages(prev => [...prev, {
             id: Date.now(),
             role: 'assistant',
@@ -430,7 +440,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         }
     }, []);
 
-    // ── GALILEO ONNIPOTENTE: YouTube search handler (curated DB + fallback) ──
+    // ── UNLIM ONNIPOTENTE: YouTube search handler (curated DB + fallback) ──
     const handleYouTubeSearch = useCallback((query) => {
         // Try curated video DB first
         const curated = findVideo(query);
@@ -481,7 +491,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                     proactive: true,
                 }]);
             } else {
-                // Fallback: ask Galileo via chat
+                // Fallback: ask UNLIM via chat
                 const fallbackMsg = 'Analizza il mio circuito e dimmi se ci sono errori di cablaggio, polarità o componenti mancanti. Dai una diagnosi con voto da 1 a 5 stelle.';
                 setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: fallbackMsg }]);
                 const chatResult = await sendChat(fallbackMsg, [], { experimentContext: state, experimentId: activeExperiment?.id || null });
@@ -518,7 +528,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                     proactive: true,
                 }]);
             } else {
-                // Fallback: ask Galileo via chat
+                // Fallback: ask UNLIM via chat
                 const fallbackMsg = `Dammi 3 suggerimenti progressivi per l'esperimento "${activeExperiment.title || activeExperiment.id}": uno leggero (domanda guida), uno medio (indizio concreto), uno diretto (soluzione passo passo).`;
                 setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: fallbackMsg }]);
                 const chatResult = await sendChat(fallbackMsg, [], { socraticMode: true, experimentId: activeExperiment?.id || null });
@@ -648,7 +658,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         return () => document.removeEventListener('fullscreenchange', handler);
     }, []);
 
-    // ── GALILEO ONNIPOTENTE: Persistent memory — save session summary on unload ──
+    // ── UNLIM ONNIPOTENTE: Persistent memory — save session summary on unload ──
     useEffect(() => {
         const handleBeforeUnload = () => {
             try {
@@ -658,10 +668,10 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                 const duration = Math.round((Date.now() - sessionStartRef.current) / 60000);
                 const expName = activeExperiment?.title || activeExperiment?.id || 'nessuno';
                 const summary = `${chatCount} msg, ${duration}min, esp: ${expName}, ultimo: ${(lastMsg?.content || '').slice(0, 60)}`;
-                galileoMemory.saveSessionSummary(summary);
+                unlimMemory.saveSessionSummary(summary);
                 // Track experiment if one was active
                 if (activeExperiment?.id) {
-                    galileoMemory.trackExperimentCompletion(activeExperiment.id, 'session-end');
+                    unlimMemory.trackExperimentCompletion(activeExperiment.id, 'session-end');
                 }
             } catch { /* silent — never block page unload */ }
         };
@@ -669,13 +679,13 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [messages, activeExperiment]);
 
-    // ── GALILEO ONNIPOTENTE (Fase 5): Backend memory sync — init on mount ──
+    // ── UNLIM ONNIPOTENTE (Fase 5): Backend memory sync — init on mount ──
     useEffect(() => {
-        try { galileoMemory.initSync(); } catch { /* silent — backend sync is optional */ }
+        try { unlimMemory.initSync(); } catch { /* silent — backend sync is optional */ }
     }, []);
 
-    // ── GALILEO ONNIPOTENTE (Fase 6): Inactivity nudge ──
-    // If >120s without chat interaction and an experiment is loaded, Galileo offers help
+    // ── UNLIM ONNIPOTENTE (Fase 6): Inactivity nudge ──
+    // If >120s without chat interaction and an experiment is loaded, UNLIM offers help
     useEffect(() => {
         if (!activeExperiment) return;
         // Reset timer on every new message
@@ -1003,8 +1013,8 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         setIsLoading(false);
     };
 
-    // ===================== SEND IMAGE TO GALILEO (Whiteboard / generic) =====================
-    const handleSendImageToGalileo = useCallback(async (imageDataUrl, message) => {
+    // ===================== SEND IMAGE TO UNLIM (Whiteboard / generic) =====================
+    const handleSendImageToUNLIM = useCallback(async (imageDataUrl, message) => {
         setShowChat(true);
         const userMsg = {
             id: Date.now(),
@@ -1209,7 +1219,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
 
     const detectIntent = (text) => {
         // Rimosse tutte le "frasi fatte" (Regex)
-        // L'utente ha richiesto che Galileo sia completamente autonomo (autoscienza), 
+        // L'utente ha richiesto che UNLIM sia completamente autonomo (autoscienza), 
         // interfacciato a tutti i comandi tramite intelligenza artificiale pura.
         // Restituendo sempre null forziamo TUTTO ad andare al backend/nanobot.
         return null;
@@ -1294,7 +1304,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             }
         } catch { /* silent */ }
 
-        // ── GALILEO ONNIPOTENTE: Enriched context data ──
+        // ── UNLIM ONNIPOTENTE: Enriched context data ──
         // Interaction history (last 5 actions)
         if (interactionHistoryRef.current.length > 0) {
             const recent = interactionHistoryRef.current.slice(-5);
@@ -1347,16 +1357,16 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         const metricsBlock = sessionMetrics.formatForContext();
         if (metricsBlock) parts.push(metricsBlock);
 
-        // Student memory context (from galileoMemory service)
+        // Student memory context (from "./unlimMemory" service)
         let memoryContext = '';
         try {
-            if (typeof window !== 'undefined' && window.__galileoMemory) {
-                memoryContext = window.__galileoMemory.buildMemoryContext();
+            if (typeof window !== 'undefined' && window.__unlimMemory) {
+                memoryContext = window.__unlimMemory.buildMemoryContext();
             }
         } catch { /* silent */ }
 
         // S58: Streamlined context — clear, structured, no redundancy with nanobot.yml system prompt
-        return `[CONTESTO DI SISTEMA — GALILEO v3.0]
+        return `[CONTESTO DI SISTEMA — UNLIM v3.0]
 
 STATO ATTUALE INTERFACCIA:
 ${parts.join('\n')}
@@ -1372,7 +1382,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         currentVideoId, meetActive,
         activeNotebookId, notebooks, activePageIndex, isSocraticMode, messages.length]);
 
-    // ===================== AUTO-SCREENSHOT (Galileo Onnipotente — FASE 4) =====================
+    // ===================== AUTO-SCREENSHOT (UNLIM Onnipotente — FASE 4) =====================
     // Detects when the student's message needs visual context from the simulator
     // and auto-captures a screenshot to send to the Vision specialist
     const VISUAL_KEYWORDS = /(?:cosa vedi|guarda|screen|mostrami|fammi vedere|controlla il circuito|analizza|verifica|è giusto|è corretto|check|foto|screenshot|schermata|sembra|vedi qualcosa|dov'è l'errore|dove sbaglio|non funziona|non si accende|si è bruciato|bruciato|cortocircuito|short|errore nel circuito|lavagna|disegno|ho disegnato|ho scritto sulla|scritto qui|questa pagina|questo esperimento|questa immagine|questo schema)/i;
@@ -1457,7 +1467,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 }
             }
         } catch (err) {
-            if (typeof console !== 'undefined') console.warn('[Galileo] Active tab screenshot fallback failed:', err?.message || err);
+            if (typeof console !== 'undefined') console.warn('[UNLIM] Active tab screenshot fallback failed:', err?.message || err);
         }
 
         return { dataUrl: null, source: null };
@@ -1507,7 +1517,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             localResponse = detectIntent(userMessage);
         } catch (err) {
             // Log silently — never break chat flow due to detectIntent bugs
-            if (typeof console !== 'undefined') console.warn('[Galileo] detectIntent error:', err.message);
+            if (typeof console !== 'undefined') console.warn('[UNLIM] detectIntent error:', err.message);
         }
         if (localResponse) {
             setMessages(prev => [...prev, {
@@ -1520,7 +1530,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
 
         setIsLoading(true);
         const volNum = activeExperiment?.id?.match(/^v(\d+)-/)?.[1] || '?';
-        // GALILEO CENTRO DI COMANDO: always include tutor context + circuit state
+        // UNLIM CENTRO DI COMANDO: always include tutor context + circuit state
         const tutorContext = buildTutorContext();
         const liveCircuit = circuitStateRef.current?.text || circuitStateRef.current || '';
 
@@ -1549,7 +1559,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 ? `${tutorContext}\n[Esp: Vol.${volNum} "${activeExperiment.title || activeExperiment.id || ''}" — ${activeExperiment.chapter || ''} — componenti: ${(activeExperiment.components || []).map(c => c.type).join(', ')}]${goalContext}`
                 : `${tutorContext}${goalContext}`;
 
-        // ── Auto-screenshot (Galileo Onnipotente — FASE 4 + Smart Canvas) ──
+        // ── Auto-screenshot (UNLIM Onnipotente — FASE 4 + Smart Canvas) ──
         // Capture screenshot from the CORRECT source based on active tab
         let autoImages = [];
         let autoScreenshotSource = null;
@@ -1564,7 +1574,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 }
             } catch (err) {
                 // Never break chat flow due to screenshot failure
-                if (typeof console !== 'undefined') console.warn('[Galileo] Auto-screenshot failed:', err.message);
+                if (typeof console !== 'undefined') console.warn('[UNLIM] Auto-screenshot failed:', err.message);
             }
         }
 
@@ -1573,7 +1583,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             autoScreenshotSource === 'manual-page' ||
             autoScreenshotSource === 'document-page' ||
             autoScreenshotSource === 'active-tab';
-        // S104: Collect unified simulator context for Galileo Context Engine
+        // S104: Collect unified simulator context for UNLIM Context Engine
         let simulatorContext = null;
         if (!isNonSimulatorVisual) {
             try {
@@ -1602,7 +1612,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const aiLower = aiResponse.toLowerCase();
             const userLower = userMessage.toLowerCase();
 
-            // ── Strip action tags from display text (Galileo Onnipotente: esecuzione silenziosa) ──
+            // ── Strip action tags from display text (UNLIM Onnipotente: esecuzione silenziosa) ──
             // Tags get executed below but NEVER shown to the student
             // S58 FIX: More permissive regex — also catches [Azione:...], [azione:...], and partial matches
             // Strip INTENT tags using balanced-brace parser (regex fails on nested JSON brackets)
@@ -1931,12 +1941,12 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         executedActions.push('reset');
                     }
                     else if (cmd === 'highlight') {
-                        if (!api?.galileo?.highlightComponent) throw new Error('highlight non disponibile');
+                        if (!api?.unlim?.highlightComponent) throw new Error('highlight non disponibile');
                         const rawTargets = (parts[1] || '').split(',').map(s => s.trim()).filter(Boolean);
                         const resolvedTargets = [...new Set(rawTargets.flatMap(token => resolveComponentIds(token, true)))];
                         if (!resolvedTargets.length) throw new Error('componenti da evidenziare non trovati');
-                        api.galileo.highlightComponent(resolvedTargets);
-                        setTimeout(() => api.galileo.clearHighlights(), 4000);
+                        api.unlim.highlightComponent(resolvedTargets);
+                        setTimeout(() => api.unlim.clearHighlights(), 4000);
                         executedActions.push(`highlight:${resolvedTargets.join(',')}`);
                     }
                     else if (cmd === 'loadexp' && parts[1]) {
@@ -2049,7 +2059,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         }
                         executedActions.push('compile');
                     }
-                    // ── NEW ACTION TAGS (Galileo Onnipotente) ──
+                    // ── NEW ACTION TAGS (UNLIM Onnipotente) ──
                     else if (cmd === 'movecomponent') {
                         if (!api?.moveComponent) throw new Error('moveComponent non disponibile');
                         if (!parts[1]) throw new Error('componente da spostare mancante');
@@ -2068,7 +2078,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     }
                     else if (cmd === 'quiz') {
                         const expId = parts[1] || activeExperiment?.id || null;
-                        window.dispatchEvent(new CustomEvent('galileo-quiz', { detail: { experimentId: expId } }));
+                        window.dispatchEvent(new CustomEvent('unlim-quiz', { detail: { experimentId: expId } }));
                         executedActions.push('quiz');
                     }
                     else if (cmd === 'youtube' && parts.length > 1) {
@@ -2164,7 +2174,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         api.loadScratchWorkspace(xml);
                         executedActions.push('loadblocks');
                     }
-                    // ── S115: Galileo Onnipotente v2 — 12 nuove azioni ──
+                    // ── S115: UNLIM Onnipotente v2 — 12 nuove azioni ──
                     else if (cmd === 'undo') {
                         if (!api?.undo) throw new Error('undo non disponibile');
                         api.undo();
@@ -2248,7 +2258,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     }
                     else if (cmd === 'getstate') {
                         // [AZIONE:getstate] — mostra stato completo del circuito
-                        const circuitState = api?.getCircuitState?.() || api?.galileo?.getCircuitState?.();
+                        const circuitState = api?.getCircuitState?.() || api?.unlim?.getCircuitState?.();
                         if (!circuitState) throw new Error('stato circuito non disponibile');
                         const comps = (circuitState.components || []).length;
                         const wires = (circuitState.connections || []).length;
@@ -2261,7 +2271,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         }]);
                         executedActions.push('getstate');
                     }
-                    // ── S115: Code Control — Galileo scrive/legge codice Arduino e Scratch ──
+                    // ── S115: Code Control — UNLIM scrive/legge codice Arduino e Scratch ──
                     else if (cmd === 'setcode') {
                         // [AZIONE:setcode:CODE] — sostituisce tutto il codice nell'editor
                         const arg = parts.slice(1).join(':').replace(/\\n/g, '\n');
@@ -2302,7 +2312,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         api.resetEditorCode();
                         executedActions.push('resetcode');
                     }
-                    // ── S115: Chat/View control — Galileo controlla finestre ──
+                    // ── S115: Chat/View control — UNLIM controlla finestre ──
                     else if (cmd === 'openchat') {
                         setShowChat(true);
                         executedActions.push('openchat');
@@ -2335,7 +2345,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     errorHistoryRef.current = errorHistoryRef.current.slice(-10);
                 }
                 if (typeof console !== 'undefined') {
-                    console.warn('[Galileo] Action failures:', uniqueFailures);
+                    console.warn('[UNLIM] Action failures:', uniqueFailures);
                 }
             }
 
@@ -2344,7 +2354,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const quizKeywords = /\b(quiz|verificami|testami|domande\s+di\s+verifica)\b/i;
             if (quizKeywords.test(userLower) && !executedActions.some(a => a === 'quiz')) {
                 const expId = activeExperiment?.id || null;
-                window.dispatchEvent(new CustomEvent('galileo-quiz', { detail: { experimentId: expId } }));
+                window.dispatchEvent(new CustomEvent('unlim-quiz', { detail: { experimentId: expId } }));
                 executedActions.push('quiz');
             }
 
@@ -2600,8 +2610,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 userKits={isDocente || user?.ruolo === 'admin' ? null : (user?.kits || [])}
                                 onDiagnoseCircuit={handleDiagnoseCircuit}
                                 onGetHints={handleGetHints}
-                                onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
-                                onSendImageToGalileo={handleSendImageToGalileo}
+                                onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
+                                onSendImageToUNLIM={handleSendImageToUNLIM}
                                 messagesRef={messagesForReportRef}
                                 quizResultsRef={quizResultsForReportRef}
                                 sessionStartRef={sessionStartRef}
@@ -2612,7 +2622,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         {activeTab === 'detective' && (
                             <Suspense fallback={<div className="game-loading">Caricamento gioco...</div>}>
                                 <CircuitDetective
-                                    onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                    onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                                     onOpenSimulator={(experimentId) => { setPendingExperimentId(experimentId || null); setActiveTab('simulator'); }}
                                     logSession={logSession}
                                 />
@@ -2622,7 +2632,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         {activeTab === 'poe' && (
                             <Suspense fallback={<div className="game-loading">Caricamento gioco...</div>}>
                                 <PredictObserveExplain
-                                    onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                    onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                                     onOpenSimulator={(experimentId) => { setPendingExperimentId(experimentId || null); setActiveTab('simulator'); }}
                                     logSession={logSession}
                                 />
@@ -2632,7 +2642,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         {activeTab === 'reverse' && (
                             <Suspense fallback={<div className="game-loading">Caricamento gioco...</div>}>
                                 <ReverseEngineeringLab
-                                    onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                    onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                                     onOpenSimulator={(experimentId) => { setPendingExperimentId(experimentId || null); setActiveTab('simulator'); }}
                                     logSession={logSession}
                                 />
@@ -2642,7 +2652,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         {activeTab === 'review' && (
                             <Suspense fallback={<div className="game-loading">Caricamento gioco...</div>}>
                                 <CircuitReview
-                                    onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                    onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                                     onOpenSimulator={(experimentId) => { setPendingExperimentId(experimentId || null); setActiveTab('simulator'); }}
                                     logSession={logSession}
                                 />
@@ -2662,8 +2672,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onSetShowChat={setShowChat}
                                 onSetMessages={setMessages}
                                 onSetIsLoading={setIsLoading}
-                                onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
-                                onSendImageToGalileo={handleSendImageToGalileo}
+                                onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
+                                onSendImageToUNLIM={handleSendImageToUNLIM}
                             />
                         )}
 
@@ -2680,7 +2690,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onCloseNotebook={closeNotebook}
                                 onChangePage={changePage}
                                 onAddPage={addPage}
-                                onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                             />
                         )}
 
@@ -2700,7 +2710,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onJoinMeet={joinMeet}
                                 onCopyMeetLink={copyMeetLink}
                                 onStopMeet={stopMeet}
-                                onSendToGalileo={(msg) => { setShowChat(true); handleSend(msg); }}
+                                onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                             />
                         )}
 

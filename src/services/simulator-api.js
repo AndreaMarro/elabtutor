@@ -4,15 +4,15 @@
  * Provides a global window.__ELAB_API object for external systems to interact
  * with the simulator programmatically.
  *
- * Includes Galileo AI bridge (highlight, serialWrite, callbacks),
+ * Includes UNLIM AI bridge (highlight, serialWrite, callbacks),
  * pub/sub event system, and full simulation control.
  *
  * Usage from MCP/external:
  *   window.__ELAB_API.loadExperiment('v1-cap6-primo-circuito')
  *   window.__ELAB_API.getExperimentList()
  *   window.__ELAB_API.captureScreenshot()
- *   window.__ELAB_API.askGalileo('Spiega questo circuito')
- *   window.__ELAB_API.galileo.highlightComponent(['led1', 'r1'])
+ *   window.__ELAB_API.askUNLIM('Spiega questo circuito')
+ *   window.__ELAB_API.unlim.highlightComponent(['led1', 'r1'])
  *   window.__ELAB_API.on('stateChange', console.log)
  *
  * © Andrea Marro — 12/02/2026
@@ -193,7 +193,7 @@ function createPublicAPI() {
       _simulatorRef?.removeComponent?.(id);
     },
 
-    // ─── GALILEO ONNIPOTENTE: Extended breadboard manipulation ───
+    // ─── UNLIM ONNIPOTENTE: Extended breadboard manipulation ───
 
     /**
      * Move a component to new coordinates
@@ -273,13 +273,13 @@ function createPublicAPI() {
     },
 
     /**
-     * Ask Galileo AI about the current experiment
-     * @param {string} customPrompt - Optional custom prompt (overrides galileoPrompt)
+     * Ask UNLIM AI about the current experiment
+     * @param {string} customPrompt - Optional custom prompt (overrides unlimPrompt)
      * @returns {Promise<Object>} { success, response, source }
      */
-    async askGalileo(customPrompt = null) {
+    async askUNLIM(customPrompt = null) {
       const exp = _simulatorRef?.getCurrentExperiment?.();
-      const prompt = customPrompt || exp?.galileoPrompt ||
+      const prompt = customPrompt || exp?.unlimPrompt ||
         `Spiega l'esperimento "${exp?.title || 'corrente'}" in modo semplice per bambini.`;
 
       // Try to capture screenshot
@@ -292,7 +292,7 @@ function createPublicAPI() {
     },
 
     /**
-     * Send an image to Galileo for analysis
+     * Send an image to UNLIM for analysis
      * @param {string} imageDataUrl - data:image/png;base64,...
      * @param {string} question
      * @returns {Promise<Object>}
@@ -377,7 +377,7 @@ function createPublicAPI() {
       _simulatorRef?.loadScratchWorkspace?.(xml);
     },
 
-    // ─── S115: Galileo Onnipotente v2 — Extended Control ───
+    // ─── S115: UNLIM Onnipotente v2 — Extended Control ───
 
     /** Undo last action */
     undo() { _simulatorRef?.undo?.(); },
@@ -440,7 +440,7 @@ function createPublicAPI() {
     /** @returns {string} 'running' or 'stopped' */
     getSimulationStatus() { return _simulatorRef?.getSimulationStatus?.() || 'stopped'; },
 
-    // ─── S115: Code Control — Galileo writes/reads Arduino code ───
+    // ─── S115: Code Control — UNLIM writes/reads Arduino code ───
 
     /**
      * Append code to the existing editor content
@@ -459,13 +459,13 @@ function createPublicAPI() {
      */
     getExperimentOriginalCode() { return _simulatorRef?.getExperimentOriginalCode?.() || ''; },
 
-    // ─── S104: Unified Simulator Context for Galileo ───
+    // ─── S104: Unified Simulator Context for UNLIM ───
 
     /**
      * Get full simulator context as a compact JSON payload.
      * Includes experiment, build mode, editor mode, components, wires,
      * simulation state, and last compilation result.
-     * @returns {Object} Comprehensive simulator snapshot for Galileo
+     * @returns {Object} Comprehensive simulator snapshot for UNLIM
      */
     getSimulatorContext() {
       const circuitState = _simulatorRef?.getCircuitState?.() || {};
@@ -535,9 +535,9 @@ function createPublicAPI() {
       };
     },
 
-    // ─── Galileo AI Bridge ───
+    // ─── UNLIM AI Bridge ───
     /* Andrea Marro — 12/02/2026 */
-    galileo: {
+    unlim: {
       /**
        * Highlight one or more components on the canvas
        * @param {string|string[]} componentIds - e.g. "led1" or ["r1", "led1"]
@@ -583,7 +583,7 @@ function createPublicAPI() {
 
       version: '1.0.0',
       info: {
-        name: 'ELAB Simulator — Galileo Bridge',
+        name: 'ELAB Simulator — UNLIM Bridge',
         author: 'Andrea Marro',
         modes: ['circuit', 'avr'],
         totalExperiments,

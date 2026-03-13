@@ -92,7 +92,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il catodo del secondo LED (a19) alla riga - e poi al polo negativo della batteria."
       ],
       observe: "Entrambi i LED si accendono con la stessa luminosit\u00E0! La corrente che passa attraverso entrambi \u00E8 identica perch\u00E9 sono in serie.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie con 1 resistore'. In questo circuito due LED sono collegati uno dopo l'altro (in serie) con un solo resistore. La corrente che passa \u00E8 la stessa per entrambi, come l'acqua in un tubo: non si divide! Le tensioni invece si sommano. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie con 1 resistore'. In questo circuito due LED sono collegati uno dopo l'altro (in serie) con un solo resistore. La corrente che passa \u00E8 la stessa per entrambi, come l'acqua in un tubo: non si divide! Le tensioni invece si sommano. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "LED in serie, la corrente \u00E8 la stessa, le tensioni si sommano",
@@ -253,7 +253,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il catodo del LED verde (a19) alla riga - e poi al polo negativo della batteria."
       ],
       observe: "Entrambi i LED si accendono, ma con luminosit\u00E0 diversa! Il LED rosso (Vf \u2248 1.8V) brilla di pi\u00F9 del verde (Vf \u2248 2.2V) perch\u00E9 la tensione rimanente si distribuisce diversamente.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie colori diversi'. Qui ci sono due LED di colori diversi in serie. Ogni colore di LED ha bisogno di una tensione diversa per accendersi (la tensione forward Vf): il rosso circa 1.8V, il verde circa 2.2V. \u00C8 come se ogni LED fosse una porticina di altezza diversa: la corrente deve superarle tutte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie colori diversi'. Qui ci sono due LED di colori diversi in serie. Ogni colore di LED ha bisogno di una tensione diversa per accendersi (la tensione forward Vf): il rosso circa 1.8V, il verde circa 2.2V. \u00C8 come se ogni LED fosse una porticina di altezza diversa: la corrente deve superarle tutte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Tensione forward diversa per colore, somma Vf in serie",
@@ -416,7 +416,7 @@ const EXPERIMENTS_VOL2 = {
         "Prova a sostituire il resistore con uno da 220\u03A9 e osserva la differenza!"
       ],
       observe: "Tutti e tre i LED si accendono! Con R330\u03A9 la luminosit\u00E0 \u00E8 moderata. Sostituendo con R220\u03A9 i LED brillano di pi\u00F9 perch\u00E9 passa pi\u00F9 corrente. La somma delle Vf (3\u00D71.8V = 5.4V) pi\u00F9 la caduta sul resistore deve uguagliare i 9V della batteria.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Tre LED in serie'. Con tre LED in serie, la somma delle tensioni forward \u00E8 circa 5.4V (3 x 1.8V). La batteria da 9V deve fornire tensione per tutti e tre pi\u00F9 il resistore. Cambiando il resistore da 330\u03A9 a 220\u03A9 passa pi\u00F9 corrente e i LED brillano di pi\u00F9! \u00C8 come aprire di pi\u00F9 il rubinetto dell'acqua. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Tre LED in serie'. Con tre LED in serie, la somma delle tensioni forward \u00E8 circa 5.4V (3 x 1.8V). La batteria da 9V deve fornire tensione per tutti e tre pi\u00F9 il resistore. Cambiando il resistore da 330\u03A9 a 220\u03A9 passa pi\u00F9 corrente e i LED brillano di pi\u00F9! \u00C8 come aprire di pi\u00F9 il rubinetto dell'acqua. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "3 LED in serie, limite tensione 9V, swap resistore 330\u03A9\u2192220\u03A9",
@@ -582,7 +582,7 @@ const EXPERIMENTS_VOL2 = {
         "Leggi il valore sul display: questa \u00E8 la tensione forward Vf!"
       ],
       observe: "Il multimetro mostra circa 1.8V per il LED rosso. Questa \u00E8 la tensione forward (Vf): la 'quota di pedaggio' che il LED richiede per accendersi. Prova con LED di colori diversi: vedrai valori diversi!",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Misurare Vf con multimetro'. Il multimetro \u00E8 come un detective: misura la tensione ai capi del LED (la tensione forward Vf). Collegandolo in parallelo al LED, puoi leggere quanta 'spinta' serve per far passare la corrente attraverso il LED. Ogni colore ha un valore diverso! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Misurare Vf con multimetro'. Il multimetro \u00E8 come un detective: misura la tensione ai capi del LED (la tensione forward Vf). Collegandolo in parallelo al LED, puoi leggere quanta 'spinta' serve per far passare la corrente attraverso il LED. Ogni colore ha un valore diverso! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Misura tensione forward Vf, uso del multimetro in modalit\u00E0 voltmetro",
@@ -759,7 +759,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega batteria e multimetro, poi premi il pulsante per caricare!"
       ],
       observe: "Premendo il pulsante, il condensatore si carica istantaneamente a 9V. Rilasciandolo, la batteria viene scollegata e il condensatore si scarica lentamente attraverso il resistore da 1kΩ. Il tempo di scarica dipende da Tau = R × C = 1kΩ × 1000µF = 1 secondo.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica condensatore + multimetro'. Il condensatore è come una piccola batteria ricaricabile. Premendo il pulsante lo colleghiamo alla batteria 9V e si ricarica subito. Rilasciando il pulsante, l'energia immagazzinata si scarica lentamente attraverso il resistore, seguendo una curva esponenziale visibile sul multimetro. Il tempo di scarica dipende da R e C: Tau = R x C. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica condensatore + multimetro'. Il condensatore è come una piccola batteria ricaricabile. Premendo il pulsante lo colleghiamo alla batteria 9V e si ricarica subito. Rilasciando il pulsante, l'energia immagazzinata si scarica lentamente attraverso il resistore, seguendo una curva esponenziale visibile sul multimetro. Il tempo di scarica dipende da R e C: Tau = R x C. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni.",
       code: null,
       hexFile: null,
       concept: "Carica/scarica condensatore, costante di tempo RC, curva esponenziale",
@@ -960,7 +960,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il multimetro: sonda rossa al foro b5, sonda nera al foro b6."
       ],
       observe: "Premendo il pulsante, il LED si accende e poi sfuma lentamente! Puoi VEDERE l'energia del condensatore che si esaurisce. Il multimetro mostra la tensione che cala contemporaneamente.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica con LED rosso'. Qui il condensatore si scarica attraverso un LED e un resistore: puoi VEDERE l'energia che se ne va! Il LED parte luminoso e sfuma piano piano, come una torcia che si scarica. Questo \u00E8 il concetto di scarica RC reso visibile. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica con LED rosso'. Qui il condensatore si scarica attraverso un LED e un resistore: puoi VEDERE l'energia che se ne va! Il LED parte luminoso e sfuma piano piano, come una torcia che si scarica. Questo \u00E8 il concetto di scarica RC reso visibile. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Scarica RC visibile: il LED sfuma man mano che il condensatore si scarica",
@@ -1185,7 +1185,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il catodo del LED (a27) alla riga - e poi al polo negativo della batteria."
       ],
       observe: "Il LED sfuma MOLTO pi\u00F9 lentamente rispetto a un solo condensatore! Con 3 condensatori da 1000\u00B5F in parallelo hai 3000\u00B5F: la capacit\u00E0 totale \u00E8 la somma. Tau = 1k\u03A9 \u00D7 3000\u00B5F = 3 secondi.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Condensatori in parallelo'. Mettere condensatori in parallelo \u00E8 come mettere secchi d'acqua uno accanto all'altro: la capacit\u00E0 totale \u00E8 la somma di tutte! Con 3 condensatori da 1000\u00B5F, hai 3000\u00B5F totali. La scarica dura 3 volte di pi\u00F9 e il LED sfuma molto pi\u00F9 lentamente. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Condensatori in parallelo'. Mettere condensatori in parallelo \u00E8 come mettere secchi d'acqua uno accanto all'altro: la capacit\u00E0 totale \u00E8 la somma di tutte! Con 3 condensatori da 1000\u00B5F, hai 3000\u00B5F totali. La scarica dura 3 volte di pi\u00F9 e il LED sfuma molto pi\u00F9 lentamente. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Condensatori in parallelo: Ctot = C1+C2+C3, scarica pi\u00F9 lenta",
@@ -1423,7 +1423,7 @@ const EXPERIMENTS_VOL2 = {
         "Infine prova con 10k\u03A9: la scarica \u00E8 lentissima."
       ],
       observe: "Con R=470\u03A9 la scarica \u00E8 rapida (Tau\u22480.5s). Con R=1k\u03A9 Tau=1s. Con R=4.7k\u03A9 Tau=4.7s. Con R=10k\u03A9 Tau=10s! Pi\u00F9 grande il resistore, pi\u00F9 lentamente il condensatore si scarica. Tau = R \u00D7 C.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Variare R nella scarica RC'. La costante di tempo Tau = R x C determina quanto velocemente si scarica il condensatore. Aumentando la resistenza \u00E8 come stringere un tubo: l'acqua (corrente) esce pi\u00F9 lentamente e il condensatore si scarica pi\u00F9 piano. Prova diversi resistori e osserva la differenza! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Variare R nella scarica RC'. La costante di tempo Tau = R x C determina quanto velocemente si scarica il condensatore. Aumentando la resistenza \u00E8 come stringere un tubo: l'acqua (corrente) esce pi\u00F9 lentamente e il condensatore si scarica pi\u00F9 piano. Prova diversi resistori e osserva la differenza! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Costante di tempo Tau = R\u00D7C, variare R cambia velocit\u00E0 di scarica",
@@ -1635,7 +1635,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega un filo verde dalla riga + al gate del MOSFET (g17)."
       ],
       observe: "Con il Gate collegato a 9V, il MOSFET si apre e il LED si accende! Scollega il filo verde dal Gate: il LED si spegne. Il MOSFET funziona come un interruttore controllato dalla tensione.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET come interruttore'. Il MOSFET \u00E8 come un cancello elettronico: quando metti tensione sul Gate (il 'grilletto'), il cancello si apre e la corrente pu\u00F2 passare dal Drain al Source, accendendo il LED. Senza tensione al Gate, il cancello \u00E8 chiuso e non passa nulla! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET come interruttore'. Il MOSFET \u00E8 come un cancello elettronico: quando metti tensione sul Gate (il 'grilletto'), il cancello si apre e la corrente pu\u00F2 passare dal Drain al Source, accendendo il LED. Senza tensione al Gate, il cancello \u00E8 chiuso e non passa nulla! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "MOSFET N-channel come interruttore, Gate controlla Drain-Source",
@@ -1804,7 +1804,7 @@ const EXPERIMENTS_VOL2 = {
         "Tocca delicatamente il pin del Gate con il dito!"
       ],
       observe: "Toccando il Gate, la carica statica del tuo corpo \u00E8 sufficiente per attivare il MOSFET e accendere il LED! Questo dimostra l'impedenza altissima del Gate: bastano pochissime cariche per controllarlo.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET e carica del corpo'. In questo esperimento il Gate del MOSFET \u00E8 scollegato (flottante). Il Gate ha un'impedenza altissima, come una porta leggerissima: basta la minima carica statica del tuo corpo per 'spingerla' e accendere il LED! Quando cammini sul tappeto ti carichi di elettricit\u00E0 statica, e toccando il Gate la trasferisci. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET e carica del corpo'. In questo esperimento il Gate del MOSFET \u00E8 scollegato (flottante). Il Gate ha un'impedenza altissima, come una porta leggerissima: basta la minima carica statica del tuo corpo per 'spingerla' e accendere il LED! Quando cammini sul tappeto ti carichi di elettricit\u00E0 statica, e toccando il Gate la trasferisci. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
 // © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       hexFile: null,
@@ -1968,7 +1968,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il multimetro: sonda rossa al foro h17 (gate), sonda nera alla riga -."
       ],
       observe: "Girando il potenziometro lentamente, il multimetro mostra la tensione al Gate che sale da 0V a 9V. A circa 2V (la tensione di soglia Vth), il LED inizia ad accendersi! Sopra i 4V il MOSFET \u00E8 completamente aperto.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET + pot + tensione soglia'. Il potenziometro \u00E8 come una manopola del volume: girando, cambi la tensione che arriva al Gate del MOSFET. Sotto una certa soglia (Vth, circa 2V) il MOSFET resta chiuso. Appena superi la soglia, si apre e il LED si accende! Il multimetro ti mostra esattamente a quale tensione avviene il 'click'. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET + pot + tensione soglia'. Il potenziometro \u00E8 come una manopola del volume: girando, cambi la tensione che arriva al Gate del MOSFET. Sotto una certa soglia (Vth, circa 2V) il MOSFET resta chiuso. Appena superi la soglia, si apre e il LED si accende! Il multimetro ti mostra esattamente a quale tensione avviene il 'click'. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Tensione di soglia Vth del MOSFET, transizione graduale ON/OFF",
@@ -2176,7 +2176,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il multimetro: sonda rossa al foro b9 (emettitore), sonda nera alla riga -."
       ],
       observe: "Con luce intensa, il multimetro mostra una tensione alta (il fototransistor conduce molta corrente). Al buio, la tensione scende quasi a zero. Il fototransistor e il resistore formano un partitore di tensione controllato dalla luce!",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Fototransistor come sensore'. Il fototransistor \u00E8 un componente magico: la luce lo controlla! Pi\u00F9 luce riceve, pi\u00F9 corrente lascia passare, come una porta che si apre con il sole. Il resistore e il fototransistor formano un partitore di tensione: con il multimetro puoi misurare quanta tensione c'\u00E8, e cambia a seconda della luce! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Fototransistor come sensore'. Il fototransistor \u00E8 un componente magico: la luce lo controlla! Pi\u00F9 luce riceve, pi\u00F9 corrente lascia passare, come una porta che si apre con il sole. Il resistore e il fototransistor formano un partitore di tensione: con il multimetro puoi misurare quanta tensione c'\u00E8, e cambia a seconda della luce! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Fototransistor NPN, luce controlla corrente collector-emitter, partitore di tensione",
@@ -2370,7 +2370,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega a28 a g29 (catodo LED a drain MOSFET). Collega source (g30) alla riga -."
       ],
       observe: "Con luce: il fototransistor conduce, la tensione al nodo R1/collettore scende, il Gate del MOSFET resta basso tramite R4 (pull-down) e il LED resta spento. Al buio: il fototransistor si chiude, la tensione sale, R3 porta la tensione al Gate, il MOSFET si apre e il LED si accende! Una vera luce notturna automatica!",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Luce notturna automatica'. Questo circuito \u00E8 intelligente: funziona al contrario! Quando c'\u00E8 luce, il fototransistor conduce e tiene il Gate del MOSFET basso, quindi il LED \u00E8 spento. Quando viene buio, il fototransistor si chiude, il Gate sale e il MOSFET accende il LED. \u00C8 lo stesso principio delle luci stradali che si accendono da sole di notte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Luce notturna automatica'. Questo circuito \u00E8 intelligente: funziona al contrario! Quando c'\u00E8 luce, il fototransistor conduce e tiene il Gate del MOSFET basso, quindi il LED \u00E8 spento. Quando viene buio, il fototransistor si chiude, il Gate sale e il MOSFET accende il LED. \u00C8 lo stesso principio delle luci stradali che si accendono da sole di notte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Luce notturna: fototransistor + MOSFET logica invertita, buio accende LED",
@@ -2611,7 +2611,7 @@ const EXPERIMENTS_VOL2 = {
       ],
       observe: "Il motore gira! L'energia elettrica della batteria viene convertita in energia meccanica (movimento). Il verso di rotazione dipende dalla polarit\u00E0 dei collegamenti.",
 // © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Far girare il motore'. Il motore DC (a corrente continua) converte l'energia elettrica della batteria in movimento! Dentro ha magneti e bobine di filo: quando la corrente passa, crea un campo magnetico che fa girare l'asse. \u00C8 lo stesso principio delle ventole, dei frullatori e dei droni! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Far girare il motore'. Il motore DC (a corrente continua) converte l'energia elettrica della batteria in movimento! Dentro ha magneti e bobine di filo: quando la corrente passa, crea un campo magnetico che fa girare l'asse. \u00C8 lo stesso principio delle ventole, dei frullatori e dei droni! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Motore DC, collegamento diretto, conversione energia elettrica in meccanica",
@@ -2718,7 +2718,7 @@ const EXPERIMENTS_VOL2 = {
         "Osserva: il motore gira nella direzione opposta!"
       ],
       observe: "Il motore gira al contrario rispetto all'esperimento precedente! Invertendo la polarit\u00E0, la corrente scorre in direzione opposta nelle bobine e il campo magnetico si inverte, facendo girare l'asse nell'altra direzione.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Invertire la rotazione'. Invertendo i fili della batteria, la corrente scorre nella direzione opposta e il motore gira al contrario! \u00C8 come invertire il flusso d'acqua in un mulinello: gira dall'altra parte. Questo \u00E8 il bello dei motori DC: la polarit\u00E0 determina la direzione di rotazione. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Invertire la rotazione'. Invertendo i fili della batteria, la corrente scorre nella direzione opposta e il motore gira al contrario! \u00C8 come invertire il flusso d'acqua in un mulinello: gira dall'altra parte. Questo \u00E8 il bello dei motori DC: la polarit\u00E0 determina la direzione di rotazione. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Inversione polarit\u00E0, inversione rotazione motore DC",
@@ -2829,7 +2829,7 @@ const EXPERIMENTS_VOL2 = {
         "Premi il pulsante: il motore gira! Rilascia: si ferma."
       ],
       observe: "Il motore gira SOLO quando tieni premuto il pulsante! Il pulsante apre e chiude il circuito: premuto = circuito chiuso = corrente passa = motore gira. Rilasciato = circuito aperto = niente corrente.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Motore con pulsante'. Aggiungendo un pulsante, il circuito si apre e si chiude come un interruttore: premi e il motore gira, rilasci e si ferma! \u00C8 il concetto di circuito aperto (corrente non passa) e circuito chiuso (corrente passa). Ogni interruttore di casa tua funziona cos\u00EC! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Motore con pulsante'. Aggiungendo un pulsante, il circuito si apre e si chiude come un interruttore: premi e il motore gira, rilasci e si ferma! \u00C8 il concetto di circuito aperto (corrente non passa) e circuito chiuso (corrente passa). Ogni interruttore di casa tua funziona cos\u00EC! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Controllo manuale motore con pulsante, circuito aperto/chiuso",
@@ -2971,7 +2971,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il catodo del LED (a24) e il negativo del motore alla riga -."
       ],
       observe: "Premendo il pulsante, il motore gira E il LED verde si accende contemporaneamente! Il LED e il motore sono in parallelo: ricevono la stessa tensione ma la corrente si divide. Il LED verde funziona come una spia che indica che il motore \u00E8 in funzione.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Motore + pulsante + LED indicatore'. Qui il LED e il motore sono collegati in parallelo dopo il pulsante: quando premi, entrambi funzionano! Il LED verde fa da indicatore, come la spia sul cruscotto dell'auto che ti dice che il motore \u00E8 acceso. In parallelo, entrambi ricevono la stessa tensione ma la corrente si divide. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Motore + pulsante + LED indicatore'. Qui il LED e il motore sono collegati in parallelo dopo il pulsante: quando premi, entrambi funzionano! Il LED verde fa da indicatore, come la spia sul cruscotto dell'auto che ti dice che il motore \u00E8 acceso. In parallelo, entrambi ricevono la stessa tensione ma la corrente si divide. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "LED indicatore in parallelo al motore, feedback visivo",
@@ -3204,7 +3204,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega i motori: mot1 dalla riga + a g8 (drain mos1), mot2 dalla riga + a g22 (drain mos2)."
       ],
       observe: "Il robot segue la luce! Quando illumini il fototransistor destro (pt1), il suo emettitore sale, attivando mos2 che fa girare il motore destro: il robot gira a SINISTRA verso la luce. La cross-connection fa s\u00EC che ogni sensore controlli il motore opposto, creando un inseguimento automatico. I diodi proteggono i MOSFET dalla forza controelettromotrice dei motori.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Robot Segui Luce'. Questo \u00E8 il progetto finale del Volume 2! Due fototransistor funzionano come gli 'occhi' del robot. Il trucco geniale \u00E8 la cross-connection: l'occhio destro controlla il motore sinistro e viceversa. Se la luce viene da destra, l'occhio destro attiva il motore sinistro e il robot gira verso la luce! I diodi proteggono i MOSFET dalla forza controelettromotrice dei motori. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Robot Segui Luce'. Questo \u00E8 il progetto finale del Volume 2! Due fototransistor funzionano come gli 'occhi' del robot. Il trucco geniale \u00E8 la cross-connection: l'occhio destro controlla il motore sinistro e viceversa. Se la luce viene da destra, l'occhio destro attiva il motore sinistro e il robot gira verso la luce! I diodi proteggono i MOSFET dalla forza controelettromotrice dei motori. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
       concept: "Robot analogico: cross-connection fototransistor\u2192MOSFET\u2192motore, diodi flyback di protezione",

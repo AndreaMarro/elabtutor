@@ -23,7 +23,7 @@ export default function WhiteboardOverlay({
   active = false,
   experimentId = null,
   onClose,
-  onSendToGalileo,
+  onSendToUNLIM,
 }) {
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
@@ -669,18 +669,18 @@ export default function WhiteboardOverlay({
     }, 50);
   }, [experimentId, redrawCanvas]);
 
-  // ── Send to Galileo AI ────────────────────────
-  const sendToGalileo = useCallback(() => {
-    if (!onSendToGalileo) return;
+  // ── Send to UNLIM AI ────────────────────────
+  const sendToUNLIM = useCallback(() => {
+    if (!onSendToUNLIM) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     setSelectedId(null);
     redrawCanvas();
     setTimeout(() => {
       const dataUrl = canvas.toDataURL('image/png');
-      onSendToGalileo(dataUrl);
+      onSendToUNLIM(dataUrl);
     }, 50);
-  }, [onSendToGalileo, redrawCanvas]);
+  }, [onSendToUNLIM, redrawCanvas]);
 
   // ── Cursor ─────────────────────────────────
   const getCursor = () => {
@@ -827,7 +827,7 @@ export default function WhiteboardOverlay({
         <ToolBtn label={showGrid ? 'Nascondi griglia' : 'Mostra griglia'} active={showGrid} onClick={() => setShowGrid(g => !g)}><IconGrid /></ToolBtn>
         <Sep />
         <ToolBtn label="Salva PNG" onClick={exportPng}><IconDownload /></ToolBtn>
-        {onSendToGalileo && <ToolBtn label="Invia a Galileo" onClick={sendToGalileo}><IconGalileo /></ToolBtn>}
+        {onSendToUNLIM && <ToolBtn label="Invia a UNLIM" onClick={sendToUNLIM}><IconUNLIM /></ToolBtn>}
         <ToolBtn label="Cancella tutto" onClick={clearAll} danger><IconTrash /></ToolBtn>
         <ToolBtn label="Chiudi lavagna" onClick={onClose}><IconClose /></ToolBtn>
       </div>
@@ -883,5 +883,5 @@ function IconClose() { return <svg {...svgProps}><line x1="18" y1="6" x2="6" y2=
 function IconZoomIn() { return <svg {...svgProps}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" /></svg>; }
 function IconZoomOut() { return <svg {...svgProps}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="8" y1="11" x2="14" y2="11" /></svg>; }
 function IconGrid() { return <svg {...svgProps}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>; }
-function IconGalileo() { return <svg {...svgProps} stroke="var(--color-primary)"><circle cx="12" cy="8" r="5" /><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" /><path d="M8 8l2 2 4-4" strokeWidth="1.5" /></svg>; }
+function IconUNLIM() { return <svg {...svgProps} stroke="var(--color-primary)"><circle cx="12" cy="8" r="5" /><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" /><path d="M8 8l2 2 4-4" strokeWidth="1.5" /></svg>; }
 // Andrea Marro — 20/02/2026

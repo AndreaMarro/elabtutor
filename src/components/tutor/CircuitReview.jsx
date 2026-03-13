@@ -34,7 +34,7 @@ const EXAMPLE_PROMPTS = [
   { text: 'Un sistema di irrigazione automatica', layer: 'cielo' }
 ];
 
-export default function CircuitReview({ onSendToGalileo, onOpenSimulator, logSession }) {
+export default function CircuitReview({ onSendToUNLIM, onOpenSimulator, logSession }) {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generated, setGenerated] = useState(null);
@@ -56,7 +56,7 @@ export default function CircuitReview({ onSendToGalileo, onOpenSimulator, logSes
     logSession?.('review-generate', { prompt: prompt.trim() });
 
     try {
-      const systemPrompt = `Sei Galileo, tutor di elettronica per ragazzi 8-14 anni.
+      const systemPrompt = `Sei UNLIM, tutor di elettronica per ragazzi 8-14 anni.
 Lo studente vuole un circuito: "${prompt.trim()}"
 
 Genera una risposta con ESATTAMENTE questo formato:
@@ -196,7 +196,7 @@ Rispondi in italiano, tono amichevole ma preciso.`;
         </span>
         <h2>Genera & Rivedi</h2>
         <p>
-          Descrivi il circuito che vuoi. Galileo lo genera, ma il <strong>tuo compito</strong> è rivederlo e criticarlo!
+          Descrivi il circuito che vuoi. UNLIM lo genera, ma il <strong>tuo compito</strong> è rivederlo e criticarlo!
           <br />Un buon ingegnere non si fida mai ciecamente.
         </p>
       </div>
@@ -237,7 +237,7 @@ Rispondi in italiano, tono amichevole ma preciso.`;
       {/* Risposta AI — SafeMarkdown (no XSS!) */}
       {generated && (
         <div className="elab-tool__card">
-          <h3>Circuito generato da Galileo</h3>
+          <h3>Circuito generato da UNLIM</h3>
           <SafeMarkdown text={circuitResponse} />
         </div>
       )}
@@ -328,7 +328,7 @@ Rispondi in italiano, tono amichevole ma preciso.`;
       {reviewComplete && (
         <CrossNavigation links={[
           { icon: '', label: 'Apri il Simulatore', action: () => onOpenSimulator?.() },
-          { icon: '', label: 'Chiedi a Galileo', action: () => onSendToGalileo?.(`Ho generato un circuito "${prompt}". Puoi controllare se è corretto?`) }
+          { icon: '', label: 'Chiedi a UNLIM', action: () => onSendToUNLIM?.(`Ho generato un circuito "${prompt}". Puoi controllare se è corretto?`) }
         ]} />
       )}
     </div>

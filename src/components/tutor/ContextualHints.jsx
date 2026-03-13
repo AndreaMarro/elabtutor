@@ -15,7 +15,7 @@ const TOTAL_EXPERIMENTS = getTotalExperiments();
 const TAB_HINTS = {
   chat: {
     emoji: '',
-    title: 'Chatta con Galileo',
+    title: 'Chatta con UNLIM',
     text: 'Da quale argomento vuoi partire? Qui puoi fare domande su elettronica, Arduino e circuiti, con una guida passo passo.',
   },
   manual: {
@@ -56,7 +56,7 @@ const TAB_HINTS = {
   review: {
     emoji: '',
     title: 'Controlla Circuito',
-    text: 'Se Galileo propone un circuito, quali controlli faresti prima di confermarlo?',
+    text: 'Se UNLIM propone un circuito, quali controlli faresti prima di confermarlo?',
   },
   timeline: {
     emoji: '',
@@ -141,4 +141,4 @@ export function TabHint({ tabId, onDismiss }) {
 }
 
 // Proactive hooks (useIdleSuggestion, useConfusionPrompt) removed —
-// Galileo now speaks only when addressed by the student.
+// UNLIM now speaks only when addressed by the student.

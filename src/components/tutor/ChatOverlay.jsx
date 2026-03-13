@@ -46,26 +46,26 @@ const DEFAULT_SUGGESTIONS = [
 ];
 
 // -- Bounce keyframes (injected once) --
-const KEYFRAMES_ID = 'galileo-chat-keyframes';
+const KEYFRAMES_ID = 'unlim-chat-keyframes';
 function ensureKeyframes() {
     if (typeof document === 'undefined') return;
     if (document.getElementById(KEYFRAMES_ID)) return;
     const style = document.createElement('style');
     style.id = KEYFRAMES_ID;
     style.textContent = `
-        @keyframes galileoBounce {
+        @keyframes unlimBounce {
             0%, 80%, 100% { transform: scale(0.4); opacity: 0.4; }
             40% { transform: scale(1); opacity: 1; }
         }
-        @keyframes galileoFadeInUp {
+        @keyframes unlimFadeInUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes galileoPanelIn {
+        @keyframes unlimPanelIn {
             from { opacity: 0; transform: translateY(20px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes galileoMsgIn {
+        @keyframes unlimMsgIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -76,14 +76,14 @@ function ensureKeyframes() {
         }
 
         /* Scoped bubble content styles (code blocks inside markdown) */
-        .galileo-bubble-content code {
+        .unlim-bubble-content code {
             background: rgba(0, 0, 0, 0.06);
             padding: 2px 6px;
             border-radius: 4px;
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 0.88em;
         }
-        .galileo-bubble-content pre {
+        .unlim-bubble-content pre {
             background: var(--color-code-bg);
             color: var(--color-code-text);
             padding: 12px;
@@ -93,24 +93,24 @@ function ensureKeyframes() {
             font-size: 0.85em;
             line-height: 1.5;
         }
-        .galileo-bubble-content pre code {
+        .unlim-bubble-content pre code {
             background: transparent;
             padding: 0;
             color: inherit;
         }
-        .galileo-bubble-content strong {
+        .unlim-bubble-content strong {
             font-weight: 700;
         }
 
         /* Scrollbar styling for messages area */
-        .galileo-messages-scroll::-webkit-scrollbar {
+        .unlim-messages-scroll::-webkit-scrollbar {
             width: 5px;
         }
-        .galileo-messages-scroll::-webkit-scrollbar-thumb {
+        .unlim-messages-scroll::-webkit-scrollbar-thumb {
             background: var(--color-border-hover);
             border-radius: 3px;
         }
-        .galileo-messages-scroll::-webkit-scrollbar-track {
+        .unlim-messages-scroll::-webkit-scrollbar-track {
             background: transparent;
         }
     `;
@@ -122,7 +122,7 @@ function TypingIndicator() {
     return (
         <div style={{
             display: 'flex', alignItems: 'flex-start', gap: '8px',
-            animation: 'galileoMsgIn 0.25s ease',
+            animation: 'unlimMsgIn 0.25s ease',
         }}>
             <div style={{
                 width: '28px', height: '28px', borderRadius: '50%',
@@ -140,7 +140,7 @@ function TypingIndicator() {
                     <div key={i} style={{
                         width: '8px', height: '8px', borderRadius: '50%',
                         background: 'var(--color-chat-thinking)',
-                        animation: `galileoBounce 1.4s ease-in-out ${i * 0.16}s infinite`,
+                        animation: `unlimBounce 1.4s ease-in-out ${i * 0.16}s infinite`,
                     }} />
                 ))}
             </div>
@@ -325,7 +325,7 @@ export default React.memo(function ChatOverlay({
                 boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
                 overflow: 'hidden',
                 zIndex: 400,
-                animation: 'galileoFadeInUp 0.2s ease',
+                animation: 'unlimFadeInUp 0.2s ease',
             }}>
                 {/* Header only */}
                 <div style={{
@@ -389,7 +389,7 @@ export default React.memo(function ChatOverlay({
         boxShadow: isDragging ? '0 16px 48px rgba(0,0,0,0.2)' : '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
         display: 'flex', flexDirection: 'column',
         zIndex: 400, transition: isDragging ? 'none' : 'width 300ms ease, height 300ms ease',
-        animation: 'galileoPanelIn 0.3s ease',
+        animation: 'unlimPanelIn 0.3s ease',
         fontFamily: "'Open Sans', -apple-system, sans-serif",
         resize: 'both', overflow: 'hidden', // Make it natively resizable
         minWidth: '320px', minHeight: '400px',
@@ -535,7 +535,7 @@ export default React.memo(function ChatOverlay({
             {/* ======== MESSAGES AREA ======== */}
             <div
                 ref={messagesContainerRef}
-                className="galileo-messages-scroll"
+                className="unlim-messages-scroll"
                 style={{
                     flex: 1, overflowY: 'auto', padding: '16px 16px 8px',
                     display: 'flex', flexDirection: 'column', gap: '4px',
@@ -849,7 +849,7 @@ function HeaderButton({ onClick, title, children }) {
     );
 }
 
-// ── GALILEO ONNIPOTENTE: Map action commands to human-readable Italian labels ──
+// ── UNLIM ONNIPOTENTE: Map action commands to human-readable Italian labels ──
 function actionToLabel(action) {
     const cmd = (action || '').split(':')[0];
     const labels = {
@@ -892,7 +892,7 @@ function MessageBubble({ msg, onRetry }) {
             alignItems: 'flex-start',
             gap: '8px',
             marginBottom: '12px',
-            animation: 'galileoMsgIn 0.25s ease',
+            animation: 'unlimMsgIn 0.25s ease',
         }}>
             {/* Avatar */}
             {!isUser && (
@@ -946,10 +946,10 @@ function MessageBubble({ msg, onRetry }) {
                         border: isError ? '1px solid var(--color-chat-msg-error-border)' : 'none',
                         // Code block styling via nested CSS (handled by ElabTutorV4.css .v4-bubble fallback)
                     }}
-                    className="galileo-bubble-content"
+                    className="unlim-bubble-content"
                 />
 
-                {/* ── GALILEO ONNIPOTENTE: Executed actions badge ── */}
+                {/* ── UNLIM ONNIPOTENTE: Executed actions badge ── */}
                 {msg._executedActions?.length > 0 && (
                     <div style={{
                         display: 'flex', flexWrap: 'wrap', gap: '4px',
@@ -961,7 +961,7 @@ function MessageBubble({ msg, onRetry }) {
                                 padding: '2px 8px', background: 'var(--color-chat-action-tag-bg)',
                                 borderRadius: '10px', fontSize: '14px', color: 'var(--color-chat-action-tag-text)',
                                 fontWeight: 600, lineHeight: '1.4',
-                                animation: 'galileoFadeInUp 0.3s ease',
+                                animation: 'unlimFadeInUp 0.3s ease',
                             }}>
                                 {actionToLabel(action)}
                             </span>
@@ -969,7 +969,7 @@ function MessageBubble({ msg, onRetry }) {
                     </div>
                 )}
 
-                {/* ── GALILEO ONNIPOTENTE: YouTube search card ── */}
+                {/* ── UNLIM ONNIPOTENTE: YouTube search card ── */}
                 {msg.youtubeSearch && (
                     <a
                         href={msg.youtubeSearch.url}

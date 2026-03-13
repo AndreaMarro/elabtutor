@@ -167,12 +167,12 @@
     display: none;
   }
 
-  /* S86: Collapse spacers + hide Galileo toolbar btn on iPad landscape */
+  /* S86: Collapse spacers + hide UNLIM toolbar btn on iPad landscape */
   .toolbar-spacer {
     flex: 0 0 auto;
     min-width: 0;
   }
-  .toolbar-btn--galileo {
+  .toolbar-btn--unlim {
     display: none !important;
   }
   /* S86: Hide experiment info text to reclaim toolbar space */
@@ -231,12 +231,12 @@
     display: none;
   }
 
-  /* S86: Collapse spacers + hide info/galileo on iPad portrait */
+  /* S86: Collapse spacers + hide info/unlim on iPad portrait */
   .toolbar-spacer {
     flex: 0 0 auto;
     min-width: 0;
   }
-  .toolbar-btn--galileo {
+  .toolbar-btn--unlim {
     display: none !important;
   }
   .toolbar-info {
@@ -317,7 +317,7 @@
   }
 }
 
-/* S66 FIX: overflow "..." menu always visible — Report PDF + Galileo accessible on all screens */
+/* S66 FIX: overflow "..." menu always visible — Report PDF + UNLIM accessible on all screens */
 
 /* ─── Overflow dropdown menu ─── */
 /* © Andrea Marro — 18/02/2026 */
@@ -678,9 +678,9 @@
   }
 }
 
-/* Galileo (gradient CTA) — S76: uses corrected ELAB Lime #7CB342 */
-.toolbar-btn--galileo {
-  background: linear-gradient(135deg, var(--color-galileo-gradient-start, #7CB342) 0%, var(--color-galileo-gradient-end, #558B2F) 100%);
+/* UNLIM (gradient CTA) — S76: uses corrected ELAB Lime #7CB342 */
+.toolbar-btn--unlim {
+  background: linear-gradient(135deg, var(--color-unlim-gradient-start, #7CB342) 0%, var(--color-unlim-gradient-end, #558B2F) 100%);
   color: var(--color-text-inverse, #FFFFFF);
   border: none;
   padding: 6px 16px;
@@ -693,16 +693,16 @@
 }
 
 @media (hover: hover) {
-  .toolbar-btn--galileo:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--color-galileo-gradient-end, #558B2F) 0%, var(--color-galileo-gradient-pressed-start) 100%);
+  .toolbar-btn--unlim:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-unlim-gradient-end, #558B2F) 0%, var(--color-unlim-gradient-pressed-start) 100%);
     color: var(--color-text-inverse, #FFFFFF);
     box-shadow: var(--shadow-accent-md);
     transform: translateY(-1px);
   }
 }
 
-.toolbar-btn--galileo:active:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-galileo-gradient-pressed-start) 0%, var(--color-galileo-gradient-pressed-end) 100%);
+.toolbar-btn--unlim:active:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-unlim-gradient-pressed-start) 0%, var(--color-unlim-gradient-pressed-end) 100%);
   color: var(--color-text-inverse, #FFFFFF);
   transform: translateY(0) scale(0.98);
   box-shadow: var(--shadow-accent-xs);
@@ -729,7 +729,7 @@
 }
 
 .toolbar-btn--diagnose:active:not(:disabled) {
-  background: var(--color-galileo-dark, #122F57);
+  background: var(--color-unlim-dark, #122F57);
   color: var(--color-text-inverse, #FFFFFF);
   transform: scale(0.95);
 }
@@ -825,14 +825,14 @@
   0% {
     background: var(--color-accent, #7CB342);
     color: var(--color-text-inverse, #FFFFFF);
-    border-color: var(--color-galileo-gradient-end, #558B2F);
+    border-color: var(--color-unlim-gradient-end, #558B2F);
     transform: scale(1.04);
   }
 
   60% {
     background: var(--color-accent, #7CB342);
     color: var(--color-text-inverse, #FFFFFF);
-    border-color: var(--color-galileo-gradient-end, #558B2F);
+    border-color: var(--color-unlim-gradient-end, #558B2F);
     transform: scale(1.0);
   }
 
@@ -844,7 +844,7 @@
   }
 }
 
-.toolbar-btn__label--galileo {
+.toolbar-btn__label--unlim {
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--font-size-sm, 14px);
 }
@@ -940,7 +940,7 @@
     display: none;
   }
 
-  .toolbar-btn__label--galileo {
+  .toolbar-btn__label--unlim {
     display: none;
   }
 

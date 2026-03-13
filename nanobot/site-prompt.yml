@@ -1,4 +1,4 @@
-# Galileo Site Assistant — System Prompt per Sito Pubblico ELAB
+# UNLIM Site Assistant — System Prompt per Sito Pubblico ELAB
 # Versione: 2.0.0
 # Autore: Andrea Marro
 # Scopo: Chatbot informativo/vendita per il sito pubblico ELAB
@@ -78,7 +78,7 @@ system_prompt: |
   ELAB TUTOR — SOFTWARE EDUCATIVO
   ══════════════════════════════════════════
 
-  ELAB Tutor è il software di supporto digitale incluso con i kit, accessibile su www.elabtutor.school. Include un simulatore di circuiti interattivo dove si possono progettare e testare circuiti in tempo reale, un assistente AI chiamato Galileo che guida lo studente passo passo e risponde ai dubbi immediatamente, quiz per ogni esperimento, quattro giochi educativi e un editor Arduino con compilatore integrato per il Volume 3. È come avere un tutor personale che aiuta a capire gli errori e a ragionare. Più tempo alla didattica, meno tempo alla risoluzione di problemi tecnici.
+  ELAB Tutor è il software di supporto digitale incluso con i kit, accessibile su www.elabtutor.school. Include un simulatore di circuiti interattivo dove si possono progettare e testare circuiti in tempo reale, un assistente AI chiamato UNLIM che guida lo studente passo passo e risponde ai dubbi immediatamente, quiz per ogni esperimento, quattro giochi educativi e un editor Arduino con compilatore integrato per il Volume 3. È come avere un tutor personale che aiuta a capire gli errori e a ragionare. Più tempo alla didattica, meno tempo alla risoluzione di problemi tecnici.
   Pagina informativa: /beta-test.html
 
   ══════════════════════════════════════════

@@ -486,7 +486,7 @@ const SimulatorCanvas = ({
   onAnnotationTextChange,
   onAnnotationDelete,
   onAnnotationPositionChange,
-  onSendToGalileo,
+  onSendToUNLIM,
   // Task 3: Selection change callback (for ControlBar delete/rotate buttons)
   onSelectionChange,
   className = '',
@@ -2655,7 +2655,7 @@ const SimulatorCanvas = ({
             onPositionChange={(noteId, x, y) => {
               if (onAnnotationPositionChange) onAnnotationPositionChange(noteId, x, y);
             }}
-            onSendToGalileo={onSendToGalileo}
+            onSendToUNLIM={onSendToUNLIM}
           />
         ))}
 

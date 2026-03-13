@@ -96,12 +96,16 @@ export function buildPinComponentMap(experiment) {
 
     // Now find which Arduino pins connect to which output components
     // Find all nano pin endpoints
+    // NanoR4Board uses W_D9/E_D9/W_A0 format (West/East side prefix) — strip to D9/A0
     const nanoPins = {}; // "D13" -> union-find node
     (experiment.connections || []).forEach(conn => {
       [conn.from, conn.to].forEach(endpoint => {
         const [id, pin] = endpoint.split(':');
-        if (compById[id]?.type === 'nano-r4' && /^[DA]\d+$/.test(pin)) {
-          nanoPins[pin] = endpoint;
+        if (compById[id]?.type === 'nano-r4') {
+          const stripped = pin.replace(/^[WE]_/, '');
+          if (/^[DA]\d+$/.test(stripped)) {
+            nanoPins[stripped] = endpoint;
+          }
         }
       });
     });
@@ -161,10 +165,14 @@ export function buildPinComponentMap(experiment) {
     let otherCompId = null;
     let otherComp = null;
 
-    if (fromComp?.type === 'nano-r4' && /^[DA]\d+$/.test(fromPin)) {
-      nanoPin = fromPin; otherCompId = toId; otherComp = toComp;
-    } else if (toComp?.type === 'nano-r4' && /^[DA]\d+$/.test(toPin)) {
-      nanoPin = toPin; otherCompId = fromId; otherComp = fromComp;
+    // Strip W_/E_ prefix from NanoR4Board pin names (West/East side)
+    const strippedFrom = fromPin.replace(/^[WE]_/, '');
+    const strippedTo = toPin.replace(/^[WE]_/, '');
+
+    if (fromComp?.type === 'nano-r4' && /^[DA]\d+$/.test(strippedFrom)) {
+      nanoPin = strippedFrom; otherCompId = toId; otherComp = toComp;
+    } else if (toComp?.type === 'nano-r4' && /^[DA]\d+$/.test(strippedTo)) {
+      nanoPin = strippedTo; otherCompId = fromId; otherComp = fromComp;
     }
 
     if (nanoPin && otherComp) {
@@ -190,6 +198,7 @@ export function buildPinComponentMap(experiment) {
           }
         }
         map[pinNum] = { compId: target.id, compType: target.type };
+// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       }
     }
   });
@@ -198,7 +207,6 @@ export function buildPinComponentMap(experiment) {
 }
 
 /**
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
  * Build LCD pin mapping for AVRBridge.configureLCDPins().
  * Traces which Arduino pins are connected to the LCD's RS, E, D4-D7 pins
  * through the breadboard wiring.
@@ -277,8 +285,11 @@ export function buildLCDPinMapping(experiment) {
   (experiment.connections || []).forEach(conn => {
     [conn.from, conn.to].forEach(endpoint => {
       const [id, pin] = endpoint.split(':');
-      if (compById[id]?.type === 'nano-r4' && /^[DA]\d+$/.test(pin)) {
-        nanoPins[pin] = endpoint;
+      if (compById[id]?.type === 'nano-r4') {
+        const stripped = pin.replace(/^[WE]_/, '');
+        if (/^[DA]\d+$/.test(stripped)) {
+          nanoPins[stripped] = endpoint;
+        }
       }
     });
   });

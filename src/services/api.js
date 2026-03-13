@@ -6,7 +6,7 @@
 // © Andrea Marro — 20/02/2026
 // ========================================
 import { filterAIResponse } from '../utils/aiSafetyFilter';
-import { searchKnowledgeBase } from '../data/galileo-knowledge-base';
+import { searchKnowledgeBase } from '../data/unlim-knowledge-base';
 
 // URLs da variabili d'ambiente (Vite: VITE_ prefix)
 // In produzione: solo backend webhook. Nessun fallback localhost.
@@ -31,7 +31,7 @@ const ALLOWED_COMPILE_BOARDS = new Set([
 ]);
 const SOCRATIC_INSTRUCTION = [
     '[AUTOCOSCIENZA — Chi sei e cosa puoi fare]',
-    'Sei Galileo, tutor AI di ELAB con POTERI REALI sul simulatore. Non sei solo una chat: puoi ESEGUIRE azioni.',
+    'Sei UNLIM, tutor AI di ELAB con POTERI REALI sul simulatore. Non sei solo una chat: puoi ESEGUIRE azioni.',
     'Accompagni studenti 8-14 anni. Rispondi SEMPRE in italiano, chiaro, concreto, entusiasta.',
     'Fai 1 domanda guida breve, poi dai la spiegazione completa. Usa analogie (corrente=acqua, resistore=strettoia).',
     '',
@@ -291,17 +291,17 @@ function friendlyError(error) {
     const msg = (error?.message || '').toLowerCase();
 
     if (msg.includes('chat_url_missing') || msg.includes('vite_n8n_chat_url')) {
-        return 'Configurazione mancante: imposta VITE_N8N_CHAT_URL per usare Galileo.';
+        return 'Configurazione mancante: imposta VITE_N8N_CHAT_URL per usare UNLIM.';
     }
 
     if (error?.name === 'AbortError' || msg.includes('timeout')) {
-        return 'Galileo ci sta mettendo un po\' troppo. Riprova tra qualche secondo.';
+        return 'UNLIM ci sta mettendo un po\' troppo. Riprova tra qualche secondo.';
     }
     if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
         return 'Sembra che la connessione internet non funzioni. Controlla e riprova.';
     }
     if (msg.includes('404')) {
-        return 'Galileo sta dormendo adesso. Puoi comunque usare il manuale e il simulatore!';
+        return 'UNLIM sta dormendo adesso. Puoi comunque usare il manuale e il simulatore!';
     }
     if (msg.includes('500') || msg.includes('502') || msg.includes('503')) {
         return 'Ops! Qualcosa non funziona. Riprova tra un momento!';
@@ -313,7 +313,7 @@ function friendlyError(error) {
         return 'Ops! Qualcosa si è confuso. Ricarica la pagina e riprova.';
     }
     if (msg.includes('vuota') || msg.includes('empty')) {
-        return 'Galileo non ha risposto. Riprova con una domanda diversa.';
+        return 'UNLIM non ha risposto. Riprova con una domanda diversa.';
     }
 
     return 'Qualcosa non ha funzionato. Riprova tra qualche secondo.';
@@ -423,7 +423,7 @@ const BLOCKED_PATTERNS = [
 
 const MODERATION_RESPONSE = {
     success: true,
-    response: 'Galileo è qui per aiutarti con l\'elettronica! Prova a chiedermi qualcosa sui circuiti, i componenti o gli esperimenti del libro.',
+    response: 'UNLIM è qui per aiutarti con l\'elettronica! Prova a chiedermi qualcosa sui circuiti, i componenti o gli esperimenti del libro.',
     source: 'moderation',
     actions: { commands: [], buttons: [], route: null },
 };
@@ -439,7 +439,7 @@ function isMessageBlocked(message) {
 }
 
 /**
- * Chat con Galileo — Fallback chain: nanobot → backend webhook → local RAG → knowledge base
+ * Chat con UNLIM — Fallback chain: nanobot → backend webhook → local RAG → knowledge base
  * @param {string} message - Il messaggio dell'utente
  * @param {Array} images - Array di immagini [{base64, mimeType}] (opzionale)
  */
@@ -476,8 +476,8 @@ export async function sendChat(message, images = [], options = {}) {
 
             // Security: sessionStorage instead of localStorage — session IDs must not
             // persist across browser sessions on shared school computers.
-            const sessionId = sessionStorage.getItem('galileo_session') || `s_${crypto.randomUUID()}`;
-            sessionStorage.setItem('galileo_session', sessionId);
+            const sessionId = sessionStorage.getItem('unlim_session') || `s_${crypto.randomUUID()}`;
+            sessionStorage.setItem('unlim_session', sessionId);
 
             try {
                 const analyzeResponse = await postChatWithRetry({
@@ -543,8 +543,8 @@ export async function sendChat(message, images = [], options = {}) {
         // Genera sessionId unico per la memoria
         // Security: sessionStorage instead of localStorage — session IDs must not
         // persist across browser sessions on shared school computers.
-        const sessionId = sessionStorage.getItem('galileo_session') || `s_${crypto.randomUUID()}`;
-        sessionStorage.setItem('galileo_session', sessionId);
+        const sessionId = sessionStorage.getItem('unlim_session') || `s_${crypto.randomUUID()}`;
+        sessionStorage.setItem('unlim_session', sessionId);
 
         const response = await postChatWithRetry({ message: webhookMessage, sessionId }, externalSignal);
 

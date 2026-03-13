@@ -532,7 +532,7 @@ const EXPERIMENTS_VOL3 = {
         "Collega GND e 5V dell'Arduino ai binari. Carica il programma e osserva il semaforo!"
       ],
       observe: "I LED si accendono in sequenza come un vero semaforo: verde per 3 secondi, giallo per 1 secondo, rosso per 3 secondi. Solo un colore alla volta è acceso, esattamente come al semaforo stradale!",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Semaforo 3 LED' del Volume 3 — Arduino Programmato. Questo esperimento usa TRE pin di output sul breakout wing (W_D5, W_D6, W_D3) per creare un semaforo vero! Il codice nel loop() ha tre blocchi: prima accende solo il verde (pin 5 HIGH, gli altri LOW) e aspetta 3 secondi, poi solo il giallo (pin 6) per 1 secondo, poi solo il rosso (pin 3) per 3 secondi. È una sequenza di stati, come le fasi di un semaforo reale! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Semaforo 3 LED' del Volume 3 — Arduino Programmato. Questo esperimento usa TRE pin di output sul breakout wing (W_D5, W_D6, W_D3) per creare un semaforo vero! Il codice nel loop() ha tre blocchi: prima accende solo il verde (pin 5 HIGH, gli altri LOW) e aspetta 3 secondi, poi solo il giallo (pin 6) per 1 secondo, poi solo il rosso (pin 3) per 3 secondi. È una sequenza di stati, come le fasi di un semaforo reale! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: `// Semaforo 3 LED — Pin D5 (verde), D6 (giallo), D3 (rosso)
 // Breakout wing: W_D5, W_D6, W_D3
 // Timing: Verde 3s, Giallo 1s, Rosso 3s
@@ -823,7 +823,7 @@ void loop() {
         "Collega le colonne dei catodi (28) al binario GND. Carica e premi il pulsante per alternare!"
       ],
       observe: "All'avvio il LED verde è acceso e il rosso spento. Ogni volta che premi il pulsante, si scambiano: il verde si spegne e il rosso si accende, o viceversa. Il codice usa il debounce per evitare rimbalzi meccanici del pulsante.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento '2 LED + Pulsante (toggle)' del Volume 3 — Arduino Programmato. Questo è l'esperimento più avanzato del capitolo 7! Il codice usa variabili booleane (statoVerde e ultimoPulsante) per ricordare lo stato tra un ciclo e l'altro. Rileva la transizione HIGH->LOW del pulsante (il momento esatto della pressione) e usa il debounce con delay(50) per evitare falsi contatti. Poi con if/else alterna quale LED è acceso. È come un interruttore che ogni volta che lo premi cambia stanza! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento '2 LED + Pulsante (toggle)' del Volume 3 — Arduino Programmato. Questo è l'esperimento più avanzato del capitolo 7! Il codice usa variabili booleane (statoVerde e ultimoPulsante) per ricordare lo stato tra un ciclo e l'altro. Rileva la transizione HIGH->LOW del pulsante (il momento esatto della pressione) e usa il debounce con delay(50) per evitare falsi contatti. Poi con if/else alterna quale LED è acceso. È come un interruttore che ogni volta che lo premi cambia stanza! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: `// 2 LED + Pulsante Toggle
 // D6 (W_D6) = pulsante, D10 (W_D10) = verde, D9 (W_D9) = rosso
 // Premi per alternare: verde <-> rosso
@@ -1069,7 +1069,7 @@ void loop() {
         "Prova a trovare il valore 512 (metà corsa) girando la manopola con precisione!"
       ],
       observe: "Sul Serial Monitor appaiono numeri che cambiano in tempo reale quando giri la manopola. Il valore va da 0 (manopola tutta a sinistra, 0V) a 1023 (tutta a destra, 5V). Questo è il convertitore analogico-digitale (ADC) a 10 bit dell'Arduino: trasforma una tensione analogica in un numero digitale!",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'analogRead + Serial Monitor' del Volume 3 — Arduino Programmato. Questo è il primo esperimento con i pin analogici E il Serial Monitor! Il codice usa Serial.begin(9600) nel setup per aprire la comunicazione seriale. Nel loop(), analogRead(A0) legge il valore del potenziometro come un numero da 0 a 1023 (ADC a 10 bit), poi Serial.println(valore) lo stampa sul monitor. Il delay(200) evita di stampare troppo velocemente. È come un termometro digitale che legge la temperatura e la mostra sullo schermo! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'analogRead + Serial Monitor' del Volume 3 — Arduino Programmato. Questo è il primo esperimento con i pin analogici E il Serial Monitor! Il codice usa Serial.begin(9600) nel setup per aprire la comunicazione seriale. Nel loop(), analogRead(A0) legge il valore del potenziometro come un numero da 0 a 1023 (ADC a 10 bit), poi Serial.println(valore) lo stampa sul monitor. Il delay(200) evita di stampare troppo velocemente. È come un termometro digitale che legge la temperatura e la mostra sullo schermo! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: `// analogRead + Serial Monitor
 // Potenziometro su A0, stampa valore 0-1023
 
@@ -1228,7 +1228,7 @@ void loop() {
         "Osserva il messaggio \"Hello World!\" sul display LCD."
       ],
       observe: "Il display LCD mostra \"Hello World!\" sulla prima riga e \"ELAB Simulator\" sulla seconda. Il protocollo HD44780 in modalità 4-bit usa 6 pin di Arduino per controllare il display: RS, E, D4-D7.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LCD Hello World' — Extra. Questo esperimento mostra come usare un display LCD 16x2 con Arduino. Il display usa il protocollo HD44780 in modalità 4-bit: servono 6 pin (RS, E, D4-D7). La libreria LiquidCrystal semplifica tutto: lcd.begin(16,2) inizializza il display, lcd.setCursor(colonna, riga) posiziona il cursore, lcd.print() stampa il testo. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LCD Hello World' — Extra. Questo esperimento mostra come usare un display LCD 16x2 con Arduino. Il display usa il protocollo HD44780 in modalità 4-bit: servono 6 pin (RS, E, D4-D7). La libreria LiquidCrystal semplifica tutto: lcd.begin(16,2) inizializza il display, lcd.setCursor(colonna, riga) posiziona il cursore, lcd.print() stampa il testo. Rispondi in italiano.",
       code: `#include <LiquidCrystal.h>
 
 // RS=12 (W_D12), E=11 (W_D11), D4=5 (W_D5), D5=10 (W_D10), D6=3 (W_D3), D7=6 (W_D6)
@@ -1400,7 +1400,7 @@ void loop() {
         "Osserva il braccio del servo che oscilla da 0 a 180 gradi e ritorno."
       ],
       observe: "Il braccio del servo si muove lentamente da 0 a 180 gradi, poi ritorna a 0. Il ciclo si ripete all'infinito. Il servo usa un segnale PWM sul pin D9 per controllare l'angolo.",
-      galileoPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Servo Sweep' — Extra. Un servomotore è un motore che può ruotare a un angolo preciso (da 0 a 180 gradi). La libreria Servo di Arduino semplifica il controllo: myServo.attach(9) collega il servo al pin 9, myServo.write(angolo) imposta l'angolo. Il codice usa due cicli for: uno da 0 a 180 e uno da 180 a 0, con delay(15) tra ogni grado per un movimento fluido. Rispondi in italiano.",
+      unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Servo Sweep' — Extra. Un servomotore è un motore che può ruotare a un angolo preciso (da 0 a 180 gradi). La libreria Servo di Arduino semplifica il controllo: myServo.attach(9) collega il servo al pin 9, myServo.write(angolo) imposta l'angolo. Il codice usa due cicli for: uno da 0 a 180 e uno da 180 a 0, con delay(15) tra ogni grado per un movimento fluido. Rispondi in italiano.",
       code: `#include <Servo.h>
 
 Servo myServo;
@@ -1520,6 +1520,7 @@ void loop() {
       difficulty: 3,
       icon: "🧠",
       simulationMode: "avr",
+      hexFile: "/hex/v3-extra-simon.hex",
       components: [
         { type: "breadboard-half", id: "bb1" },
         { type: "nano-r4", id: "nano1" },
@@ -1604,8 +1605,8 @@ void loop() {
         /* Buzzer: left side of breadboard, columns 10-11 */
         "buz1": { x: 355, y: 43.75 }
       },
-      steps: [
 // © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+      steps: [
         "Carica il codice su Arduino.",
         "Osserva il lampeggio iniziale: tutti e 4 i LED si accendono insieme con un suono acuto.",
         "Dopo il lampeggio, un LED si accende con la sua nota musicale: è il primo elemento della sequenza.",
@@ -1616,7 +1617,7 @@ void loop() {
         "Sfida te stesso: quanti livelli riesci a completare?"
       ],
       observe: "Osserva come ogni LED si accende per 400ms insieme alla sua nota musicale (Do=262Hz per il rosso, Mi=330Hz per il verde, Sol=392Hz per il blu, Do alto=523Hz per il giallo). Il cicalino aiuta la memoria: puoi ricordare la sequenza sia con i colori che con le note! Il timeout per premere un pulsante è di 3 secondi.",
-      galileoPrompt: "Questo esperimento implementa il gioco Simon Says con feedback sonoro. 4 LED colorati (rosso D9, verde D10, blu D11, giallo D12) + un cicalino piezo (D8) mostrano una sequenza di luci e suoni che si allunga ad ogni turno. Ogni colore ha la sua nota: rosso=Do(262Hz), verde=Mi(330Hz), blu=Sol(392Hz), giallo=Do alto(523Hz). 4 pulsanti (rosso D3, verde D5, blu D6, giallo D13) in INPUT_PULLUP permettono al giocatore di ripetere la sequenza. Un array seq[] memorizza fino a 100 elementi. La funzione accendi() usa tone() e noTone() per abbinare suono e luce. gameOver() suona un tono grave (150Hz) durante il lampeggio. Usa randomSeed(analogRead(A0)) per sequenze diverse ad ogni partita.",
+      unlimPrompt: "Questo esperimento implementa il gioco Simon Says con feedback sonoro. 4 LED colorati (rosso D9, verde D10, blu D11, giallo D12) + un cicalino piezo (D8) mostrano una sequenza di luci e suoni che si allunga ad ogni turno. Ogni colore ha la sua nota: rosso=Do(262Hz), verde=Mi(330Hz), blu=Sol(392Hz), giallo=Do alto(523Hz). 4 pulsanti (rosso D3, verde D5, blu D6, giallo D13) in INPUT_PULLUP permettono al giocatore di ripetere la sequenza. Un array seq[] memorizza fino a 100 elementi. La funzione accendi() usa tone() e noTone() per abbinare suono e luce. gameOver() suona un tono grave (150Hz) durante il lampeggio. Usa randomSeed(analogRead(A0)) per sequenze diverse ad ogni partita.",
       code: `// SIMON GAME — ELAB Volume 3
 // Gioco di memoria con 4 LED, 4 pulsanti e cicalino
 
@@ -1805,8 +1806,8 @@ void loop() {
           componentId: "led3",
           componentType: "led",
           targetPins: { "led3:anode": "bb1:h23", "led3:cathode": "bb1:h24" },
-          hint: "Stesso schema del LED rosso, ma nella sezione inferiore."
 // © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+          hint: "Stesso schema del LED rosso, ma nella sezione inferiore."
         },
         {
           step: 11,
@@ -2006,8 +2007,8 @@ void loop() {
       scratchSteps: [
         {
           step: 1,
-          text: "Apri l'editor Scratch (tab Blocchi) e trascina il blocco 'Imposta pin 9 come USCITA' nel Setup — questo prepara il primo LED",
 // © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+          text: "Apri l'editor Scratch (tab Blocchi) e trascina il blocco 'Imposta pin 9 come USCITA' nel Setup — questo prepara il primo LED",
           hint: "Ogni LED ha bisogno del suo pinMode OUTPUT nel setup — ne servono 4 per i LED + 1 per il cicalino.",
           explanation: "Il Setup si esegue una sola volta all'accensione. Qui prepariamo i pin dicendo ad Arduino quali sono uscite (OUTPUT) e quali ingressi (INPUT_PULLUP)."
         },

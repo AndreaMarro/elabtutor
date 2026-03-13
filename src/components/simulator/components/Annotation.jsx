@@ -17,7 +17,7 @@ const Annotation = ({
   onSelect,
   onDelete,
   onPositionChange,
-  onSendToGalileo,
+  onSendToUNLIM,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localText, setLocalText] = useState(text);
@@ -211,14 +211,14 @@ const Annotation = ({
       {/* Action buttons (top-right, visible when selected) */}
       {isSelected && (
         <>
-          {/* Send to Galileo button (chat icon) */}
-          {onSendToGalileo && text.trim() && (
+          {/* Send to UNLIM button (chat icon) */}
+          {onSendToUNLIM && text.trim() && (
             <g
               style={{ cursor: 'pointer' }}
               onMouseDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onSendToGalileo(`Ho scritto questa annotazione sul circuito: "${text}". Puoi aiutarmi a capire meglio?`);
+                onSendToUNLIM(`Ho scritto questa annotazione sul circuito: "${text}". Puoi aiutarmi a capire meglio?`);
               }}
             >
               <circle cx={renderX + noteWidth - 14} cy={renderY + 1} r="5" fill="var(--color-primary, #1E4D8C)" stroke="#fff" strokeWidth="0.5" />

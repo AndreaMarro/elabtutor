@@ -30,7 +30,7 @@ const REVERSE_STAR_MESSAGES = {
   1: 'Mistero risolto! Usa meno sonde la prossima volta.',
 };
 
-export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onSendToGalileo }) {
+export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onSendToUNLIM }) {
   const { saveScore, getScore, getAllScores } = useGameScore('reverse');
   const [selected, setSelected] = useState(null);
   const [revealedPoints, setRevealedPoints] = useState([]);
@@ -364,13 +364,13 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
           <div style={{ marginTop: 8, fontSize: '0.875rem', color: 'var(--elab-muted)', textAlign: 'center' }}>
             Hai usato {revealedPoints.length} sond{revealedPoints.length === 1 ? 'a' : 'e'} su {selected.testPoints.length} disponibili
           </div>
-          {onSendToGalileo && (
+          {onSendToUNLIM && (
             <button
-              onClick={() => onSendToGalileo(`Nel Reverse Engineering "${selected.title}", il componente misterioso era "${selected.hiddenPart.name}". Spiegami come funziona questo componente nel circuito.`)}
+              onClick={() => onSendToUNLIM(`Nel Reverse Engineering "${selected.title}", il componente misterioso era "${selected.hiddenPart.name}". Spiegami come funziona questo componente nel circuito.`)}
               className="elab-tool__btn elab-tool__btn--secondary elab-tool__btn--full"
               style={{ marginTop: 12 }}
             >
-              Galileo, spiegami come funziona
+              UNLIM, spiegami come funziona
             </button>
           )}
         </div>

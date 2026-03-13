@@ -15,7 +15,7 @@ const LINE_ENDINGS = [
   { label: 'Entrambi', value: '\r\n' },
 ];
 
-const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = false, onBaudRateChange, baudMismatch = false, showTimestamps = false, onToggleTimestamps, onSendToGalileo }) => {
+const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = false, onBaudRateChange, baudMismatch = false, showTimestamps = false, onToggleTimestamps, onSendToUNLIM }) => {
   const [inputText, setInputText] = useState('');
   const [autoScroll, setAutoScroll] = useState(true);
   const [baudRate, setBaudRate] = useState(9600);
@@ -127,10 +127,10 @@ const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = 
             </svg>
           </button>
 
-          {/* Galileo button */}
-          {onSendToGalileo && serialOutput.trim() && (
+          {/* UNLIM button */}
+          {onSendToUNLIM && serialOutput.trim() && (
             <button
-              onClick={() => onSendToGalileo(`L'output del Serial Monitor è:\n${serialOutput.slice(-500)}\n\nPuoi spiegarmi cosa significano questi dati?`)}
+              onClick={() => onSendToUNLIM(`L'output del Serial Monitor è:\n${serialOutput.slice(-500)}\n\nPuoi spiegarmi cosa significano questi dati?`)}
               style={{
                 ...S.iconBtn,
                 background: 'var(--color-primary-subtle, rgba(30,77,140,0.15))',
@@ -139,9 +139,9 @@ const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = 
                 fontWeight: 700,
                 fontSize: 14,
               }}
-              title="Chiedi a Galileo di spiegare l'output"
+              title="Chiedi a UNLIM di spiegare l'output"
             >
-              G
+              U
             </button>
           )}
         </div>

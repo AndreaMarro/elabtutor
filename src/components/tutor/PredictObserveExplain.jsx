@@ -28,7 +28,7 @@ const POE_STAR_MESSAGES = {
   1: 'Sfida completata! Riprova per migliorare.',
 };
 
-export default function PredictObserveExplain({ onOpenSimulator, logSession, onSendToGalileo }) {
+export default function PredictObserveExplain({ onOpenSimulator, logSession, onSendToUNLIM }) {
   const { saveScore, getScore, getAllScores } = useGameScore('poe');
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [phase, setPhase] = useState('predict');
@@ -254,13 +254,13 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
                 Provalo nel simulatore
               </button>
             )}
-            {!isCorrect && onSendToGalileo && (
+            {!isCorrect && onSendToUNLIM && (
               <button
-                onClick={() => onSendToGalileo(`Nella sfida POE "${selectedChallenge.question}", ho previsto "${selectedChallenge.options[prediction]}" ma la risposta corretta è "${selectedChallenge.options[selectedChallenge.correctAnswer]}". Puoi spiegarmi perché?`)}
+                onClick={() => onSendToUNLIM(`Nella sfida POE "${selectedChallenge.question}", ho previsto "${selectedChallenge.options[prediction]}" ma la risposta corretta è "${selectedChallenge.options[selectedChallenge.correctAnswer]}". Puoi spiegarmi perché?`)}
                 className="elab-tool__btn elab-tool__btn--secondary"
                 style={{ flex: 1 }}
               >
-                Chiedi a Galileo perché
+                Chiedi a UNLIM perché
               </button>
             )}
             <button onClick={goToExplain} className="elab-tool__btn elab-tool__btn--navy" style={{ flex: 1 }}>
@@ -291,13 +291,13 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             </p>
           )}
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            {onSendToGalileo && (
+            {onSendToUNLIM && (
               <button
-                onClick={() => onSendToGalileo(`Nella sfida POE "${selectedChallenge.question}", aiutami a capire: ${isCorrect ? 'perché la mia previsione era corretta?' : 'perché il risultato è diverso dalla mia previsione?'}`)}
+                onClick={() => onSendToUNLIM(`Nella sfida POE "${selectedChallenge.question}", aiutami a capire: ${isCorrect ? 'perché la mia previsione era corretta?' : 'perché il risultato è diverso dalla mia previsione?'}`)}
                 className="elab-tool__btn elab-tool__btn--secondary"
                 style={{ flex: 1 }}
               >
-                Galileo, aiutami
+                UNLIM, aiutami
               </button>
             )}
             <button

@@ -1,7 +1,7 @@
 /**
  * ELAB Simulator — PinOverlay
  * Layer trasparente sopra i componenti per evidenziare pin
- * Usato dall'AI tutor Galileo per indicare dove collegare i fili
+ * Usato dall'AI tutor UNLIM per indicare dove collegare i fili
  * © Andrea Marro — 10/02/2026
  */
 

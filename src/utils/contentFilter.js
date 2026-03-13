@@ -102,7 +102,7 @@ export function sanitizeOutput(text) {
 export function getBlockMessage(reason) {
   switch (reason) {
     case 'inappropriate':
-      return 'Usiamo parole gentili! Galileo risponde solo a domande di elettronica e scienza.';
+      return 'Usiamo parole gentili! UNLIM risponde solo a domande di elettronica e scienza.';
     case 'pii':
       return 'Per la tua sicurezza, non condividere dati personali come email o numeri di telefono nella chat.';
     default:

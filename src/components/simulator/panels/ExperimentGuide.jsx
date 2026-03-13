@@ -12,7 +12,7 @@
 
 import React from 'react';
 
-const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildMode, onClose, onSendToGalileo }) {
+const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildMode, onClose, onSendToUNLIM }) {
   // S84: Auto-collapse on iPad/tablet (all breakpoints ≤1365px) to maximize canvas space
   const isTabletOrSmaller = typeof window !== 'undefined' && window.innerWidth <= 1365;
   const [expanded, setExpanded] = React.useState(!isTabletOrSmaller);
@@ -100,18 +100,18 @@ const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildM
         </div>
       )}
 
-      {/* Chiedi a Galileo */}
-      {onSendToGalileo && (
+      {/* Chiedi a UNLIM */}
+      {onSendToUNLIM && (
         <button
-          onClick={() => onSendToGalileo(`Spiegami l'esperimento "${experiment.title || ''}" — cosa devo osservare e perché funziona così?`)}
-          style={S.galileoBtn}
+          onClick={() => onSendToUNLIM(`Spiegami l'esperimento "${experiment.title || ''}" — cosa devo osservare e perché funziona così?`)}
+          style={S.unlimBtn}
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
             <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/>
             <path d="M5.5 5.5C5.5 4.67 6.17 4 7 4C7.83 4 8.5 4.67 8.5 5.5C8.5 6.33 7 6.5 7 7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
             <circle cx="7" cy="9.5" r="0.5" fill="currentColor"/>
           </svg>
-          Chiedi a Galileo
+          Chiedi a UNLIM
         </button>
       )}
     </div>
@@ -285,7 +285,7 @@ const S = {
     lineHeight: 1.5,
   },
 
-  galileoBtn: {
+  unlimBtn: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

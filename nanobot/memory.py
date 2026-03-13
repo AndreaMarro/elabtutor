@@ -1,8 +1,8 @@
 """
-Galileo Memory System — Individual + Collective Learning
+UNLIM Memory System — Individual + Collective Learning
 2-Layer learning: per-student memory (session) + collective patterns (experiment).
 Integrates with server.py orchestrator (build_specialist_context → build_memory_context).
-(c) Andrea Marro — 28/02/2026 — Multi-Galileo v4.0
+(c) Andrea Marro — 28/02/2026 — Multi-UNLIM v4.0
 """
 
 import json

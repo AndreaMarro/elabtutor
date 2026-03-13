@@ -1,7 +1,7 @@
 /**
  * Activity Ring Buffer — Sprint 1 Context Mastery
- * Tracks the last N user actions for Galileo's contextual awareness.
- * Galileo can see "what the teacher just did" and offer proactive help.
+ * Tracks the last N user actions for UNLIM's contextual awareness.
+ * UNLIM can see "what the teacher just did" and offer proactive help.
  *
  * Usage:
  *   import { pushActivity, getRecentActivities, formatForContext } from './activityBuffer';
@@ -37,7 +37,7 @@ export function getRecentActivities(n = 5) {
 }
 
 /**
- * Format recent activities as a compact context string for Galileo.
+ * Format recent activities as a compact context string for UNLIM.
  * Example output:
  *   [ATTIVITÀ RECENTE]
  *   1. [14:03:15] compile_error: undefined reference to loop

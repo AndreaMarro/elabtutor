@@ -118,7 +118,7 @@ function buildSummaryPrompt(data) {
     ? `${data.quizResults.score}/${data.quizResults.total} (${data.quizResults.score === data.quizResults.total ? 'Tutto giusto!' : data.quizResults.score > 0 ? 'Parziale' : 'Da rivedere'})`
     : 'Non fatto';
 
-  return `[SISTEMA] Sei Galileo. Genera un riassunto per un report PDF della sessione.
+  return `[SISTEMA] Sei UNLIM. Genera un riassunto per un report PDF della sessione.
 
 REGOLE TASSATIVE:
 - Racconta SOLO quello che e' successo. NON inventare.

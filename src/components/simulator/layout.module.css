@@ -1,5 +1,5 @@
 /* Andrea Marro — 13/02/2026 */
-/* Layout + Galileo styles — Responsive Edition (UI-5) */
+/* Layout + UNLIM styles — Responsive Edition (UI-5) */
 /* Breakpoints: Mobile <600, Landscape 600-767, Tablet 768-1023, Desktop 1024-1439, Wide 1440+ */
 
 /* ─── Layout ───────────────────────────────────────────────── */
@@ -44,9 +44,9 @@
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
-/* ─── Galileo Response Panel ───────────────────────────────── */
+/* ─── UNLIM Response Panel ───────────────────────────────── */
 
-.galileoBackdrop {
+.unlimBackdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -60,7 +60,7 @@
   padding: 20px;
 }
 
-.galileoPanel {
+.unlimPanel {
   background: var(--color-sim-bg, #FAFAF7);
   border: 2px solid var(--color-accent, #7CB342);
   border-radius: var(--radius-xl, 16px);
@@ -75,7 +75,7 @@
   font-family: var(--font-sans, 'Open Sans', sans-serif);
 }
 
-.galileoHeader {
+.unlimHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -84,13 +84,13 @@
   border-bottom: 1px solid var(--color-sim-border, #E8E4DB);
 }
 
-.galileoHeaderLeft {
+.unlimHeaderLeft {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.galileoHeaderTitle {
+.unlimHeaderTitle {
   font-size: var(--font-size-md, 16px);
   font-weight: var(--font-weight-bold, 700);
   color: var(--color-primary, #1E4D8C);
@@ -99,7 +99,7 @@
   letter-spacing: 0.5px;
 }
 
-.galileoCloseBtn {
+.unlimCloseBtn {
   border: none;
   background: none;
   cursor: pointer;
@@ -114,7 +114,7 @@
   justify-content: center;
 }
 
-.galileoBody {
+.unlimBody {
   padding: var(--space-4, 16px) var(--space-5, 20px);
   font-size: var(--font-size-sm, 14px);
   color: var(--color-text, #333);
@@ -124,7 +124,7 @@
   font-family: var(--font-sans, 'Open Sans', sans-serif);
 }
 
-.galileoFooter {
+.unlimFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -133,7 +133,7 @@
   background: var(--color-overlay-cream, #F5F3EE);
 }
 
-.galileoRetryBtn {
+.unlimRetryBtn {
   border: 1px solid var(--color-accent, #7CB342);
   border-radius: var(--radius-md, 8px);
   background: var(--color-bg, #fff);
@@ -158,19 +158,23 @@
 
 /* S96: Fullscreen Scratch mode — covers entire viewport */
 /* S161.4: z-index 300→900 (above chat 400, below hints 1000) + solid background */
+/* S115: margins + rounded corners so user sees edges and can exit */
 .codeEditorPanelScratchFullscreen {
   position: fixed !important;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100% !important;
-  max-width: 100% !important;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  width: calc(100% - 16px) !important;
+  max-width: calc(100% - 16px) !important;
   min-width: 0 !important;
-  height: 100dvh !important;
+  height: calc(100dvh - 16px) !important;
   z-index: 900;
   border-left: none !important;
+  border-radius: 12px;
+  overflow: hidden;
   background: var(--color-editor-active-bg, #1E2530);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(230,126,34,0.3);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -194,29 +198,29 @@
     padding: 4px 10px;
     gap: 6px;
     top: 4px;
+/* © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 
-  .galileoBackdrop {
+  .unlimBackdrop {
     padding: 0;
-/* © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     align-items: flex-end;
   }
 
-  .galileoPanel {
+  .unlimPanel {
     max-width: 100%;
     max-height: 85vh;
     max-height: 85dvh;
     border-radius: 16px 16px 0 0;
     border-bottom: none;
-    animation: slideUpGalileo 300ms ease;
+    animation: slideUpUnlim 300ms ease;
   }
 
-  .galileoBody {
+  .unlimBody {
     padding: 16px 16px;
     font-size: 14px;
   }
 
-  .galileoHeaderTitle {
+  .unlimHeaderTitle {
     font-size: 14px;
   }
 }
@@ -244,7 +248,7 @@
     padding: 5px 12px;
   }
 
-  .galileoPanel {
+  .unlimPanel {
     max-width: 500px;
   }
 }
@@ -278,7 +282,7 @@
     max-width: 70vw;
   }
 
-  .galileoPanel {
+  .unlimPanel {
     max-width: 560px;
   }
 }
@@ -325,7 +329,7 @@
 
 /* ─── Animations ───────────────────────────────────────────── */
 
-@keyframes slideUpGalileo {
+@keyframes slideUpUnlim {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }

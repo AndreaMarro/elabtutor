@@ -181,7 +181,7 @@ export default function PrivacyPolicy({ onClose }) {
                 <td style={styles.td}>Art. 8 GDPR + COPPA</td>
               </tr>
               <tr>
-                <td style={styles.td}>Chat AI (Galileo)</td>
+                <td style={styles.td}>Chat AI (UNLIM)</td>
                 <td style={styles.td}>Testo domande e risposte</td>
                 <td style={styles.td}>Art. 6(1)(a) — Consenso</td>
               </tr>
@@ -296,7 +296,7 @@ export default function PrivacyPolicy({ onClose }) {
               </tr>
               <tr>
                 <td style={styles.td}>Erogazione servizio</td>
-                <td style={styles.td}>Simulatore, esperimenti, tutor AI Galileo</td>
+                <td style={styles.td}>Simulatore, esperimenti, tutor AI UNLIM</td>
               </tr>
               <tr>
                 <td style={styles.td}>Personalizzazione</td>
@@ -344,7 +344,7 @@ export default function PrivacyPolicy({ onClose }) {
               <ul style={styles.sublist}>
                 <li>Vercel (hosting)</li>
                 <li>Backend server (workflow automation)</li>
-                <li>Anthropic (AI Galileo - solo testo query)</li>
+                <li>Anthropic (AI UNLIM - solo testo query)</li>
                 <li>SendGrid/Mailgun (invio email)</li>
               </ul>
             </li>

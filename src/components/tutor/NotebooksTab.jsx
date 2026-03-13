@@ -18,7 +18,7 @@ export default function NotebooksTab({
     onCloseNotebook,
     onChangePage,
     onAddPage,
-    onSendToGalileo,
+    onSendToUNLIM,
 }) {
     return (
         <div className="v4-notebooks">
@@ -27,13 +27,13 @@ export default function NotebooksTab({
                     <div className="v4-edit-header">
                         <button className="v4-toolbar-btn" onClick={onCloseNotebook}>← Indietro</button>
                         <h3>{notebooks.find(n => n.id === activeNotebookId)?.title}</h3>
-                        {onSendToGalileo && (
+                        {onSendToUNLIM && (
                             <button
                                 className="v4-toolbar-btn"
-                                onClick={() => onSendToGalileo(`Ho un taccuino aperto intitolato "${notebooks.find(n => n.id === activeNotebookId)?.title || 'senza titolo'}". Puoi aiutarmi a riassumere o approfondire gli argomenti?`)}
-                                title="Chiedi a Galileo"
+                                onClick={() => onSendToUNLIM(`Ho un taccuino aperto intitolato "${notebooks.find(n => n.id === activeNotebookId)?.title || 'senza titolo'}". Puoi aiutarmi a riassumere o approfondire gli argomenti?`)}
+                                title="Chiedi a UNLIM"
                             >
-                                Chiedi a Galileo
+                                Chiedi a UNLIM
                             </button>
                         )}
                     </div>

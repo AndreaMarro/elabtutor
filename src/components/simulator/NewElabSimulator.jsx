@@ -20,6 +20,7 @@ import React, {
   lazy,
 } from 'react';
 import SimulatorCanvas from './canvas/SimulatorCanvas';
+import DrawingOverlay from './canvas/DrawingOverlay';
 import { getAutoWireColor } from './canvas/WireRenderer';
 import ExperimentPicker from './panels/ExperimentPicker';
 import ComponentPalette from './panels/ComponentPalette';
@@ -143,7 +144,7 @@ const ScratchCompileBar = React.memo(function ScratchCompileBar({
 import PotOverlay from './overlays/PotOverlay';
 import LdrOverlay from './overlays/LdrOverlay';
 import PropertiesPanel from './panels/PropertiesPanel';
-import GalileoResponsePanel from './panels/GalileoResponsePanel';
+import UNLIMResponsePanel from './panels/UNLIMResponsePanel';
 import ExperimentGuide from './panels/ExperimentGuide';
 import BuildModeGuide from './panels/BuildModeGuide';
 import ComponentDrawer from './panels/ComponentDrawer';
@@ -257,15 +258,15 @@ const NewElabSimulator = ({
   userKits = null,
   onDiagnoseCircuit,
   onGetHints,
-  onSendToGalileo,
-  onSendImageToGalileo,
+  onSendToUNLIM,
+  onSendImageToUNLIM,
   // Session Report: refs from ElabTutorV4 for PDF generation
   messagesRef,
   quizResultsRef,
   sessionStartRef,
   circuitStateRef,
 }) => {
-  // ─── Galileo API highlight state (internal, merged with props) ───
+  // ─── UNLIM API highlight state (internal, merged with props) ───
   /* Andrea Marro — 12/02/2026 */
   const [apiHighlightedComponents, setApiHighlightedComponents] = useState([]);
   const [apiHighlightedPins, setApiHighlightedPins] = useState([]);
@@ -316,6 +317,7 @@ const NewElabSimulator = ({
   const [serialBaudRate, setSerialBaudRate] = useState(9600);
   const [serialTimestamps, setSerialTimestamps] = useState(false);
   const [baudMismatch, setBaudMismatch] = useState(false);
+  const [drawingEnabled, setDrawingEnabled] = useState(false); // Drawing layer toggle
 
   // S100: Persist sidebar preference to localStorage
   useEffect(() => {
@@ -643,7 +645,7 @@ const NewElabSimulator = ({
 
   // restoreSnapshot is defined after reSolve (forward reference)
   const restoreSnapshotRef = useRef(null);
-  // Galileo Onnipotente: refs for undo snapshot in clearAll (mount-time API)
+  // UNLIM Onnipotente: refs for undo snapshot in clearAll (mount-time API)
   const getCurrentSnapshotRef = useRef(getCurrentSnapshot);
   const pushSnapshotRef = useRef(pushSnapshot);
   getCurrentSnapshotRef.current = getCurrentSnapshot;
@@ -848,7 +850,7 @@ const NewElabSimulator = ({
     };
   }, [compilationStatus, compilationErrors, compilationWarnings, compilationSize]);
 
-  // Sprint 1 Context Mastery: Refs for serial output + selected component (for Galileo)
+  // Sprint 1 Context Mastery: Refs for serial output + selected component (for UNLIM)
   const serialOutputRef = useRef('');
   useEffect(() => { serialOutputRef.current = serialOutput; }, [serialOutput]);
   const selectedComponentIdRef = useRef(null);
@@ -867,7 +869,7 @@ const NewElabSimulator = ({
     }
   }, []);
 
-  // ── GALILEO ONNIPOTENTE: Listen for quiz trigger from Galileo chat ──
+  // ── UNLIM ONNIPOTENTE: Listen for quiz trigger from UNLIM chat ──
   useEffect(() => {
     const handler = (e) => {
       const expId = e.detail?.experimentId;
@@ -877,8 +879,8 @@ const NewElabSimulator = ({
         setShowNotes(false);
       }
     };
-    window.addEventListener('galileo-quiz', handler);
-    return () => window.removeEventListener('galileo-quiz', handler);
+    window.addEventListener('unlim-quiz', handler);
+    return () => window.removeEventListener('unlim-quiz', handler);
   }, [currentExperiment]);
 
   const [annotations, setAnnotations] = useState([]);    // [{ id, x, y, text }]
@@ -889,9 +891,9 @@ const NewElabSimulator = ({
   // ─── Session 9: Whiteboard overlay — Andrea Marro 18/02/2026 ───
   const [showWhiteboard, setShowWhiteboard] = useState(false);
 
-  // ─── NEW: Galileo AI state ───
-  const [isAskingGalileo, setIsAskingGalileo] = useState(false);
-  const [galileoResponse, setGalileoResponse] = useState(null);  // { text, timestamp }
+  // ─── NEW: UNLIM AI state ───
+  const [isAskingUNLIM, setIsAskingUNLIM] = useState(false);
+  const [unlimResponse, setUnlimResponse] = useState(null);  // { text, timestamp }
   const [circuitWarning, setCircuitWarning] = useState(null); // { type, message } | null
   const [circuitStatus, setCircuitStatus] = useState({ status: 'idle', warnings: [], errors: [] });
   // status: 'idle' | 'ok' | 'warning' | 'error'
@@ -928,8 +930,8 @@ const NewElabSimulator = ({
   const handleWireDeleteRef = useRef(null);
   const handleComponentAddRef = useRef(null);
   const handleComponentDeleteRef = useRef(null);
-  const handleLayoutChangeRef = useRef(null); // Galileo Onnipotente: moveComponent API
-  const handleBuildModeSwitchRef = useRef(null); // S115: Galileo build mode control
+  const handleLayoutChangeRef = useRef(null); // UNLIM Onnipotente: moveComponent API
+  const handleBuildModeSwitchRef = useRef(null); // S115: UNLIM build mode control
   const avrLoadingRef = useRef(false); // Synchronous guard for async AVR setup
   const onCodeSelectRef = useRef(onCodeSelect);
   const onOpenSimulatorRef = useRef(onOpenSimulator);
@@ -1399,10 +1401,14 @@ const NewElabSimulator = ({
     if (!audio.ctx) {
       try { audio.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
     }
+    // S112: Resume AudioContext if suspended (browser autoplay policy)
+    if (audio.ctx.state === 'suspended') {
+      audio.ctx.resume().catch(() => {});
+    }
     const prevStates = simonPrevStatesRef.current;
     for (const [ledId, cfg] of Object.entries(SIMON_LEDS)) {
       const ledState = componentStates[ledId];
-      const isOn = ledState?.on === true;
+      const isOn = ledState?.on === true || (ledState?.brightness > 0);
       const wasOn = prevStates[ledId] || false;
       if (isOn && !wasOn) {
         // LED turned ON → start tone
@@ -1497,9 +1503,9 @@ const NewElabSimulator = ({
   }, []);
 
   /* ─────────────────────────────────────────────────
-     GALILEO PERVASIVO: Bridge circuit state → parent (ElabTutorV4)
+     UNLIM PERVASIVO: Bridge circuit state → parent (ElabTutorV4)
      Serializes component states + connections into concise text
-     for Galileo to "see" the student's circuit.
+     for UNLIM to "see" the student's circuit.
      Debounced at 400ms for responsive AI feedback.
      Andrea Marro — 24/02/2026
      ───────────────────────────────────────────────── */
@@ -1646,9 +1652,9 @@ const NewElabSimulator = ({
   }, [componentStates, mergedExperiment, currentExperiment, buildStepIndex, onCircuitStateChange, buildStructuredState]);
 
   /* ─────────────────────────────────────────────────
-     GALILEO PERVASIVO: Proactive event detection
+     UNLIM PERVASIVO: Proactive event detection
      Detects critical circuit events and notifies parent
-     so Galileo can intervene WITHOUT the student asking.
+     so UNLIM can intervene WITHOUT the student asking.
      Each event type fires only ONCE per session to avoid spam.
      Andrea Marro — 24/02/2026
      ───────────────────────────────────────────────── */
@@ -1670,7 +1676,7 @@ const NewElabSimulator = ({
           onCircuitEvent({
             type: 'led-burned',
             componentId: c.id,
-            message: `⚡ Oh no! Il LED "${c.id}" si è bruciato! Probabilmente manca un resistore o il suo valore è troppo basso. Vuoi che Galileo ti spieghi cosa è successo?`
+            message: `⚡ Oh no! Il LED "${c.id}" si è bruciato! Probabilmente manca un resistore o il suo valore è troppo basso. Vuoi che UNLIM ti spieghi cosa è successo?`
           });
         }
       }
@@ -1692,7 +1698,7 @@ const NewElabSimulator = ({
       }
     });
 
-    // NOTE: Removed "circuit-working" congratulatory event (Galileo parla SOLO se interpellato
+    // NOTE: Removed "circuit-working" congratulatory event (UNLIM parla SOLO se interpellato
     // o per errori). Manteniamo solo led-burned e high-current come guida errori.
 
   }, [componentStates, mergedExperiment, onCircuitEvent]);
@@ -1742,11 +1748,11 @@ const NewElabSimulator = ({
       removeComponent: (id) => handleComponentDeleteRef.current?.(id),
       getEditorCode: () => editorModeRef?.current === 'scratch' ? scratchGeneratedCodeRef.current : editorCodeRef.current, // S93: mode-aware
       setEditorCode: (code) => { setEditorCode(code); codeNeedsCompileRef.current = true; }, // S116: mark dirty
-      /* Andrea Marro — 12/02/2026 — Galileo API bridge */
+      /* Andrea Marro — 12/02/2026 — UNLIM API bridge */
       setHighlightedComponents: (ids) => setApiHighlightedComponents(Array.isArray(ids) ? ids : (ids ? [ids] : [])),
       setHighlightedPins: (refs) => setApiHighlightedPins(Array.isArray(refs) ? refs : (refs ? [refs] : [])),
       serialWrite: (text) => { if (avrRef.current) avrRef.current.serialWrite?.(text); },
-      /* ── GALILEO ONNIPOTENTE: Extended API for full breadboard manipulation ── */
+      /* ── UNLIM ONNIPOTENTE: Extended API for full breadboard manipulation ── */
       moveComponent: (id, x, y) => {
         handleLayoutChangeRef.current?.(id, { x: parseInt(x), y: parseInt(y) }, true);
       },
@@ -1781,16 +1787,16 @@ const NewElabSimulator = ({
         };
       },
       getCircuitState: () => buildStructuredState(),
-      // S104: Full compilation snapshot for Galileo context
+      // S104: Full compilation snapshot for UNLIM context
       getCompilationSnapshot: () => compilationDetailsRef.current,
-      // S76: Scratch Universale — editor control for Galileo action tags
+      // S76: Scratch Universale — editor control for UNLIM action tags
       showEditor: () => setShowCodeEditor(true),
       hideEditor: () => setShowCodeEditor(false),
       setEditorMode: (mode) => { if (mode === 'scratch' || mode === 'arduino') { setEditorMode(mode); pushActivity('editor_switch', mode); } },
       getEditorMode: () => editorModeRef.current, // S93: use ref to avoid stale closure
       isEditorVisible: () => showCodeEditorRef.current, // S116: ref avoids stale closure
       loadScratchWorkspace: (xml) => { setScratchXml(xml); setEditorMode('scratch'); setShowCodeEditor(true); },
-      // S115: Galileo Onnipotente v2 — extended API surface
+      // S115: UNLIM Onnipotente v2 — extended API surface
       undo: () => {
         const snapshot = undoHistory(getCurrentSnapshot());
         if (snapshot) restoreSnapshotRef.current?.(snapshot);
@@ -1825,7 +1831,7 @@ const NewElabSimulator = ({
       hideSerialMonitor: () => { setShowCodeEditor(false); }, // S115-FIX: actually hides editor panel
       isSimulating: () => isRunningRef.current || false,
       getSimulationStatus: () => isRunningRef.current ? 'running' : 'stopped',
-      // Sprint 1 Context Mastery: expose selected component + serial output for Galileo
+      // Sprint 1 Context Mastery: expose selected component + serial output for UNLIM
       getSelectedComponent: () => {
         const id = selectedComponentIdRef.current;
         if (!id) return null;
@@ -1839,13 +1845,15 @@ const NewElabSimulator = ({
         const lines = text.split('\n').filter(Boolean);
         return { lastLines: lines.slice(-10), lineCount: lines.length };
       },
-      // S115: Code control — Galileo può scrivere/leggere codice Arduino
+      // S115: Code control — UNLIM può scrivere/leggere codice Arduino
       appendEditorCode: (code) => { setEditorCode(prev => (prev || '') + '\n' + code); codeNeedsCompileRef.current = true; }, // S116: mark dirty
       resetEditorCode: () => {
         const orig = currentExperimentRef.current?.code || '';
         setEditorCode(orig);
       },
       getExperimentOriginalCode: () => currentExperimentRef.current?.code || '',
+      // S115: Scratch fullscreen control for UNLIM action tags
+      setScratchFullscreen: (v) => { setScratchFullscreen(!!v); if (v) { setEditorMode('scratch'); setShowCodeEditor(true); } },
       // S116: Full compile+load via handleCompile (updates UI state, loads hex into AVR)
       compileAndLoad: async (code) => {
         if (handleCompileRef.current) {
@@ -2463,6 +2471,8 @@ const NewElabSimulator = ({
 
     // FIX P0-2: Push-button with explicit press/release action from SimulatorCanvas
     if (comp.type === 'push-button' && (action === 'press' || action === 'release')) {
+      // S112: Update visual state for button depression feedback
+      setComponentStates(prev => ({ ...prev, [componentId]: { ...prev[componentId], pressed: action === 'press' } }));
       if (mergedExperiment.simulationMode === 'circuit' && solverRef.current) {
         solverRef.current.interact(componentId, action);
       }
@@ -2473,6 +2483,10 @@ const NewElabSimulator = ({
         if (pinEntry) {
           const pin = parseInt(pinEntry[0]);
           avrRef.current.setInputPin(pin, action === 'press' ? 0 : 1);
+        }
+        // S112: Also route through solver so CircuitSolver updates its state
+        if (solverRef.current) {
+          solverRef.current.interact(componentId, action);
         }
       }
       /* ── Andrea Marro — 17/02/2026 ── ~riga 1200 ── Input handling e interazioni ── */
@@ -2712,17 +2726,17 @@ const NewElabSimulator = ({
   }, []);
 
   /* ═══════════════════════════════════════════════════════════════
-     NEW: "Chiedi a Galileo" handler — captures SVG screenshot + galileoPrompt
+     NEW: "Chiedi a UNLIM" handler — captures SVG screenshot + unlimPrompt
      ═══════════════════════════════════════════════════════════════ */
-  const handleAskGalileo = useCallback(async () => {
-    if (!mergedExperiment || isAskingGalileo) return;
+  const handleAskUNLIM = useCallback(async () => {
+    if (!mergedExperiment || isAskingUNLIM) return;
 
-    setIsAskingGalileo(true);
+    setIsAskingUNLIM(true);
     // Show a "connecting" panel immediately so user knows something is happening
-    setGalileoResponse({ text: '⏳ Galileo sta analizzando l\'esperimento... Potrebbe richiedere fino a 30 secondi.', timestamp: Date.now(), loading: true });
+    setUnlimResponse({ text: '⏳ UNLIM sta analizzando l\'esperimento... Potrebbe richiedere fino a 30 secondi.', timestamp: Date.now(), loading: true });
 
     try {
-      // 1. Build circuit state context for Galileo
+      // 1. Build circuit state context for UNLIM
       const ledStates = (mergedExperiment.components || [])
         .filter(c => c.type === 'led' || c.type === 'rgb-led')
         .map(c => {
@@ -2736,9 +2750,9 @@ const NewElabSimulator = ({
           ? `Passo Passo (step ${buildStepIndex + 1} di ${mergedExperiment.buildSteps?.length || '?'})`
           : 'Esplora Libero (canvas libero)';
 
-      // 2. Build the prompt from galileoPrompt field or generate a default (BEFORE screenshot for speed)
-      const galileoPrompt = mergedExperiment.galileoPrompt ||
-        `Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento "${mergedExperiment.title}". ` +
+      // 2. Build the prompt from unlimPrompt field or generate a default (BEFORE screenshot for speed)
+      const unlimPrompt = mergedExperiment.unlimPrompt ||
+        `Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento "${mergedExperiment.title}". ` +
         `Descrizione: ${mergedExperiment.desc || 'N/A'}. ` +
         `Concetti chiave: ${mergedExperiment.concept || 'N/A'}. ` +
         `Modalità: ${buildModeText}. ` +
@@ -2777,31 +2791,31 @@ const NewElabSimulator = ({
           URL.revokeObjectURL(url);
         } catch (screenshotErr) {
           logger.warn('[ELAB] Screenshot capture failed:', screenshotErr.message);
-          // Continue without image — Galileo can still explain from the text prompt
+          // Continue without image — UNLIM can still explain from the text prompt
         }
       }
 
-      // 3. Send to Galileo API (text-only if screenshot failed, with image otherwise)
+      // 3. Send to UNLIM API (text-only if screenshot failed, with image otherwise)
       const images = imageBase64 ? [{ base64: imageBase64, mimeType: 'image/png' }] : [];
-      const result = await apiSendChat(galileoPrompt, images);
+      const result = await apiSendChat(unlimPrompt, images);
 
       if (result.success) {
-        setGalileoResponse({ text: result.response, timestamp: Date.now() });
+        setUnlimResponse({ text: result.response, timestamp: Date.now() });
       } else {
         // Show a clear error with the actual message
-        const errorText = result.response || '❌ Galileo non è disponibile al momento.';
-        setGalileoResponse({ text: errorText + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
+        const errorText = result.response || '❌ UNLIM non è disponibile al momento.';
+        setUnlimResponse({ text: errorText + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
       }
     } catch (err) {
-      logger.error('[ELAB] Ask Galileo error:', err);
+      logger.error('[ELAB] Ask UNLIM error:', err);
       const msg = err?.message?.includes('abort') || err?.message?.includes('timeout')
-        ? 'Galileo ci sta mettendo troppo. Il servizio potrebbe essere temporaneamente non disponibile.'
-        : 'Errore di connessione con Galileo.';
-      setGalileoResponse({ text: msg + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
+        ? 'UNLIM ci sta mettendo troppo. Il servizio potrebbe essere temporaneamente non disponibile.'
+        : 'Errore di connessione con UNLIM.';
+      setUnlimResponse({ text: msg + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
     } finally {
-      setIsAskingGalileo(false);
+      setIsAskingUNLIM(false);
     }
-  }, [mergedExperiment, isAskingGalileo, componentStates, currentExperiment, buildStepIndex]);
+  }, [mergedExperiment, isAskingUNLIM, componentStates, currentExperiment, buildStepIndex]);
 
   /* ═══════════════════════════════════════════════════════════════
      Layout change handler (drag-drop moves)
@@ -3682,8 +3696,8 @@ const NewElabSimulator = ({
           onToggleCodeEditor={currentExperiment ? () => setShowCodeEditor(prev => !prev) : undefined}
           wireMode={wireMode}
           onToggleWireMode={currentExperiment ? () => setWireMode(prev => !prev) : undefined}
-          onAskGalileo={currentExperiment ? handleAskGalileo : undefined}
-          isAskingGalileo={isAskingGalileo}
+          onAskUNLIM={currentExperiment ? handleAskUNLIM : undefined}
+          isAskingUNLIM={isAskingUNLIM}
           onDiagnoseCircuit={currentExperiment ? onDiagnoseCircuit : undefined}
           onGetHints={currentExperiment ? onGetHints : undefined}
           experimentName={currentExperiment?.title || ''}
@@ -3887,7 +3901,7 @@ const NewElabSimulator = ({
                   onAnnotationTextChange={handleAnnotationTextChange}
                   onAnnotationDelete={handleAnnotationDelete}
                   onAnnotationPositionChange={handleAnnotationPositionChange}
-                  onSendToGalileo={onSendToGalileo}
+                  onSendToUNLIM={onSendToUNLIM}
                   buildValidation={currentExperiment?.buildMode === 'guided' ? {
                     currentStep: buildStepIndex,
                     buildSteps: currentExperiment?.buildSteps || [],
@@ -3908,10 +3922,20 @@ const NewElabSimulator = ({
                   active={showWhiteboard}
                   experimentId={currentExperiment?.id}
                   onClose={() => setShowWhiteboard(false)}
-                  onSendToGalileo={onSendImageToGalileo ? (dataUrl) => {
+                  onSendToUNLIM={onSendImageToUNLIM ? (dataUrl) => {
                     setShowWhiteboard(false);
-                    onSendImageToGalileo(dataUrl, 'Analizza questo disegno dalla lavagna e dimmi cosa rappresenta. Se è uno schema elettrico, controlla se è corretto.');
+                    onSendImageToUNLIM(dataUrl, 'Analizza questo disegno dalla lavagna e dimmi cosa rappresenta. Se è uno schema elettrico, controlla se è corretto.');
                   } : undefined}
+                />
+
+                {/* Drawing/Annotation overlay — Andrea Marro 13/03/2026 */}
+                <DrawingOverlay
+                  drawingEnabled={drawingEnabled}
+                  canvasWidth={canvasContainerRef.current?.offsetWidth || 800}
+                  canvasHeight={canvasContainerRef.current?.offsetHeight || 600}
+                  onPathsChange={(paths) => {
+                    // Paths persist in DrawingOverlay state; callback available for future logging
+                  }}
                 />
 
                 {/* S161.3: Visually-hidden simulation state announcer for screen readers */}
@@ -3953,7 +3977,7 @@ const NewElabSimulator = ({
                     experiment={currentExperiment}
                     buildMode={currentExperiment.buildMode || 'complete'}
                     onClose={() => setShowGuide(false)}
-                    onSendToGalileo={onSendToGalileo}
+                    onSendToUNLIM={onSendToUNLIM}
                   />
                 )}
 
@@ -3970,7 +3994,7 @@ const NewElabSimulator = ({
                   <QuizPanel
                     experiment={currentExperiment}
                     onClose={() => setShowQuiz(false)}
-                    onSendToGalileo={onSendToGalileo}
+                    onSendToUNLIM={onSendToUNLIM}
                     onQuizComplete={handleQuizComplete}
                   />
                 )}
@@ -4132,15 +4156,20 @@ const NewElabSimulator = ({
                         </button>
                         <button
                           onClick={() => setShowBottomPanel(false)}
-                          title="Nascondi pannello"
+                          title="Chiudi pannello (Monitor/Plotter)"
+                          aria-label="Chiudi pannello seriale"
                           style={{
                             padding: '4px 10px', border: 'none', cursor: 'pointer',
-                            background: 'var(--color-editor-bg, #161B22)', color: 'var(--color-text-gray-300, #888)', fontSize: 14,
+                            background: 'var(--color-editor-bg, #161B22)', color: 'var(--color-text-gray-300, #888)', fontSize: 16,
                             borderBottom: '2px solid transparent',
                             minHeight: 'var(--touch-min, 44px)', minWidth: 44,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: 'color 150ms, background 150ms',
                           }}
+                          onPointerEnter={e => { e.currentTarget.style.color = '#E54B3D'; e.currentTarget.style.background = 'rgba(229,75,61,0.1)'; }}
+                          onPointerLeave={e => { e.currentTarget.style.color = '#888'; e.currentTarget.style.background = 'var(--color-editor-bg, #161B22)'; }}
                         >
-                          {'\u25BC'}
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4L12 12M4 12L12 4"/></svg>
                         </button>
                       </div>
                       <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
@@ -4160,7 +4189,7 @@ const NewElabSimulator = ({
                             baudMismatch={baudMismatch}
                             showTimestamps={serialTimestamps}
                             onToggleTimestamps={() => setSerialTimestamps(prev => !prev)}
-                            onSendToGalileo={onSendToGalileo}
+                            onSendToUNLIM={onSendToUNLIM}
                           />
                         ) : (
                           <SerialPlotter
@@ -4232,19 +4261,22 @@ const NewElabSimulator = ({
               display: 'flex', gap: 0, borderBottom: '1px solid var(--color-blockly-grid, #2a3040)',
               background: 'var(--color-editor-bg, #161B22)', flexShrink: 0,
             }}>
-              {/* S100: Close editor panel button */}
+              {/* S100+S91: Close editor panel button — clear X icon, hover feedback */}
               <button
                 onClick={() => setShowCodeEditor(false)}
                 aria-label="Chiudi editor"
-                title="Chiudi editor"
+                title="Chiudi editor (torna al circuito)"
                 style={{
-                  width: 36, minHeight: 44, border: 'none', cursor: 'pointer', padding: 0,
+                  width: 44, minHeight: 44, border: 'none', cursor: 'pointer', padding: 0,
                   background: 'var(--color-editor-bg, #161B22)',
                   color: 'var(--color-text-gray-400, #666)', fontSize: 16,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  transition: 'color 150ms, background 150ms',
                 }}
+                onPointerEnter={e => { e.currentTarget.style.color = '#E54B3D'; e.currentTarget.style.background = 'rgba(229,75,61,0.1)'; }}
+                onPointerLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.background = 'var(--color-editor-bg, #161B22)'; }}
               >
-                ›
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4L12 12M4 12L12 4"/></svg>
               </button>
               <button
                 onClick={() => { setEditorMode('arduino'); setScratchFullscreen(false); }}
@@ -4301,6 +4333,27 @@ const NewElabSimulator = ({
               )}
             </div>
 
+            {/* S115: Floating exit button for Scratch fullscreen */}
+            {scratchFullscreen && editorMode === 'scratch' && (
+              <button
+                onClick={() => setScratchFullscreen(false)}
+                style={{
+                  position: 'fixed', top: 16, right: 16, zIndex: 950,
+                  padding: '8px 18px', border: 'none', cursor: 'pointer', minHeight: 44,
+                  background: 'var(--color-tab-scratch, #E67E22)', color: '#fff',
+                  borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 700,
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', gap: 8,
+                  transition: 'transform 0.15s ease',
+                }}
+                onPointerEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                onPointerLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                aria-label="Esci da schermo intero"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 2h4v4M6 14H2v-4M14 2L9.5 6.5M2 14l4.5-4.5"/></svg>
+                Esci da Schermo Intero
+              </button>
+            )}
+
             {editorMode === 'arduino' ? (
               <CodeEditorCM6
                 code={editorCode}
@@ -4322,9 +4375,9 @@ const NewElabSimulator = ({
                 compilationErrorLine={compilationErrorLine}
                 compilationSize={compilationSize}
                 readOnly={false}
-                onExplainCode={onSendToGalileo ? (currentCode) => {
+                onExplainCode={onSendToUNLIM ? (currentCode) => {
                   const snippet = currentCode?.length > 800 ? currentCode.slice(0, 800) + '\n// ...(troncato)' : currentCode;
-                  onSendToGalileo(`Spiegami questo codice Arduino riga per riga:\n\`\`\`\n${snippet || '(vuoto)'}\n\`\`\``);
+                  onSendToUNLIM(`Spiegami questo codice Arduino riga per riga:\n\`\`\`\n${snippet || '(vuoto)'}\n\`\`\``);
                 } : undefined}
               />
             ) : (
@@ -4373,12 +4426,12 @@ const NewElabSimulator = ({
         )}
       </div>
 
-      {/* ═══ GALILEO RESPONSE PANEL ═══ */}
-      <GalileoResponsePanel
-        response={galileoResponse}
-        isAsking={isAskingGalileo}
-        onAskAgain={handleAskGalileo}
-        onClose={() => setGalileoResponse(null)}
+      {/* ═══ UNLIM RESPONSE PANEL ═══ */}
+      <UNLIMResponsePanel
+        response={unlimResponse}
+        isAsking={isAskingUNLIM}
+        onAskAgain={handleAskUNLIM}
+        onClose={() => setUnlimResponse(null)}
       />
 
       {/* ═══ OVERLAY: Potentiometer ═══ */}
