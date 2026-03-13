@@ -1981,9 +1981,16 @@ async def race_providers(messages: list, providers: list = None, max_tokens: int
         r = await call_single_provider(messages, prov, max_tokens, images=images)
         return r, f"{prov['provider']}/{prov['model']}"
 
+    # Minimum response length for quality gate — if a fast provider returns
+    # a suspiciously short response, wait for the next one instead.
+    # This prevents Groq's ultra-fast but sometimes truncated responses from
+    # winning over DeepSeek's slower but more complete ones.
+    MIN_RESPONSE_CHARS = 120  # ~20 words — below this, response is likely truncated
+
     tasks = [asyncio.create_task(_call(p)) for p in targets]
     pending = set(tasks)
     last_error = None
+    short_fallback = None  # Keep first short response as fallback
 
     while pending:
         done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
@@ -1991,6 +1998,12 @@ async def race_providers(messages: list, providers: list = None, max_tokens: int
             try:
                 result, name = task.result()
                 elapsed = int((time.monotonic() - t0) * 1000)
+                # Quality gate: reject suspiciously short responses if other providers are still running
+                if len(result.strip()) < MIN_RESPONSE_CHARS and pending and not images:
+                    print(f"[UNLIM] Short response from {name} ({len(result)} chars), waiting for next provider...")
+                    if not short_fallback:
+                        short_fallback = (result, name, elapsed)
+                    continue
                 # Cancel remaining
                 for t in pending:
                     t.cancel()
@@ -1999,6 +2012,12 @@ async def race_providers(messages: list, providers: list = None, max_tokens: int
             except Exception as e:
                 last_error = e
                 print(f"[UNLIM] Provider failed in race: {e}")
+
+    # If all providers failed or returned short responses, use the short fallback
+    if short_fallback:
+        result, name, elapsed = short_fallback
+        print(f"[UNLIM] All providers short/failed — using fallback from {name} ({len(result)} chars)")
+        return result, name, elapsed
 
     raise last_error or RuntimeError("All providers failed in race")
 
