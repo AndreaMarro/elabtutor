@@ -4688,13 +4688,1037 @@ def gen_layer_context_aware(n):
 
 
 def gen_layer_adversarial(n):
-    """Layer 4: Negazioni, off-topic, ambiguita', edge case.
-    - "Non avviare" → no action
-    - "Che ore sono?" → tutor (off-topic redirect)
-    - "Metti il led... anzi no, il buzzer" → correction handling
+    """Layer 4: Adversarial — input garbled, ambigui, dialettali, trap (~2000).
+    9 sub-generators:
+      1. heavy_typos (300)     — 50%+ error rate, heavily garbled
+      2. mixed_lang (200)      — Italian/English hybrid
+      3. vague (300)           — extremely vague references
+      4. multi_intent (300)    — multiple intents in one sentence
+      5. negation (200)        — corrections and negations
+      6. conversational (200)  — intent buried in conversation
+      7. emoji (100)           — emoji-only or minimal text
+      8. dialect (200)         — regional Italian dialect/slang
+      9. traps (200)           — looks like action but is tutor question
     """
-    # TODO: Task 5 — implementare
-    return []
+
+    # ================================================================
+    # Helpers
+    # ================================================================
+    def _comp_alias(comp_type):
+        if comp_type in COMPONENT_ALIASES:
+            return random.choice(COMPONENT_ALIASES[comp_type])
+        return comp_type
+
+    def apply_heavy_typo(text, passes=None):
+        """Apply typo 2-3 times with high probability for heavy garbling."""
+        passes = passes or random.randint(2, 3)
+        result = text
+        for _ in range(passes):
+            result = apply_typo(result, probability=0.75)
+        return result
+
+    # ================================================================
+    # 1. HEAVY TYPOS (300) — 50%+ error rate
+    # ================================================================
+    def _adv_heavy_typos(n_target=300):
+        results = []
+
+        ACTION_PHRASES_TYPO = [
+            ("avvia la simulazione", "action", [], ["[AZIONE:play]"], False,
+             ["Simulazione avviata! ▶", "Play! ▶", "Si parte!"], None),
+            ("metti un LED", "circuit", ["led"], ["[INTENT:place_and_wire]"], False,
+             ["LED posizionato!", "Ecco il LED!"], None),
+            ("compila il codice", "action", [], ["[AZIONE:compile]"], False,
+             ["Compilazione avviata!", "Compilo!"], None),
+            ("togli il resistore", "circuit", ["resistor"], ["[AZIONE:removecomponent:resistor1]"], False,
+             ["Resistore rimosso!", "Via il resistore."], None),
+            ("fammi un quiz", "teacher", [], ["[AZIONE:quiz]"], False,
+             ["Quiz in arrivo!", "Ecco il quiz!"], None),
+            ("metti in pausa", "action", [], ["[AZIONE:pause]"], False,
+             ["Pausa! ⏸", "Fermato. ⏸"], None),
+            ("cancella tutto", "action", [], ["[AZIONE:clearall]"], False,
+             ["Tutto rimosso!", "Breadboard svuotata!"], None),
+            ("resetta il circuito", "action", [], ["[AZIONE:reset]"], False,
+             ["Reset!", "Circuito resettato."], None),
+            ("apri l'editor", "action", [], ["[AZIONE:openeditor]"], False,
+             ["Editor aperto!", "Ecco l'editor!"], None),
+            ("vai al passo successivo", "navigation", [], ["[AZIONE:nextstep]"], False,
+             ["Prossimo passo!", "Avanti!"], None),
+            ("torna indietro", "action", [], ["[AZIONE:undo]"], False,
+             ["Annullato!", "Torno indietro."], None),
+            ("carica l'esperimento del semaforo", "navigation", ["v3-cap2-esp1"], ["[AZIONE:loadexp:v3-cap2-esp1]"], False,
+             ["Esperimento caricato!", "Ecco il Semaforo!"], None),
+            ("metti un buzzer", "circuit", ["buzzer-piezo"], ["[INTENT:place_and_wire]"], False,
+             ["Buzzer posizionato!", "Ecco il buzzer!"], None),
+            ("mostrami il BOM", "action", [], ["[AZIONE:showbom]"], False,
+             ["Ecco la lista componenti!", "BOM aperto!"], None),
+            ("aggiungi un potenziometro", "circuit", ["potentiometer"], ["[INTENT:place_and_wire]"], False,
+             ["Potenziometro aggiunto!", "Ecco il pot!"], None),
+            ("apri il monitor seriale", "action", [], ["[AZIONE:showserial]"], False,
+             ["Monitor seriale aperto!", "Ecco il serial monitor!"], None),
+            ("passa a scratch", "action", [], ["[AZIONE:switcheditor:scratch]"], False,
+             ["Modalita' Scratch!", "Passo a Scratch!"], None),
+            ("annulla l'ultima azione", "action", [], ["[AZIONE:undo]"], False,
+             ["Annullato!", "Ultima azione annullata."], None),
+            ("rifai quello che hai annullato", "action", [], ["[AZIONE:redo]"], False,
+             ["Rifatto!", "Azione ripetuta."], None),
+            ("metti un condensatore", "circuit", ["capacitor"], ["[INTENT:place_and_wire]"], False,
+             ["Condensatore posizionato!", "Ecco il condensatore!"], None),
+        ]
+
+        for _ in range(n_target):
+            phrase, intent, entities, actions, needs_llm, responses, hint = random.choice(ACTION_PHRASES_TYPO)
+            garbled = apply_heavy_typo(phrase)
+            garbled = augment_phrase(garbled)
+            results.append(make_example(
+                user_msg=garbled,
+                intent=intent,
+                entities=entities,
+                actions=actions,
+                needs_llm=needs_llm,
+                response=random.choice(responses),
+                llm_hint=hint,
+            ))
+
+        return results
+
+    # ================================================================
+    # 2. MIXED LANGUAGE (200) — Italian/English hybrid
+    # ================================================================
+    def _adv_mixed_lang(n_target=200):
+        results = []
+
+        MIXED_TEMPLATES = [
+            ("fai il start del circuit", "action", [], ["[AZIONE:play]"], False,
+             ["Simulazione avviata! ▶", "Play! ▶"], None),
+            ("puoi fare il compile please?", "action", [], ["[AZIONE:compile]"], False,
+             ["Compilazione avviata!", "Compilo!"], None),
+            ("add un LED red", "circuit", ["led"], ["[INTENT:place_and_wire]"], False,
+             ["LED posizionato!", "Ecco il LED rosso!"], None),
+            ("open the editor per favore", "action", [], ["[AZIONE:openeditor]"], False,
+             ["Editor aperto!", "Ecco l'editor!"], None),
+            ("metti un component sulla board", "circuit", [], [], True,
+             None, "L'utente vuole aggiungere un componente ma non ha specificato quale"),
+            ("delete all the cosi", "action", [], ["[AZIONE:clearall]"], False,
+             ["Tutto rimosso!", "Breadboard svuotata!"], None),
+            ("give me un quiz di electronics", "teacher", [], ["[AZIONE:quiz]"], False,
+             ["Quiz in arrivo!", "Ecco il quiz!"], None),
+            ("switch to scratch mode", "action", [], ["[AZIONE:switcheditor:scratch]"], False,
+             ["Passo a Scratch!", "Modalita' Scratch attivata!"], None),
+            ("show me the serial port", "action", [], ["[AZIONE:showserial]"], False,
+             ["Monitor seriale aperto!", "Ecco il serial monitor!"], None),
+            ("load next experiment", "navigation", [], ["[AZIONE:nextstep]"], False,
+             ["Prossimo passo!", "Avanti!"], None),
+            ("fai il pause please", "action", [], ["[AZIONE:pause]"], False,
+             ["Pausa! ⏸", "Fermato. ⏸"], None),
+            ("reset everything dai", "action", [], ["[AZIONE:reset]"], False,
+             ["Reset!", "Circuito resettato."], None),
+            ("put un buzzer on the breadboard", "circuit", ["buzzer-piezo"], ["[INTENT:place_and_wire]"], False,
+             ["Buzzer posizionato!", "Ecco il buzzer!"], None),
+            ("close the editor grazie", "action", [], ["[AZIONE:closeeditor]"], False,
+             ["Editor chiuso!", "Chiudo l'editor."], None),
+            ("fai l'undo per favore", "action", [], ["[AZIONE:undo]"], False,
+             ["Annullato!", "Torno indietro."], None),
+            ("can you compile il codice?", "action", [], ["[AZIONE:compile]"], False,
+             ["Compilazione avviata!", "Compilo il codice!"], None),
+            ("please add una resistenza", "circuit", ["resistor"], ["[INTENT:place_and_wire]"], False,
+             ["Resistenza posizionata!", "Ecco la resistenza!"], None),
+            ("help me con il circuito", "tutor", [], [], True,
+             None, "L'utente chiede aiuto generico sul circuito in lingua mista"),
+            ("run the simulation adesso", "action", [], ["[AZIONE:play]"], False,
+             ["Simulazione avviata! ▶", "Si parte!"], None),
+            ("stop il tutto now", "action", [], ["[AZIONE:pause]"], False,
+             ["Pausa! ⏸", "Fermato. ⏸"], None),
+            ("next step per piacere", "navigation", [], ["[AZIONE:nextstep]"], False,
+             ["Prossimo passo!", "Avanti!"], None),
+            ("clear the breadboard tutta", "action", [], ["[AZIONE:clearall]"], False,
+             ["Tutto rimosso!", "Breadboard svuotata!"], None),
+            ("show il BOM component list", "action", [], ["[AZIONE:showbom]"], False,
+             ["Ecco la lista componenti!", "BOM aperto!"], None),
+            ("go to arduino mode", "action", [], ["[AZIONE:switcheditor:arduino]"], False,
+             ["Passo ad Arduino!", "Modalita' Arduino attivata!"], None),
+            ("play il circuit che ho fatto", "action", [], ["[AZIONE:play]"], False,
+             ["Simulazione avviata! ▶", "Si parte!"], None),
+            ("remove il LED please", "circuit", ["led"], ["[AZIONE:removecomponent:led1]"], False,
+             ["LED rimosso!", "Via il LED."], None),
+            ("dammi un hint please", "tutor", [], [], True,
+             None, "L'utente chiede un suggerimento in lingua mista"),
+            ("what does il resistore do?", "tutor", ["resistor"], [], True,
+             None, "L'utente chiede informazioni sul resistore in lingua mista"),
+        ]
+
+        for _ in range(n_target):
+            tmpl = random.choice(MIXED_TEMPLATES)
+            phrase, intent, entities, actions, needs_llm, resp_or_none, hint = tmpl
+            phrase = augment_phrase(apply_typo(phrase, probability=0.2))
+            response = random.choice(resp_or_none) if isinstance(resp_or_none, list) else resp_or_none
+            results.append(make_example(
+                user_msg=phrase,
+                intent=intent,
+                entities=entities,
+                actions=actions,
+                needs_llm=needs_llm,
+                response=response,
+                llm_hint=hint,
+            ))
+
+        return results
+
+    # ================================================================
+    # 3. VAGUE REFERENCES (300) — extremely vague
+    # ================================================================
+    def _adv_vague(n_target=300):
+        results = []
+
+        # Vague with context clues → deterministic action
+        VAGUE_DETERMINISTIC = [
+            # sim stopped → most likely wants play
+            {"phrases": ["fai quella cosa", "fai andare", "dai vai", "fallo partire", "fai la magia"],
+             "ctx_kwargs": {"sim_state": "stopped"},
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False, "responses": ["Simulazione avviata! ▶", "Si parte!"], "hint": None},
+            # sim running → most likely wants pause
+            {"phrases": ["fermalo", "stop", "basta cosi'", "ok fermati"],
+             "ctx_kwargs": {"sim_state": "running"},
+             "intent": "action", "entities": [], "actions": ["[AZIONE:pause]"],
+             "needs_llm": False, "responses": ["Pausa! ⏸", "Fermato."], "hint": None},
+            # "quello che fa luce" → LED
+            {"phrases": ["metti quello che fa luce", "aggiungi la cosa che si illumina",
+                         "metti la lucina", "aggiungi quel coso luminoso"],
+             "ctx_kwargs": {},
+             "intent": "circuit", "entities": ["led"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False, "responses": ["LED posizionato!", "Ecco il LED!"], "hint": None},
+            # "il coso che gira" → motor-dc
+            {"phrases": ["metti il coso che gira", "aggiungi quello che ruota",
+                         "metti la cosa che si muove", "il motorino quel coso"],
+             "ctx_kwargs": {},
+             "intent": "circuit", "entities": ["motor-dc"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False, "responses": ["Motore DC posizionato!", "Ecco il motorino!"], "hint": None},
+            # "la cosa rotonda" → potentiometer
+            {"phrases": ["metti la cosa rotonda", "aggiungi il coso tondo",
+                         "quello con la manopola", "il rotondo quel coso"],
+             "ctx_kwargs": {},
+             "intent": "circuit", "entities": ["potentiometer"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False, "responses": ["Potenziometro posizionato!", "Ecco la manopola!"], "hint": None},
+            # "il bottoncino" → push-button
+            {"phrases": ["metti il bottoncino", "aggiungi il pulsantino",
+                         "il cosino che si preme", "metti quel tasto piccolo"],
+             "ctx_kwargs": {},
+             "intent": "circuit", "entities": ["push-button"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False, "responses": ["Pulsante posizionato!", "Ecco il bottone!"], "hint": None},
+            # "la cosa che suona" → buzzer
+            {"phrases": ["metti la cosa che suona", "aggiungi il coso sonoro",
+                         "quello che fa rumore", "il coso che beepa"],
+             "ctx_kwargs": {},
+             "intent": "circuit", "entities": ["buzzer-piezo"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False, "responses": ["Buzzer posizionato!", "Ecco il buzzer!"], "hint": None},
+        ]
+
+        # Vague without enough context → needs_llm
+        VAGUE_AMBIGUOUS = [
+            {"phrases": ["metti il coso", "aggiungi quella cosa", "metti un coso",
+                         "aggiungi il pezzo", "metti il componente"],
+             "intent": "circuit", "entities": [], "actions": [],
+             "hint": "L'utente vuole aggiungere un componente ma non ha specificato quale"},
+            {"phrases": ["vai la'", "vai dove devo andare", "portami dove serve"],
+             "intent": "navigation", "entities": [], "actions": [],
+             "hint": "L'utente vuole navigare da qualche parte ma non ha specificato dove"},
+            {"phrases": ["fai come prima", "rifai quella cosa", "ripeti l'ultima operazione"],
+             "intent": "action", "entities": [], "actions": [],
+             "hint": "L'utente vuole ripetere qualcosa ma serve contesto conversazionale"},
+            {"phrases": ["apri quel gioco", "fammi giocare", "il giochino quello"],
+             "intent": "navigation", "entities": [], "actions": [],
+             "hint": "L'utente vuole aprire un gioco ma non ha specificato quale"},
+            {"phrases": ["la roba elettronica", "fammi vedere le cose", "mostrami tutto"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente ha fatto una richiesta troppo generica, serve chiarimento"},
+            {"phrases": ["quel filo", "il cavetto", "collegami quel coso"],
+             "intent": "circuit", "entities": ["wire"], "actions": [],
+             "hint": "L'utente si riferisce a un collegamento ma senza specificare quale"},
+            {"phrases": ["cambia quella roba", "modifica il coso", "sistema quella cosa"],
+             "intent": "circuit", "entities": [], "actions": [],
+             "hint": "L'utente vuole modificare qualcosa ma non ha specificato cosa"},
+            {"phrases": ["fammi vedere", "mostrami", "fai apparire"],
+             "intent": "action", "entities": [], "actions": [],
+             "hint": "Richiesta troppo vaga, serve chiarimento su cosa mostrare"},
+        ]
+
+        # Generate deterministic vague examples
+        det_count = n_target * 2 // 3
+        for _ in range(det_count):
+            entry = random.choice(VAGUE_DETERMINISTIC)
+            phrase = augment_phrase(apply_typo(random.choice(entry["phrases"])))
+            ctx = random_context_v6(**entry["ctx_kwargs"])
+            results.append(make_example(
+                user_msg=phrase,
+                intent=entry["intent"],
+                entities=entry["entities"],
+                actions=entry["actions"],
+                needs_llm=entry["needs_llm"],
+                response=random.choice(entry["responses"]),
+                llm_hint=entry["hint"],
+                ctx=ctx,
+            ))
+
+        # Generate ambiguous vague examples
+        amb_count = n_target - det_count
+        for _ in range(amb_count):
+            entry = random.choice(VAGUE_AMBIGUOUS)
+            phrase = augment_phrase(apply_typo(random.choice(entry["phrases"])))
+            results.append(make_example(
+                user_msg=phrase,
+                intent=entry["intent"],
+                entities=entry["entities"],
+                actions=entry["actions"],
+                needs_llm=True,
+                response=None,
+                llm_hint=entry["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 4. MULTI-INTENT (300) — multiple intents in one sentence
+    # ================================================================
+    def _adv_multi_intent(n_target=300):
+        results = []
+
+        MULTI_TEMPLATES = [
+            # Pure action sequences (no LLM needed)
+            {"phrases": [
+                "prima cancella tutto poi carica il semaforo e compilami il codice",
+                "cancella, carica il semaforo, compila",
+                "clearall, loadexp semaforo, compile",
+             ],
+             "intent": "action", "entities": ["v3-cap2-esp1"],
+             "actions": ["[AZIONE:clearall]", "[AZIONE:loadexp:v3-cap2-esp1]", "[AZIONE:compile]"],
+             "needs_llm": False,
+             "responses": ["Fatto! Ho cancellato tutto, caricato il Semaforo e avviato la compilazione.", "Cancellato, caricato e compilato!"],
+             "hint": None},
+            {"phrases": [
+                "aggiungi un buzzer collegalo e fammi sentire il suono",
+                "metti un buzzer poi collegalo e avvia",
+                "buzzer, collega, play",
+             ],
+             "intent": "circuit", "entities": ["buzzer-piezo"],
+             "actions": ["[INTENT:place_and_wire]", "[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Buzzer posizionato, collegato e simulazione avviata!", "Ecco il buzzer, collegato e in azione!"],
+             "hint": None},
+            {"phrases": [
+                "metti un LED e avvia la simulazione",
+                "aggiungi un LED poi fai play",
+                "LED e poi start",
+             ],
+             "intent": "circuit", "entities": ["led"],
+             "actions": ["[INTENT:place_and_wire]", "[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["LED posizionato e simulazione avviata!", "Ecco il LED, si parte!"],
+             "hint": None},
+            {"phrases": [
+                "annulla e poi rifai",
+                "undo e redo",
+                "prima undo poi redo",
+             ],
+             "intent": "action", "entities": [],
+             "actions": ["[AZIONE:undo]", "[AZIONE:redo]"],
+             "needs_llm": False,
+             "responses": ["Annullato e rifatto!", "Undo + Redo eseguiti!"],
+             "hint": None},
+            {"phrases": [
+                "resetta tutto e poi metti un LED rosso",
+                "reset e poi aggiungi LED",
+                "pulisci e metti un led",
+             ],
+             "intent": "action", "entities": ["led"],
+             "actions": ["[AZIONE:clearall]", "[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Tutto pulito e LED posizionato!", "Reset e LED aggiunto!"],
+             "hint": None},
+            {"phrases": [
+                "apri l'editor e compila",
+                "editor e compile",
+                "apri editor poi compila il codice",
+             ],
+             "intent": "action", "entities": [],
+             "actions": ["[AZIONE:openeditor]", "[AZIONE:compile]"],
+             "needs_llm": False,
+             "responses": ["Editor aperto e compilazione avviata!", "Ecco l'editor, compilo!"],
+             "hint": None},
+            {"phrases": [
+                "pausa e mostrami il BOM",
+                "fermati e fammi vedere il BOM",
+                "stop e BOM",
+             ],
+             "intent": "action", "entities": [],
+             "actions": ["[AZIONE:pause]", "[AZIONE:showbom]"],
+             "needs_llm": False,
+             "responses": ["In pausa, ecco il BOM!", "Fermato e BOM aperto!"],
+             "hint": None},
+
+            # Mixed: some actions + LLM reasoning needed
+            {"phrases": [
+                "metti un LED poi avvia e se non funziona dimmi perche'",
+                "aggiungi LED, play, e spiegami se non va",
+                "LED, avvia e poi dimmi cosa c'e' che non va",
+             ],
+             "intent": "circuit", "entities": ["led"],
+             "actions": ["[INTENT:place_and_wire]", "[AZIONE:play]"],
+             "needs_llm": True,
+             "responses": None,
+             "hint": "L'utente vuole piazzare un LED, avviare e poi una spiegazione se non funziona"},
+            {"phrases": [
+                "resetta togli il LED vecchio metti uno nuovo rosso e avvia",
+                "reset, rimuovi LED, aggiungi nuovo LED, play",
+                "pulisci, via il LED, nuovo LED, start",
+             ],
+             "intent": "action", "entities": ["led"],
+             "actions": ["[AZIONE:reset]", "[AZIONE:removecomponent:led1]", "[INTENT:place_and_wire]", "[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Reset, LED rimosso, nuovo LED aggiunto e simulazione avviata!", "Fatto tutto: reset, cambio LED e play!"],
+             "hint": None},
+            {"phrases": [
+                "carica il primo esperimento del volume 1 e spiegamelo",
+                "loadexp primo vol1 e dimmi come funziona",
+                "apri esp1 vol1 e fai il tutor",
+             ],
+             "intent": "navigation", "entities": ["v1-cap1-esp1"],
+             "actions": ["[AZIONE:loadexp:v1-cap1-esp1]"],
+             "needs_llm": True,
+             "responses": None,
+             "hint": "L'utente vuole caricare l'esperimento v1-cap1-esp1 e una spiegazione del contenuto"},
+            {"phrases": [
+                "compila il codice e se ci sono errori correggili tu",
+                "compile e fixami gli errori",
+                "compila e sistema i bug",
+             ],
+             "intent": "code", "entities": [],
+             "actions": ["[AZIONE:compile]"],
+             "needs_llm": True,
+             "responses": None,
+             "hint": "L'utente vuole compilare e poi assistenza per correggere eventuali errori"},
+            {"phrases": [
+                "metti un motore un LED e un buzzer tutti insieme",
+                "aggiungi motore LED buzzer",
+                "tre componenti: motore, led, buzzer",
+             ],
+             "intent": "circuit", "entities": ["motor-dc", "led", "buzzer-piezo"],
+             "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Motore, LED e buzzer posizionati!", "Ecco i tre componenti!"],
+             "hint": None},
+        ]
+
+        for _ in range(n_target):
+            tmpl = random.choice(MULTI_TEMPLATES)
+            phrase = augment_phrase(apply_typo(random.choice(tmpl["phrases"])))
+            response = random.choice(tmpl["responses"]) if tmpl["responses"] else None
+            results.append(make_example(
+                user_msg=phrase,
+                intent=tmpl["intent"],
+                entities=tmpl["entities"],
+                actions=tmpl["actions"],
+                needs_llm=tmpl["needs_llm"],
+                response=response,
+                llm_hint=tmpl["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 5. NEGATION (200) — corrections and negations
+    # ================================================================
+    def _adv_negation(n_target=200):
+        results = []
+
+        NEGATION_EXAMPLES = [
+            # Explicit negations → no action, just acknowledge
+            {"phrases": ["non avviare!", "NON premere play!", "non fare play!", "non avviare la simulazione!"],
+             "intent": "action", "entities": [], "actions": [],
+             "needs_llm": False,
+             "responses": ["Ok, non avvio.", "Va bene, non avvio la simulazione.", "Capito, resto fermo."],
+             "hint": None},
+            {"phrases": ["non toccare niente", "non fare niente", "non muovere nulla",
+                         "lascia tutto com'e'", "non cambiare niente"],
+             "intent": "action", "entities": [], "actions": [],
+             "needs_llm": False,
+             "responses": ["Ok, non faccio nulla!", "Perfetto, lascio tutto com'e'.", "D'accordo, non tocco niente."],
+             "hint": None},
+            {"phrases": ["lascia tutto cosi'", "va bene cosi'", "non serve altro",
+                         "perfetto cosi'", "basta cosi'"],
+             "intent": "action", "entities": [], "actions": [],
+             "needs_llm": False,
+             "responses": ["Perfetto, lascio tutto com'e'.", "Ok, tutto a posto!", "Benissimo!"],
+             "hint": None},
+
+            # Corrections → correct to the RIGHT action
+            {"phrases": ["ho detto pausa non play!", "volevo pausa, non play!",
+                         "pausa ho detto, non avviare!"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:pause]"],
+             "needs_llm": False,
+             "responses": ["Scusa! Metto in pausa. ⏸", "Pausa! ⏸", "Ecco la pausa, scusa!"],
+             "hint": None},
+            {"phrases": ["scusa, volevo dire compila non cancella",
+                         "no aspetta, compile non clearall",
+                         "non cancellare, compila!"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:compile]"],
+             "needs_llm": False,
+             "responses": ["Compilazione avviata!", "Compilo, scusa per l'errore!"],
+             "hint": None},
+            {"phrases": ["no no no, undo!", "undo! torna indietro!",
+                         "no aspetta, annulla!", "annulla tutto!"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:undo]"],
+             "needs_llm": False,
+             "responses": ["Annullato!", "Torno indietro, scusa!"],
+             "hint": None},
+
+            # Correction with component swap
+            {"phrases": ["non voglio il LED, voglio il buzzer",
+                         "no il LED no, metti un buzzer",
+                         "togli il LED e metti un buzzer al suo posto"],
+             "intent": "circuit", "entities": ["led", "buzzer-piezo"],
+             "actions": ["[AZIONE:removecomponent:led1]", "[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["LED rimosso e buzzer aggiunto!", "Cambio fatto: via LED, ecco il buzzer!"],
+             "hint": None},
+            {"phrases": ["anzi no, togli la resistenza e metti un condensatore",
+                         "scusa, volevo il condensatore non la resistenza",
+                         "no la resistenza no, il condensatore"],
+             "intent": "circuit", "entities": ["resistor", "capacitor"],
+             "actions": ["[AZIONE:removecomponent:resistor1]", "[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Resistenza rimossa e condensatore aggiunto!", "Cambio fatto!"],
+             "hint": None},
+
+            # Last instruction wins
+            {"phrases": ["fermati! no aspetta vai avanti",
+                         "no stop... anzi si, vai avanti",
+                         "pausa... no dai, continua"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Si parte! ▶", "Ok, vado avanti!"],
+             "hint": None},
+
+            # Needs conversation context
+            {"phrases": ["no aspetta non quello, l'altro",
+                         "non questo, quello di prima",
+                         "no l'altro componente, non questo"],
+             "intent": "action", "entities": [], "actions": [],
+             "needs_llm": True,
+             "responses": None,
+             "hint": "L'utente sta correggendo una scelta precedente, serve contesto conversazionale"},
+        ]
+
+        for _ in range(n_target):
+            entry = random.choice(NEGATION_EXAMPLES)
+            phrase = augment_phrase(apply_typo(random.choice(entry["phrases"])))
+            response = random.choice(entry["responses"]) if entry["responses"] else None
+            results.append(make_example(
+                user_msg=phrase,
+                intent=entry["intent"],
+                entities=entry["entities"],
+                actions=entry["actions"],
+                needs_llm=entry["needs_llm"],
+                response=response,
+                llm_hint=entry["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 6. CONVERSATIONAL (200) — intent buried in conversation
+    # ================================================================
+    def _adv_conversational(n_target=200):
+        results = []
+
+        CONVERSATIONAL_TEMPLATES = [
+            {"phrases": [
+                "sai che ieri ho fatto un circuito bellissimo? comunque puoi avviare?",
+                "ciao! come stai? senti, puoi fare play?",
+                "oh oggi e' una bella giornata, vai fai partire il circuito",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Si parte!"],
+             "hint": None},
+            {"phrases": [
+                "prof mi ha detto di fare l'esperimento 3 del volume 2, lo puoi caricare?",
+                "la maestra vuole che faccia esp3 vol2, me lo carichi?",
+                "il professore ha detto esperimento 3 volume 2",
+             ],
+             "intent": "navigation", "entities": ["v2-cap3-esp1"],
+             "actions": ["[AZIONE:loadexp:v2-cap3-esp1]"],
+             "needs_llm": False,
+             "responses": ["Esperimento caricato!", "Ecco l'esperimento del Volume 2!"],
+             "hint": None},
+            {"phrases": [
+                "stavo pensando... si puo' mettere un buzzer?",
+                "ehm scusa ma... posso aggiungere un buzzer?",
+                "aspetta un attimo... metti un buzzer dai",
+             ],
+             "intent": "circuit", "entities": ["buzzer-piezo"],
+             "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Buzzer posizionato!", "Ecco il buzzer!"],
+             "hint": None},
+            {"phrases": [
+                "oh bello il simulatore! senti, mi compili il codice?",
+                "wow che figata questa roba, compila per favore",
+                "bello tutto, comunque compilami il codice va",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:compile]"],
+             "needs_llm": False,
+             "responses": ["Compilazione avviata!", "Compilo!"],
+             "hint": None},
+            {"phrases": [
+                "sono stanco ma devo finire, vai avanti col passo",
+                "uffa che fatica, prossimo step per favore",
+                "dai che quasi finisco, avanti con il passo",
+             ],
+             "intent": "navigation", "entities": [], "actions": ["[AZIONE:nextstep]"],
+             "needs_llm": False,
+             "responses": ["Prossimo passo!", "Avanti!"],
+             "hint": None},
+            {"phrases": [
+                "mamma mia che casino, cancella tutto per favore",
+                "aiuto ho fatto un disastro, togli tutto",
+                "che pasticcio, via tutto dalla breadboard",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:clearall]"],
+             "needs_llm": False,
+             "responses": ["Tutto rimosso!", "Breadboard svuotata!"],
+             "hint": None},
+            {"phrases": [
+                "ah dimenticavo, mi serve anche un resistore da 220",
+                "quasi quasi... aggiungi una resistenza",
+                "aspetta, manca il resistore!",
+             ],
+             "intent": "circuit", "entities": ["resistor"],
+             "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Resistore aggiunto!", "Ecco la resistenza!"],
+             "hint": None},
+            {"phrases": [
+                "senti mi annoio un po', facciamo un quiz?",
+                "basta circuiti per oggi, quiz!",
+                "ho finito il circuito, posso fare un quiz?",
+             ],
+             "intent": "teacher", "entities": [], "actions": ["[AZIONE:quiz]"],
+             "needs_llm": False,
+             "responses": ["Quiz in arrivo!", "Ecco il quiz!"],
+             "hint": None},
+            {"phrases": [
+                "ma sai che non ho capito niente della lezione? vabe' metti in pausa",
+                "il prof ha spiegato malissimo, pausa per favore",
+                "non so cosa sto facendo, fermati un attimo",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:pause]"],
+             "needs_llm": False,
+             "responses": ["Pausa! ⏸", "Fermato. ⏸"],
+             "hint": None},
+            {"phrases": [
+                "sai cosa ti dico? resetta tutto e ricominciamo",
+                "ho fatto troppi errori, reset!",
+                "va tutto storto, ricominciamo da capo",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:reset]"],
+             "needs_llm": False,
+             "responses": ["Reset!", "Ricominciamo da capo."],
+             "hint": None},
+            {"phrases": [
+                "una cosa... puoi aprirmi il monitor seriale?",
+                "ah si, serve il serial monitor",
+                "dimenticavo, apri la seriale",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:showserial]"],
+             "needs_llm": False,
+             "responses": ["Monitor seriale aperto!", "Ecco il serial monitor!"],
+             "hint": None},
+            {"phrases": [
+                "l'altro giorno la maestra ci ha fatto vedere Arduino, posso passare a Scratch?",
+                "preferisco i blocchi, metti scratch",
+                "non mi piace scrivere codice, voglio i blocchetti",
+             ],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:switcheditor:scratch]"],
+             "needs_llm": False,
+             "responses": ["Passo a Scratch!", "Modalita' Scratch attivata!"],
+             "hint": None},
+        ]
+
+        for _ in range(n_target):
+            tmpl = random.choice(CONVERSATIONAL_TEMPLATES)
+            phrase = augment_phrase(apply_typo(random.choice(tmpl["phrases"])))
+            results.append(make_example(
+                user_msg=phrase,
+                intent=tmpl["intent"],
+                entities=tmpl["entities"],
+                actions=tmpl["actions"],
+                needs_llm=tmpl["needs_llm"],
+                response=random.choice(tmpl["responses"]),
+                llm_hint=tmpl["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 7. EMOJI (100) — emoji-only or minimal text
+    # ================================================================
+    def _adv_emoji(n_target=100):
+        results = []
+
+        EMOJI_DETERMINISTIC = [
+            {"phrases": ["▶️", "▶", "▶️ vai!", "▶️ go!", "▶️▶️▶️"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Play! ▶", "Si parte!"],
+             "hint": None},
+            {"phrases": ["⏸", "⏸️", "⏸ stop", "⏸️ fermati"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:pause]"],
+             "needs_llm": False,
+             "responses": ["Pausa! ⏸", "Fermato. ⏸"],
+             "hint": None},
+            {"phrases": ["🎯 quiz!", "🎯 quiz", "🎯 fammi un quiz", "🎯"],
+             "intent": "teacher", "entities": [], "actions": ["[AZIONE:quiz]"],
+             "needs_llm": False,
+             "responses": ["Quiz in arrivo!", "Ecco il quiz!"],
+             "hint": None},
+            {"phrases": ["📋", "📋 BOM", "📋 lista componenti"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:showbom]"],
+             "needs_llm": False,
+             "responses": ["Ecco la lista componenti!", "BOM aperto!"],
+             "hint": None},
+            {"phrases": ["❌ cancella", "❌ via tutto", "❌❌❌"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:clearall]"],
+             "needs_llm": False,
+             "responses": ["Tutto rimosso!", "Breadboard svuotata!"],
+             "hint": None},
+            {"phrases": ["⏮ indietro", "⬅️ torna indietro", "↩️ undo"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:undo]"],
+             "needs_llm": False,
+             "responses": ["Annullato!", "Torno indietro."],
+             "hint": None},
+        ]
+
+        EMOJI_AMBIGUOUS = [
+            {"phrases": ["🔴", "🔴🔴🔴", "rosso"],
+             "intent": "circuit", "entities": [], "actions": [],
+             "hint": "L'utente ha mandato un emoji rosso, potrebbe voler dire LED rosso, errore, o stop"},
+            {"phrases": ["💡", "💡💡", "lampadina"],
+             "intent": "circuit", "entities": ["led"], "actions": [],
+             "hint": "L'utente probabilmente vuole un LED ma serve conferma"},
+            {"phrases": ["🔧", "🔧 aggiusta", "🛠️"],
+             "intent": "circuit", "entities": [], "actions": [],
+             "hint": "L'utente vuole diagnosticare o riparare qualcosa"},
+            {"phrases": ["👍", "👍👍", "ok 👍"],
+             "intent": "action", "entities": [], "actions": [],
+             "hint": "L'utente conferma qualcosa ma non e' chiaro cosa"},
+            {"phrases": ["🔌", "🔌🔌", "collega 🔌"],
+             "intent": "circuit", "entities": ["wire"], "actions": [],
+             "hint": "L'utente vuole collegare qualcosa ma non ha specificato cosa"},
+            {"phrases": ["?", "??", "???"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente ha una domanda ma non l'ha formulata"},
+            {"phrases": ["help", "help!", "HELP", "aiuto"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede aiuto generico"},
+            {"phrases": ["!!!", "!!!!!", "!!!!!!!!!"],
+             "intent": "action", "entities": [], "actions": [],
+             "hint": "L'utente esprime sorpresa o frustrazione, serve chiarimento"},
+        ]
+
+        # Deterministic emoji
+        det_count = n_target * 2 // 3
+        for _ in range(det_count):
+            entry = random.choice(EMOJI_DETERMINISTIC)
+            phrase = random.choice(entry["phrases"])
+            results.append(make_example(
+                user_msg=phrase,
+                intent=entry["intent"],
+                entities=entry["entities"],
+                actions=entry["actions"],
+                needs_llm=entry["needs_llm"],
+                response=random.choice(entry["responses"]),
+                llm_hint=entry["hint"],
+            ))
+
+        # Ambiguous emoji
+        amb_count = n_target - det_count
+        for _ in range(amb_count):
+            entry = random.choice(EMOJI_AMBIGUOUS)
+            phrase = random.choice(entry["phrases"])
+            results.append(make_example(
+                user_msg=phrase,
+                intent=entry["intent"],
+                entities=entry["entities"],
+                actions=entry["actions"],
+                needs_llm=True,
+                response=None,
+                llm_hint=entry["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 8. DIALECT (200) — Regional Italian dialect/slang
+    # ================================================================
+    def _adv_dialect(n_target=200):
+        results = []
+
+        DIALECT_TEMPLATES = [
+            # Roman dialect
+            {"phrases": ["daje fallo anda'", "daje fallo parti'", "daje avvia",
+                         "ammazza che bel circuito, fallo parti'",
+                         "da' fallo anda'", "aho fallo parti'"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Si parte!", "Daje! ▶"],
+             "hint": None},
+            {"phrases": ["levame sto coso", "toglime sto LED", "levame sta roba",
+                         "aho toglielo sto coso"],
+             "intent": "circuit", "entities": ["led"], "actions": ["[AZIONE:removecomponent:led1]"],
+             "needs_llm": False,
+             "responses": ["LED rimosso!", "Tolto!"],
+             "hint": None},
+            {"phrases": ["mettece un LED de'", "mettece 'na lucina",
+                         "aho metti un LED", "piazza un LED aho"],
+             "intent": "circuit", "entities": ["led"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["LED posizionato!", "Ecco il LED!"],
+             "hint": None},
+
+            # Milanese/Northern
+            {"phrases": ["dai molla via tutto", "molla via tutta sta roba",
+                         "via tutto dai", "butta via tutto"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:clearall]"],
+             "needs_llm": False,
+             "responses": ["Tutto rimosso!", "Breadboard svuotata!"],
+             "hint": None},
+            {"phrases": ["piantala e fa pausa", "basta dai fermati",
+                         "smettila, pausa", "dai piantala, stop"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:pause]"],
+             "needs_llm": False,
+             "responses": ["Pausa! ⏸", "Fermato. ⏸"],
+             "hint": None},
+
+            # Southern
+            {"phrases": ["ue' metti nu LED", "ue' metti un LED",
+                         "uaglio' metti un LED", "jamma' metti un LED"],
+             "intent": "circuit", "entities": ["led"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["LED posizionato!", "Ecco il LED!"],
+             "hint": None},
+            {"phrases": ["fallo ji'", "fallo anda'", "fallo camina'", "fallo parti' uaglio'"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Si parte!"],
+             "hint": None},
+
+            # General slang
+            {"phrases": ["spacca!", "spaccalo!", "spacca tutto!"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Si parte! ▶", "Simulazione avviata!"],
+             "hint": None},
+            {"phrases": ["sgancia il quiz", "sgancia un quiz", "butta fuori un quiz"],
+             "intent": "teacher", "entities": [], "actions": ["[AZIONE:quiz]"],
+             "needs_llm": False,
+             "responses": ["Quiz in arrivo!", "Ecco il quiz!"],
+             "hint": None},
+            {"phrases": ["butta dentro un buzzer", "ficca un buzzer", "schiaffa un buzzer"],
+             "intent": "circuit", "entities": ["buzzer-piezo"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Buzzer posizionato!", "Ecco il buzzer!"],
+             "hint": None},
+            {"phrases": ["fai girare sta roba", "fai girare sto circuito",
+                         "metti in moto sta roba"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Si parte!"],
+             "hint": None},
+            {"phrases": ["toglimi sta schifezza", "via sta roba", "cancella sta porcheria"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:clearall]"],
+             "needs_llm": False,
+             "responses": ["Tutto rimosso!", "Breadboard svuotata!"],
+             "hint": None},
+            {"phrases": ["bella zio, avvia", "bella fra' avvia", "bella zi, play",
+                         "grande capo, fai partire"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:play]"],
+             "needs_llm": False,
+             "responses": ["Simulazione avviata! ▶", "Si parte!"],
+             "hint": None},
+            {"phrases": ["damme un resistore", "passame un resistore", "famme un resistore"],
+             "intent": "circuit", "entities": ["resistor"], "actions": ["[INTENT:place_and_wire]"],
+             "needs_llm": False,
+             "responses": ["Resistore aggiunto!", "Ecco la resistenza!"],
+             "hint": None},
+            {"phrases": ["compila sto coso", "compila sta roba", "fai il compile sto codice"],
+             "intent": "action", "entities": [], "actions": ["[AZIONE:compile]"],
+             "needs_llm": False,
+             "responses": ["Compilazione avviata!", "Compilo!"],
+             "hint": None},
+            {"phrases": ["fai vede' il prossimo", "fai vede' avanti", "vai co' lo step dopo"],
+             "intent": "navigation", "entities": [], "actions": ["[AZIONE:nextstep]"],
+             "needs_llm": False,
+             "responses": ["Prossimo passo!", "Avanti!"],
+             "hint": None},
+        ]
+
+        for _ in range(n_target):
+            tmpl = random.choice(DIALECT_TEMPLATES)
+            phrase = augment_phrase(apply_typo(random.choice(tmpl["phrases"]), probability=0.15))
+            results.append(make_example(
+                user_msg=phrase,
+                intent=tmpl["intent"],
+                entities=tmpl["entities"],
+                actions=tmpl["actions"],
+                needs_llm=tmpl["needs_llm"],
+                response=random.choice(tmpl["responses"]),
+                llm_hint=tmpl["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # 9. TRAPS (200) — Looks like action but is actually tutor question
+    # ================================================================
+    def _adv_traps(n_target=200):
+        results = []
+
+        TRAP_TEMPLATES = [
+            # Questions ABOUT actions (NOT action requests!)
+            {"phrases": ["cosa succede se avvio?", "cosa succede quando premo play?",
+                         "che succede se faccio play?", "cosa capita se avvio la simulazione?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede cosa succedera' se avvia, NON vuole avviare"},
+            {"phrases": ["a cosa serve il compilatore?", "che fa il compilatore?",
+                         "perche' devo compilare?", "cosa significa compilare?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione sulla compilazione, NON vuole compilare"},
+            {"phrases": ["quando devo premere play?", "quando si usa play?",
+                         "in che momento devo avviare?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede consigli su quando avviare, NON vuole avviare adesso"},
+            {"phrases": ["perche' si usa il reset?", "a cosa serve resettare?",
+                         "quando serve il reset?", "che differenza c'e' tra reset e clearall?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione sul reset, NON vuole resettare"},
+            {"phrases": ["come funziona il pulsante?", "a cosa serve il pulsante?",
+                         "che fa il pulsante nel circuito?", "perche' si usa il pulsante?"],
+             "intent": "tutor", "entities": ["push-button"], "actions": [],
+             "hint": "L'utente chiede spiegazione sul pulsante, NON vuole interagire"},
+            {"phrases": ["cosa fa il serial monitor?", "a cosa serve la seriale?",
+                         "che cos'e' il monitor seriale?", "come si usa il serial?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione sul serial monitor, NON vuole aprirlo"},
+            {"phrases": ["a che serve il BOM?", "cosa mostra il BOM?",
+                         "che cos'e' il BOM?", "cosa significa BOM?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione sul BOM, NON vuole visualizzarlo"},
+            {"phrases": ["si puo' usare il potenziometro senza Arduino?",
+                         "serve l'Arduino per il potenziometro?",
+                         "il potenziometro funziona da solo?"],
+             "intent": "tutor", "entities": ["potentiometer"], "actions": [],
+             "hint": "L'utente chiede una domanda teorica sul potenziometro"},
+            {"phrases": ["qual e' la differenza tra Scratch e Arduino?",
+                         "meglio Scratch o Arduino?",
+                         "quando usare Scratch e quando Arduino?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede confronto tra modalita' editor"},
+            {"phrases": ["mi conviene usare il passo passo o il sandbox?",
+                         "qual e' la differenza tra passo passo e sandbox?",
+                         "quando usare sandbox?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede consigli sulle modalita' di costruzione"},
+            {"phrases": ["e' meglio cancellare tutto o solo il resistore?",
+                         "conviene togliere tutto o solo un pezzo?",
+                         "devo cancellare tutto o solo il LED?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede consiglio, NON vuole cancellare"},
+            {"phrases": ["dovrei avviare adesso?", "e' il momento giusto per fare play?",
+                         "posso avviare o devo prima fare altro?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede conferma prima di avviare, NON vuole avviare"},
+            {"phrases": ["come si collega il LED?", "dove va collegato il resistore?",
+                         "come si cabla un buzzer?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione su come collegare, NON vuole che venga fatto"},
+            {"phrases": ["perche' il LED non si accende?", "come mai non funziona?",
+                         "perche' il buzzer non suona?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede diagnosi/spiegazione di un problema"},
+            {"phrases": ["cosa sono i pin?", "che vuol dire pin digitale?",
+                         "cos'e' un pin analogico?", "come funzionano i pin dell'Arduino?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede spiegazione tecnica sui pin"},
+            {"phrases": ["come funziona l'undo?", "quante volte posso annullare?",
+                         "l'undo torna indietro di quanti passi?"],
+             "intent": "tutor", "entities": [], "actions": [],
+             "hint": "L'utente chiede come funziona l'undo, NON vuole annullare"},
+            {"phrases": ["cos'e' una resistenza?", "a cosa serve la resistenza in un circuito?",
+                         "perche' serve il resistore?", "che lavoro fa la resistenza?"],
+             "intent": "tutor", "entities": ["resistor"], "actions": [],
+             "hint": "L'utente chiede spiegazione teorica sulla resistenza"},
+            {"phrases": ["cosa significa LED?", "LED e' un acronimo?",
+                         "di che materiale e' fatto un LED?"],
+             "intent": "tutor", "entities": ["led"], "actions": [],
+             "hint": "L'utente chiede informazioni teoriche sul LED"},
+        ]
+
+        for _ in range(n_target):
+            tmpl = random.choice(TRAP_TEMPLATES)
+            phrase = augment_phrase(apply_typo(random.choice(tmpl["phrases"])))
+            results.append(make_example(
+                user_msg=phrase,
+                intent=tmpl["intent"],
+                entities=tmpl["entities"],
+                actions=tmpl["actions"],
+                needs_llm=True,
+                response=None,
+                llm_hint=tmpl["hint"],
+            ))
+
+        return results
+
+    # ================================================================
+    # ORCHESTRATOR
+    # ================================================================
+    INFLATE = 1.15  # slight inflation for dedup/shuffle trimming
+
+    # Target proportions (sum = 2000)
+    ratio_sum = 300 + 200 + 300 + 300 + 200 + 200 + 100 + 200 + 200  # = 2000
+    n1 = int(n * INFLATE * 300 / ratio_sum)
+    n2 = int(n * INFLATE * 200 / ratio_sum)
+    n3 = int(n * INFLATE * 300 / ratio_sum)
+    n4 = int(n * INFLATE * 300 / ratio_sum)
+    n5 = int(n * INFLATE * 200 / ratio_sum)
+    n6 = int(n * INFLATE * 200 / ratio_sum)
+    n7 = int(n * INFLATE * 100 / ratio_sum)
+    n8 = int(n * INFLATE * 200 / ratio_sum)
+    n9 = int(n * INFLATE * 200 / ratio_sum)
+
+    examples = []
+    examples.extend(_adv_heavy_typos(n1))
+    examples.extend(_adv_mixed_lang(n2))
+    examples.extend(_adv_vague(n3))
+    examples.extend(_adv_multi_intent(n4))
+    examples.extend(_adv_negation(n5))
+    examples.extend(_adv_conversational(n6))
+    examples.extend(_adv_emoji(n7))
+    examples.extend(_adv_dialect(n8))
+    examples.extend(_adv_traps(n9))
+
+    print(f"    Adversarial sub-totals:")
+    print(f"      heavy_typos:     {n1} target")
+    print(f"      mixed_lang:      {n2} target")
+    print(f"      vague:           {n3} target")
+    print(f"      multi_intent:    {n4} target")
+    print(f"      negation:        {n5} target")
+    print(f"      conversational:  {n6} target")
+    print(f"      emoji:           {n7} target")
+    print(f"      dialect:         {n8} target")
+    print(f"      traps:           {n9} target")
+
+    return examples
 
 
 def gen_eval_set(n):
