@@ -2121,9 +2121,978 @@ def gen_layer_replay(n):
 def gen_layer_direct_action(n):
     """Layer 2: Tutte le 42 azioni dirette con varianti massive.
     Per ogni azione: frasi base, typo, augmentation, kid slang.
+    ~4200 examples across 42 actions x ~100 variants each.
     """
-    # TODO: Task 3 — implementare
-    return []
+
+    # ==============================================================
+    # Helper: generate N unique examples for a given action key
+    # ==============================================================
+    def _gen_variants(action_key, templates, count, param_fn=None):
+        """Generate `count` unique examples for a single action.
+
+        action_key: key into ACTIONS dict
+        templates: list of base phrase strings (or callables returning str)
+        count: how many examples to generate
+        param_fn: optional callable() -> (phrase_str, tag_str, entities_list)
+                  if provided, templates is ignored and param_fn is called each time
+        """
+        info = ACTIONS[action_key]
+        results = []
+        seen = set()
+        attempts = 0
+        max_attempts = count * 6  # safety valve
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+
+            if param_fn:
+                phrase, tag, entities = param_fn()
+            else:
+                phrase = random.choice(templates)
+                tag = info["tag"]
+                entities = info.get("entities", [])
+                # Clean placeholder entities
+                entities = [e for e in entities if not e.startswith("{")]
+
+            # Augment and typo
+            phrase = augment_phrase(phrase)
+            phrase = apply_typo(phrase, probability=0.3)
+
+            # Dedup on lowercase stripped
+            key = phrase.strip().lower()
+            if key in seen:
+                continue
+            seen.add(key)
+
+            response = random.choice(info["responses"])
+            ctx = random_context_v6()
+
+            actions_list = [tag] if not tag.startswith("[INTENT:") else [tag]
+
+            ex = make_example(
+                user_msg=phrase,
+                intent=info["intent"],
+                entities=entities,
+                actions=actions_list,
+                needs_llm=False,
+                response=response,
+                llm_hint=None,
+                ctx=ctx,
+            )
+            results.append(ex)
+
+        return results
+
+    # ==============================================================
+    # 1. Simulation Control — 6 actions x 120 = 720
+    # ==============================================================
+    def _direct_sim_control(n_target=720):
+        per_action = n_target // 6
+
+        PLAY_PHRASES = [
+            "Avvia", "Avvia la simulazione", "Play", "Start", "Vai", "Fai partire",
+            "Accendi", "Fai partire il circuito", "Lancia la simulazione", "Metti in moto",
+            "Premi play", "Fallo andare", "Daje!", "Via!", "Parti!", "Accendilo",
+            "Fai girare", "Attiva", "Dai che si parte", "Andiamo!", "Proviamo",
+            "Testiamo il circuito", "Facciamo andare", "OK avvia", "Si parte", "Go!",
+            "Run it", "Let's go", "Fire it up", "Ho finito di montare, avvia",
+            "Fammelo vedere in azione", "Aziona il circuito", "Metti in funzione",
+            "Fammi vedere come va", "Partiamo!", "Iniziamo!", "Mandalo", "Prova!",
+            "Vediamo se funziona", "Fallo funzionare", "Si puo' far partire?",
+            "Accendi tutto", "Manda avanti", "Fai il start", "Press play",
+            "Dai fallo andare", "Fai andare quella cosa del circuito",
+            "Avviami la simulazione", "Fai partire per favore", "Accendimi il circuito",
+        ]
+        PAUSE_PHRASES = [
+            "Stop", "Ferma", "Pausa", "Metti in pausa", "Ferma tutto", "Fermalo",
+            "Stoppa", "Blocca", "Fermati", "Basta", "Premi stop", "Spegni", "Alt",
+            "Aspetta", "Fermo!", "Stoppalo!", "Basta cosi'", "Ok basta",
+            "Fermati un attimo", "Frena", "Stoppami tutto", "Blocca tutto",
+            "Pause", "Hold", "Halt", "Stop it", "Fermami tutto", "Un attimo",
+            "Wait", "No no ferma!", "Blocca blocca!", "Stai fermo", "Aspe'",
+            "Ferma un secondo", "Fermala", "Basta fermati", "Stop stop",
+            "Ferma la simulazione", "Spegni tutto", "Premi pausa", "Metti pausa",
+            "Sospendi", "Fai pausa", "Interrompi", "Freezalo", "Congela",
+            "Spegni la simulazione", "Ferma il circuito", "Blocca la simulazione",
+        ]
+        RESET_PHRASES = [
+            "Reset", "Resetta", "Resetta il circuito", "Ripristina", "Ricomincia",
+            "Ricomincia da capo", "Resetta tutto", "Rimetti a zero", "Reimposta",
+            "Da capo", "Daccapo", "Dall'inizio", "Ricominciamo", "Azzera",
+            "Azzera tutto", "Fai reset", "Premi reset", "Resettiamo", "Come prima",
+            "Rifai da capo", "Riportami alla situazione iniziale", "Restart",
+            "Torna allo stato originale", "Riparti da zero", "Rimetti tutto a posto",
+            "Resettami", "Fai un reset", "Rimetti com'era", "Riavvia",
+            "Riavvia il circuito", "Riporta tutto all'inizio", "Stato iniziale",
+            "Torna all'inizio", "Fai ripartire", "Ricomincio", "Ricominciamo tutto",
+        ]
+        CLEARALL_PHRASES = [
+            "Cancella tutto", "Pulisci tutto", "Svuota", "Svuota tutto", "Togli tutto",
+            "Rimuovi tutto", "Elimina tutto", "Pulisci la breadboard",
+            "Svuota la breadboard", "Via tutto", "Butta via tutto", "Sgombra",
+            "Fai piazza pulita", "Tabula rasa", "Leva tutto", "Spazza via",
+            "Sparecchia", "Ripulisci", "Togli tutta sta roba",
+            "Voglio ricominciare da zero", "Voglio una breadboard vuota",
+            "Toglimi tutto di mezzo", "Via via tutto", "Clear all", "Pulisci",
+            "Cancella", "Elimina tutto quanto", "Fai piazza pulita sulla breadboard",
+            "Spazza via tutto", "Leva tutto dalla breadboard", "Nuke",
+            "Distruggi tutto", "Cancella tutti i componenti", "Rimuovi tutto dal circuito",
+        ]
+        UNDO_PHRASES = [
+            "Annulla", "Undo", "Torna indietro", "Ctrl Z", "Annulla l'ultima cosa",
+            "Indietro", "Torna come prima", "Annullami", "Fai ctrl z",
+            "Annulla l'ultima azione", "Rimetti come prima", "Non volevo",
+            "Ho sbagliato, annulla", "Back", "Annulla quello che ho fatto",
+            "Torna un passo indietro", "Annulla l'ultimo step",
+            "Disfa", "Disfa quello", "Annulla tutto", "Cancella l'ultima mossa",
+            "Passo indietro", "Vai indietro", "Undo undo", "Annulla annulla",
+            "Rimettilo com'era", "Ops annulla", "No no annulla", "Undo please",
+            "Annullami l'ultimo cambiamento", "Ctrl+Z",
+        ]
+        REDO_PHRASES = [
+            "Rifai", "Redo", "Ripeti", "Rimetti quello che ho tolto", "Ctrl Y",
+            "Ripristina", "Rimetti", "Ripeti l'azione", "Rifallo",
+            "Rifai quello che ho annullato", "Mettilo di nuovo", "Redo redo",
+            "Ripristina l'azione", "Avanti", "Fai redo", "Ripeti l'ultima",
+            "Riesegui", "Riapplica", "Rimetti come avevo fatto", "Ripeti dai",
+            "Ridai", "Ctrl+Y", "Rifai l'ultima cosa", "Ripristina l'ultimo annullamento",
+            "Rimetti quello", "Ripetimi l'azione", "Annulla l'annulla",
+            "Disfa l'annulla", "Ripeti quello che avevo fatto",
+        ]
+
+        results = []
+        for key, phrases in [("play", PLAY_PHRASES), ("pause", PAUSE_PHRASES),
+                              ("reset", RESET_PHRASES), ("clearall", CLEARALL_PHRASES),
+                              ("undo", UNDO_PHRASES), ("redo", REDO_PHRASES)]:
+            results.extend(_gen_variants(key, phrases, per_action))
+        return results
+
+    # ==============================================================
+    # 2. Compile & Editor — 7 actions x 100 = 700
+    # ==============================================================
+    def _direct_compile_editor(n_target=700):
+        per_action = n_target // 7
+
+        COMPILE_PHRASES = [
+            "Compila", "Compila il codice", "Compila lo sketch", "Verifica il codice",
+            "Controlla il codice", "Build", "Prova a compilare", "Lancia la compilazione",
+            "Vedi se il codice e' giusto", "Testami il codice", "Compilalo",
+            "Fai il build", "Manda in compilazione", "Verifica lo sketch",
+            "Compile", "Compilazione", "Fai verify", "Controlla lo sketch",
+            "Verifica", "Fai la verifica", "Testa il codice", "Prova il codice",
+            "Compila e vedi se funziona", "Manda a compilare", "Buildiamo",
+            "Fai un build", "Fai compilare il programma",
+        ]
+        OPENEDITOR_PHRASES = [
+            "Apri l'editor", "Editor", "Mostrami l'editor", "Apri il codice",
+            "Fammi vedere il codice", "Voglio scrivere codice", "Apri editor",
+            "Editor codice", "Mostra l'editor", "Apri l'editor del codice",
+            "Voglio l'editor", "Apri il pannello codice", "Fai vedere l'editor",
+            "Apri il programma", "Mostrami dove scrivo il codice", "Open editor",
+            "Dov'e' l'editor?", "Fammi l'editor", "Aprimi l'editor",
+            "Voglio programmare", "Apri la finestra del codice", "Editor please",
+            "Code editor", "Mostra codice", "Aprimi il codice",
+        ]
+        CLOSEEDITOR_PHRASES = [
+            "Chiudi l'editor", "Nascondi l'editor", "Chiudi il codice",
+            "Via l'editor", "Togli l'editor", "Chiudi editor", "Chiudi il pannello",
+            "Nascondi il codice", "Togli il pannello codice", "Close editor",
+            "Non serve piu' l'editor", "Chiudimi l'editor", "Basta codice",
+            "Nascondi il pannello", "Chiudi la finestra del codice", "Via il codice",
+            "Sparisci editor", "Togli il codice", "Editor via", "Metti via l'editor",
+            "Rimuovi l'editor", "Non mi serve l'editor",
+        ]
+        SWITCH_SCRATCH_PHRASES = [
+            "Passa a Scratch", "Usa Scratch", "Voglio programmare con i blocchi",
+            "Apri l'editor Scratch", "Modalita' blocchi", "Passa ai blocchi",
+            "Blocchi", "Voglio i blocchi", "Fammi usare Scratch", "Metti Scratch",
+            "Apri Scratch", "Blocchetti", "Voglio programmare con i blocchetti",
+            "Switch a Scratch", "Scratch mode", "Metti i blocchetti",
+            "Programma a blocchi", "Fammi i blocchi", "Editor a blocchi",
+            "Visual editor", "Drag and drop", "Programmazione visuale",
+            "Passa alla modalita' blocchi", "Voglio il drag and drop",
+            "Metti la programmazione a blocchi", "Scratch!", "Blocchini",
+        ]
+        SWITCH_ARDUINO_PHRASES = [
+            "Torna ad Arduino", "Usa Arduino C++", "Codice testuale",
+            "Passa all'editor Arduino", "Modalita' codice", "Torna al codice",
+            "Arduino", "Voglio scrivere il codice", "Fammi usare Arduino",
+            "Metti Arduino", "Apri l'editor codice", "C++", "Torna al testo",
+            "Switch ad Arduino", "Arduino mode", "Scrivi in Arduino",
+            "Modalita' C++", "Programmazione testuale", "Codice C++",
+            "Voglio scrivere in C++", "Editor testuale", "Testo", "Passa al C++",
+            "Text editor", "Codice Arduino", "Fammi scrivere il codice a mano",
+        ]
+        RESETCODE_PHRASES = [
+            "Resetta il codice", "Codice originale", "Rimetti il codice di default",
+            "Codice iniziale", "Reset code", "Rimetti il codice originale",
+            "Codice di partenza", "Ripristina il codice", "Rimetti il codice base",
+            "Fai reset del codice", "Togli le modifiche al codice",
+            "Cancella le modifiche", "Rimetti lo sketch originale",
+            "Ripristina lo sketch", "Default code", "Codice default",
+            "Torna al codice originale", "Resettami il codice", "Codice di fabbrica",
+            "Codice stock", "Rimetti com'era il codice", "Ricomincia il codice",
+        ]
+        GETCODE_PHRASES = [
+            "Mostrami il codice", "Fammi vedere il codice", "Che codice c'e'?",
+            "Qual e' il codice attuale?", "Dammi il codice", "Codice corrente",
+            "Get code", "Leggi il codice", "Cosa c'e' nell'editor?",
+            "Che programma c'e'?", "Mostra il programma", "Fammi leggere il codice",
+            "Recupera il codice", "Dammi lo sketch", "Che sketch c'e'?",
+            "Mostrami lo sketch attuale", "Leggi lo sketch", "Dimmi il codice",
+            "Che codice ho scritto?", "Fammi vedere lo sketch", "Show me the code",
+        ]
+
+        results = []
+        for key, phrases in [
+            ("compile", COMPILE_PHRASES),
+            ("openeditor", OPENEDITOR_PHRASES),
+            ("closeeditor", CLOSEEDITOR_PHRASES),
+            ("switcheditor_scratch", SWITCH_SCRATCH_PHRASES),
+            ("switcheditor_arduino", SWITCH_ARDUINO_PHRASES),
+            ("resetcode", RESETCODE_PHRASES),
+            ("getcode", GETCODE_PHRASES),
+        ]:
+            results.extend(_gen_variants(key, phrases, per_action))
+        return results
+
+    # ==============================================================
+    # 3. Navigation — 5 actions x 100 = 500
+    # ==============================================================
+    def _direct_navigation(n_target=500):
+        per_action = n_target // 5
+
+        # --- loadexp: parametric ---
+        LOADEXP_TEMPLATES = [
+            "Carica {name}", "Apri {name}", "Vai a {name}", "Voglio fare {name}",
+            "Fammi fare {name}", "Portami a {name}", "Apri l'esperimento {name}",
+            "Mostra {name}", "Seleziona {name}", "Facciamo {name}",
+            "Andiamo a {name}", "Carica l'esperimento {name}",
+            "Vorrei fare {name}", "Carichiamo {name}", "Metti {name}",
+            "Fammi {name}", "Iniziamo con {name}", "Apri il progetto {name}",
+            "Caricami {name}", "Vai all'esperimento {name}",
+            "Prova a caricare {name}", "Apri per favore {name}",
+            "Facciamo l'esperimento {name}", "Lavoriamo su {name}",
+        ]
+
+        def _loadexp_param():
+            exp_id = random.choice(EXPERIMENTS)
+            name = EXP_NAMES.get(exp_id, exp_id)
+            template = random.choice(LOADEXP_TEMPLATES)
+            phrase = template.format(name=name)
+            tag = f"[AZIONE:loadexp:{exp_id}]"
+            return phrase, tag, [exp_id]
+
+        # --- opentab: parametric ---
+        OPENTAB_TEMPLATES = [
+            "Apri il {tab}", "Vai al {tab}", "Mostra il {tab}", "Passa al {tab}",
+            "Fammi vedere il {tab}", "Apri la scheda {tab}", "Portami al {tab}",
+            "Voglio il {tab}", "Vai sulla scheda {tab}", "Aprimi il {tab}",
+            "Apri {tab}", "Mostrami {tab}", "Voglio andare al {tab}",
+            "Fai vedere {tab}", "Portami su {tab}", "Switch al {tab}",
+            "Cambia al {tab}", "Metti il {tab}", "Vai su {tab}",
+        ]
+        OPENTAB_SPECIFIC = {
+            "simulator": ["Fammi vedere il simulatore", "Torna alla breadboard",
+                          "Mostra il circuito", "Voglio il simulatore",
+                          "Apri il sim", "Portami al simulatore"],
+            "canvas": ["Voglio disegnare", "Apri la lavagna", "Fammi disegnare",
+                       "Apri il canvas", "Disegniamo", "Dove disegno?"],
+            "detective": ["Gioca a detective", "Trova il guasto", "Gioco detective",
+                          "Facciamo il detective", "Apri trova il guasto"],
+            "poe": ["Prevedi e spiega", "Gioco previsione", "Facciamo prevedi e spiega",
+                    "Apri il gioco POE", "Proviamo a prevedere"],
+            "reverse": ["Circuito misterioso", "Apri il mistero", "Facciamo il mistero",
+                        "Apri reverse engineering", "Circuito segreto"],
+            "taccuini": ["Apri il quaderno", "Voglio gli appunti", "Fammi vedere le note",
+                         "Apri il taccuino", "Notebook", "I miei appunti"],
+            "editor": ["Apri l'editor", "Mostrami il codice", "Voglio il codice",
+                       "Fammi programmare", "Dove scrivo il codice?"],
+            "video": ["Mostrami il video", "Apri il video", "Voglio vedere il video",
+                      "Fammi vedere il filmato", "C'e' un video?"],
+            "manual": ["Apri il manuale", "Mostrami il libro", "Dove sono le istruzioni?",
+                       "Fammi vedere la guida", "Apri la guida"],
+            "review": ["Controlla il circuito", "Facciamo la review", "Verifica il mio lavoro",
+                       "Apri la verifica", "Review del circuito"],
+        }
+
+        def _opentab_param():
+            tab_key = random.choice(TABS)
+            # 50% use template + alias, 50% use specific phrases
+            if random.random() < 0.5 and tab_key in OPENTAB_SPECIFIC:
+                phrase = random.choice(OPENTAB_SPECIFIC[tab_key])
+            else:
+                alias = random.choice(TAB_ALIASES.get(tab_key, [tab_key]))
+                template = random.choice(OPENTAB_TEMPLATES)
+                phrase = template.format(tab=alias)
+            tag = f"[AZIONE:opentab:{tab_key}]"
+            return phrase, tag, [tab_key]
+
+        # --- openvolume: parametric ---
+        OPENVOLUME_TEMPLATES = [
+            "Apri il Volume {n}", "Vai al Volume {n}", "Volume {n}",
+            "Mostra il Volume {n}", "Passa al Volume {n}", "Voglio il Volume {n}",
+            "Carica il Volume {n}", "Metti il Volume {n}", "Cambia al Volume {n}",
+            "Aprimi il Volume {n}", "Portami al Volume {n}", "Switch al Volume {n}",
+            "Andiamo al Volume {n}", "Fammi il Volume {n}",
+            "Voglio lavorare col Volume {n}", "Seleziona Volume {n}",
+            "Libro {n}", "Vol {n}", "Vol. {n}", "Volume numero {n}",
+        ]
+
+        def _openvolume_param():
+            vol_n = random.randint(1, 3)
+            template = random.choice(OPENVOLUME_TEMPLATES)
+            phrase = template.format(n=vol_n)
+            tag = f"[AZIONE:openvolume:{vol_n}]"
+            return phrase, tag, []
+
+        # --- nextstep ---
+        NEXTSTEP_PHRASES = [
+            "Avanti", "Prossimo passo", "Prossimo step", "Vai avanti",
+            "Next", "Next step", "Continua", "Andiamo avanti",
+            "Passo successivo", "Step dopo", "Prossimo", "Vai al prossimo",
+            "Step avanti", "Fammi andare avanti", "Andiamo al prossimo",
+            "Prosegui", "Procedi", "Fai avanti", "Un altro passo",
+            "Successivo", "Il passo dopo", "Avanza", "Forward",
+            "Prossimo passaggio", "Step successivo", "Dammi il prossimo passo",
+        ]
+
+        # --- prevstep ---
+        PREVSTEP_PHRASES = [
+            "Indietro", "Passo precedente", "Step precedente",
+            "Torna indietro", "Previous", "Back", "Passo prima",
+            "Step prima", "Vai indietro", "Torna al passo prima",
+            "Precedente", "Vai al precedente", "Step indietro",
+            "Fammi tornare indietro", "Torniamo indietro", "Un passo indietro",
+            "Backward", "Ritorna", "Lo step di prima", "Ridammi il passo prima",
+            "Torna allo step precedente", "Fai indietro",
+        ]
+
+        results = []
+        results.extend(_gen_variants("loadexp", [], per_action, param_fn=_loadexp_param))
+        results.extend(_gen_variants("opentab", [], per_action, param_fn=_opentab_param))
+        results.extend(_gen_variants("openvolume", [], per_action, param_fn=_openvolume_param))
+        results.extend(_gen_variants("nextstep", NEXTSTEP_PHRASES, per_action))
+        results.extend(_gen_variants("prevstep", PREVSTEP_PHRASES, per_action))
+        return results
+
+    # ==============================================================
+    # 4. Component Operations — 6 actions x 110 = 660
+    # ==============================================================
+    def _direct_component_ops(n_target=660):
+        per_action = n_target // 6
+
+        # --- place_and_wire: parametric ---
+        PLACE_TEMPLATES = [
+            "Metti {comp}", "Aggiungi {comp}", "Piazza {comp}", "Mettimi {comp}",
+            "Voglio {comp}", "Dammi {comp}", "Mi serve {comp}", "Ho bisogno di {comp}",
+            "Metti {comp} sulla breadboard", "Aggiungi {comp} al circuito",
+            "Piazzami {comp}", "Posiziona {comp}", "Inserisci {comp}",
+            "Ci metti {comp}?", "Puoi mettere {comp}?", "Aggiungimi {comp}",
+            "Manca {comp}, aggiungilo", "Serve {comp}", "Ci vuole {comp}",
+            "Daje metti {comp}", "Mettici {comp}", "Su metti {comp}",
+            "Pianta {comp} sulla breadboard", "Ficca {comp} sulla breadboard",
+        ]
+        PLACE_MULTI_TEMPLATES = [
+            "Metti {list}", "Aggiungi {list}", "Mi servono {list}",
+            "Piazza {list}", "Costruisci un circuito con {list}",
+            "Voglio {list} sulla breadboard", "Ho bisogno di {list}",
+            "Mettimi {list}", "Dammi {list}", "Prepara {list}",
+        ]
+
+        def _place_param():
+            # 70% single component, 30% multi
+            if random.random() < 0.7:
+                comp = random.choice(PLACEABLE)
+                alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+                template = random.choice(PLACE_TEMPLATES)
+                phrase = template.format(comp=alias)
+                entities = [comp]
+            else:
+                n_comps = random.randint(2, 4)
+                comps = random.sample(PLACEABLE, min(n_comps, len(PLACEABLE)))
+                aliases = [random.choice(COMPONENT_ALIASES.get(c, [c])) for c in comps]
+                if len(aliases) == 2:
+                    comp_list = f"{aliases[0]} e {aliases[1]}"
+                else:
+                    comp_list = ", ".join(aliases[:-1]) + f" e {aliases[-1]}"
+                template = random.choice(PLACE_MULTI_TEMPLATES)
+                phrase = template.format(list=comp_list)
+                entities = comps
+
+            intent_json = json.dumps({"tipo": entities[0] if len(entities) == 1 else entities}, ensure_ascii=False)
+            tag = f"[INTENT:place_and_wire]"
+            return phrase, tag, entities
+
+        # --- removecomponent: parametric ---
+        REMOVE_TEMPLATES = [
+            "Togli {comp}", "Rimuovi {comp}", "Elimina {comp}", "Via {comp}",
+            "Leva {comp}", "Cancella {comp}", "Butta via {comp}",
+            "Non mi serve {comp}, toglilo", "Rimuovimi {comp}",
+            "Togli {comp} dal circuito", "Elimina {comp} dalla breadboard",
+            "Via {comp} dalla breadboard", "Toglimi {comp}",
+            "Rimuovi {comp} per favore", "Leva via {comp}", "Sparisci {comp}",
+            "Non voglio piu' {comp}", "Porta via {comp}", "Caccia {comp}",
+        ]
+
+        def _remove_param():
+            comp = random.choice(PLACEABLE)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            template = random.choice(REMOVE_TEMPLATES)
+            phrase = template.format(comp=alias)
+            tag = f"[AZIONE:removecomponent:{comp}]"
+            return phrase, tag, [comp]
+
+        # --- movecomponent: parametric ---
+        MOVE_TEMPLATES = [
+            "Sposta {comp} a {dir}", "Muovi {comp} {dir}", "Metti {comp} piu' {dir}",
+            "Sposta {comp} verso {dir}", "Porta {comp} {dir}",
+            "Trascina {comp} {dir}", "Fai scorrere {comp} {dir}",
+            "Muovi {comp} un po' {dir}", "{comp} spostalo {dir}",
+            "Posiziona {comp} piu' {dir}", "Cambia posizione a {comp}, {dir}",
+        ]
+        DIRECTIONS = ["su", "giu'", "a sinistra", "a destra", "in alto", "in basso",
+                       "up", "down", "left", "right"]
+
+        def _move_param():
+            comp = random.choice(PLACEABLE)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            direction = random.choice(DIRECTIONS)
+            template = random.choice(MOVE_TEMPLATES)
+            phrase = template.format(comp=alias, dir=direction)
+            tag = f"[AZIONE:movecomponent:{comp}:{direction}]"
+            return phrase, tag, [comp]
+
+        # --- setvalue: parametric ---
+        SETVALUE_TEMPLATES = [
+            "Metti {comp} a {val}", "Imposta {comp} a {val}",
+            "Cambia {comp} a {val}", "Setta {comp} a {val}",
+            "Il valore di {comp} deve essere {val}", "Modifica {comp}: {val}",
+            "Metti la {comp} a {val}", "Imposta il valore di {comp} a {val}",
+            "Cambia il valore: {comp} = {val}", "Fai {comp} = {val}",
+        ]
+        VALUE_EXAMPLES = [
+            ("resistor", "resistance", "220 ohm"), ("resistor", "resistance", "1k ohm"),
+            ("resistor", "resistance", "10k ohm"), ("resistor", "resistance", "4.7k"),
+            ("resistor", "resistance", "330 ohm"), ("resistor", "resistance", "100 ohm"),
+            ("capacitor", "capacitance", "100uF"), ("capacitor", "capacitance", "10uF"),
+            ("capacitor", "capacitance", "47uF"), ("led", "color", "rosso"),
+            ("led", "color", "verde"), ("led", "color", "blu"),
+            ("led", "color", "giallo"), ("servo", "angle", "90 gradi"),
+            ("servo", "angle", "0 gradi"), ("servo", "angle", "180 gradi"),
+            ("servo", "angle", "45 gradi"), ("potentiometer", "value", "50%"),
+            ("potentiometer", "value", "0"), ("potentiometer", "value", "100%"),
+        ]
+
+        def _setvalue_param():
+            comp, param, val = random.choice(VALUE_EXAMPLES)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            template = random.choice(SETVALUE_TEMPLATES)
+            phrase = template.format(comp=alias, val=val)
+            tag = f"[AZIONE:setvalue:{comp}:{param}:{val}]"
+            return phrase, tag, [comp]
+
+        # --- highlight: parametric ---
+        HIGHLIGHT_TEMPLATES = [
+            "Mostrami dove e' {comp}", "Evidenzia {comp}", "Dov'e' {comp}?",
+            "Fammi vedere {comp}", "Indica {comp}", "Dove si trova {comp}?",
+            "Illumina {comp}", "Segnami {comp}", "Trova {comp}",
+            "Cerchia {comp}", "Metti in evidenza {comp}", "Spotlight su {comp}",
+            "Indicami {comp}", "Dove sta {comp}?", "Highlight {comp}",
+            "Fai brillare {comp}", "Segnalami {comp}", "Marca {comp}",
+        ]
+
+        def _highlight_param():
+            comp = random.choice(PLACEABLE)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            template = random.choice(HIGHLIGHT_TEMPLATES)
+            phrase = template.format(comp=alias)
+            tag = f"[AZIONE:highlight:{comp}]"
+            return phrase, tag, [comp]
+
+        # --- highlightpin: parametric ---
+        HIGHLIGHTPIN_TEMPLATES = [
+            "Mostrami il pin {pin} di {comp}", "Dov'e' il pin {pin} di {comp}?",
+            "Evidenzia il {pin} di {comp}", "Fammi vedere il {pin} di {comp}",
+            "Indica il pin {pin} su {comp}", "Quale e' il {pin} di {comp}?",
+            "Segnami il {pin} di {comp}", "Dove sta il pin {pin} di {comp}?",
+            "Mostra {pin} su {comp}", "Illumina il pin {pin} del {comp}",
+        ]
+
+        def _highlightpin_param():
+            comp = random.choice([c for c in PLACEABLE if c in PIN_MAP])
+            pins = PIN_MAP[comp]
+            pin = random.choice(pins)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            template = random.choice(HIGHLIGHTPIN_TEMPLATES)
+            phrase = template.format(pin=pin, comp=alias)
+            tag = f"[AZIONE:highlightpin:{comp}:{pin}]"
+            return phrase, tag, [comp, pin]
+
+        results = []
+        results.extend(_gen_variants("place_and_wire", [], per_action, param_fn=_place_param))
+        results.extend(_gen_variants("removecomponent", [], per_action, param_fn=_remove_param))
+        results.extend(_gen_variants("movecomponent", [], per_action, param_fn=_move_param))
+        results.extend(_gen_variants("setvalue", [], per_action, param_fn=_setvalue_param))
+        results.extend(_gen_variants("highlight", [], per_action, param_fn=_highlight_param))
+        results.extend(_gen_variants("highlightpin", [], per_action, param_fn=_highlightpin_param))
+        return results
+
+    # ==============================================================
+    # 5. Wiring — 2 actions x 100 = 200
+    # ==============================================================
+    def _direct_wiring(n_target=200):
+        per_action = n_target // 2
+
+        # --- addwire: parametric ---
+        ADDWIRE_P2P = [
+            "Collega {c1} a {c2}", "Metti un filo da {c1} a {c2}",
+            "Connetti {c1} con {c2}", "Fai un collegamento tra {c1} e {c2}",
+            "Cabla {c1} a {c2}", "Wire da {c1} a {c2}",
+            "Unisci {c1} e {c2}", "Fai un filo tra {c1} e {c2}",
+            "Collega il {c1} al {c2}", "Metti un cavo da {c1} a {c2}",
+        ]
+        ADDWIRE_BUS = [
+            "Collega {comp} al bus positivo", "Collega {comp} al bus negativo",
+            "Metti {comp} a massa", "Collega {comp} al GND",
+            "Collega {comp} al 5V", "Collega {comp} a VCC",
+            "Porta {comp} al positivo", "Metti {comp} sul bus GND",
+            "{comp} al positivo", "{comp} al negativo", "{comp} a GND",
+            "Connetti {comp} al bus-bot-plus", "Connetti {comp} al bus-bot-minus",
+        ]
+        ADDWIRE_WING = [
+            "Collega {comp} al pin {wing}", "Metti un filo da {comp} a {wing}",
+            "Connetti {comp} al pin digitale {pin}", "Collega {comp} all'analogico {pin}",
+            "Fai un filo tra {comp} e il pin {wing}",
+            "Porta {comp} al pin {wing} della board", "Collega {comp} a {wing}",
+            "Wire da {comp} a {wing}", "{comp} va al pin {wing}",
+        ]
+
+        def _addwire_param():
+            variant = random.choice(["p2p", "bus", "wing"])
+            if variant == "p2p":
+                c1, c2 = random.sample(PLACEABLE, 2)
+                a1 = random.choice(COMPONENT_ALIASES.get(c1, [c1]))
+                a2 = random.choice(COMPONENT_ALIASES.get(c2, [c2]))
+                template = random.choice(ADDWIRE_P2P)
+                phrase = template.format(c1=a1, c2=a2)
+                p1 = random.choice(PIN_MAP.get(c1, ["pin1"]))
+                p2 = random.choice(PIN_MAP.get(c2, ["pin1"]))
+                tag = f"[AZIONE:addwire:{c1}.{p1}:{c2}.{p2}]"
+                return phrase, tag, [c1, c2]
+            elif variant == "bus":
+                comp = random.choice(PLACEABLE)
+                alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+                template = random.choice(ADDWIRE_BUS)
+                phrase = template.format(comp=alias)
+                pin = random.choice(PIN_MAP.get(comp, ["pin1"]))
+                bus = random.choice(["bus-bot-plus", "bus-bot-minus"])
+                tag = f"[AZIONE:addwire:{comp}.{pin}:{bus}]"
+                return phrase, tag, [comp]
+            else:  # wing
+                comp = random.choice(PLACEABLE)
+                alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+                wing = random.choice(WING_PINS)
+                pin_label = wing.replace("W_", "")
+                template = random.choice(ADDWIRE_WING)
+                phrase = template.format(comp=alias, wing=wing, pin=pin_label)
+                c_pin = random.choice(PIN_MAP.get(comp, ["pin1"]))
+                tag = f"[AZIONE:addwire:{comp}.{c_pin}:{wing}]"
+                return phrase, tag, [comp]
+
+        # --- removewire: parametric ---
+        REMOVEWIRE_TEMPLATES = [
+            "Togli il filo da {c1} a {c2}", "Rimuovi il collegamento tra {c1} e {c2}",
+            "Scollega {c1} da {c2}", "Via il filo tra {c1} e {c2}",
+            "Elimina il filo {c1}-{c2}", "Disconnetti {c1} da {c2}",
+            "Togli il cavo da {c1} a {c2}", "Stacca {c1} da {c2}",
+            "Leva il filo che va da {c1} a {c2}", "Cancella il collegamento {c1}-{c2}",
+        ]
+        REMOVEWIRE_GENERIC = [
+            "Togli il filo rosso", "Rimuovi l'ultimo filo", "Togli quel filo",
+            "Via il filo", "Elimina il collegamento", "Scollega",
+            "Togli il filo nero", "Rimuovi il filo verde", "Via quel cavo",
+            "Togli il filo giallo", "Elimina il filo blu",
+            "Scollega tutto", "Rimuovi i fili", "Togli i collegamenti",
+        ]
+
+        def _removewire_param():
+            if random.random() < 0.6:
+                c1, c2 = random.sample(PLACEABLE, 2)
+                a1 = random.choice(COMPONENT_ALIASES.get(c1, [c1]))
+                a2 = random.choice(COMPONENT_ALIASES.get(c2, [c2]))
+                template = random.choice(REMOVEWIRE_TEMPLATES)
+                phrase = template.format(c1=a1, c2=a2)
+                desc = f"{c1}-{c2}"
+            else:
+                phrase = random.choice(REMOVEWIRE_GENERIC)
+                desc = "ultimo"
+            tag = f"[AZIONE:removewire:{desc}]"
+            return phrase, tag, [desc]
+
+        results = []
+        results.extend(_gen_variants("addwire", [], per_action, param_fn=_addwire_param))
+        results.extend(_gen_variants("removewire", [], per_action, param_fn=_removewire_param))
+        return results
+
+    # ==============================================================
+    # 6. Interaction — 4 actions x 100 = 400
+    # ==============================================================
+    def _direct_interaction(n_target=400):
+        per_action = n_target // 4
+
+        # --- interact: parametric ---
+        INTERACT_TEMPLATES = [
+            "Premi {comp}", "Clicca {comp}", "Spingi {comp}", "Attiva {comp}",
+            "Premi il {comp}", "Schiaccia {comp}", "Aziona {comp}",
+            "Gira {comp}", "Ruota {comp}", "Muovi {comp}",
+            "Interagisci con {comp}", "Tappa su {comp}", "Tocca {comp}",
+            "Fai click su {comp}", "Premi su {comp}",
+        ]
+        INTERACT_SPECIFIC = [
+            ("push-button", "press", "1", "Premi il pulsante"),
+            ("push-button", "press", "1", "Schiaccia il bottone"),
+            ("push-button", "press", "1", "Premi il tasto"),
+            ("push-button", "release", "0", "Rilascia il pulsante"),
+            ("potentiometer", "rotate", "50", "Gira il potenziometro a meta'"),
+            ("potentiometer", "rotate", "100", "Gira la manopola al massimo"),
+            ("potentiometer", "rotate", "0", "Metti il pot a zero"),
+            ("potentiometer", "rotate", "75", "Ruota la manopola a tre quarti"),
+            ("servo", "set", "90", "Metti il servo a 90 gradi"),
+            ("servo", "set", "0", "Servo a zero"),
+            ("servo", "set", "180", "Servo al massimo"),
+            ("reed-switch", "activate", "1", "Avvicina il magnete al reed"),
+            ("reed-switch", "deactivate", "0", "Allontana il magnete"),
+        ]
+
+        def _interact_param():
+            if random.random() < 0.5:
+                comp, action, val, phrase = random.choice(INTERACT_SPECIFIC)
+                tag = f"[AZIONE:interact:{comp}:{action}:{val}]"
+                return phrase, tag, [comp]
+            else:
+                comp = random.choice(["push-button", "potentiometer", "servo", "reed-switch"])
+                alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+                template = random.choice(INTERACT_TEMPLATES)
+                phrase = template.format(comp=alias)
+                tag = f"[AZIONE:interact:{comp}:press:1]"
+                return phrase, tag, [comp]
+
+        # --- measure: parametric ---
+        MEASURE_TEMPLATES = [
+            "Misura la tensione su {comp}", "Misura {comp}", "Testa {comp}",
+            "Quanto corrente passa in {comp}?", "Usa il tester su {comp}",
+            "Misura la resistenza di {comp}", "Quanto voltaggio c'e' su {comp}?",
+            "Misurami {comp}", "Fai una misura su {comp}", "Verifica {comp} col tester",
+            "Quanti volt su {comp}?", "Quanti ohm ha {comp}?",
+            "Controlla la tensione di {comp}", "Misura il valore di {comp}",
+            "Quanto vale {comp}?", "Analizza {comp} col multimetro",
+        ]
+
+        def _measure_param():
+            comp = random.choice(PLACEABLE)
+            alias = random.choice(COMPONENT_ALIASES.get(comp, [comp]))
+            template = random.choice(MEASURE_TEMPLATES)
+            phrase = template.format(comp=alias)
+            tag = f"[AZIONE:measure:{comp}]"
+            return phrase, tag, [comp]
+
+        # --- diagnose ---
+        DIAGNOSE_PHRASES = [
+            "Controlla il circuito", "Trova l'errore", "Debug",
+            "Cosa c'e' che non va?", "Diagnostica", "Diagnosi",
+            "Cerca il problema", "Analizza il circuito", "Perche' non funziona?",
+            "Verifica il mio circuito", "C'e' qualcosa di sbagliato?",
+            "Trova il bug", "Check del circuito", "Dove ho sbagliato?",
+            "Controlla se c'e' un errore", "Debugga il circuito",
+            "Fai un check", "Cerca l'errore", "Analisi del circuito",
+            "Qualcosa non va, controlla", "Controlla tutto",
+            "Verifica i collegamenti", "Trova cosa manca", "E' corretto?",
+            "Il circuito e' giusto?", "Controllami il circuito",
+        ]
+
+        # --- getstate ---
+        GETSTATE_PHRASES = [
+            "Cosa c'e' sul circuito?", "Elenca i componenti", "Dimmi lo stato",
+            "Che componenti ci sono?", "Stato del circuito", "Descrivi il circuito",
+            "Cosa ho sulla breadboard?", "Quali pezzi ho messo?",
+            "Quanti componenti ci sono?", "Lista di quello che c'e'",
+            "Fammi un riepilogo", "Inventario componenti", "Cosa c'e'?",
+            "Stato attuale", "Descrivimi il circuito", "Che c'e' montato?",
+            "Riepilogo del circuito", "Dimmi cosa c'e' sulla breadboard",
+            "Quanti fili ci sono?", "Elencami tutto", "Che situazione c'e'?",
+            "Circuito report", "Get state", "Status del circuito",
+        ]
+
+        results = []
+        results.extend(_gen_variants("interact", [], per_action, param_fn=_interact_param))
+        results.extend(_gen_variants("measure", [], per_action, param_fn=_measure_param))
+        results.extend(_gen_variants("diagnose", DIAGNOSE_PHRASES, per_action))
+        results.extend(_gen_variants("getstate", GETSTATE_PHRASES, per_action))
+        return results
+
+    # ==============================================================
+    # 7. UI Panels — 5 actions x 80 = 400
+    # ==============================================================
+    def _direct_ui_panels(n_target=400):
+        per_action = n_target // 5
+
+        SHOWBOM_PHRASES = [
+            "Lista componenti", "Cosa mi serve?", "BOM", "Materiali necessari",
+            "Mostra la lista componenti", "Quali pezzi servono?",
+            "Elenco materiali", "Che componenti ci vogliono?", "Bill of materials",
+            "Fammi vedere cosa serve", "Mostrami i materiali", "Cosa devo preparare?",
+            "Apri la BOM", "Lista pezzi", "Mostra BOM", "Dammi la lista",
+            "Che serve?", "Occorrente", "Mostra l'occorrente",
+            "Quanti pezzi servono?", "Elenco componenti", "Shopping list",
+        ]
+        SHOWSERIAL_PHRASES = [
+            "Apri il monitor seriale", "Mostra l'output", "Serial monitor",
+            "Apri la seriale", "Mostra seriale", "Serial", "Fammi vedere la seriale",
+            "Output seriale", "Monitor seriale", "Apri serial",
+            "Mostra il serial monitor", "Voglio vedere l'output",
+            "Apri il terminale", "Mostra i messaggi", "Console seriale",
+            "Apri il monitor", "Fammi vedere i messaggi", "Apri l'output",
+            "Terminale", "Mostrami l'output del programma",
+        ]
+        SHOWSHORTCUTS_PHRASES = [
+            "Scorciatoie", "Shortcuts", "Mostra le scorciatoie", "Tasti rapidi",
+            "Comandi da tastiera", "Quali sono le scorciatoie?", "Help scorciatoie",
+            "Hotkeys", "Keyboard shortcuts", "Mostrami i tasti rapidi",
+            "Quali tasti posso usare?", "Lista scorciatoie", "Comandi rapidi",
+            "Apri le shortcuts", "Fammi vedere i comandi", "Tasti funzione",
+            "Come uso la tastiera?", "Quali comandi ci sono?",
+        ]
+        FULLSCREEN_SCRATCH_PHRASES = [
+            "Scratch grande", "Blocchi a tutto schermo", "Ingrandisci Scratch",
+            "Fullscreen Scratch", "Scratch a schermo intero", "Scratch full",
+            "Allarga Scratch", "Massimizza Scratch", "Scratch piu' grande",
+            "Espandi Scratch", "Zoom Scratch", "Scratch tutto lo schermo",
+            "Metti Scratch grande", "Ingrandisci i blocchi", "Blocchi fullscreen",
+            "Scratch schermo intero", "Apri Scratch in grande",
+        ]
+        EXIT_SCRATCH_FULLSCREEN_PHRASES = [
+            "Esci da fullscreen", "Rimpicciolisci Scratch", "Scratch normale",
+            "Esci da schermo intero", "Torna alla vista normale", "Exit fullscreen",
+            "Rimpicciolisci", "Scratch piccolo", "Ridimensiona Scratch",
+            "Chiudi fullscreen", "Torna alla vista piccola", "Minimizza Scratch",
+            "Scratch non piu' grande", "Riduci Scratch", "Vista normale",
+            "Esci dalla vista grande", "Scratch standard",
+        ]
+
+        results = []
+        results.extend(_gen_variants("showbom", SHOWBOM_PHRASES, per_action))
+        results.extend(_gen_variants("showserial", SHOWSERIAL_PHRASES, per_action))
+        results.extend(_gen_variants("showshortcuts", SHOWSHORTCUTS_PHRASES, per_action))
+        results.extend(_gen_variants("fullscreenscratch", FULLSCREEN_SCRATCH_PHRASES, per_action))
+        results.extend(_gen_variants("exitscratchfullscreen", EXIT_SCRATCH_FULLSCREEN_PHRASES, per_action))
+        return results
+
+    # ==============================================================
+    # 8. Educational — 3 actions x 100 = 300
+    # ==============================================================
+    def _direct_educational(n_target=300):
+        per_action = n_target // 3
+
+        QUIZ_PHRASES = [
+            "Fammi un quiz", "Interrogami", "Test!", "Vediamo se ho capito",
+            "Quiz!", "Domanda!", "Fammi una domanda", "Mettimi alla prova",
+            "Sfidami", "Prova a interrogarmi", "Verificami", "Challenge",
+            "Sparami un quiz", "Facciamo un quiz", "Interrogazione!",
+            "Testami", "Daje col quiz", "Voglio mettermi alla prova",
+            "Quiz time", "Prova le mie conoscenze", "Esaminami",
+            "Fammi un test veloce", "Un quiz!", "Facciamo la verifica",
+            "Controlla se ho studiato", "Ho studiato, testami",
+        ]
+
+        # --- youtube: parametric ---
+        YOUTUBE_TOPICS = [
+            "LED", "resistenza", "Arduino", "circuiti", "breadboard",
+            "corrente elettrica", "legge di Ohm", "condensatore",
+            "servo motore", "buzzer", "potenziometro", "diodo",
+            "Scratch Arduino", "programmazione Arduino", "LCD display",
+            "sensore di luce", "elettronica per bambini", "circuiti in serie",
+            "circuiti in parallelo", "PWM", "comunicazione seriale",
+        ]
+        YOUTUBE_TEMPLATES = [
+            "Cerca un video su {topic}", "Mostrami un tutorial su {topic}",
+            "Video su {topic}", "Trova un video che spiega {topic}",
+            "C'e' un video su {topic}?", "Voglio vedere un video su {topic}",
+            "Tutorial {topic}", "Fammi vedere un video di {topic}",
+            "YouTube {topic}", "Cerca su YouTube {topic}",
+            "Un video per capire {topic}", "Mostrami come funziona {topic} in video",
+        ]
+
+        def _youtube_param():
+            topic = random.choice(YOUTUBE_TOPICS)
+            template = random.choice(YOUTUBE_TEMPLATES)
+            phrase = template.format(topic=topic)
+            tag = f"[AZIONE:youtube:{topic}]"
+            return phrase, tag, [topic]
+
+        # --- createnotebook: parametric ---
+        NOTEBOOK_TITLES = [
+            "Legge di Ohm", "Come funziona un LED", "Circuiti in serie",
+            "Circuiti in parallelo", "Il condensatore", "Il diodo",
+            "Arduino basi", "Il PWM", "I sensori", "Il servo motore",
+            "La breadboard", "Pin digitali e analogici", "Il buzzer",
+            "Il potenziometro", "La fotoresistenza", "Il motore DC",
+            "Il mio primo circuito", "Appunti di oggi", "Cose da ricordare",
+        ]
+        NOTEBOOK_TEMPLATES = [
+            "Crea un appunto su {title}", "Segna che {title}",
+            "Prendi nota: {title}", "Crea un taccuino su {title}",
+            "Nuovo appunto: {title}", "Scrivi una nota su {title}",
+            "Salva un appunto: {title}", "Notebook su {title}",
+            "Annotazione: {title}", "Crea nota su {title}",
+            "Fammi un appunto su {title}", "Taccuino nuovo: {title}",
+        ]
+
+        def _notebook_param():
+            title = random.choice(NOTEBOOK_TITLES)
+            template = random.choice(NOTEBOOK_TEMPLATES)
+            phrase = template.format(title=title)
+            tag = f"[AZIONE:createnotebook:{title}]"
+            return phrase, tag, [title]
+
+        results = []
+        results.extend(_gen_variants("quiz", QUIZ_PHRASES, per_action))
+        results.extend(_gen_variants("youtube", [], per_action, param_fn=_youtube_param))
+        results.extend(_gen_variants("createnotebook", [], per_action, param_fn=_notebook_param))
+        return results
+
+    # ==============================================================
+    # 9. Serial & Code — 3 actions x 80 = 240
+    # ==============================================================
+    def _direct_serial_code(n_target=240):
+        per_action = n_target // 3
+
+        # --- serialwrite: parametric ---
+        SERIAL_TEXTS = [
+            "Hello", "Ciao", "Test", "1234", "LED ON", "LED OFF",
+            "Temperatura: 25", "OK", "Start", "Stop", "Blink",
+            "Pronto", "Arduino", "Sensore attivo", "Valore: 512",
+            "Errore", "Debug", "Messaggio di prova", "ping", "pong",
+        ]
+        SERIALWRITE_TEMPLATES = [
+            "Scrivi '{text}' sulla seriale", "Manda '{text}' al serial",
+            "Invia '{text}' alla seriale", "Serial write: {text}",
+            "Scrivi {text} sul monitor seriale", "Manda messaggio: {text}",
+            "Invia alla seriale: {text}", "Spedisci '{text}' sulla seriale",
+            "Scrivi sulla seriale '{text}'", "Trasmetti '{text}'",
+        ]
+
+        def _serialwrite_param():
+            text = random.choice(SERIAL_TEXTS)
+            template = random.choice(SERIALWRITE_TEMPLATES)
+            phrase = template.format(text=text)
+            tag = f"[AZIONE:serialwrite:{text}]"
+            return phrase, tag, [text]
+
+        # --- setcode: parametric ---
+        CODE_SNIPPETS = [
+            "void setup() { pinMode(13, OUTPUT); }\\nvoid loop() { digitalWrite(13, HIGH); delay(1000); digitalWrite(13, LOW); delay(1000); }",
+            "void setup() { Serial.begin(9600); }\\nvoid loop() { Serial.println(\"Hello\"); delay(1000); }",
+            "int led = 13;\\nvoid setup() { pinMode(led, OUTPUT); }\\nvoid loop() { digitalWrite(led, HIGH); delay(500); }",
+        ]
+        SETCODE_TEMPLATES = [
+            "Imposta questo codice: {code}", "Metti questo programma: {code}",
+            "Carica questo codice: {code}", "Scrivi questo nell'editor: {code}",
+            "Sostituisci il codice con: {code}", "Codice nuovo: {code}",
+            "Set code: {code}", "Metti questo sketch: {code}",
+        ]
+
+        def _setcode_param():
+            code = random.choice(CODE_SNIPPETS)
+            template = random.choice(SETCODE_TEMPLATES)
+            phrase = template.format(code=code[:60] + "...")
+            tag = f"[AZIONE:setcode:{code[:40]}]"
+            return phrase, tag, []
+
+        # --- appendcode: parametric ---
+        APPEND_SNIPPETS = [
+            "digitalWrite(13, HIGH);", "delay(1000);", "Serial.println(\"test\");",
+            "int x = analogRead(A0);", "tone(8, 440, 500);", "servo.write(90);",
+            "lcd.print(\"Ciao\");", "if (digitalRead(2) == HIGH) {}", "for (int i=0; i<10; i++) {}",
+        ]
+        APPENDCODE_TEMPLATES = [
+            "Aggiungi questa riga: {code}", "Appendi al codice: {code}",
+            "Metti in fondo: {code}", "Aggiungi dopo il loop: {code}",
+            "Inserisci questa riga: {code}", "Append: {code}",
+            "Aggiungi al programma: {code}", "Metti anche: {code}",
+        ]
+
+        def _appendcode_param():
+            code = random.choice(APPEND_SNIPPETS)
+            template = random.choice(APPENDCODE_TEMPLATES)
+            phrase = template.format(code=code)
+            tag = f"[AZIONE:appendcode:{code}]"
+            return phrase, tag, []
+
+        results = []
+        results.extend(_gen_variants("serialwrite", [], per_action, param_fn=_serialwrite_param))
+        results.extend(_gen_variants("setcode", [], per_action, param_fn=_setcode_param))
+        results.extend(_gen_variants("appendcode", [], per_action, param_fn=_appendcode_param))
+        return results
+
+    # ==============================================================
+    # 10. Build Mode — 1 action x 80 = 80
+    # ==============================================================
+    def _direct_buildmode(n_target=80):
+        def _buildmode_param():
+            mode = random.choice(BUILD_MODES)
+            phrase = random.choice(BUILD_MODE_PHRASES[mode])
+            tag = f"[AZIONE:setbuildmode:{mode}]"
+            return phrase, tag, []
+
+        return _gen_variants("setbuildmode", [], n_target, param_fn=_buildmode_param)
+
+    # ==============================================================
+    # MAIN ORCHESTRATOR: proportional scaling to fit n
+    # ==============================================================
+    BASE_COUNTS = {
+        "sim_control": 720,
+        "compile_editor": 700,
+        "navigation": 500,
+        "component_ops": 660,
+        "wiring": 200,
+        "interaction": 400,
+        "ui_panels": 400,
+        "educational": 300,
+        "serial_code": 240,
+        "buildmode": 80,
+    }
+    total_base = sum(BASE_COUNTS.values())  # 4200
+    scale = n / total_base if total_base > 0 else 1.0
+
+    scaled = {k: max(1, int(v * scale)) for k, v in BASE_COUNTS.items()}
+
+    # Adjust rounding to hit exactly n
+    diff = n - sum(scaled.values())
+    keys = list(scaled.keys())
+    for i in range(abs(diff)):
+        k = keys[i % len(keys)]
+        scaled[k] += 1 if diff > 0 else -1
+
+    results = []
+    results.extend(_direct_sim_control(scaled["sim_control"]))
+    results.extend(_direct_compile_editor(scaled["compile_editor"]))
+    results.extend(_direct_navigation(scaled["navigation"]))
+    results.extend(_direct_component_ops(scaled["component_ops"]))
+    results.extend(_direct_wiring(scaled["wiring"]))
+    results.extend(_direct_interaction(scaled["interaction"]))
+    results.extend(_direct_ui_panels(scaled["ui_panels"]))
+    results.extend(_direct_educational(scaled["educational"]))
+    results.extend(_direct_serial_code(scaled["serial_code"]))
+    results.extend(_direct_buildmode(scaled["buildmode"]))
+
+    random.shuffle(results)
+
+    # Trim or pad to exactly n
+    if len(results) > n:
+        results = results[:n]
+
+    return results
 
 
 def gen_layer_context_aware(n):
