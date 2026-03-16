@@ -5724,10 +5724,215 @@ def gen_layer_adversarial(n):
 def gen_eval_set(n):
     """Evaluation set bilanciato.
     ~N/7 per intent, mix di facile/medio/difficile.
-    Non deve sovrapporsi al training set.
+    Non deve sovrapporsi al training set (uses different seed offset).
     """
-    # TODO: Task 5 — implementare
-    return []
+    results = []
+    per_intent = max(5, n // 7)
+
+    # --- ACTION (direct, needs_llm=false) ---
+    action_keys = ["play", "pause", "reset", "clearall", "compile", "undo", "redo",
+                   "quiz", "diagnose", "nextstep", "prevstep", "showbom", "showserial",
+                   "resetcode", "openeditor", "closeeditor", "switcheditor_scratch",
+                   "switcheditor_arduino", "getcode", "fullscreenscratch",
+                   "exitscratchfullscreen", "showshortcuts"]
+    eval_action_phrases = {
+        "play": ["Manda avanti il circuito", "Fai funzionare tutto", "Prova il mio lavoro"],
+        "pause": ["Blocca un attimo", "Tieni fermo tutto", "Sospendi"],
+        "reset": ["Riparti da zero", "Rimetti com'era prima", "Stato iniziale"],
+        "clearall": ["Sgombra la breadboard", "Fai piazza pulita", "Via tutto dal tavolo"],
+        "compile": ["Verifica se il programma è giusto", "Controlla il mio sketch", "Buildami il codice"],
+        "undo": ["Torna indietro di un passo", "Cancella l'ultima modifica", "Ctrl Z"],
+        "redo": ["Rimetti quello che ho tolto", "Ripristina l'azione", "Rifai"],
+        "quiz": ["Testami le conoscenze", "Vediamo quanto ho imparato", "Sparami delle domande"],
+        "diagnose": ["Cerca problemi nel circuito", "Fai un check-up", "Analisi completa"],
+        "nextstep": ["Prosegui col montaggio", "Step successivo", "Vai al prossimo"],
+        "prevstep": ["Torna allo step prima", "Passo indietro", "Rifammi vedere il precedente"],
+        "showbom": ["Quali pezzi mi servono?", "Lista della spesa componenti", "Materiale necessario"],
+        "showserial": ["Fammi vedere l'output seriale", "Apri il terminale", "Monitor dati"],
+        "resetcode": ["Rimetti il codice originale", "Cancella le mie modifiche al codice", "Default code"],
+        "openeditor": ["Apri dove si scrive il codice", "Mostra l'area di programmazione", "Editor su"],
+        "closeeditor": ["Nascondi l'editor", "Chiudi il pannello codice", "Togli il codice"],
+        "switcheditor_scratch": ["Programma coi blocchetti", "Modalità visuale", "Usa i puzzle"],
+        "switcheditor_arduino": ["Scrivi in C++", "Modalità testo", "Codice Arduino classico"],
+        "getcode": ["Mostrami cosa c'è scritto", "Fammi leggere il programma", "Che codice ho?"],
+        "fullscreenscratch": ["Blocchi a tutto schermo", "Ingrandisci l'area Scratch", "Scratch full"],
+        "exitscratchfullscreen": ["Torna alla vista normale", "Riduci Scratch", "Esci dal fullscreen"],
+        "showshortcuts": ["Quali tasti posso usare?", "Scorciatoie tastiera", "Comandi rapidi"],
+    }
+    action_count = 0
+    for key in action_keys:
+        if key not in ACTIONS:
+            continue
+        a = ACTIONS[key]
+        phrases = eval_action_phrases.get(key, [f"Esegui {key}"])
+        for phrase in phrases[:3]:
+            msg = augment_phrase(phrase)
+            results.append(make_example(
+                msg, a["intent"], a.get("entities", []),
+                [a["tag"]], False,
+                random.choice(a["responses"]), None,
+                random_context_v6(tab="simulator")
+            ))
+            action_count += 1
+            if action_count >= per_intent:
+                break
+        if action_count >= per_intent:
+            break
+
+    # --- CIRCUIT (placement + wiring) ---
+    eval_circuit_phrases = [
+        ("Piazzami un condensatore sulla breadboard", "capacitor"),
+        ("Aggiungi un servomotore", "servo"),
+        ("Metti un display LCD", "lcd16x2"),
+        ("Inserisci un diodo nel circuito", "diode"),
+        ("Voglio un mosfet per controllare il motore", "mosfet-n"),
+        ("Dammi un sensore magnetico", "reed-switch"),
+        ("Mettimi un fototransistor", "phototransistor"),
+        ("Ho bisogno di una fotoresistenza", "photo-resistor"),
+        ("Piazza un LED RGB tricolore", "rgb-led"),
+        ("Aggiungi un motorino elettrico", "motor-dc"),
+    ]
+    for phrase, comp in eval_circuit_phrases[:per_intent]:
+        intent_json = json.dumps({"action": "place_and_wire", "components": [{"type": comp}], "wires": "auto"}, ensure_ascii=False)
+        results.append(make_example(
+            augment_phrase(phrase), "circuit", [comp],
+            [f"[INTENT:{intent_json}]"], False,
+            f"Ecco, {comp} piazzato! ✅", None
+        ))
+
+    # --- CODE (needs_llm=true) ---
+    eval_code_phrases = [
+        "Come controllo un servo con il potenziometro?",
+        "Programmami un allarme sonoro con il buzzer",
+        "Codice per contare quante volte premo il pulsante",
+        "Sketch per alternare due LED",
+        "Come uso analogWrite per la luminosità?",
+        "Fammi il programma per il gioco Simon Says",
+        "Blocchi Scratch per far lampeggiare un LED",
+        "Come leggo il valore della fotoresistenza?",
+        "Scrivi il codice per una stazione meteo",
+        "Programma per far girare il motore a velocità variabile",
+    ]
+    for phrase in eval_code_phrases[:per_intent]:
+        results.append(make_example(
+            augment_phrase(phrase), "code", [], [], True,
+            None, f"L'utente chiede: {phrase}",
+            random_context_v6(tab="editor")
+        ))
+
+    # --- TUTOR (needs_llm=true) ---
+    eval_tutor_phrases = [
+        "Qual è la differenza tra corrente e tensione?",
+        "A cosa servono i condensatori?",
+        "Come si calcola la resistenza con la legge di Ohm?",
+        "Perché il LED ha bisogno di una resistenza?",
+        "Cosa significa PWM?",
+        "Come funziona un circuito in parallelo?",
+        "Che cos'è un transistor MOSFET?",
+        "Perché si usa il GND?",
+        "Cosa sono i pin analogici?",
+        "Spiegami la comunicazione seriale",
+        "A cosa serve il duty cycle?",
+        "Meglio usare delay o millis?",
+    ]
+    for phrase in eval_tutor_phrases[:per_intent]:
+        results.append(make_example(
+            augment_phrase(phrase), "tutor", [], [], True,
+            None, f"Domanda teorica: {phrase}"
+        ))
+
+    # --- VISION (needs_llm=true) ---
+    eval_vision_phrases = [
+        "Dai un'occhiata al mio circuito",
+        "È collegato giusto?",
+        "Vedi qualche errore?",
+        "Analizza quello che ho costruito",
+        "Controlla i fili",
+        "Il circuito ti sembra corretto?",
+        "Guarda e dimmi cosa manca",
+        "Verifica le connessioni",
+    ]
+    for phrase in eval_vision_phrases[:per_intent]:
+        results.append(make_example(
+            augment_phrase(phrase), "vision", [], [], True,
+            None, "L'utente chiede analisi visiva del circuito"
+        ))
+
+    # --- NAVIGATION ---
+    eval_nav_phrases = [
+        ("Portami all'esperimento del condensatore", "loadexp", ["v1-cap9-esp1"]),
+        ("Apri la lavagna per disegnare", "opentab", ["canvas"]),
+        ("Vai al gioco Prevedi e Spiega", "opentab", ["poe"]),
+        ("Carica il Volume 2", "openvolume", ["2"]),
+        ("Mostrami il manuale", "opentab", ["manual"]),
+        ("Apri i miei appunti", "opentab", ["taccuini"]),
+        ("Portami al circuito misterioso", "opentab", ["reverse"]),
+        ("Carica l'esperimento Hello Arduino", "loadexp", ["v3-cap1-esp1"]),
+    ]
+    for phrase, sub_action, params in eval_nav_phrases[:per_intent]:
+        if sub_action == "loadexp":
+            tag = f"[AZIONE:loadexp:{params[0]}]"
+            resp = "Esperimento caricato! 📖"
+        elif sub_action == "opentab":
+            tag = f"[AZIONE:opentab:{params[0]}]"
+            resp = f"Ecco il {params[0]}!"
+        else:
+            tag = f"[AZIONE:openvolume:{params[0]}]"
+            resp = f"Volume {params[0]} aperto!"
+        results.append(make_example(
+            augment_phrase(phrase), "navigation", params,
+            [tag], False, resp, None
+        ))
+
+    # --- TEACHER (needs_llm=true) ---
+    eval_teacher_phrases = [
+        "Come sta andando Marco con gli esperimenti?",
+        "Report settimanale della classe",
+        "Quali studenti hanno completato il Volume 1?",
+        "Statistiche dei quiz della 3B",
+        "Chi ha avuto più difficoltà?",
+        "Progressi degli studenti questa settimana",
+        "Riepilogo attività classe",
+        "Risultati dell'ultimo test",
+    ]
+    for phrase in eval_teacher_phrases[:per_intent]:
+        results.append(make_example(
+            augment_phrase(phrase), "teacher", [], [], True,
+            None, f"Richiesta docente: {phrase}"
+        ))
+
+    # --- ADVERSARIAL (mixed) ---
+    eval_adv = [
+        # Heavy typo → action
+        ("avía la simulazzione", "action", "[AZIONE:play]", False, "Simulazione avviata! ▶"),
+        # Mixed lang → action
+        ("fai il compile del code please", "action", "[AZIONE:compile]", False, "Compilazione avviata."),
+        # Vague → needs LLM
+        ("fai quella cosa di prima", "action", "", True, None),
+        # Trap → tutor (NOT action!)
+        ("cosa succede se premo play?", "tutor", "", True, None),
+        # Emoji → action
+        ("▶️ vai!", "action", "[AZIONE:play]", False, "Simulazione avviata! ▶"),
+        # Negation
+        ("non toccare niente!", "action", "", False, "Ok, non faccio nulla! 👌"),
+        # Dialect
+        ("daje fallo andà sto circuito", "action", "[AZIONE:play]", False, "Simulazione avviata! ▶"),
+        # Multi-intent
+        ("cancella tutto e metti un LED", "circuit", "[AZIONE:clearall]", False, "Breadboard svuotata e LED piazzato! ✅"),
+        # Conversational buried
+        ("sai che bello... comunque compilami il codice", "action", "[AZIONE:compile]", False, "Compilazione avviata."),
+        # Trap 2
+        ("è meglio usare Scratch o Arduino?", "tutor", "", True, None),
+    ]
+    for msg, intent, tag, needs_llm, resp in eval_adv:
+        actions = [tag] if tag else []
+        hint = f"Adversarial: {msg}" if needs_llm else None
+        results.append(make_example(
+            msg, intent, [], actions, needs_llm, resp, hint
+        ))
+
+    random.shuffle(results)
+    return results[:n]
 
 
 # ============================================================
