@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL1 = {
           targetPins: { "led1:anode": "bb1:f2", "led1:cathode": "bb1:f3" },
           hint: "L'anodo (+) va in F2, il catodo (−) va in F3. Nella sezione inferiore della breadboard!"
         },
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 2,
           text: "Collega un filo ROSSO dal polo positivo della batteria al bus + (colonna 1)",
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL1 = {
     // ═══════════════════════════════════════════════════
     {
       id: "v1-cap7-esp1",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
       title: "Cap. 7 Esp. 1 - Accendi il rosso del RGB",
       desc: "Collega solo il pin rosso del LED RGB alla batteria tramite un resistore.",
       chapter: "Capitolo 7 - Cos'è il LED RGB?",
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL1 = {
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il filo rosso porta i 9V dalla batteria."
         },
         {
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL1 = {
         { type: "battery9v", id: "bat1" },
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 470 },
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "resistor", id: "r2", value: 470 },
         { type: "rgb-led", id: "rgb1" }
       ],
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL1 = {
       steps: [
         "Inserisci il LED RGB nei fori F2-F5",
         "Inserisci tre resistori da 470Ω: E8-E2, E10-E4, E12-E6",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "Collega il bus + alle colonne 8, 10 e 12",
         "Collega E2→F2 (rosso), E4→F4 (verde), E6→F5 (blu)",
         "Collega il catodo comune (J3) al bus − e chiudi con la batteria"
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL1 = {
       layer: "schema",
       note: "Prova varianti di resistori (mai sotto 100Ω).",
       buildSteps: [
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 1,
           text: "Inserisci il LED RGB nei fori F2, F3, F4 e F5",
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 3,
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ROSSO dal polo + della batteria al bus + (striscia rossa).",
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL1 = {
           componentId: "led1",
           componentType: "led",
           targetPins: { "led1:anode": "bb1:f9", "led1:cathode": "bb1:f10" },
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "La gambetta lunga (+) va in F9 e quella corta (−) in F10."
         },
         {
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL1 = {
           componentId: "rgb1",
           componentType: "rgb-led",
           targetPins: { "rgb1:red": "bb1:f15", "rgb1:common": "bb1:f16", "rgb1:green": "bb1:f17", "rgb1:blue": "bb1:f18" },
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "I 4 piedini: Rosso in F15, Catodo (gambetta lunga) in F16, Verde in F17, Blu in F18."
         },
         {
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Inserisci il pulsante BTN3 (blu) a cavallo del canale nei fori E10/F12.",
           componentId: "btn3",
           componentType: "push-button",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "btn3:pin1": "bb1:e10", "btn3:pin2": "bb1:f12" },
           hint: "BTN3 controllerà il canale BLU del LED RGB."
         },
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL1 = {
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "battery9v",
           hint: "La batteria 9V alimenta il circuito."
         },
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL1 = {
       ],
       observe: "Girando la manopola il LED cambia luminosit\u00e0! Il pot agisce come un dimmer regolabile.",
       unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Dimmer LED con potenziometro'. Il potenziometro è come un rubinetto girevole che controlla quanta corrente passa. Girando la manopola si cambia la resistenza da 0 a 10000 ohm. Spiega il concetto di partitore di tensione e come il pot funziona come un dimmer (regolatore di luminosità). Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
       code: null,
       hexFile: null,
       concept: "Resistenza variabile, partitore di tensione, dimmer",
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 6,
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "bat1:negative",
           wireColor: "black",
           hint: "Questo filo chiude il circuito riportando la corrente alla batteria."
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         }
       ],
       quiz: [
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL1 = {
         }
       ],
       quiz: [
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           question: "Che colore ottieni mescolando luce blu e verde?",
           options: ["Viola", "Ciano (azzurrino)", "Giallo"],
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL1 = {
           explanation: "A metà la corrente si divide equamente tra rosso e blu, creando il viola!"
         }
       ]
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
     },
     {
       id: "v1-cap9-esp6",
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo GIALLO dal foro A8 al foro C19.",
           wireFrom: "bb1:a8",
           wireTo: "bb1:c19",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "yellow",
           hint: "Questo filo collega due parti del circuito."
         },
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL1 = {
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e12", "r1:pin2": "bb1:e19" },
           hint: "Il resistore limita la corrente nel circuito."
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 6,
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 5,
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori C12 e C19.",
           componentId: "r1",
           componentType: "resistor",
@@ -4017,7 +4017,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
           componentType: "battery9v",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "La batteria 9V alimenta il circuito."
         },
         {
@@ -4218,7 +4218,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Prendi il fotoresistore (LDR) dalla palette e posizionalo nei fori D5 e D6.",
           componentId: "ldr1",
           componentType: "photo-resistor",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "ldr1:pin1": "bb1:d5", "ldr1:pin2": "bb1:d6" },
           hint: "La fotoresistenza cambia valore con la luce."
         },
@@ -4419,7 +4419,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 9,
           text: "Collega un filo GIALLO dal foro A9 al foro A10 (dal resistore al LED).",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:a9",
           wireTo: "bb1:a10",
           wireColor: "yellow",
@@ -4620,7 +4620,7 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "bb1:a3",
           wireColor: "red",
           hint: "Alimenta LDR1 (canale rosso)."
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 12,
@@ -4821,7 +4821,7 @@ const EXPERIMENTS_VOL1 = {
           step: 6,
           text: "Prendi il LED blu dalla palette e posizionalo nei fori H14 e H15.",
           componentId: "led2",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "led",
           targetPins: { "led2:anode": "bb1:h14", "led2:cathode": "bb1:h15" },
           hint: "L'anodo (+, gamba lunga) va in H14 e il catodo (−, gamba corta) in H15."
@@ -5022,7 +5022,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 5,
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il LED bianco dalla palette e posizionalo nei fori B16 e B17.",
           componentId: "led1",
           componentType: "led",
@@ -5223,7 +5223,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "La breadboard collega i componenti senza saldature."
         },
         {
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
@@ -5424,7 +5424,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo ROSSO lungo tra bus + inferiore sinistro e bus + inferiore destro.",
           wireFrom: "bb1:bus-bot-plus-1",
           wireTo: "bb1:bus-bot-plus-27",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Ponte del bus positivo come da figura."
         },
@@ -5625,7 +5625,7 @@ const EXPERIMENTS_VOL1 = {
       title: "Cap. 12 Esp. 1 - LED con reed switch",
       desc: "Avvicina il magnete al reed switch e il LED si accende! Come un sensore segreto.",
       chapter: "Capitolo 12 - L'interruttore magnetico",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
       difficulty: 2,
       icon: "\u{1F9F2}",
       simulationMode: "circuit",
@@ -5826,7 +5826,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "La breadboard collega i componenti senza saldature."
         },
         {
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
@@ -6027,7 +6027,7 @@ const EXPERIMENTS_VOL1 = {
           step: 8,
           text: "Collega un filo GIALLO dal foro A11 al foro A14.",
           wireFrom: "bb1:a11",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bb1:a14",
           wireColor: "yellow",
           hint: "Questo filo collega due parti del circuito."
@@ -6228,7 +6228,7 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "bb1:bus-top-minus-14",
           wireColor: "black",
           hint: "Questo filo riporta la corrente al bus negativo."
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 13,
@@ -6429,7 +6429,7 @@ const EXPERIMENTS_VOL1 = {
           step: 4,
           text: "Posiziona il terzo LED bianco nella composizione",
           componentId: "led3",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "led",
           targetPins: { "led3:anode": "bat1:positive", "led3:cathode": "bat1:negative" },
           hint: "Mantieni separati anodo e catodo."
@@ -6630,7 +6630,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Prendi il potenziometro da 10kΩ dalla palette e posizionalo nei fori E28, E29 e E30.",
           componentId: "pot1",
           componentType: "potentiometer",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "pot1:vcc": "bb1:e28", "pot1:signal": "bb1:e29", "pot1:gnd": "bb1:e30" },
           hint: "I 3 pin: VCC in E28, Signal in E29, GND in E30."
         },
@@ -6831,7 +6831,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo VERDE dal foro F50 al foro A55.",
           wireFrom: "bb1:f50",
           wireTo: "bb1:a55",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "green",
           hint: "Questo filo collega due parti del circuito."
         },

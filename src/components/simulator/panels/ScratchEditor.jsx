@@ -163,6 +163,11 @@ const TOOLBOX_XML = `
   <category name="💬 Seriale" categorystyle="arduino_serial_cat">
     <block type="arduino_serial_begin"></block>
     <block type="arduino_serial_print"></block>
+    <block type="arduino_serial_available"></block>
+    <block type="arduino_serial_read"></block>
+  </category>
+  <category name="📡 Sensori" categorystyle="arduino_io_cat">
+    <block type="arduino_pulse_in"></block>
   </category>
 </xml>`;
 

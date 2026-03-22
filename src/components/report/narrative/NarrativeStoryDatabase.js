@@ -198,7 +198,7 @@ export const EXERCISE_TEMPLATES = {
         "Per saldare i componenti",
         "Per collegare componenti senza saldatura (CORRETTO!)",
         "Per caricare il codice",
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "Per misurare la corrente"
       ],
       explanation: "La breadboard è magica: permette di fare connessioni temporanee senza saldare nulla!",

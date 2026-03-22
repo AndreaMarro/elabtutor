@@ -132,6 +132,20 @@ arduinoGenerator.forBlock['arduino_serial_print'] = function (block) {
     return `  Serial.${fn}(${content});\n`;
 };
 
+arduinoGenerator.forBlock['arduino_serial_available'] = function () {
+    return ['Serial.available()', arduinoGenerator.ORDER_FUNCTION_CALL];
+};
+
+arduinoGenerator.forBlock['arduino_serial_read'] = function () {
+    return ['Serial.read()', arduinoGenerator.ORDER_FUNCTION_CALL];
+};
+
+arduinoGenerator.forBlock['arduino_pulse_in'] = function (block) {
+    const pin = block.getFieldValue('PIN');
+    const value = block.getFieldValue('VALUE');
+    return [`pulseIn(${pin}, ${value})`, arduinoGenerator.ORDER_FUNCTION_CALL];
+};
+
 // --- Standard Blocks Generators Overrides for Arduino C++ --- //
 
 arduinoGenerator.forBlock['math_number'] = function (block) {
@@ -184,6 +198,7 @@ arduinoGenerator.forBlock['logic_compare'] = function (block) {
     const OPERATORS = {
         'EQ': '==',
         'NEQ': '!=',
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         'LT': '<',
         'LTE': '<=',
         'GT': '>',
@@ -198,7 +213,6 @@ arduinoGenerator.forBlock['logic_compare'] = function (block) {
 
 arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const operator = block.getFieldValue('OP') === 'AND' ? '&&' : '||';
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     const order = operator === '&&' ? arduinoGenerator.ORDER_LOGICAL_AND : arduinoGenerator.ORDER_LOGICAL_OR;
     const argument0 = arduinoGenerator.valueToCode(block, 'A', order);
     const argument1 = arduinoGenerator.valueToCode(block, 'B', order);
@@ -385,6 +399,7 @@ arduinoGenerator.forBlock['variables_set'] = function (block) {
     // Always emit plain assignment — declaration is global in header
     return `  ${varName} = ${value};\n`;
 };
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['variables_get'] = function (block) {
     const varField = block.getField('VAR');
@@ -399,7 +414,6 @@ arduinoGenerator.forBlock['math_modulo'] = function (block) {
     const divisor = arduinoGenerator.valueToCode(block, 'DIVISOR', arduinoGenerator.ORDER_MULTIPLICATION) || '1';
     return [`${dividend} % ${divisor}`, arduinoGenerator.ORDER_MULTIPLICATION];
 };
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['math_constrain'] = function (block) {
     const value = arduinoGenerator.valueToCode(block, 'VALUE', arduinoGenerator.ORDER_ATOMIC) || '0';

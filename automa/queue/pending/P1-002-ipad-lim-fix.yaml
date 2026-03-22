@@ -1,0 +1,5 @@
+id: ipad-lim-fix
+priority: P1
+title: iPad/LIM fix — touch 56px, font, split-attention
+description: Touch target minimo 56px (era 44px). Font leggibili da 10m su LIM (28pt equivalent). Fix split-attention (istruzioni sopra breadboard). RotateOverlay per portrait.
+tags: ipad,lim,responsive,ux

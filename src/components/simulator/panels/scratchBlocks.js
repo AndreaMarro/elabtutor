@@ -166,6 +166,42 @@ Blockly.Blocks['arduino_serial_print'] = {
     }
 };
 
+// 11b. Serial.available()
+Blockly.Blocks['arduino_serial_available'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("💬 dati disponibili su seriale?");
+        this.setOutput(true, "Boolean");
+        this.setStyle(STYLES.SERIAL);
+        this.setTooltip("Controlla se ci sono dati in arrivo sulla porta seriale");
+    }
+};
+
+// 11c. Serial.read()
+Blockly.Blocks['arduino_serial_read'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("💬 leggi dalla seriale");
+        this.setOutput(true, "Number");
+        this.setStyle(STYLES.SERIAL);
+        this.setTooltip("Legge un byte dalla porta seriale (restituisce un numero)");
+    }
+};
+
+// 11d. pulseIn(pin, value)
+Blockly.Blocks['arduino_pulse_in'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("📡 misura impulso pin")
+            .appendField(new Blockly.FieldNumber(7, 0, 13, 1), "PIN")
+            .appendField(new Blockly.FieldDropdown([["ALTO", "HIGH"], ["BASSO", "LOW"]]), "VALUE");
+        this.setOutput(true, "Number");
+        this.setStyle(STYLES.IO);
+        this.setTooltip("Misura la durata di un impulso su un pin (in microsecondi). Utile per sensori a ultrasuoni!");
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+    }
+};
+
 // ─── TONE / BUZZER ─── //
 
 // 11. tone(pin, freq)
@@ -198,7 +234,6 @@ Blockly.Blocks['arduino_no_tone'] = {
 
 // ─── SERVO ─── //
 
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
 // 13. Servo attach
 Blockly.Blocks['arduino_servo_attach'] = {
     init: function () {
@@ -364,6 +399,7 @@ Blockly.Blocks['arduino_random'] = {
 // 18. map(value, fromLow, fromHigh, toLow, toHigh)
 Blockly.Blocks['arduino_map'] = {
     init: function () {
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
         this.appendValueInput("VALUE").setCheck("Number").appendField("map(");
         this.appendValueInput("FROM_LOW").setCheck("Number").appendField(", da");
         this.appendValueInput("FROM_HIGH").setCheck("Number").appendField("~");

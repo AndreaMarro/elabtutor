@@ -198,7 +198,7 @@ ELAB STEM - © 2026 Andrea Marro`
   </ul>
   
   <h3>Può gestire il consenso:</h3>
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
   <p>In qualsiasi momento può:</p>
   <ul>
     <li>Accedere ai dati di suo figlio: <a href="${data.parentDashboardUrl}">Area Genitori</a></li>
@@ -399,7 +399,7 @@ class EmailService {
    * Invia email via API
    * @param {Object} options - { to, subject, html, text, from }
    * @returns {Promise<Object>}
-// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
    */
   async send(options) {
     const { to, subject, html, text, from = { email: FROM_EMAIL, name: FROM_NAME } } = options;

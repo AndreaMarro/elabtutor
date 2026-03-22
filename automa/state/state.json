@@ -1,0 +1,69 @@
+{
+  "updated": "2026-03-23T00:05:28.645756",
+  "session": "S117",
+  "scores": {
+    "auth_security": 9.8,
+    "sito_pubblico": 9.6,
+    "simulatore_funzionalita": 10.0,
+    "simulatore_estetica": 8.5,
+    "simulatore_ipad": 8.5,
+    "simulatore_physics": 8.0,
+    "scratch_universale": 10.0,
+    "ai_integration": 10.0,
+    "responsive_a11y": 9.2,
+    "code_quality": 9.8,
+    "overall": 9.2
+  },
+  "deploy": {
+    "vercel": {
+      "url": "https://www.elabtutor.school",
+      "last_deploy": "2026-03-10",
+      "status": "ok"
+    },
+    "nanobot": {
+      "url": "https://elab-galileo.onrender.com",
+      "version": "5.3.0",
+      "status": "ok"
+    },
+    "brain_vps": {
+      "url": "http://72.60.129.50:11434",
+      "model": "galileo-brain-v13",
+      "status": "ok"
+    }
+  },
+  "build": {
+    "status": "pass",
+    "last_check": "2026-03-23T00:05:28.645734"
+  },
+  "bugs": {
+    "p1": [
+      "notion-db-mismatch",
+      "student-tracking-not-shared",
+      "email-e2e-untested"
+    ],
+    "p2": [
+      "p2-tdz-obfuscator",
+      "circuitstate-unsanitized",
+      "session-messages-unsanitized"
+    ],
+    "p3": [
+      "no-e2e-tests",
+      "window-confirm-blocks-ui",
+      "notion-no-429-retry",
+      "no-aria-live"
+    ]
+  },
+  "loop": {
+    "status": "running",
+    "cycles_today": 2,
+    "last_cycle": "2026-03-23T00:05:28.645711",
+    "tasks_completed_today": 0,
+    "last_date": "2026-03-23",
+    "last_elapsed_s": 108
+  },
+  "budget": {
+    "monthly_limit_eur": 50,
+    "spent_today_eur": 0,
+    "spent_month_eur": 0
+  }
+}

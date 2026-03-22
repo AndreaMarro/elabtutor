@@ -5,7 +5,7 @@
 # Se HALT esiste, non fa nulla.
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-HEARTBEAT="$DIR/heartbeat"
+HEARTBEAT="$DIR/state/heartbeat"
 LOG="$DIR/logs/watchdog-$(date +%Y%m%d).log"
 
 log() { echo "[$(date +%H:%M:%S)] $1" >> "$LOG"; }
@@ -29,16 +29,16 @@ fi
 if [ "$DIFF" -gt 10800 ]; then
     log "Dispatcher stale (${DIFF}s since heartbeat). Restarting..."
 
-    # Kill old dispatcher
-    pkill -f "dispatcher.sh" 2>/dev/null
+    # Kill old orchestrator
+    pkill -f "orchestrator.py" 2>/dev/null
     sleep 2
 
     # Restart
     cd "$DIR/.."
-    nohup bash automa/dispatcher.sh >> "$DIR/logs/dispatcher-$(date +%Y%m%d).log" 2>&1 &
-    log "Dispatcher restarted (PID: $!)"
+    nohup python3 automa/orchestrator.py --loop >> "$DIR/logs/orchestrator-$(date +%Y%m%d).log" 2>&1 &
+    log "Orchestrator restarted (PID: $!)"
 else
-    log "Dispatcher alive (heartbeat ${DIFF}s ago)"
+    log "Orchestrator alive (heartbeat ${DIFF}s ago)"
 fi
 
 # Caffeinate renewal

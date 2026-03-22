@@ -19,11 +19,11 @@ mkdir -p "$DIR/logs" "$DIR/state" "$DIR/alerts" "$DIR/reports/nightly"
 caffeinate -dims -t 86400 &
 echo "Caffeinate attivo (24h)"
 
-# Start dispatcher in background
-echo "Avvio dispatcher..."
-nohup bash "$DIR/dispatcher.sh" >> "$DIR/logs/dispatcher-$(date +%Y%m%d).log" 2>&1 &
+# Start orchestrator in background
+echo "Avvio orchestrator..."
+nohup python3 "$DIR/orchestrator.py" --loop >> "$DIR/logs/orchestrator-$(date +%Y%m%d).log" 2>&1 &
 DISP_PID=$!
-echo "Dispatcher avviato (PID: $DISP_PID)"
+echo "Orchestrator avviato (PID: $DISP_PID)"
 
 # Install watchdog launchd plist
 PLIST="$HOME/Library/LaunchAgents/com.elab.automa.watchdog.plist"
