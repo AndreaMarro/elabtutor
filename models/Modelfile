@@ -21,7 +21,7 @@
 # ============================================================
 
 # Modello GGUF fine-tuned (scaricato da Colab dopo training v3)
-FROM ./galileo-brain-v3-gguf.Q4_K_M.gguf
+FROM ./galileo-brain-v2-gguf.Q4_K_M.gguf
 
 # Template ChatML (Qwen3)
 TEMPLATE """{{- if .System }}<|im_start|>system

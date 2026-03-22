@@ -25,7 +25,7 @@ Il cuore del progetto ELAB Tutor: un simulatore di circuiti educativo costruito 
 
 ### Feature Principali
 
-- **69 esperimenti interattivi** su 3 volumi (Vol1: base, Vol2: intermedio, Vol3: Arduino AVR)
+- **62 esperimenti interattivi** su 3 volumi (Vol1: 38 base, Vol2: 18 intermedio, Vol3: 6 Arduino AVR)
 - **22 componenti SVG** custom: LED, resistore, breadboard, Arduino Nano, buzzer, potenziometro, fotoresistore, servo, RGB LED, LCD 16x2...
 - **Motore CircuitSolver**: analisi KVL/KCL in tempo reale con MNA (Modified Nodal Analysis)
 - **Emulatore AVR**: ATmega328p in-browser via Web Worker per esecuzione codice Arduino

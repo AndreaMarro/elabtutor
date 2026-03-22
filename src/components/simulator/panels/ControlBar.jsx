@@ -286,6 +286,8 @@ const ControlBar = ({
   // Session 9: Whiteboard
   showWhiteboard = false,
   onToggleWhiteboard,
+  electronViewEnabled = false,
+  onToggleElectronView,
   // Session 30: Notes panel
   showNotes = false,
   onToggleNotes,
@@ -499,6 +501,7 @@ const ControlBar = ({
           onExportPng && { label: 'Cattura Immagine', action: onExportPng },
           onGenerateReport && { label: isGeneratingReport ? 'Generazione Report...' : 'Report PDF', action: onGenerateReport, disabled: isGeneratingReport },
           onToggleWhiteboard && { label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard },
+          onToggleElectronView && { label: 'Vista Elettroni', checked: electronViewEnabled, action: onToggleElectronView },
           /* ── Aiuto ── */
           { type: 'separator', label: 'Aiuto' },
           experiment && onAskUNLIM && { label: isAskingUNLIM ? 'UNLIM sta pensando...' : 'Chiedi a UNLIM', action: onAskUNLIM, disabled: isAskingUNLIM },

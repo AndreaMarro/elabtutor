@@ -890,6 +890,7 @@ const NewElabSimulator = ({
 
   // ─── Session 9: Whiteboard overlay — Andrea Marro 18/02/2026 ───
   const [showWhiteboard, setShowWhiteboard] = useState(false);
+  const [electronViewEnabled, setElectronViewEnabled] = useState(false);
 
   // ─── NEW: UNLIM AI state ───
   const [isAskingUNLIM, setIsAskingUNLIM] = useState(false);
@@ -3723,6 +3724,8 @@ const NewElabSimulator = ({
           onAddAnnotation={currentExperiment ? handleAnnotationAdd : undefined}
           showWhiteboard={showWhiteboard}
           onToggleWhiteboard={currentExperiment ? () => setShowWhiteboard(prev => !prev) : undefined}
+          electronViewEnabled={electronViewEnabled}
+          onToggleElectronView={currentExperiment ? () => setElectronViewEnabled(prev => !prev) : undefined}
           showNotes={showNotes}
           onToggleNotes={currentExperiment ? () => toggleRightPanel('notes') : undefined}
           showQuiz={showQuiz}
@@ -3913,6 +3916,7 @@ const NewElabSimulator = ({
                   }}
                   snapToGrid={currentExperiment?.buildMode === 'sandbox'}
                   onSelectionChange={setSelectedComponentId}
+                  electronViewEnabled={electronViewEnabled}
                   className="elab-simulator__canvas"
                   style={{ flex: 1 }}
                 />

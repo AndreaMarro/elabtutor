@@ -110,12 +110,55 @@ class TemplateSection(Section):
             "_clean_input": text,
         }
 
+    def _re_pick_response(self, assistant_json_str: str) -> str:
+        """Re-roll response from responses_v8.yml pool for variety.
+
+        When creating corruption variants, the output should vary too —
+        not just the input. This picks a different response from the same
+        response category to avoid thousands of identical "Fatto tutto!".
+        """
+        try:
+            out = json.loads(assistant_json_str)
+        except (json.JSONDecodeError, TypeError):
+            return assistant_json_str
+
+        # Only re-pick for needs_llm=false (deterministic responses)
+        if out.get("needs_llm"):
+            # For needs_llm=true, vary the llm_hint from pool if available
+            if out.get("llm_hint") and isinstance(out["llm_hint"], str):
+                # Check if the template had a list of hints (stored in _hint_pool)
+                pass  # llm_hint variety is handled via {hint} vars in v8 templates
+            return assistant_json_str
+
+        response = out.get("response")
+        if not response or not self.responses_config:
+            return assistant_json_str
+
+        # Find which response pool this belongs to
+        for key, pool in self.responses_config.items():
+            if isinstance(pool, list) and response in pool:
+                # Re-pick a different one from the same pool
+                new_response = self.cp.rng.choice(pool)
+                out["response"] = new_response
+                return json.dumps(out, ensure_ascii=False)
+
+        # Also try generic_done pool for catch-all responses
+        generic = self.responses_config.get("generic_done", [])
+        if generic and response in ["Fatto tutto!", "Ci penso io!", "Fatto!", "Ok!"]:
+            out["response"] = self.cp.rng.choice(generic)
+            return json.dumps(out, ensure_ascii=False)
+
+        return assistant_json_str
+
     def generate(self, target_count: int) -> list[dict]:
         """Generate up to target_count examples with corruption variants.
 
         Uses progressive corruption: starts with config-level corruption,
         escalates aggressiveness every 500 failed attempts to maximize
         unique output diversity.
+
+        v8 FIX: re-picks response for each corrupted variant to eliminate
+        response repetition (e.g., "Fatto tutto!" x7500).
         """
         # Phase 1: expand all templates combinatorially
         base_examples = []
@@ -148,11 +191,13 @@ class TemplateSection(Section):
 
             if corrupted not in seen_inputs:
                 seen_inputs.add(corrupted)
+                # v8 FIX: re-pick response for variety
+                varied_output = self._re_pick_response(ex["messages"][2]["content"])
                 new_ex = {
                     "messages": [
                         ex["messages"][0],  # system
                         {"role": "user", "content": corrupted},
-                        ex["messages"][2],  # assistant (same output)
+                        {"role": "assistant", "content": varied_output},
                     ],
                     "_clean_input": clean,
                 }

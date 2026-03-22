@@ -20,6 +20,7 @@ const COMPILE_URL = (import.meta.env.VITE_COMPILE_URL || '').trim() || null; // 
 const COMPILE_WEBHOOK = (import.meta.env.VITE_COMPILE_WEBHOOK_URL || '').trim() || null; // Backend fallback
 const LOCAL_API = (import.meta.env.VITE_LOCAL_API_URL || '').trim() || null;
 const LOCAL_URL = (import.meta.env.VITE_LOCAL_COMPILE_URL || '').trim() || null; // Dev locale
+const LOCAL_SERVER = 'http://localhost:8000'; // elab-local-server (Ollama)
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'); // 30s (was 60s)
 const COMPILE_TIMEOUT = 65000; // 65s for compilation (arduino-cli has 60s timeout)
 const CHAT_RETRY_COUNT = 1;
@@ -93,6 +94,76 @@ function getTutorSessionId() {
     return id;
 }
 
+// === LOCAL SERVER (Ollama) ===
+// Auto-detect: if localhost:8000 responds, use local. Cached for 60s.
+let _localServerAvailable = null;
+let _localServerCheckedAt = 0;
+
+async function isLocalServerAvailable() {
+    const now = Date.now();
+    if (_localServerAvailable !== null && now - _localServerCheckedAt < 60000) {
+        return _localServerAvailable;
+    }
+    try {
+        const resp = await fetch(`${LOCAL_SERVER}/health`, {
+            signal: AbortSignal.timeout(2000),
+        });
+        _localServerAvailable = resp.ok;
+    } catch {
+        _localServerAvailable = false;
+    }
+    _localServerCheckedAt = now;
+    return _localServerAvailable;
+}
+
+/**
+ * Try elab-local-server (Ollama) — lowest latency, 100% offline.
+ * Returns null if unavailable — caller falls through to cloud.
+ */
+async function tryLocalServer(message, circuitState, externalSignal, experimentId, images = [], simulatorContext = null) {
+    if (!await isLocalServerAvailable()) return null;
+
+    try {
+        const controller = new AbortController();
+        const timeout = images.length > 0 ? 120000 : 60000;
+        const timer = setTimeout(() => controller.abort(), timeout);
+        if (externalSignal) {
+            externalSignal.addEventListener('abort', () => controller.abort());
+        }
+
+        const body = {
+            message,
+            sessionId: getTutorSessionId(),
+            experimentId: experimentId || null,
+            circuitState: circuitState || null,
+            simulatorContext: simulatorContext || null,
+            images: images.map(img => img.base64 || img),
+        };
+
+        const resp = await fetch(`${LOCAL_SERVER}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+        });
+
+        clearTimeout(timer);
+
+        if (!resp.ok) return null;
+
+        const data = await resp.json();
+        if (data.response) {
+            return data.response;
+        }
+        return null;
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            _localServerAvailable = false;
+        }
+        return null;
+    }
+}
+
 /**
  * Try nanobot server first (lower latency, circuit-aware MCP).
  * Returns null if unavailable — caller falls through to backend webhook.
@@ -127,6 +198,7 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
             payload.images = images.map(img => ({
                 base64: img.base64,
                 mimeType: img.mimeType || 'image/png',
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
             }));
         }
         const res = await fetch(`${NANOBOT_URL}${endpoint}`, {
@@ -198,7 +270,6 @@ export async function getExperimentHints(experimentId, currentStep = 0, difficul
             body: JSON.stringify({ experimentId, currentStep, difficulty }),
         });
         if (!res.ok) return null;
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         const data = await res.json();
         if (data.success && data.hints) {
             const { filtered } = filterAIResponse(data.hints);
@@ -328,6 +399,7 @@ function buildChatMessage(message, socraticMode, experimentContext) {
     if (socraticMode) parts.push(SOCRATIC_INSTRUCTION);
     if (experimentContext) parts.push(experimentContext);
     if (parts.length === 0) return message;
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     return `${parts.join('\n')}\n\nMessaggio studente:\n${message}`;
 }
 
@@ -399,7 +471,6 @@ async function postChatWithRetry(payload, externalSignal) {
                 externalSignal.removeEventListener('abort', abortHandler);
             }
         }
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     throw new Error('Backend error: retry exhausted');
@@ -458,7 +529,11 @@ export async function sendChat(message, images = [], options = {}) {
         : message;
     const webhookMessage = buildChatMessage(message, socraticMode, experimentContext);
 
-    // 1. Try nanobot first (text + vision via Gemini, circuit-aware, parallel racing)
+    // 0. Try local server first (Ollama, 100% offline, zero config)
+    const localResult = await tryLocalServer(nanobotMessage, circuitState, externalSignal, experimentId, images, simulatorContext);
+    if (localResult) return localResult;
+
+    // 1. Try nanobot cloud (text + vision via Gemini, circuit-aware, parallel racing)
     if (NANOBOT_URL) {
         const nanobotResult = await tryNanobot(nanobotMessage, circuitState, externalSignal, experimentId, images, simulatorContext);
         if (nanobotResult) return nanobotResult;
@@ -525,6 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
                 return {
                     success: true,
                     response: safeContent,
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
                     source: 'backend-vision',
                     actions: extractActions(safeContent)
                 };
@@ -600,7 +676,6 @@ export async function sendChat(message, images = [], options = {}) {
             success: true,
             response: safeContent,
             source: 'backend',
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
             actions: extractActions(safeContent)
         };
 
@@ -726,6 +801,7 @@ function extractActions(text, userMessage = '') {
             code,
             label: 'Apri nel Simulatore'
         });
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // ============================================
@@ -801,7 +877,6 @@ export async function analyzeImage(imageData, question = "Analizza questa immagi
     const mimeType = imageData.includes('data:')
         ? imageData.split(';')[0].split(':')[1]
         : 'image/png';
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     return await sendChat(question, [{ base64, mimeType }], { signal });
 }

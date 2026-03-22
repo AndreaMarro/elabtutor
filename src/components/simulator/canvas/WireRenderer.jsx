@@ -952,6 +952,7 @@ const WireRenderer = ({
   onWireClick = null,
   onWireDelete = null,
   routingMode = 'flex', // 'flex' | 'book'
+  electronViewEnabled = false, // Electron View PoC: enhanced particle animation
 }) => {
   const [hoveredWireIndex, setHoveredWireIndex] = useState(-1);
 
@@ -1164,30 +1165,89 @@ const WireRenderer = ({
           // CoVe Fix #11 + S52 Bezier-safe reverse
           const reversePath = dir < 0 ? reverseSvgPath(path) : path;
 
-          elements.push(
-            <g key="current-animation">
-              {[0, 0.33, 0.66].map((offset, di) => (
-                <circle key={`dot-${di}`} r="1.3" fill={dotColor} opacity={dotOpacity}>
-                  <animateMotion
-                    path={dir < 0 ? reversePath : path}
-                    dur={`${duration}s`}
-                    begin={`${offset * duration}s`}
-                    repeatCount="indefinite"
-                    // Rimosso keyPoints - usa path diretto/inverso
-                    calcMode="linear"
-                  />
-                  {isShortCircuit && (
-                    <animate
-                      attributeName="opacity"
-                      values="0.4;1;0.4"
-                      dur="0.4s"
+          if (electronViewEnabled) {
+            // ── ELECTRON VIEW: Enhanced particle system ──
+            // More particles, glow effect, color by magnitude thresholds
+            const evColor = mag > 50 ? '#F44336' : mag > 5 ? '#FF9800' : '#FFD54F';
+            const evParticleCount = Math.min(12, Math.max(3, Math.round(mag / 8)));
+            const evRadius = mag > 50 ? 2.5 : mag > 5 ? 2.0 : 1.6;
+            const evDuration = duration * 0.8; // slightly faster for drama
+
+            elements.push(
+              <g key="electron-view-animation">
+                {Array.from({ length: evParticleCount }, (_, di) => {
+                  const offset = di / evParticleCount;
+                  return (
+                    <g key={`ev-${di}`}>
+                      {/* Glow halo */}
+                      <circle r={evRadius * 2.5} fill={evColor} opacity="0.12">
+                        <animateMotion
+                          path={dir < 0 ? reversePath : path}
+                          dur={`${evDuration}s`}
+                          begin={`${offset * evDuration}s`}
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        />
+                      </circle>
+                      {/* Core particle */}
+                      <circle r={evRadius} fill={evColor} opacity="0.9">
+                        <animateMotion
+                          path={dir < 0 ? reversePath : path}
+                          dur={`${evDuration}s`}
+                          begin={`${offset * evDuration}s`}
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        />
+                        {isShortCircuit && (
+                          <animate
+                            attributeName="opacity"
+                            values="0.5;1;0.5"
+                            dur="0.3s"
+                            repeatCount="indefinite"
+                          />
+                        )}
+                      </circle>
+                      {/* Bright center dot */}
+                      <circle r={evRadius * 0.4} fill="#FFFFFF" opacity="0.7">
+                        <animateMotion
+                          path={dir < 0 ? reversePath : path}
+                          dur={`${evDuration}s`}
+                          begin={`${offset * evDuration}s`}
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        />
+                      </circle>
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          } else {
+            // ── Standard mode: 3 subtle dots ──
+            elements.push(
+              <g key="current-animation">
+                {[0, 0.33, 0.66].map((offset, di) => (
+                  <circle key={`dot-${di}`} r="1.3" fill={dotColor} opacity={dotOpacity}>
+                    <animateMotion
+                      path={dir < 0 ? reversePath : path}
+                      dur={`${duration}s`}
+                      begin={`${offset * duration}s`}
                       repeatCount="indefinite"
+                      calcMode="linear"
                     />
-                  )}
-                </circle>
-              ))}
-            </g>
-          );
+                    {isShortCircuit && (
+                      <animate
+                        attributeName="opacity"
+                        values="0.4;1;0.4"
+                        dur="0.4s"
+                        repeatCount="indefinite"
+                      />
+                    )}
+                  </circle>
+                ))}
+              </g>
+            );
+          }
         }
       }
 

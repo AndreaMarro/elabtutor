@@ -198,7 +198,7 @@ export function analyzePinLayout(pins) {
 function computeTO220Assignment(compId, pins, anchor, bbId, bbPos) {
   const pinAssignments = {};
   const holePositions = [];
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
   
   // Sort pins by X position (left to right)
   const sortedPins = [...pins].sort((a, b) => a.x - b.x);
@@ -399,7 +399,7 @@ export function computeAutoPinAssignment(compId, compType, dropX, dropY, bbId, b
         anchorPinId = pin.id;
       }
     }
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
   }
   if (!anchor) return null;
 

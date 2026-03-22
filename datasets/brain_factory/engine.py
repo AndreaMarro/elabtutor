@@ -57,8 +57,9 @@ class BrainEngine:
         if profile_corruptions is not None:
             config = {**config, "corruptions": profile_corruptions}
 
-        # Load responses config for @responses.yml references
-        responses_config = self._load_yaml_config("responses.yml")
+        # Load responses config — prefer v8 if available
+        responses_v8 = self._load_yaml_config("responses_v8.yml")
+        responses_config = responses_v8 if responses_v8 else self._load_yaml_config("responses.yml")
 
         # ComboSection is special — needs component data
         if sid == "combos":

@@ -489,6 +489,7 @@ const SimulatorCanvas = ({
   onSendToUNLIM,
   // Task 3: Selection change callback (for ControlBar delete/rotate buttons)
   onSelectionChange,
+  electronViewEnabled = false,
   className = '',
   style = {}
 }) => {
@@ -2529,6 +2530,7 @@ const SimulatorCanvas = ({
             onWireClick={onWireClick}
             onWireDelete={onWireDelete}
             routingMode={experiment.wireRouting || 'flex'}
+            electronViewEnabled={electronViewEnabled}
           />
         )}
 

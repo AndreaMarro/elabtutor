@@ -198,7 +198,7 @@ export const S = {
             fontSize: '14px', color: COLORS.textPrimary,
         };
     },
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     modal: {
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
         background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center',

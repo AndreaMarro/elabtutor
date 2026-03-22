@@ -9,8 +9,15 @@ node_modules/
 dist/
 build/
 
-# Dataset output (regenerable)
+# Dataset output and large training files (regenerable via brain factory)
 datasets/output/
+datasets/*.jsonl
+datasets/v13-combined/
+datasets/batches/
+datasets/curriculum/*.jsonl
+datasets/curriculum-v11/
+datasets/sprint-v12/*.jsonl
+datasets/sprint-finale/*.jsonl
 
 # AI model files (2.3 GB+)
 models/*.gguf

@@ -198,7 +198,7 @@ arduinoGenerator.forBlock['logic_compare'] = function (block) {
 
 arduinoGenerator.forBlock['logic_operation'] = function (block) {
     const operator = block.getFieldValue('OP') === 'AND' ? '&&' : '||';
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     const order = operator === '&&' ? arduinoGenerator.ORDER_LOGICAL_AND : arduinoGenerator.ORDER_LOGICAL_OR;
     const argument0 = arduinoGenerator.valueToCode(block, 'A', order);
     const argument1 = arduinoGenerator.valueToCode(block, 'B', order);
@@ -399,7 +399,7 @@ arduinoGenerator.forBlock['math_modulo'] = function (block) {
     const divisor = arduinoGenerator.valueToCode(block, 'DIVISOR', arduinoGenerator.ORDER_MULTIPLICATION) || '1';
     return [`${dividend} % ${divisor}`, arduinoGenerator.ORDER_MULTIPLICATION];
 };
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['math_constrain'] = function (block) {
     const value = arduinoGenerator.valueToCode(block, 'VALUE', arduinoGenerator.ORDER_ATOMIC) || '0';

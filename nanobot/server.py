@@ -2230,10 +2230,8 @@ async def route_to_specialist(message: str, session_id: str = "", experiment_id:
     intent = classify_intent(message, has_images=has_images)
     print(f"[UNLIM] Intent: {intent} (images={has_images})")
 
-    # BRAIN SHADOW MODE: run local Brain in parallel (non-blocking, fire-and-forget)
-    brain = get_brain()
-    if brain.mode == "shadow" and not has_images:
-        asyncio.create_task(brain.shadow_classify(message, intent))
+    # NOTE: Brain integration moved to /chat endpoint (S112)
+    # Shadow + Active modes both handled there for ALL messages (text + vision)
 
     # FASE 2: ARRICCHIRE — build specialist context
     enriched_context = build_specialist_context(intent, session_id, experiment_id, circuit_context)
@@ -2468,11 +2466,47 @@ async def health():
 
 @app.get("/brain-stats")
 async def brain_stats():
-    """Get Brain shadow mode comparison statistics."""
+    """Get Brain statistics (shadow or active mode)."""
     brain = get_brain()
-    stats = brain.get_shadow_stats()
-    stats["available"] = await brain.is_available()
+    available = await brain.is_available()
+
+    if brain.mode == "active":
+        stats = brain.get_active_stats()
+    else:
+        stats = brain.get_shadow_stats()
+
+    stats["available"] = available
+    stats["model"] = brain.model
     return stats
+
+
+@app.get("/brain-test")
+async def brain_test(message: str = "avvia la simulazione"):
+    """Test Brain classification with a sample message. Pass ?message=... to test."""
+    brain = get_brain()
+    available = await brain.is_available()
+    if not available:
+        return {"success": False, "error": "Brain not available (Ollama not running or model not loaded)"}
+
+    # Temporarily allow classify even if mode is "off"
+    old_mode = brain.mode
+    brain.mode = "active"
+    try:
+        result = await brain.classify(message)
+    finally:
+        brain.mode = old_mode
+
+    if result is None:
+        return {"success": False, "error": "Brain returned None (JSON parse failure or timeout)"}
+
+    return {
+        "success": True,
+        "message": message,
+        "brain_result": result,
+        "formatted_response": brain.format_brain_response(result),
+        "model": brain.model,
+        "mode": old_mode,
+    }
 
 
 @app.get("/debug-vision")
@@ -2553,6 +2587,81 @@ async def chat(request: Request, req: ChatRequest):
     if req.images:
         images_data = [{"base64": img.base64, "mimeType": img.mimeType} for img in req.images]
 
+    # ── BRAIN ACTIVE MODE ────────────────────────────────────
+    # If Brain is active and available, try local classification first.
+    # needs_llm=false → respond directly (~100ms), fire LLM double-check in background
+    # needs_llm=true  → pass brain intent + llm_hint to specialist routing
+    # failure/timeout → silent fallback to normal regex+LLM flow
+    brain = get_brain()
+    brain_result = None
+
+    if brain.mode == "active" and not images_data:
+        # Format context like training dataset: [CONTESTO]\ntab: ...\n[MESSAGGIO]\n...
+        brain_context = ""
+        if req.simulatorContext:
+            ctx = req.simulatorContext
+            parts = []
+            if ctx.get("tab"):
+                parts.append(f"tab: {ctx['tab']}")
+            if req.experimentId:
+                parts.append(f"esperimento: {req.experimentId}")
+            if ctx.get("editorMode"):
+                parts.append(f"editor: {ctx['editorMode']}")
+            if ctx.get("buildStep") and ctx.get("totalSteps"):
+                parts.append(f"step_corrente: {ctx['buildStep']}/{ctx['totalSteps']}")
+            if ctx.get("volume"):
+                parts.append(f"volume_attivo: {ctx['volume']}")
+            # Add component summary from circuit context
+            if circuit_context:
+                # Take first 300 chars of circuit context for Brain (it only needs a summary)
+                parts.append(f"circuito: {circuit_context[:300]}")
+            if parts:
+                brain_context = "[CONTESTO]\n" + "\n".join(parts)
+
+        brain_result = await brain.classify(sanitized, brain_context)
+
+        if brain_result and brain_result.get("needs_llm") is False:
+            # Brain says it can handle this directly — respond immediately
+            brain_response = brain.format_brain_response(brain_result)
+
+            if brain_response:
+                # Post-process same as LLM path
+                brain_response = sanitize_identity_leaks(normalize_action_tags(brain_response))
+                brain_response = convert_addcomponent_to_intent(brain_response)
+
+                print(f"[BRAIN] ✅ ACTIVE direct response | intent={brain_result.get('intent')} "
+                      f"| actions={brain_result.get('actions')} | {brain_result.get('_brain_latency_ms', 0):.0f}ms")
+
+                # Persist to session
+                if session_id:
+                    save_to_session(session_id, "user", req.message)
+                    save_to_session(session_id, "assistant", brain_response)
+
+                # DOUBLE-CHECK: fire LLM in background to compare
+                async def _brain_double_check():
+                    try:
+                        llm_result = await orchestrate(sanitized, circuit_context, history)
+                        llm_resp = sanitize_identity_leaks(normalize_action_tags(llm_result.get("response", "")))
+                        brain.log_active_decision(sanitized, brain_result, brain_responded=True, llm_response=llm_resp)
+                    except Exception as e:
+                        print(f"[BRAIN] Double-check LLM failed: {e}")
+                        brain.log_active_decision(sanitized, brain_result, brain_responded=True, llm_response=None)
+
+                asyncio.create_task(_brain_double_check())
+
+                return ChatResponse(
+                    success=True,
+                    response=brain_response,
+                    source="brain",
+                    layer="L0-brain",
+                )
+
+    # If Brain is shadow mode (text only), fire-and-forget for logging
+    if brain.mode == "shadow" and not images_data:
+        intent_for_shadow = classify_intent(sanitized, has_images=False)
+        asyncio.create_task(brain.shadow_classify(sanitized, intent_for_shadow))
+
+    # ── STANDARD LLM FLOW ─────────────────────────────────
     try:
         # Vision routing: when images present, use specialist routing for proper vision prompt
         if images_data:
@@ -2565,7 +2674,28 @@ async def chat(request: Request, req: ChatRequest):
                 images=images_data,
             )
         else:
-            result = await orchestrate(sanitized, circuit_context, history)
+            # If Brain is active and gave us needs_llm=true, pass hint as extra context
+            if brain_result and brain.mode == "active" and brain_result.get("needs_llm"):
+                llm_hint = brain_result.get("llm_hint") or ""
+                brain_intent = brain_result.get("intent", "")
+                if llm_hint:
+                    hint_context = f"\n[BRAIN HINT: {llm_hint}]"
+                    enhanced_circuit = f"{circuit_context}{hint_context}" if circuit_context else hint_context
+                    result = await route_to_specialist(
+                        sanitized,
+                        session_id=session_id,
+                        experiment_id=req.experimentId or "",
+                        circuit_context=enhanced_circuit,
+                        conversation_history=history,
+                    )
+                else:
+                    result = await orchestrate(sanitized, circuit_context, history)
+                # Log active decision (Brain routed to LLM)
+                brain.log_active_decision(sanitized, brain_result, brain_responded=False,
+                                          llm_response=result.get("response", ""))
+            else:
+                result = await orchestrate(sanitized, circuit_context, history)
+
         result["response"] = sanitize_identity_leaks(normalize_action_tags(result["response"]))
         # S73: Convert legacy [AZIONE:addcomponent:...] to [INTENT:] on /chat path
         result["response"] = convert_addcomponent_to_intent(result["response"])

@@ -21,10 +21,11 @@ import { getComponent } from '../components/registry';
 // Forward voltages per LED color
 const LED_VF = {
   red: 1.8,
-  green: 2.8,
+  green: 2.2,
   blue: 3.0,
   yellow: 2.0,
   white: 3.2,
+  orange: 2.0,
 };
 
 const DIODE_VF = 0.7;
@@ -197,8 +198,8 @@ class CircuitSolver {
     // Maps "componentId:pinName" → "bbId:holeId" for components inserted in breadboard
     this._pinAssignments = experiment.pinAssignments || {};
     Object.entries(this._pinAssignments).forEach(([compPin, bbHole]) => {
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
       this._pinRefs.add(compPin);
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       this._pinRefs.add(bbHole);
       const [cId, cPin] = compPin.split(':');
       const [bbId, holeId] = bbHole.split(':');
@@ -398,8 +399,8 @@ class CircuitSolver {
   }
 
   pause() {
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     this.running = false;
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
@@ -599,8 +600,8 @@ class CircuitSolver {
     if (errors.length > 0) {
       // CoVe Fix: Allow simulation to proceed even with "errors" (like missing resistor)
       // so that the physical result (e.g., LED burning) can happen.
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
       // We can still return the message for UI warnings if needed, but valid must be true.
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       return {
         valid: true,
         message: errors.join(' ')
@@ -800,8 +801,8 @@ class CircuitSolver {
             }
           }
         }
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
       }
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     });
 
     // ─── Pin Assignments: component pin = breadboard hole ───
@@ -1001,8 +1002,8 @@ class CircuitSolver {
             type: 'overcurrent',
             message: `LED "${id}" a ${Math.round(current * 1000)}mA — vicino al limite! (max 20mA)`,
           });
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
           if (this.onWarning) {
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
             this.onWarning('overcurrent', `LED "${id}" è in zona di pericolo: ${Math.round(current * 1000)}mA (max 20mA).`);
           }
         } else if (!comp.state.burned) {
@@ -1202,8 +1203,8 @@ class CircuitSolver {
     const pinMap = {
       'resistor': { pin1: 'pin2', pin2: 'pin1' },
       'photo-resistor': { pin1: 'pin2', pin2: 'pin1' },
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
       'push-button': comp.state.pressed
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         ? { pin1: 'pin2', pin2: 'pin1', pin3: 'pin4', pin4: 'pin3' }
         : null,
       'reed-switch': comp.state.closed ? { pin1: 'pin2', pin2: 'pin1' } : null,
@@ -1403,8 +1404,8 @@ class CircuitSolver {
     if (nodeCount === 0) return;
 
     // ─── Iterative MNA with LED polarity check ───
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     // LEDs are modeled as Vf voltage sources, but a reverse-biased LED should
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
     // be an open circuit. We solve, check LED currents, exclude reverse-biased
     // LEDs (negative current), and re-solve until convergence (max 3 passes).
     const excludedLEDs = new Set(); // LED compIds excluded as reverse-biased
@@ -1604,8 +1605,8 @@ class CircuitSolver {
       this._mnaNodeVoltages.set(groundNet, 0);
 
       // Step 8: Extract branch currents from voltage sources
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
       this._mnaBranchCurrents = new Map();
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
       for (let v = 0; v < vsCount; v++) {
         const vs = voltageSources[v];
         this._mnaBranchCurrents.set(vs.compId, x[nodeCount + v]);
@@ -1805,8 +1806,8 @@ class CircuitSolver {
           comp.state.brightness = 0;
           comp.state.on = false;
           comp.state.current = current;
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
           // Ensure voltage reflects forward drop even if burned
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
           comp.state.voltage = vf;
         } else {
           comp.state.burned = false;
@@ -2006,8 +2007,8 @@ class CircuitSolver {
       comp.state.vgs = gateV - sourceV;
     }
 
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     comp.state.on = comp.state.vgs >= MOSFET_VGS_THRESHOLD;
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     if (comp.state.on) {
       const drainV = this._mnaNodeVoltages ? this._getMNAVoltage(`${id}:drain`) : this._pinSupplyVoltage(`${id}:drain`, id);
@@ -2207,8 +2208,8 @@ class CircuitSolver {
 
       // Check both orientations: probes may be connected either way
       if ((capPosNet === posNet && capNegNet === negNet) ||
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
         (capPosNet === negNet && capNegNet === posNet)) {
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
         const v = comp.state.voltage || 0;
         // Match polarity: if cap-positive is on probe-positive net, use as-is
         const sign = (capPosNet === posNet) ? 1 : -1;
@@ -2408,8 +2409,8 @@ class CircuitSolver {
   _pinSupplyVoltage(pinRef, excludeCompId) {
     // Direct net supply?
     const directV = this._netVoltage(pinRef);
+// © Andrea Marro — 22/03/2026 — ELAB Tutor — Tutti i diritti riservati
     if (directV !== null) return directV;
-// © Andrea Marro — 13/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     // Trace through circuit
     const trace = this._traceToSupply(pinRef, excludeCompId);
