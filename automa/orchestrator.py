@@ -516,20 +516,45 @@ def run_cycle(skip_slow: bool = False, dry_run: bool = False) -> dict:
     prompt = compose_prompt(check_results, task, state, mode=mode, program=program_md)
 
     if dry_run:
-        print("\n🔍 DRY RUN — Prompt composed but NOT executing Claude.")
+        print("\n🔍 DRY RUN — Prompt composed but NOT executing.")
         print(f"   Prompt length: {len(prompt)} chars")
         task_result = {"task": "dry_run", "status": "skipped"}
     else:
-        # Try claude CLI first, fall back to prompt-only mode
-        import shutil
-        if shutil.which("claude"):
-            print("\n🤖 Launching Claude Code headless...")
-            task_result = run_claude_headless(prompt)
-        else:
-            print("\n📝 Claude CLI not in PATH — saving prompt for interactive session.")
-            prompt_file = AUTOMA_ROOT / "state" / "next-prompt.md"
-            prompt_file.write_text(prompt)
-            task_result = {"task": task.get("title", "?") if task else "none", "status": "pending_interactive", "prompt_saved": str(prompt_file)}
+        # Try Agent SDK (Anthropic API) first, fall back to claude -p, then prompt-only
+        try:
+            from agent import run_agent, ANTHROPIC_API_KEY as AGENT_KEY
+            if AGENT_KEY:
+                print("\n🧠 Launching Agent SDK (Anthropic API + tool calling)...")
+                agent_result = run_agent(
+                    system_prompt=prompt,
+                    user_prompt=f"Modo: {mode}. Esegui il lavoro descritto nel system prompt. Usa i tool disponibili. Documenta tutto.",
+                    max_turns=20,
+                    model="claude-sonnet-4-20250514",
+                )
+                task_result = {
+                    "task": task.get("title", "?") if task else mode,
+                    "status": agent_result.get("status", "unknown"),
+                    "turns": agent_result.get("turns", 0),
+                    "tool_calls": agent_result.get("tool_calls", 0),
+                    "tokens": agent_result.get("tokens", 0),
+                    "tools_used": agent_result.get("tools_used", []),
+                    "response_preview": agent_result.get("response", "")[:500],
+                }
+                print(f"   Agent done: {agent_result.get('turns',0)} turns, {agent_result.get('tool_calls',0)} tool calls, {agent_result.get('tokens',0)} tokens")
+                print(f"   Tools used: {agent_result.get('tools_used', [])}")
+            else:
+                raise ImportError("No Anthropic API key")
+        except (ImportError, Exception) as e:
+            # Fallback: claude -p headless
+            import shutil
+            if shutil.which("claude"):
+                print(f"\n🤖 Agent SDK unavailable ({e}), falling back to claude -p...")
+                task_result = run_claude_headless(prompt)
+            else:
+                print(f"\n📝 No agent available — saving prompt.")
+                prompt_file = AUTOMA_ROOT / "state" / "next-prompt.md"
+                prompt_file.write_text(prompt)
+                task_result = {"task": task.get("title", "?") if task else "none", "status": "pending_interactive"}
         print(f"   Result: {task_result.get('status', '?')}")
 
         # Update task status

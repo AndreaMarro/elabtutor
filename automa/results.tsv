@@ -1,2 +1,2 @@
 commit	composite	mode	status	description
-baseline	0.0000	SETUP	keep	pre-autoresearch baseline (not yet measured)
+450d17a	0.8872	BASELINE	keep	First real evaluation — build=1.0 tags=0.9 gulp=0.8 identity=1.0 content=1.0 ipad=0.68 lighthouse=0.62

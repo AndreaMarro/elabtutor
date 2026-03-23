@@ -1,0 +1,14 @@
+{
+  "composite": 0.8872,
+  "timestamp": "2026-03-23T14:14:36.694423",
+  "cycle": 0,
+  "metrics": {
+    "build_pass": 1.0,
+    "galileo_tag_accuracy": 0.9,
+    "galileo_gulpease": 0.8,
+    "galileo_identity": 1.0,
+    "content_integrity": 1.0,
+    "ipad_compliance": 0.675,
+    "lighthouse_perf": 0.62
+  }
+}
