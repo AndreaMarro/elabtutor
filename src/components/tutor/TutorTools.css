@@ -85,7 +85,7 @@
     cursor: pointer;
     transition: all var(--transition-fast);
     font-family: inherit;
-    min-height: 44px;
+    min-height: 56px;
 }
 
 .elab-tool__filter-btn:hover {

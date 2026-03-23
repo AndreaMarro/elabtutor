@@ -88,7 +88,7 @@
   text-align: right;
 }
 
-/* ─── S76: WCAG 44px touch target range slider for kids ──── */
+/* ─── S76: WCAG 56px touch target (LIM) range slider for kids ──── */
 
 .valueRow input[type="range"] {
   -webkit-appearance: none;
@@ -103,8 +103,8 @@
 .valueRow input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-full, 50%);
   background: var(--color-accent, #7CB342);
   cursor: pointer;
@@ -113,8 +113,8 @@
 }
 
 .valueRow input[type="range"]::-moz-range-thumb {
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-full, 50%);
   background: var(--color-accent, #7CB342);
   cursor: pointer;
