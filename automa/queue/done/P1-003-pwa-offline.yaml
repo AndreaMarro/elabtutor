@@ -1,0 +1,9 @@
+id: pwa-offline
+priority: P1
+title: PWA offline — service worker + manifest + Dexie.js
+description: Installare vite-plugin-pwa. Service worker per cache assets. Dexie.js per IndexedDB esperimenti offline. Install banner. Fallback Galileo offline.
+tags: pwa,offline,service-worker
+claimed_at: "2026-03-23T01:06:30.366199"
+claimed_by: orchestrator
+completed_at: "2026-03-23T01:06:30.366711"
+result: vite-plugin-pwa installed, SW generated, 99 precache entries, manifest with icons

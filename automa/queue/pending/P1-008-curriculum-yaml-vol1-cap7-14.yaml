@@ -1,0 +1,5 @@
+id: curriculum-yaml-vol1-full
+priority: P1
+title: Creare curriculum YAML per Vol1 Cap7-14 (35 esperimenti)
+description: Usa il template di v1-cap6-esp1.yaml. Per ogni esperimento: prerequisites, concepts_introduced, vocabulary_level, allowed_terms, forbidden_terms, teacher_briefing, common_mistakes, analogies. Leggi experiments-vol1.js per i dati. Salva in automa/curriculum/
+tags: curriculum,content,pedagogy

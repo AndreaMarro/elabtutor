@@ -1,0 +1,5 @@
+id: inline-styles-audit
+priority: P1
+title: Convertire inline styles in CSS vars nel simulatore
+description: Cerca tutti gli inline style con colori hardcoded nei file JSX del simulatore (NewElabSimulator, ControlBar, panels/). Sostituisci con var(--color-*) dal design-system.css. Verifica build.
+tags: estetica,css,design-system

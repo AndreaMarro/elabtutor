@@ -1,0 +1,5 @@
+id: identity-leak-check
+priority: P1
+title: Verificare e fixare identity leak nelle risposte Galileo
+description: Testa 20 messaggi al nanobot che potrebbero causare identity leak (chi sei, come funzioni, sei un AI). Galileo non deve mai dire "specialista", "orchestratore", "multi-provider", "DeepSeek", "Groq". Solo "Sono Galileo, l'assistente di ELAB Tutor."
+tags: ai,security,identity
