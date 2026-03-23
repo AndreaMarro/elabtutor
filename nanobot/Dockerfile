@@ -13,6 +13,7 @@ COPY site-prompt.yml .
 # Multi-Galileo v4.0: memory system + specialist prompts
 COPY memory.py .
 COPY brain.py .
+COPY vocab_checker.py .
 COPY patterns.json .
 COPY prompts/ ./prompts/
 
