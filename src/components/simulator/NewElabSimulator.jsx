@@ -1809,7 +1809,6 @@ const NewElabSimulator = ({
       canUndo: () => canUndoRef.current,   // S115-FIX: ref avoids stale closure
       canRedo: () => canRedoRef.current,   // S115-FIX: ref avoids stale closure
       highlightPin: (refs) => setApiHighlightedPins(Array.isArray(refs) ? refs : (refs ? [refs] : [])),
-      serialWrite: (text) => { if (avrRef.current) avrRef.current.serialWrite?.(text); },
       setBuildMode: (mode) => handleBuildModeSwitchRef.current?.(mode),
       getBuildMode: () => currentExperimentRef.current?.buildMode || false,
       nextStep: () => {
