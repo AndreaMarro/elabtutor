@@ -131,6 +131,23 @@ Priorità: esperienza insegnante > UX simulatore > bug > performance.
     if pdr_path.exists():
         pdr_summary = pdr_path.read_text()[:3000]
 
+    # CONTEXT CONTINUITY: results.tsv (last 20 lines) + last report + handoff
+    results_tsv = ""
+    tsv_path = AUTOMA_ROOT / "results.tsv"
+    if tsv_path.exists():
+        lines = tsv_path.read_text().strip().splitlines()
+        results_tsv = "\n".join(lines[:1] + lines[-20:])  # header + last 20
+
+    last_report = ""
+    report_files = sorted(REPORTS_DIR.glob("*.json"))
+    if report_files:
+        last_report = report_files[-1].read_text()[:1500]
+
+    handoff = ""
+    handoff_path = AUTOMA_ROOT / "handoff.md"
+    if handoff_path.exists():
+        handoff = handoff_path.read_text()[:1500]
+
     prompt = f"""Sei l'agente autonomo di ELAB Tutor (ELAB Autoresearch). Lavori in italiano. Project root: {PROJECT_ROOT}
 Modo corrente: {mode}
 
@@ -148,6 +165,17 @@ Il linguaggio sulla LIM è SEMPRE 10-14 anni. Galileo segue i volumi ELAB — no
 
 ## PIANO (PDR)
 {pdr_summary[:2000]}
+
+## CONTESTO TRA CICLI (cosa è successo prima)
+
+### results.tsv (ultimi esperimenti)
+{results_tsv if results_tsv else "(nessun esperimento precedente)"}
+
+### Ultimo report
+{last_report[:800] if last_report else "(primo ciclo)"}
+
+### Handoff sessione precedente
+{handoff[:800] if handoff else "(nessun handoff)"}
 
 ## RISULTATI CHECK (appena eseguiti)
 {check_summary}
@@ -419,7 +447,24 @@ def run_cycle(skip_slow: bool = False, dry_run: bool = False) -> dict:
     else:
         print("   No results")
 
-    # Step 5: Save report
+    # Step 5: Update results.tsv (autoresearch log)
+    tsv_path = AUTOMA_ROOT / "results.tsv"
+    if mode == "IMPROVE" and task_result.get("status") in ("done", "failed"):
+        try:
+            # Get short git hash
+            git_hash = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, cwd=str(PROJECT_ROOT)
+            ).stdout.strip()[:7] or "unknown"
+            status_str = "keep" if task_result.get("status") == "done" else "discard"
+            desc = task_result.get("task", "unknown")[:80].replace("\t", " ")
+            line = f"{git_hash}\t0.0000\t{mode}\t{status_str}\t{desc}\n"
+            with open(tsv_path, "a") as f:
+                f.write(line)
+        except Exception:
+            pass
+
+    # Step 5b: Save report
     report_path = save_report(cycle_num, check_results, task_result, research,
                               mode=mode, ai_scoring=ai_result)
     print(f"\n📊 Report saved: {report_path}")
