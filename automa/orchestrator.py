@@ -131,22 +131,54 @@ Priorità: esperienza insegnante > UX simulatore > bug > performance.
     if pdr_path.exists():
         pdr_summary = pdr_path.read_text()[:3000]
 
-    # CONTEXT CONTINUITY: results.tsv (last 20 lines) + last report + handoff
+    # CONTEXT CONTINUITY: multi-layer memory for inter-cycle awareness
+    # Layer 1: results.tsv (experiment history)
     results_tsv = ""
     tsv_path = AUTOMA_ROOT / "results.tsv"
     if tsv_path.exists():
         lines = tsv_path.read_text().strip().splitlines()
-        results_tsv = "\n".join(lines[:1] + lines[-20:])  # header + last 20
+        results_tsv = "\n".join(lines[:1] + lines[-20:])
 
+    # Layer 2: last cycle report (what happened immediately before)
     last_report = ""
-    report_files = sorted(REPORTS_DIR.glob("*.json"))
+    report_files = sorted(REPORTS_DIR.glob("2*.json"))  # Only cycle reports (start with date)
     if report_files:
         last_report = report_files[-1].read_text()[:1500]
 
+    # Layer 3: handoff (session-level context)
     handoff = ""
     handoff_path = AUTOMA_ROOT / "handoff.md"
     if handoff_path.exists():
         handoff = handoff_path.read_text()[:1500]
+
+    # Layer 4: git log (what changed in code recently)
+    git_log = ""
+    try:
+        r = subprocess.run(["git", "log", "--oneline", "-10"],
+                           capture_output=True, text=True, cwd=str(PROJECT_ROOT), timeout=5)
+        git_log = r.stdout.strip()
+    except Exception:
+        pass
+
+    # Layer 5: knowledge index (what research exists)
+    knowledge_index = ""
+    knowledge_dir = AUTOMA_ROOT / "knowledge"
+    if knowledge_dir.exists():
+        files = sorted(knowledge_dir.glob("*.md"))
+        knowledge_index = "\n".join(f"  - {f.stem}" for f in files[-15:])
+
+    # Layer 6: AI feedback history (persisted scoring/reviews)
+    ai_history = ""
+    ai_log_path = AUTOMA_ROOT / "state" / "ai-feedback.log"
+    if ai_log_path.exists():
+        lines = ai_log_path.read_text().strip().splitlines()
+        ai_history = "\n".join(lines[-10:])  # Last 10 AI feedback entries
+
+    # Layer 7: current composite score (if evaluate.py was run)
+    eval_score = ""
+    eval_path = AUTOMA_ROOT / "state" / "last-eval.json"
+    if eval_path.exists():
+        eval_score = eval_path.read_text()[:500]
 
     prompt = f"""Sei l'agente autonomo di ELAB Tutor (ELAB Autoresearch). Lavori in italiano. Project root: {PROJECT_ROOT}
 Modo corrente: {mode}
@@ -166,16 +198,29 @@ Il linguaggio sulla LIM è SEMPRE 10-14 anni. Galileo segue i volumi ELAB — no
 ## PIANO (PDR)
 {pdr_summary[:2000]}
 
-## CONTESTO TRA CICLI (cosa è successo prima)
+## CONTESTO TRA CICLI — 7 LAYER DI MEMORIA
 
-### results.tsv (ultimi esperimenti)
-{results_tsv if results_tsv else "(nessun esperimento precedente)"}
+### 1. Esperimenti passati (results.tsv)
+{results_tsv if results_tsv else "(primo ciclo — nessun esperimento)"}
 
-### Ultimo report
-{last_report[:800] if last_report else "(primo ciclo)"}
+### 2. Ultimo ciclo
+{last_report[:600] if last_report else "(primo ciclo)"}
 
-### Handoff sessione precedente
-{handoff[:800] if handoff else "(nessun handoff)"}
+### 3. Handoff sessione
+{handoff[:600] if handoff else "(nessun handoff)"}
+
+### 4. Ultimi commit
+{git_log if git_log else "(git non disponibile)"}
+
+### 5. Ricerche disponibili in knowledge/
+{knowledge_index if knowledge_index else "(nessuna ricerca)"}
+Per leggere un file: `cat automa/knowledge/NOME.md`
+
+### 6. Feedback AI precedenti
+{ai_history if ai_history else "(nessun feedback AI precedente)"}
+
+### 7. Score composito corrente
+{eval_score if eval_score else "(evaluate.py non ancora eseguito — ESEGUILO come prima cosa!)"}
 
 ## RISULTATI CHECK (appena eseguiti)
 {check_summary}
@@ -284,6 +329,8 @@ def ai_scoring(state: dict, cycle: int) -> str | None:
                 f"Rispondi SOLO con: SCORE:N MOTIVO:breve spiegazione"
             )
             results.append(f"DeepSeek scoring: {score[:200]}")
+    # Persist AI feedback
+    _persist_ai_feedback(f"[DeepSeek score] {score[:300]}")
 
     # Every 10 cycles: Gemini competitor analysis
     if cycle % 10 == 0:
@@ -293,6 +340,7 @@ def ai_scoring(state: dict, cycle: int) -> str | None:
             "Max 200 parole, fatti concreti."
         )
         results.append(f"Gemini market: {analysis[:300]}")
+    _persist_ai_feedback(f"[Gemini market] {analysis[:300]}")
 
     # Every 10 cycles: Kimi review
     if cycle % 10 == 5:
@@ -305,12 +353,24 @@ def ai_scoring(state: dict, cycle: int) -> str | None:
             f"Cosa miglioreresti? Max 200 parole, concreto."
         )
         results.append(f"Kimi review: {kimi_review[:300]}")
+        _persist_ai_feedback(f"[Kimi review] {kimi_review[:300]}")
 
     return "\n".join(results) if results else None
 
 
+def _persist_ai_feedback(entry: str):
+    """Append AI feedback to persistent log for inter-cycle context."""
+    log_path = AUTOMA_ROOT / "state" / "ai-feedback.log"
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with open(log_path, "a") as f:
+        f.write(f"[{timestamp}] {entry}\n")
+
+
 def micro_research(state: dict) -> str | None:
-    """Run 1 micro-research per cycle (Semantic Scholar)."""
+    """Multi-source research: Semantic Scholar + DeepSeek reasoning.
+    Semantic Scholar for papers, DeepSeek for reasoned analysis when papers fail."""
+    from tools import call_deepseek_reasoner
+
     topics = [
         "educational electronics simulation children",
         "Scratch to Arduino C++ block programming",
@@ -320,20 +380,62 @@ def micro_research(state: dict) -> str | None:
         "iPad touch interface educational",
         "offline progressive web app education",
         "Socratic questioning AI tutor",
-        "inexperienced teacher technology adoption",
+        "inexperienced teacher technology adoption barriers",
         "maker education elementary school",
         "gamification STEM learning engagement",
-        "EdTech marketing school district adoption",
+        "EdTech product marketing school adoption",
+        "misconceptions electricity children",
+        "visual programming Arduino pedagogy",
+        "LIM interactive whiteboard classroom electronics",
+        "progressive web app offline education developing countries",
     ]
 
     cycle = state.get("loop", {}).get("cycles_today", 0)
     topic = topics[cycle % len(topics)]
+    results = []
 
-    papers = search_papers(topic, limit=3)
-    if papers and not any("error" in p for p in papers):
-        summary = f"Research: '{topic}' → {len(papers)} papers found"
-        for p in papers[:2]:
-            summary += f"\n  - {p.get('title', '?')} ({p.get('year', '?')}, {p.get('citationCount', 0)} cites)"
+    # Source 1: Semantic Scholar (fast, free, sometimes fails)
+    papers = search_papers(topic, limit=5)
+    valid_papers = [p for p in papers if p.get("title")]
+    if valid_papers:
+        results.append(f"Semantic Scholar: '{topic}' → {len(valid_papers)} papers")
+        for p in valid_papers[:3]:
+            results.append(f"  - [{p.get('year','?')}] {p.get('title','?')[:80]} ({p.get('citationCount',0)} cites)")
+
+    # Source 2: Kimi K2.5 (128K context — good for synthesis and review, every 2 cycles)
+    if cycle % 2 == 0:
+        from tools import call_kimi
+        kimi_query = (
+            f"Topic di ricerca: '{topic}'. Contesto: ELAB Tutor è un simulatore di circuiti "
+            f"per bambini 10-14 anni con AI tutor. Elenca: 1) 3 trend recenti in questo campo, "
+            f"2) 1 idea innovativa che nessun competitor ha implementato, "
+            f"3) 1 rischio o problema da evitare. Max 150 parole."
+        )
+        kimi_insight = call_kimi(kimi_query)
+        if kimi_insight and "[ERROR]" not in kimi_insight and "[SKIP]" not in kimi_insight:
+            results.append(f"Kimi K2.5 insight:")
+            results.append(f"  {kimi_insight[:400]}")
+
+    # Source 3: DeepSeek reasoning (when Scholar fails, or every 3 cycles for deep analysis)
+    if not valid_papers or cycle % 3 == 0:
+        deepseek_query = (
+            f"Sei un ricercatore EdTech. Topic: '{topic}'. "
+            f"Rispondi con: 1) 2 problemi concreti che questo topic pone per ELAB Tutor "
+            f"(simulatore elettronica per bambini 10-14), 2) 1 soluzione tecnica implementabile "
+            f"in una settimana, 3) 1 metrica per misurare il miglioramento. Max 150 parole, concreto."
+        )
+        analysis = call_deepseek_reasoner(deepseek_query)
+        if analysis and "[ERROR]" not in analysis and "[SKIP]" not in analysis:
+            results.append(f"DeepSeek analysis on '{topic}':")
+            results.append(f"  {analysis[:400]}")
+
+    # Persist research findings
+    if results:
+        summary = "\n".join(results)
+        # Save to knowledge file (accumulates research)
+        research_log = AUTOMA_ROOT / "state" / "research-log.md"
+        with open(research_log, "a") as f:
+            f.write(f"\n## Cycle {cycle} — {topic}\n{summary}\n")
         return summary
     return None
 
@@ -438,6 +540,33 @@ def run_cycle(skip_slow: bool = False, dry_run: bool = False) -> dict:
                 pass  # Keep in active, will be completed interactively
             else:
                 fail_task(task["_file"], task_result.get("error", "unknown"))
+
+    # Step 3b: Run evaluate.py every 5 cycles to track composite score
+    if cycle_num % 5 == 1 and not dry_run:
+        print("\n📊 Running evaluate.py for composite score...")
+        try:
+            eval_result = subprocess.run(
+                ["python3", str(AUTOMA_ROOT / "evaluate.py")],
+                capture_output=True, text=True, timeout=600,
+                cwd=str(PROJECT_ROOT),
+            )
+            # Extract composite score
+            for line in eval_result.stdout.splitlines():
+                if line.startswith("SCORE:composite="):
+                    score_val = line.split("=")[1]
+                    print(f"   Composite score: {score_val}")
+                    # Persist for next cycle's context
+                    eval_json_path = AUTOMA_ROOT / "state" / "last-eval.json"
+                    eval_data = {"composite": float(score_val), "timestamp": datetime.now().isoformat(),
+                                 "cycle": cycle_num, "output": eval_result.stdout[-500:]}
+                    eval_json_path.write_text(json.dumps(eval_data, indent=2))
+                    break
+            else:
+                print("   evaluate.py ran but no composite score found")
+        except subprocess.TimeoutExpired:
+            print("   evaluate.py timed out (>10min)")
+        except Exception as e:
+            print(f"   evaluate.py error: {e}")
 
     # Step 4: Micro-research (every cycle — costante ricerca)
     print("\n🔬 Micro-research...")
