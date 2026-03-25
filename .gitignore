@@ -26,6 +26,10 @@ models/*.bin
 models/*.pt
 models/*.pth
 
+# Runtime state (must NOT be reverted by git checkout -- .)
+automa/state/last-eval.json
+automa/state/cycle-snapshot.json
+
 # Environment files
 .env
 .env.local
