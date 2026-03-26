@@ -1,10 +1,10 @@
-# Esame di Coscienza — Ciclo 35 (2026-03-26 12:38)
+# Esame di Coscienza — Ciclo 45 (2026-03-26 20:26)
 
 ## Score Trend
 **Andamento**: 📉 WORSENING
-- Finestra attuale: success=0.5 | failure=0.1
+- Finestra attuale: success=0.4 | failure=0.0
 - Finestra precedente: success=0.9 | failure=0.1
-- Delta success rate: -0.40
+- Delta success rate: -0.50
 
 ## Pattern Rilevati
 - ✅ Nessun pattern problematico rilevato.
@@ -22,4 +22,4 @@
   - Azione suggerita: Crea task YAML: 'Revisione metriche evaluate.py — identificare quale dimensione è bloccata e proporre fix concreto'
 
 ---
-*Generato automaticamente da self_exam.py — ciclo 35*
+*Generato automaticamente da self_exam.py — ciclo 45*

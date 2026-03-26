@@ -28,7 +28,7 @@ import ControlBar from './panels/ControlBar';
 import SerialMonitor from './panels/SerialMonitor';
 import SerialPlotter from './panels/SerialPlotter';
 import CircuitSolver from './engine/CircuitSolver';
-import { findExperimentById } from '../../data/experiments-index';
+import { findExperimentById, ALL_EXPERIMENTS } from '../../data/experiments-index';
 import { compileCode as apiCompileCode, sendChat as apiSendChat, preloadExperiment } from '../../services/api';
 import { registerSimulatorInstance, unregisterSimulatorInstance, emitSimulatorEvent } from '../../services/simulator-api';
 import { pushActivity } from '../../services/activityBuffer';
@@ -36,6 +36,7 @@ import { sessionMetrics } from '../../services/sessionMetrics';
 import { sendAnalyticsEvent, EVENTS } from './api/AnalyticsWebhook'; /* Andrea Marro — 12/02/2026 */
 import useUndoRedo from './hooks/useUndoRedo';
 import useCircuitStorage from './hooks/useCircuitStorage';
+import useDisclosureLevel from './hooks/useDisclosureLevel';
 import CodeEditorCM6 from './panels/CodeEditorCM6';
 // Lazy-loaded: Blockly (~750KB) caricato solo quando l'utente clicca "Blocchi"
 const ScratchEditor = lazy(() => import('./panels/ScratchEditor'));
@@ -150,6 +151,7 @@ import BuildModeGuide from './panels/BuildModeGuide';
 import ComponentDrawer from './panels/ComponentDrawer';
 import NotesPanel from './panels/NotesPanel';
 import BomPanel from './panels/BomPanel';
+import LessonPathPanel from './panels/LessonPathPanel';
 import ShortcutsPanel from './panels/ShortcutsPanel';
 import WhiteboardOverlay from './panels/WhiteboardOverlay';
 import QuizPanel from './panels/QuizPanel';
@@ -318,6 +320,9 @@ const NewElabSimulator = ({
   const [serialTimestamps, setSerialTimestamps] = useState(false);
   const [baudMismatch, setBaudMismatch] = useState(false);
   const [drawingEnabled, setDrawingEnabled] = useState(false); // Drawing layer toggle
+
+  // Progressive disclosure: tracks user milestones for gradual UI complexity
+  const { level: disclosureLevel, recordMilestone, recordExperimentLoad } = useDisclosureLevel();
 
   // S100: Persist sidebar preference to localStorage
   useEffect(() => {
@@ -690,6 +695,7 @@ const NewElabSimulator = ({
       return;
     }
     compilingRef.current = true;
+    recordMilestone('compiledCode');
 
     setCompilationStatus('compiling');
     setCompilationErrors(null);
@@ -830,6 +836,7 @@ const NewElabSimulator = ({
   const [showBom, setShowBom] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [showLessonPath, setShowLessonPath] = useState(false);
 
   // ─── Session Report: state + refs for PDF generation ───
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
@@ -861,11 +868,13 @@ const NewElabSimulator = ({
   // Opening one automatically closes the others to prevent overlap.
   const toggleRightPanel = useCallback((panel) => {
     if (panel === 'bom') {
-      setShowBom(prev => { if (!prev) { setShowNotes(false); setShowQuiz(false); } return !prev; });
+      setShowBom(prev => { if (!prev) { setShowNotes(false); setShowQuiz(false); setShowLessonPath(false); } return !prev; });
     } else if (panel === 'notes') {
-      setShowNotes(prev => { if (!prev) { setShowBom(false); setShowQuiz(false); } return !prev; });
+      setShowNotes(prev => { if (!prev) { setShowBom(false); setShowQuiz(false); setShowLessonPath(false); } return !prev; });
     } else if (panel === 'quiz') {
-      setShowQuiz(prev => { if (!prev) { setShowBom(false); setShowNotes(false); } return !prev; });
+      setShowQuiz(prev => { if (!prev) { setShowBom(false); setShowNotes(false); setShowLessonPath(false); } return !prev; });
+    } else if (panel === 'lessonPath') {
+      setShowLessonPath(prev => { if (!prev) { setShowBom(false); setShowNotes(false); setShowQuiz(false); } return !prev; });
     }
   }, []);
 
@@ -1231,8 +1240,8 @@ const NewElabSimulator = ({
   // Undo/Redo button callbacks (for ControlBar UI buttons)
   const handleUndoBtn = useCallback(() => {
     const snapshot = undoHistory(getCurrentSnapshot());
-    if (snapshot) { restoreSnapshotRef.current(snapshot); pushActivity('undo'); }
-  }, [undoHistory, getCurrentSnapshot]);
+    if (snapshot) { restoreSnapshotRef.current(snapshot); pushActivity('undo'); recordMilestone('usedUndo'); }
+  }, [undoHistory, getCurrentSnapshot, recordMilestone]);
 
   const handleRedoBtn = useCallback(() => {
     const snapshot = redoHistory(getCurrentSnapshot());
@@ -1827,6 +1836,8 @@ const NewElabSimulator = ({
       getBuildStepIndex: () => buildStepIndexRef.current,
       showBom: () => setShowBom(true),
       hideBom: () => setShowBom(false),
+      showLessonPath: () => { setShowLessonPath(true); setShowBom(false); setShowNotes(false); setShowQuiz(false); },
+      hideLessonPath: () => setShowLessonPath(false),
       showSerialMonitor: () => { setShowCodeEditor(true); setBottomPanel('monitor'); },
       hideSerialMonitor: () => { setShowCodeEditor(false); }, // S115-FIX: actually hides editor panel
       isSimulating: () => isRunningRef.current || false,
@@ -1922,6 +1933,8 @@ const NewElabSimulator = ({
       return;
     }
     loadedExpIdRef.current = experiment.id;
+    // Progressive disclosure: record experiment load milestone
+    recordExperimentLoad(experiment.id);
     // Preload hints in background (fire-and-forget) — popola cache nanobot L0
     preloadExperiment(experiment.id);
     if (experiment.simulationMode === 'avr') {
@@ -1962,6 +1975,7 @@ const NewElabSimulator = ({
     setSelectedAnnotation(null);
     setShowBom(false);
     setShowQuiz(false);
+    setShowLessonPath(false);
     // Build mode: start from empty board (-1) when guided/sandbox, show all when complete
     // Andrea Marro — 20/02/2026
     setBuildStepIndex(
@@ -2837,6 +2851,7 @@ const NewElabSimulator = ({
     if (!dragSnapshotPushedRef.current) {
       pushSnapshot(getCurrentSnapshot());
       dragSnapshotPushedRef.current = true;
+      recordMilestone('draggedComponent');
     }
 
     // Recompute pinAssignments for ANY dragged component (base OR user-added)
@@ -3049,9 +3064,10 @@ const NewElabSimulator = ({
     const newConn = { from: fromPinRef, to: toPinRef, color, id: `conn-${Date.now()}-${Math.random().toString(36).substr(2, 5)}` };
     pushActivity('wire_added', `${fromPinRef}→${toPinRef}`);
     setCustomConnections(prev => [...prev, newConn]);
+    recordMilestone('connectedWire');
     /* Andrea Marro — 12/02/2026 — Events */
     try { emitSimulatorEvent('circuitChange', { action: 'wireAdded', from: fromPinRef, to: toPinRef }); } catch { }
-  }, [pushSnapshot, getCurrentSnapshot]);
+  }, [pushSnapshot, getCurrentSnapshot, recordMilestone]);
 
   // Handle wire update (waypoints, color, etc.)
   const handleWireUpdate = useCallback((wireIndex, newConnectionData) => {
@@ -3691,9 +3707,9 @@ const NewElabSimulator = ({
           onBack={handleBack}
           simulationTime={simulationTime}
           showPalette={showPalette}
-          onTogglePalette={currentExperiment ? () => setShowPalette(prev => !prev) : undefined}
+          onTogglePalette={currentExperiment ? () => { setShowPalette(prev => !prev); recordMilestone('usedPalette'); } : undefined}
           showCodeEditor={showCodeEditor}
-          onToggleCodeEditor={currentExperiment ? () => setShowCodeEditor(prev => !prev) : undefined}
+          onToggleCodeEditor={currentExperiment ? () => { setShowCodeEditor(prev => !prev); recordMilestone('usedCodeEditor'); } : undefined}
           wireMode={wireMode}
           onToggleWireMode={currentExperiment ? () => setWireMode(prev => !prev) : undefined}
           onAskUNLIM={currentExperiment ? handleAskUNLIM : undefined}
@@ -3711,6 +3727,8 @@ const NewElabSimulator = ({
           onRedo={handleRedoBtn}
           showBom={showBom}
           onToggleBom={currentExperiment ? () => toggleRightPanel('bom') : undefined}
+          showLessonPath={showLessonPath}
+          onToggleLessonPath={currentExperiment ? () => toggleRightPanel('lessonPath') : undefined}
           onExportPng={currentExperiment ? handleExportPng : undefined}
           onToggleShortcuts={() => setShowShortcuts(prev => !prev)}
           showSidebar={showSidebar}
@@ -3742,6 +3760,7 @@ const NewElabSimulator = ({
           onShowProperties={currentExperiment ? (compId) => {
             handleComponentClick(compId);
           } : undefined}
+          disclosureLevel={disclosureLevel}
         />
       </div>
 
@@ -3989,6 +4008,20 @@ const NewElabSimulator = ({
                   <BomPanel
                     experiment={mergedExperiment}
                     onClose={() => setShowBom(false)}
+                  />
+                )}
+
+                {/* Lesson Path Panel — Percorso Lezione per insegnanti */}
+                {showLessonPath && currentExperiment && (
+                  <LessonPathPanel
+                    experiment={currentExperiment}
+                    allExperiments={ALL_EXPERIMENTS}
+                    onClose={() => setShowLessonPath(false)}
+                    onSendToUNLIM={onSendToUNLIM}
+                    onLoadExperiment={(id) => {
+                      const exp = findExperimentById(id);
+                      if (exp) handleExperimentSelect(exp);
+                    }}
                   />
                 )}
 

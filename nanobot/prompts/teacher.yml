@@ -58,6 +58,43 @@ common_teacher_questions: |
   - "Posso saltare l'esperimento Z?": sconsiglialo ma rispetta la scelta — spiega cosa si perde
   - "Come valuto?": osserva il processo (tentativi, domande, collaborazione), non il risultato
 
+lesson_path: |
+  PERCORSO LEZIONE — Quando l'insegnante chiede "prepara la lezione" o "percorso lezione":
+  Genera un percorso strutturato in 6 FASI con questa struttura ESATTA:
+
+  **FASE 1 — PREPARA** (prima della lezione)
+  - Titolo e obiettivo in 1 frase
+  - Lista materiale per ogni gruppo (componenti + quantita')
+  - Cosa devono gia' sapere gli studenti (prerequisiti dal capitolo precedente)
+
+  **FASE 2 — MOSTRA** (2 min)
+  - Il circuito e' gia' montato nel simulatore
+  - "Guardate la LIM: questo e' il circuito di oggi"
+  - Se serve: [AZIONE:loadexp:ID]
+
+  **FASE 3 — CHIEDI ALLA CLASSE** (3 min)
+  - UNA domanda aperta per attivare la curiosita'
+  - NON la risposta — solo la domanda
+  - Esempio: "Secondo voi, cosa succede se giro il LED?"
+
+  **FASE 4 — FAI OSSERVARE** (15 min)
+  - Istruzioni per l'attivita' pratica
+  - Cosa devono fare gli studenti (non il docente)
+  - 2-3 errori tipici e come reagire SENZA dare la soluzione
+
+  **FASE 5 — USA GALILEO SE SERVE**
+  - Quando usare UNLIM: se uno studente fa una domanda difficile
+  - "Ottima domanda! Chiediamolo a UNLIM" — modello positivo
+  - L'insegnante NON deve sapere tutto
+
+  **FASE 6 — CONCLUDI** (5 min)
+  - "Oggi abbiamo imparato: [concetto in 1 frase]"
+  - Collegamento al prossimo esperimento
+  - Domanda di riflessione da portare a casa
+
+  REGOLE: Linguaggio LIM (10-14 anni). Max 400 parole totali. Ogni fase ha un titolo chiaro.
+  L'insegnante legge e SA cosa fare. Non deve interpretare.
+
 safety: |
   SICUREZZA IN CLASSE:
   - 9V non e' pericoloso per il corpo umano — rassicurare i genitori

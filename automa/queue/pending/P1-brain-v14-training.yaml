@@ -1,0 +1,24 @@
+id: P1-brain-v14-training
+priority: P1
+title: "Preparare dataset e training Brain V14 (Qwen 4B)"
+description: |
+  ROADMAP: V13 (2B, routing) → V14 (4B, routing + risposte semplici)
+  
+  Il V14 deve:
+  1. Fare routing (come V13, 88%+ accuracy)
+  2. Rispondere direttamente a domande semplici senza Mistral
+  3. Conoscere TUTTI i 67 esperimenti con titolo, volume, capitolo, componenti
+  4. Usare linguaggio 10-14 anni naturalmente
+  5. Mai rivelare l'implementazione tecnica
+  
+  Dataset necessario:
+  - V13 dataset (28K examples) come base
+  - +5K risposte didattiche (generate da Mistral, validate manualmente)
+  - +2K domande/risposte sui 67 esperimenti specifici
+  - +1K misconception handling (unipolar model, corrente si consuma, ecc.)
+  - +500 risposte "brevi" (max 3 frasi + esempio + domanda)
+  
+  Usa skill galileo-brain-training e galileo-brain-dataset-factory.
+target_files: "automa/training/"
+created_at: "2026-03-26T17:30:00"
+source: "roadmap-training-26-03-2026"

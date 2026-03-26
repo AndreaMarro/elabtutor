@@ -193,9 +193,10 @@ def _keep_or_discard(task_result, snapshot):
             git_hash = snapshot.get("git_hash", "")
             if git_hash and git_hash != "unknown":
                 try:
-                    subprocess.run(["git", "checkout", "--", "."],
+                    # Smart revert: only revert src/, keep nanobot/ and prompt changes
+                    subprocess.run(["git", "checkout", "--", "src/"],
                                    cwd=str(PROJECT_ROOT), timeout=10)
-                    print(f"   Reverted to {git_hash}")
+                    print(f"   Reverted src/ to {git_hash} (nanobot/ changes preserved)")
                 except Exception:
                     print("   Revert failed — manual intervention needed")
             return "discard"
@@ -804,6 +805,34 @@ def run_cycle(skip_slow=False, dry_run=False):
                     break
         except Exception as e:
             print(f"   evaluate error: {e}")
+
+    # Step 3d: Save lesson to lessons.jsonl
+    try:
+        lesson_file = AUTOMA_ROOT / "state" / "lessons.jsonl"
+        # Extract lesson from task_result
+        lesson_text = task_result.get("lesson", "")
+        if not lesson_text:
+            # Try to extract from output or status
+            output = task_result.get("response_preview", "") or task_result.get("output", "")
+            if output:
+                lesson_text = output[:200]
+            else:
+                lesson_text = f"Ciclo completato ({task_result.get('status','?')}). {task_result.get('task','')[:80]}"
+
+        lesson_entry = {
+            "cycle": cycle_num,
+            "task": task_result.get("task", "unknown"),
+            "status": task_result.get("status", "unknown"),
+            "verdict": verdict,
+            "worst_check": next((r["name"] for r in check_results if r["status"] == "fail"), None),
+            "files_changed": task_result.get("files_changed", []),
+            "lesson": lesson_text,
+            "ts": datetime.now().strftime("%Y-%m-%d %H:%M")
+        }
+        with open(lesson_file, "a") as f:
+            f.write(json.dumps(lesson_entry, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"   Lesson save error: {e}")
 
     # Step 4: Micro-research
     print("\n  Micro-research...")

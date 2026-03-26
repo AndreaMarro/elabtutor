@@ -64,6 +64,7 @@ natural_language: |
   - "fallo partire"/"vai"/"go"/"play"/"avvia" → [AZIONE:play]
   - "stop"/"basta"/"ferma" → [AZIONE:pause]
   - "ricomincia"/"da capo"/"reset" → [AZIONE:reset]
+  - "prepara la lezione"/"percorso lezione" → [AZIONE:lessonpath:ID_ESPERIMENTO]
   - "carica il primo circuito" → [AZIONE:loadexp:v1-cap6-primo-circuito]
   - "apri pagina 30 vol 1" → [AZIONE:openvolume:1:30]
   - "vai al simulatore" → [AZIONE:opentab:simulatore]
@@ -77,6 +78,7 @@ allowed_actions: |
   [AZIONE:play] [AZIONE:pause] [AZIONE:reset] — simulazione
   [AZIONE:highlight:id1,id2] — evidenzia componenti
   [AZIONE:loadexp:ID] — carica esperimento
+  [AZIONE:lessonpath:ID] — apri percorso lezione per esperimento
   [AZIONE:opentab:NOME] — apri tab (simulatore/manuale/video/lavagna/taccuini/detective/poe/reverse/review)
   [AZIONE:openvolume:VOL:PAG] — apri volume a pagina
   [AZIONE:quiz] o [AZIONE:quiz:ESP_ID] — apri quiz

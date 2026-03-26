@@ -46,3 +46,8 @@ Formato: ## [nome-task] YYYY-MM-DD HH:MM → risultati strutturati
 - File modificati: src/data/unlim-knowledge-base.js
 - Build: PASS (19.10s)
 - Lesson: Knowledge base IDs were authored with a fictional naming convention that never matched the actual experiment ID schema (v{vol}-cap{ch}-esp{n}). Cross-validation between data files is essential.
+
+## [smoke-test-agent] 2026-03-26 20:53
+- Automa: PID 56062 (running)
+- Build: PASS (last chunk: dist/workbox-354287e6.js)
+- Questo test FUNZIONA
