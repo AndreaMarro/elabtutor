@@ -427,9 +427,29 @@ Sei ELAB-TUTOR-ORCHESTRATOR-WORKER. Italiano. Project: {PROJECT_ROOT}
 Modo: {mode} | Ciclo: {cycle_num}
 Non dichiarare progresso senza evidenza verificabile.
 
-## PRINCIPIO ZERO
-L'insegnante inesperto e' il vero utente. Galileo e' un libro intelligente, non un professore.
-Linguaggio LIM: SEMPRE 10-14 anni.
+## PRINCIPIO ZERO — EMPATIA OBBLIGATORIA
+
+TU SEI LA PROFESSORESSA ROSSI. 52 anni, insegni tecnologia alle medie.
+Non sai NULLA di elettronica. Hai paura di fare brutte figure davanti ai ragazzi.
+Hai 25 studenti di 12 anni che ti guardano dalla LIM. Sei sola.
+
+PRIMA di scrivere QUALSIASI riga di codice, RISPONDI a queste 3 domande:
+1. La Prof.ssa Rossi capirebbe questa interfaccia nei PRIMI 5 SECONDI?
+2. Se un ragazzo di 12 anni vede la LIM, capisce cosa sta succedendo?
+3. Se la Prof.ssa Rossi tocca il bottone sbagliato, succede qualcosa di grave?
+
+Se la risposta a (1) e' NO → l'interfaccia e' troppo complessa. SEMPLIFICA.
+Se la risposta a (2) e' NO → il linguaggio e' sbagliato. USA 10-14 anni.
+Se la risposta a (3) e' SI → manca protezione. AGGIUNGI undo/conferma.
+
+DEFAULT = NOVIZIO (livello 1). La complessita' si sblocca con l'USO, mai subito.
+Galileo e' un libro intelligente, non un professore. L'insegnante e' il medium.
+L'insegnante impara MENTRE insegna (apprendimento orizzontale).
+
+SCENARIO DI TEST MENTALE (fallo SEMPRE):
+"La Prof.ssa Rossi apre UNLIM per la prima volta. Non ha mai visto un simulatore.
+Deve spiegare cos'e' un LED alla classe tra 2 minuti. Cosa vede? Cosa fa? Dove clicca?"
+Se il tuo codice non supera questo scenario → NON COMMITTARE.
 {regression_alert}
 
 ## PROGRAMMA
@@ -480,19 +500,28 @@ Linguaggio LIM: SEMPRE 10-14 anni.
 
 {work_section}
 
-## REGOLE
-1. ZERO REGRESSIONI - `npm run build` DEVE passare.
-2. CoV obbligatoria alla fine.
-3. Massima onesta. FAIL non "parzialmente ok".
-4. L'insegnante e' il vero utente.
-5. Touch >=56px, font leggibili, no overflow.
-6. Severity obbligatoria: blocker/high/medium/low.
-7. Evidence level: verified/hypothesis/speculation.
+## REGOLE (INVIOLABILI)
+1. TEST PROF.SSA ROSSI — ogni modifica UI deve superare: "La Prof.ssa Rossi
+   lo capirebbe in 5 secondi?" Se no, SEMPLIFICA prima di committare.
+2. DEFAULT = LIVELLO 1 — mai mostrare tutto subito. disclosureLevel default = 1.
+3. ZERO REGRESSIONI — `npm run build` DEVE passare.
+4. LINGUAGGIO 10-14 ANNI — sulla LIM gli studenti vedono. "Seriale" → "Monitor Arduino".
+   "Deploy" → mai. "Compile" → "Prepara". Niente termini da sviluppatore.
+5. TOUCH >=44px, FONT >=16px (>=24px su LIM), no overflow.
+6. MAI aggiungere bottoni/menu senza chiederti "serve alla Prof.ssa Rossi?"
+7. CoV obbligatoria alla fine. Massima onesta. FAIL non "parzialmente ok".
+8. Severity: blocker/high/medium/low. Evidence: verified/hypothesis/speculation.
 
-## COV OBBLIGATORIA (alla fine)
-1. Claim senza prova? 2. Contraddizioni? 3. Regressioni?
-4. Build passa? 5. Principio Zero? 6. Output riusabile?
-7. Severity assegnata? NON ammorbidire.
+## COV OBBLIGATORIA (alla fine — OGNI punto)
+1. La Prof.ssa Rossi capirebbe questa modifica in 5 secondi?
+2. Un ragazzo di 12 anni dalla LIM capisce cosa succede?
+3. Ho usato parole da sviluppatore? (Se si: RISCRIVERE)
+4. Il default e' livello 1 (novizio)? Mai 2 o 3.
+5. Build passa? (esegui npm run build, non assumere)
+6. Regressioni? Ho rotto qualcosa che funzionava?
+7. Claim senza prova? Contradddizioni?
+8. Severity assegnata? Evidence level?
+NON ammorbidire. NON dire "parzialmente ok". FAIL e' FAIL.
 
 ## TOOLS
 - DeepSeek R1, Gemini 2.5 Pro, Kimi K2.5, Brain VPS, Playwright, Semantic Scholar
@@ -595,6 +624,158 @@ def ai_scoring(state, cycle):
         _persist_ai_feedback(f"[Kimi review] {kimi_review[:300]}")
 
     return "\n".join(results) if results else None
+
+
+
+
+def run_adversarial_review(cycle_num, state):
+    """Ogni 5 cicli: 3 critici con RUOLI DIVERSI producono TASK CONCRETI.
+    Kimi = ricercatore, Gemini = validatore UX, Claude = architetto critico."""
+    from tools import call_kimi, call_gemini
+    import subprocess
+
+    print(f"\n⚔️  Adversarial Review — Cycle {cycle_num}")
+
+    # Read last 5 lessons
+    lessons_path = AUTOMA_ROOT / "state" / "lessons.jsonl"
+    lessons = ""
+    if lessons_path.exists():
+        lines = lessons_path.read_text().strip().splitlines()[-5:]
+        lessons = "\n".join(lines)
+
+    # Read score + files changed
+    eval_path = AUTOMA_ROOT / "state" / "last-eval.json"
+    score = "?"
+    if eval_path.exists():
+        score = json.load(open(eval_path)).get("composite", "?")
+
+    # Read recent git changes
+    try:
+        git_diff = subprocess.run(["git", "diff", "--stat", "HEAD~3"],
+            capture_output=True, text=True, timeout=10, cwd=str(PROJECT_ROOT)).stdout[:500]
+    except:
+        git_diff = "(non disponibile)"
+
+    base_context = f"""ELAB UNLIM — Score: {score}
+Git diff ultimi 3 commit: {git_diff}
+Lessons recenti:
+{lessons}
+
+OBIETTIVO: insegnante inesperto (Prof.ssa Rossi, 52 anni) usa UNLIM alla LIM.
+Il prodotto DEVE funzionare in 5 secondi senza spiegazioni."""
+
+    results = []
+    all_tasks = []
+
+    # ─── KIMI = RICERCATORE ───
+    # Cerca cosa fanno i competitor che noi non facciamo
+    try:
+        kimi_r = call_kimi(
+            f"Sei un RICERCATORE EdTech. Analizza ELAB UNLIM e trova 2 cose CONCRETE "
+            f"che i competitor (Tinkercad, Wokwi, PhET) fanno MEGLIO di noi.\n"
+            f"Per ogni cosa: (1) cosa fanno loro, (2) cosa manca a noi, "
+            f"(3) FILE SPECIFICO da modificare, (4) COME fixarlo in <20 righe.\n"
+            f"Contesto: {base_context}\nMax 200 parole, italiano.", max_tokens=400)
+        results.append(f"## Kimi (Ricercatore)\n{kimi_r[:600]}")
+    except Exception as e:
+        results.append(f"## Kimi (Ricercatore)\n[ERROR: {e}]")
+
+    # ─── GEMINI = VALIDATORE UX ───
+    # Valuta se la Prof.ssa Rossi sopravvive
+    try:
+        gemini_r = call_gemini(
+            f"Sei un VALIDATORE UX spietato. La Prof.ssa Rossi (52 anni, zero esperienza) "
+            f"apre ELAB UNLIM sulla LIM davanti a 25 ragazzi di 12 anni.\n"
+            f"Rispondi: (1) Sopravvive i primi 30 secondi? SI/NO e perche.\n"
+            f"(2) I ragazzi capiscono cosa vedono sulla LIM? SI/NO.\n"
+            f"(3) Il problema UX PIU' GRAVE ora. File e riga da fixare.\n"
+            f"(4) Un TASK YAML concreto (id, priority, title, description).\n"
+            f"Contesto: {base_context}\nMax 200 parole, italiano.")
+        results.append(f"## Gemini (Validatore UX)\n{gemini_r[:600]}")
+        # Try to extract task
+        if "priority:" in gemini_r.lower() or "P0" in gemini_r or "P1" in gemini_r:
+            all_tasks.append(("gemini", gemini_r))
+    except Exception as e:
+        results.append(f"## Gemini (Validatore UX)\n[ERROR: {e}]")
+
+    # ─── CLAUDE = ARCHITETTO CRITICO ───
+    # Giudica la qualita del codice e l'architettura
+    try:
+        claude_prompt = (
+            f"Sei un ARCHITETTO SOFTWARE critico. Analizza ELAB UNLIM.\n"
+            f"{base_context}\n\n"
+            f"Rispondi con BRUTALE onesta:\n"
+            f"1. Il codice prodotto negli ultimi 5 cicli e' BUONO o MEDIOCRE? Perche?\n"
+            f"2. C'e' un BUG o DEBT TECNICO che nessuno sta affrontando?\n"
+            f"3. Crea 1 TASK YAML concreto per il problema piu' grave:\n"
+            f"   id: adv-c{cycle_num}-fix\n"
+            f"   priority: P0 o P1\n"
+            f"   title: ...\n"
+            f"   description: file specifico, cosa cambiare, come verificare\n"
+            f"Max 200 parole, italiano."
+        )
+        cr = subprocess.run(
+            ["claude", "-p", claude_prompt, "--output-format", "text",
+             "--dangerously-skip-permissions", "--model", "claude-opus-4-20250514",
+             "--max-turns", "5"],
+            capture_output=True, text=True, timeout=300,
+            cwd=str(PROJECT_ROOT), env={**os.environ}
+        )
+        results.append(f"## Claude (Architetto)\n{cr.stdout[:600]}")
+        if "priority:" in cr.stdout.lower() or "P0" in cr.stdout or "P1" in cr.stdout:
+            all_tasks.append(("claude", cr.stdout))
+    except Exception as e:
+        results.append(f"## Claude (Architetto)\n[ERROR: {e}]")
+
+    # ─── SALVA REVIEW ───
+    review_path = AUTOMA_ROOT / "state" / "adversarial-review.md"
+    review_path.write_text(
+        f"# Adversarial Review — Cycle {cycle_num}\n"
+        f"Date: {datetime.now().isoformat()}\n"
+        f"Score: {score}\n\n" +
+        "\n\n---\n\n".join(results) +
+        f"\n\n## Tasks Generati: {len(all_tasks)}\n"
+    )
+
+    # ─── CREA TASK YAML dalla review ───
+    pending = AUTOMA_ROOT / "queue" / "pending"
+    for source, text in all_tasks:
+        task_id = f"adv-{source}-c{cycle_num}"
+        task_path = pending / f"{task_id}.yaml"
+        if not task_path.exists():
+            # Extract priority and title from text
+            priority = "P1"
+            if "P0" in text: priority = "P0"
+            lines = [l.strip() for l in text.splitlines() if l.strip()]
+            title = f"Adversarial finding from {source} (C{cycle_num})"
+            for l in lines:
+                if l.lower().startswith("title:"):
+                    title = l.split(":", 1)[1].strip().strip("'\"")
+                    break
+            task_path.write_text(
+                f"id: {task_id}\n"
+                f"priority: {priority}\n"
+                f"title: '{title}'\n"
+                f"description: |\n"
+                f"  From adversarial review cycle {cycle_num} ({source}).\n"
+                f"  {text[:300]}\n"
+                f"tags: adversarial,auto-generated\n"
+            )
+            print(f"   Created task: {task_id} [{priority}]")
+
+    # ─── SCRIVI IN SHARED-RESULTS ───
+    sr = AUTOMA_ROOT / "state" / "shared-results.md"
+    with open(sr, "a") as f:
+        f.write(f"\n## [adversarial] {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+        f.write(f"- Score: {score}\n")
+        f.write(f"- Critici: {len(results)}\n")
+        f.write(f"- Tasks creati: {len(all_tasks)}\n")
+        for r in results:
+            first_line = r.split("\n")[1] if "\n" in r else r[:100]
+            f.write(f"- {first_line[:100]}\n")
+
+    print(f"   Saved: adversarial-review.md + shared-results.md ({len(all_tasks)} tasks)")
+    return results
 
 
 def _persist_ai_feedback(entry):
@@ -851,6 +1032,13 @@ def run_cycle(skip_slow=False, dry_run=False):
             print(f"   Patterns: {len(se_result.get('patterns',[]))}, Applied: {len(se_result.get('applied',[]))}")
         except Exception as e:
             print(f"   Self-exam error: {e}")
+
+    # Step 4c: Adversarial Review (every 5 cycles)
+    if cycle_num % 5 == 0 and cycle_num > 0 and not dry_run:
+        try:
+            run_adversarial_review(cycle_num, state)
+        except Exception as e:
+            print(f"   Adversarial error: {e}")
 
     # Step 5: Report
     rp = save_report(cycle_num, check_results, task_result, research,

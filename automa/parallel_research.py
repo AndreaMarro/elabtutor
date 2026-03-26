@@ -91,6 +91,50 @@ RESEARCH_AGENDA = [
             "EDGE-CASE-1: ...\n...\nTEST-SUGGERITO: ...\nSEVERITY: low/medium/high"
         ),
     },
+    {
+        "id": "pnrr_bandi",
+        "topic": "PNRR Scuola 4.0 bandi attivi simulatore didattico requisiti",
+        "prompt_template": (
+            "Cerca bandi PNRR Scuola 4.0 attivi nel 2026 per software didattico STEM.\n"
+            "Focus: requisiti tecnici, importi, scadenze, come candidarsi con ELAB UNLIM.\n"
+            "ELAB: simulatore circuiti + AI tutor + kit fisico. Prezzo target €500-1000/anno.\n"
+            "Max 300 parole. Formato:\n"
+            "BANDO-1: ...\nREQUISITI: ...\nAZIONE-ELAB: ...\nSEVERITY: high"
+        ),
+    },
+    {
+        "id": "gdpr_mistral",
+        "topic": "GDPR scuola italiana AI minori Mistral API EU modelli locali",
+        "prompt_template": (
+            "Come usare AI nelle scuole italiane rispettando il GDPR per minori 10-14?\n"
+            "Opzioni: Mistral (Francia, EU), modelli locali (Ollama), ibrido.\n"
+            "Focus: consenso genitori, DPA, data residency EU, modelli open-weight.\n"
+            "Max 300 parole. Formato:\n"
+            "OPZIONE-1: ...\nPRO/CONTRO: ...\nRACCOMANDAZIONE: ...\nSEVERITY: high"
+        ),
+    },
+    {
+        "id": "progetti_scuola",
+        "topic": "progetti innovativi scuola media elettronica Arduino Italia casi successo",
+        "prompt_template": (
+            "Cerca progetti scolastici italiani (scuole medie) che usano Arduino/elettronica.\n"
+            "Focus: cosa ha funzionato, come hanno convinto i dirigenti, budget, risultati.\n"
+            "ELAB vuole entrare in TUTTE le scuole medie italiane con kit €75 + licenza €500-1000.\n"
+            "Max 300 parole. Formato:\n"
+            "PROGETTO-1: ...\nCOSA-HA-FUNZIONATO: ...\nLEZIONE-PER-ELAB: ...\nSEVERITY: medium"
+        ),
+    },
+    {
+        "id": "innovazione_radicale",
+        "topic": "innovazione EdTech radicale non convenzionale gamification maker education",
+        "prompt_template": (
+            "Trova 2 idee RADICALI per un simulatore di circuiti educativo. Non banali.\n"
+            "Pensa a: maker education, Reggio Emilia, Montessori + tech, gamification profonda.\n"
+            "ELAB ha simulatore + AI tutor + kit fisico. Cosa nessun competitor ha MAI fatto?\n"
+            "Max 300 parole. Formato:\n"
+            "IDEA-1: ...\nPERCHE-NESSUNO-LO-FA: ...\nCOME-IMPLEMENTARE: ...\nSEVERITY: medium"
+        ),
+    },
 ]
 
 
@@ -150,6 +194,7 @@ def run_parallel_research(cycle_num: int, state: dict, blocking: bool = False) -
             "timestamp": datetime.now().isoformat(),
             "elapsed_s": round(elapsed, 1),
             "raw_response": result[:2000],
+            "text": result[:500],  # Short version for prompt injection
             "status": "error" if result.startswith("[") else "ok",
         }
 
