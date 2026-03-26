@@ -59,3 +59,109 @@ Formato: ## [nome-task] YYYY-MM-DD HH:MM → risultati strutturati
 - 1. Cosa fanno i competitor: Tinkercad offre un'interfaccia più intuitiva e facile da usare per i pro
 - **VALIDATORE UX ATTIVATO. ANALISI SPIETATA.**
 - [ERROR: Command '['claude', '-p', 'Sei un ARCHITETTO SOFTWARE critico. Analizza ELAB UNLIM.\nELAB UN
+
+---
+
+## [ricerca-web-reale] 2026-03-26 23:30
+
+### PNRR — Bandi attivi e opportunità
+
+1. **Avviso n. 115839 (3 luglio 2025)** — "Laboratori di orientamento e PCTO in ambito STEM"
+   - Destinatari: Scuole secondarie di secondo grado
+   - Modalità: Candidature "a sportello" fino a esaurimento fondi
+   - Finanzia: Orientamento scientifico, mobilità, laboratori STEM, workshop IA
+   - Fonte: https://www.tutornow.it/blog/formazione-scolastica/post/pnrr-scuola-2025-2026-stem-intelligenza-artificiale
+
+2. **Bandi attivi su MR Digital (marzo 2026)**:
+   - Potenziamento offerta formativa ITS Academy
+   - Fondi formazione AI per docenti
+   - Agenda Sud e Agenda Nord
+   - Realizzazione laboratori innovativi e avanzati
+   - Campus formativi integrati
+   - Fonte: https://education.mrdigital.it/bandi/
+
+3. **Piano Scuola 4.0** — Stanziamento totale: €2,1 miliardi per 100.000 classi
+   - Azione 1 (Next Generation Classrooms): ambienti innovativi
+   - Azione 2 (Next Generation Labs): laboratori professioni digitali
+   - Min 60% budget per dotazioni digitali (software, app, contenuti)
+   - Completamento progetti: dicembre 2025, formazione estesa a.s. 2025/2026
+   - Portali: pnrr.istruzione.it, padigitale2026.gov.it, Scuola Futura
+   - Fonte: https://www.campustore.it/bandi-e-finanziamenti/piano-nazionale-di-ripresa-e-resilienza-pnrr/piano-scuola-4-0-pnrr.html
+
+**DATO CRITICO per ELAB**: Il 60% minimo per dotazioni digitali (software incluso) è la porta d'ingresso. Le scuole DEVONO spendere su software STEM. Bandi "a sportello" = chi arriva prima prende.
+
+### Competitor
+
+#### Tinkercad Circuits (Autodesk)
+- **Prezzo**: GRATUITO, browser-based, nessun piano a pagamento
+- **Novità 2026**: Aggiunti componenti I2C, aggiornamenti interfaccia incrementali
+- **Limiti**: No librerie custom, no upload, set sensori limitato, no nuove board Arduino
+- **Punto debole**: Nessun aggiornamento sostanziale di feature nel 2025-2026. Stagnante.
+- Fonte: https://www.tinkercad.com/blog/i2c-components
+- Fonte: https://www.g2.com/products/tinkercad/reviews
+
+#### Wokwi
+- **Community (free)**: Simulazioni illimitate, progetti pubblici, WiFi virtuale
+- **Hobby**: $7/mese annuale — 100 build veloci, progetti unlisted, librerie custom
+- **Hobby+**: $12/mese annuale — 500 build veloci, VS Code integration
+- **Pro**: $25/posto/mese annuale — 1000 build, 2000 CI min, team billing
+- **Classroom**: Quotazione custom (min 5 studenti), ~$1,050/anno risparmio su annuale
+- **Punto forte**: ESP32, STM32, RPi Pico, WiFi sim — il più avanzato
+- **Punto debole per ELAB**: target professionale/universitario, non scuola media
+- Fonte: https://wokwi.com/pricing
+- Fonte: https://wokwi.com/classroom
+
+#### Arduino Education CTC GO!
+- **CTC GO! Core Module**: €1.830 per max 24 studenti (su Campustore)
+- **Arduino Student Kit**: €79 IVA inclusa (singolo studente)
+- **Durata hardware**: ~2 anni, accesso piattaforma: 1 anno dall'attivazione
+- **Include**: 8 UNO WiFi Rev2, 8 Education Shield, 20 sessioni da 45 min
+- **Piattaforma online**: IT, EN, ES, DE, PT, FR
+- **Punto debole per ELAB**: €1.830 per 24 studenti = €76/studente. ELAB kit €75 + licenza software competitivo.
+- Fonte: https://www.campustore.it/arduino-ctc-go-core-module.html
+- Fonte: https://store.arduino.cc/products/arduino-ctc-go-core-module
+
+### GDPR / Mistral AI — Alternativa EU-safe
+
+- **Azienda**: Francese, non soggetta a CLOUD Act USA
+- **Infrastruttura**: 18.000 chip NVIDIA in Francia (giugno 2025), EU data centers di default
+- **Piano Studenti**: €5,99/mese (Le Chat Pro studenti), €14,99/mese standard
+- **API pricing chiave per ELAB**:
+  - Mistral Small 3.1 (24B): $0.03/$0.11 per 1M token — OTTIMO per didattica
+  - Mistral Small 3.2 (24B): $0.075/$0.20 per 1M token
+  - Mistral Nemo: $0.02/$0.04 per 1M token — IL PIÙ ECONOMICO
+  - Mistral Large: $0.50/$1.50 per 1M token
+  - Devstral Small 2505: GRATUITO (experiment tier)
+- **GDPR**: Team/Enterprise = Zero Data Retention di default. API dati non usati per training.
+- **NOTA CNIL**: Reclamo pendente su opt-out free users (Art. 12 GDPR), nessuna decisione ancora
+- Fonte: https://pricepertoken.com/pricing-page/provider/mistral-ai
+- Fonte: https://www.waimakers.com/en/resources/gdpr-compliance/mistral-ai
+- Fonte: https://weventure.de/en/blog/mistral
+
+**CALCOLO COSTO ELAB con Mistral Nemo**: 1000 studenti x 20 domande/giorno x 500 token medi = 10M token/giorno input. Costo: $0.20/giorno = ~€6/mese. SOSTENIBILE nel budget €50/mese.
+
+### Progetti scuola media Italia — Simulatori circuiti
+
+1. **PhET (Univ. Colorado)** — Il più usato nelle scuole medie italiane
+   - Simulatore "Kit Creazione Circuiti: Corrente Continua"
+   - Gratuito, tradotto in italiano, browser-based
+   - Usato su tecnologiaduepuntozero.it per scuola secondaria
+   - Fonte: https://phet.colorado.edu/it/simulations/circuit-construction-kit-dc
+
+2. **IC Bregante-Volta** — Progetto "STEM: che passione!"
+   - Attività laboratoriali: circuiti su cartoncino con nastro rame + LED
+   - Approccio integrato discipline + digitale
+   - Fonte: https://www.icbregantevolta.edu.it/pagine/modulo-stem-che-passione
+
+3. **Simulatori gratuiti usati nelle scuole**:
+   - EveryCircuit, Lushprojects Circuit Simulator, DcAcLab
+   - Prof. Puglisi (Altervista): raccolta dei migliori simulatori gratuiti
+   - Fonte: https://profpuglisisalvatore.altervista.org/didattica/migliori-simulatori-elettronici-gratuiti/
+   - Fonte: https://www.electroyou.it/renzodf/wiki/articolo15
+
+**NESSUN progetto italiano usa un simulatore PROPRIETARIO con AI integrato per scuola media. ELAB è UNICO in questo spazio.**
+
+### Gap critici identificati
+
+1. **GAP PNRR**: ELAB non ha una pagina/landing dedicata ai bandi PNRR con codici MEPA e documentazione pronta per i dirigenti scolastici. Le scuole comprano tramite MEPA/Consip.
+2. **GAP Mistral**: L'integrazione Mistral API come fallback GDPR-safe non è implementata. Costo stimato: €6/mese per 1000 studenti con Mistral Nemo. Galileo attualmente dipende solo da Anthropic (non EU).

@@ -523,8 +523,15 @@ Se il tuo codice non supera questo scenario → NON COMMITTARE.
 8. Severity assegnata? Evidence level?
 NON ammorbidire. NON dire "parzialmente ok". FAIL e' FAIL.
 
-## TOOLS
+## TOOLS DISPONIBILI (USALI!)
+- **WebSearch** — OBBLIGATORIO per verificare claim, cercare competitor, bandi PNRR, paper.
+  Non inventare: CERCA. Ogni ciclo RESEARCH deve fare almeno 2 WebSearch.
+- **WebFetch** — per leggere pagine web specifiche (competitor, documentazione, bandi).
 - DeepSeek R1, Gemini 2.5 Pro, Kimi K2.5, Brain VPS, Playwright, Semantic Scholar
+- Read, Write, Edit, Bash, Glob, Grep — per modificare codice
+
+REGOLA: se fai una affermazione su competitor, mercato, PNRR, GDPR, pedagogia → DEVI
+fare WebSearch per verificare. Nessun claim senza fonte.
 
 ## OUTPUT (JSON sull'ultima riga)
 {{"task": "desc", "status": "done|partial|failed", "files_changed": [], "build_pass": true, "cov_verified": true, "severity": "low", "evidence": "verified"}}

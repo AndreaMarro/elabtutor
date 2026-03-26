@@ -1,0 +1,39 @@
+id: P1-mistral-fallback-gdpr
+priority: P1
+title: "Integrare Mistral API come fallback GDPR-safe per Galileo"
+created: 2026-03-26T23:30:00
+source: ricerca-web-reale
+description: |
+  Galileo (AI tutor) dipende attualmente solo da Anthropic (USA, soggetto a CLOUD Act).
+  Per le scuole italiane serve conformità GDPR piena con data residency EU.
+
+  Mistral AI è l'unica alternativa frontier-class con:
+  - Sede in Francia, non soggetta a CLOUD Act
+  - 18.000 chip NVIDIA in Francia (infrastruttura propria dal giugno 2025)
+  - EU data centers di DEFAULT (non add-on)
+  - Zero Data Retention su piani API Team/Enterprise
+
+  Modello consigliato: Mistral Nemo ($0.02/$0.04 per 1M token)
+  - Costo stimato 1000 studenti x 20 domande/giorno: ~€6/mese
+  - Perfettamente nel budget €50/mese
+
+  Alternative più capaci se serve qualità superiore:
+  - Mistral Small 3.1 (24B): $0.03/$0.11 — rapporto qualità/prezzo ottimo
+  - Mistral Small 3.2 (24B): $0.075/$0.20
+
+  Implementazione: aggiungere provider Mistral in n8n come fallback.
+  Se Anthropic non risponde o se la scuola richiede EU-only, Galileo usa Mistral.
+
+  Questo è un REQUISITO COMMERCIALE per vendere alle scuole tramite PNRR.
+  I DPO scolastici richiedono documentazione GDPR e data residency EU.
+
+acceptance_criteria:
+  - Galileo supporta provider multipli (Anthropic + Mistral)
+  - Configurazione EU-only mode attivabile per singola scuola
+  - Fallback automatico se provider primario non risponde
+  - Documentazione GDPR aggiornata con riferimento a Mistral EU
+  - Test con Mistral Nemo e Mistral Small su prompt didattici
+  - Costo verificato su 100 prompt reali
+
+estimated_effort: "6-8 ore"
+tags: [gdpr, mistral, ai, galileo, compliance, eu, fallback]

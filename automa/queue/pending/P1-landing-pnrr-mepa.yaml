@@ -1,0 +1,30 @@
+id: P1-landing-pnrr-mepa
+priority: P1
+title: "Creare landing page /scuole/pnrr con info bandi e codice MEPA"
+created: 2026-03-26T23:30:00
+source: ricerca-web-reale
+description: |
+  Le scuole italiane acquistano software didattico tramite MEPA/Consip e con fondi PNRR.
+  ELAB non ha una pagina dedicata che spieghi ai dirigenti scolastici:
+  - Come usare i fondi PNRR Piano Scuola 4.0 (Azione 1 + Azione 2) per acquistare ELAB
+  - Il codice MEPA (da registrare se non presente)
+  - Il confronto costi: ELAB kit €75 + licenza vs Arduino CTC GO €1.830/24 studenti
+  - La conformità GDPR (server EU, dati non usati per training)
+  - PDF scaricabile per delibera consiglio d'istituto
+
+  Bandi attivi: Avviso 115839 (a sportello), fondi formazione AI, laboratori innovativi.
+  Portali di riferimento: pnrr.istruzione.it, padigitale2026.gov.it
+
+  Il 60% minimo del budget Piano Scuola 4.0 deve andare a dotazioni digitali (software incluso).
+  Questa è la porta d'ingresso commerciale per ELAB.
+
+acceptance_criteria:
+  - Landing page /scuole/pnrr accessibile dal menu
+  - Sezione bandi attivi con link ai portali MIM
+  - Tabella confronto costi ELAB vs Arduino CTC vs Tinkercad
+  - Sezione GDPR compliance
+  - CTA per richiesta preventivo/demo
+  - PDF scaricabile per dirigente scolastico
+
+estimated_effort: "4-6 ore"
+tags: [marketing, pnrr, scuole, landing, commerciale]
