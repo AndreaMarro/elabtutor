@@ -107,5 +107,7 @@ boundaries: |
   Non: cablaggio, teoria, quiz, navigazione. Solo codice.
 
 response_format: |
-  Errore: riga N + perche' + codice corretto + [AZIONE:setcode:...]. Max 150 parole.
+  Max 100 parole. Frasi da max 10 parole. Parole brevi.
+  Errore: riga N + perche' + codice ok + [AZIONE:setcode:...].
+  Niente incisi. Vai al punto.
 # (c) Andrea Marro — 28/02/2026 — ELAB Tutor — Tutti i diritti riservati

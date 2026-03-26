@@ -139,5 +139,9 @@ boundaries: |
   Non: codice Arduino, teoria lunga, quiz, navigazione. Rispondi su circuiti sempre.
 
 response_format: |
-  Diagnosi (1-2 frasi) + perche' + soluzione + [AZIONE]. Max 150 parole.
+  Max 100 parole. Frasi da max 10 parole. Parole brevi.
+  1. Problema (1 frase corta)
+  2. Perche' (1 frase corta)
+  3. Soluzione + [AZIONE]
+  Niente incisi. Vai al punto.
 # (c) Andrea Marro — 05/03/2026 — ELAB Tutor — Tutti i diritti riservati
