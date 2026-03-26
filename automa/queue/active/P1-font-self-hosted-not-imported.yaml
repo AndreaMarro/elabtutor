@@ -1,0 +1,15 @@
+id: P1-font-self-hosted-not-imported
+title: Font self-hosted (fonts.css) mai importati — Google Fonts CDN ancora attivo
+priority: P1
+severity: high
+evidence: verified
+created: 2026-03-26
+cycle: 35
+mode: AUDIT
+description: |
+ma il file non è mai importato. src/index.css: 2 importa ancora Google Fonts da CDN.
+steps: 
+acceptance: 
+files_to_check: 
+claimed_at: "2026-03-26T12:52:38.764695"
+claimed_by: orchestrator

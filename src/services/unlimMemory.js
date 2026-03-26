@@ -198,7 +198,7 @@ const SYNC_INTERVAL = 60_000; // 60 seconds
 /**
  * Get the session ID (same as api.js uses for tutor chat)
  * @returns {string} Tutor session ID
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function _getSessionId() {
     const KEY = 'elab_tutor_session';

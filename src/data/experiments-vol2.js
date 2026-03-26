@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL2 = {
           correct: 1,
           explanation: "In serie le tensioni si sommano! Con due LED rossi: 1.8V + 1.8V = 3.6V. I restanti 5.4V cadono sul resistore (9V - 3.6V = 5.4V)."
         }
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       ]
     },
 
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL2 = {
       layout: {
         "bat1": { x: 30, y: 55 },
         "bb1": { x: 100, y: 10 },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "r1": { x: 159, y: 73.75 },
         "led1": { x: 189, y: 43.75 },
         "led2": { x: 241.5, y: 43.75 },
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL2 = {
           step: 2,
           text: "Prendi il resistore da 330Ω e posizionalo sui fori A2 e A9.",
           componentId: "r1",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:a2", "r1:pin2": "bb1:a9" },
           hint: "Il resistore limita la corrente nel circuito."
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL2 = {
           componentId: "r1",
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e16", "r1:pin2": "bb1:e23" },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il resistore limita la corrente nel circuito."
         },
         {
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il LED rosso dalla palette e posizionalo nei fori D23 e D24.",
           componentId: "led1",
           componentType: "led",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "led1:anode": "bb1:d23", "led1:cathode": "bb1:d24" },
           hint: "L'anodo (+, gamba lunga) va in D23 e il catodo (−, gamba corta) in D24."
         },
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL2 = {
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "battery9v",
           hint: "La batteria 9V alimenta il circuito."
         },
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "mm1:probe-negative", to: "bb1:b6", color: "black" }
       ],
       layout: {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "bat1": { x: 30, y: 55 },
         "bb1": { x: 100, y: 10 },
         "c1": { x: 155.25, y: 88.75 },
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL2 = {
         "led1:anode": "bb1:d14",
         "led1:cathode": "bb1:d15",
         "mos1:gate": "bb1:f17",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "mos1:drain": "bb1:f18",
         "mos1:source": "bb1:f19"
       },
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL2 = {
       observe: "Toccando il Gate, la carica statica del tuo corpo \u00E8 sufficiente per attivare il MOSFET e accendere il LED! Questo dimostra l'impedenza altissima del Gate: bastano pochissime cariche per controllarlo.",
       unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'MOSFET e carica del corpo'. In questo esperimento il Gate del MOSFET \u00E8 scollegato (flottante). Il Gate ha un'impedenza altissima, come una porta leggerissima: basta la minima carica statica del tuo corpo per 'spingerla' e accendere il LED! Quando cammini sul tappeto ti carichi di elettricit\u00E0 statica, e toccando il Gate la trasferisci. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       hexFile: null,
       concept: "Gate flottante, carica elettrostatica del corpo, impedenza altissima del Gate",
       layer: "terra",
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E5 e E12.",
           componentId: "r1",
           componentType: "resistor",
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 4,
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori E14 e E21.",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "r1",
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e14", "r1:pin2": "bb1:e21" },
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori E3 e E10.",
           componentId: "r1",
           componentType: "resistor",
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL2 = {
         "Il motore inizia a girare!"
       ],
       observe: "Il motore gira! L'energia elettrica della batteria viene convertita in energia meccanica (movimento). Il verso di rotazione dipende dalla polarit\u00E0 dei collegamenti.",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       unlimPrompt: "Sei UNLIM, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Far girare il motore'. Il motore DC (a corrente continua) converte l'energia elettrica della batteria in movimento! Dentro ha magneti e bobine di filo: quando la corrente passa, crea un campo magnetico che fa girare l'asse. \u00C8 lo stesso principio delle ventole, dei frullatori e dei droni! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-10", to: "bb1:a10", color: "red" },
         { from: "bb1:g12", to: "mot1:positive", color: "yellow" },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "mot1:negative", to: "bb1:bus-top-minus-12", color: "black" },
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" }
       ],
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E16 e E23.",
           componentId: "r1",
           componentType: "resistor",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "r1:pin1": "bb1:e16", "r1:pin2": "bb1:e23" },
           hint: "Il resistore limita la corrente nel circuito."
         },
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona la breadboard (full-size) nell'area di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-full",
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:g12",
           wireTo: "bb1:g8",
           wireColor: "purple",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega due parti del circuito."
         },
         {

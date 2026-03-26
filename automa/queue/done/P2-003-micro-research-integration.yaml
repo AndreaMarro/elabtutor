@@ -1,0 +1,13 @@
+id: micro-research-integration
+priority: P2
+title: Integrare micro-ricerca Semantic Scholar nel ciclo
+description: Ogni ciclo, dopo i check, cerca 1 paper recente su Semantic Scholar su un topic emerso dai risultati. Salva finding in knowledge/daily-findings.md. Se trova qualcosa utile, crea un task.
+tags: research,semantic-scholar
+claimed_at: "2026-03-26T03:48:21.758061"
+claimed_by: orchestrator
+failed_at: "2026-03-26T02:59:47.985907"
+error: unknown
+retry: 1
+requeued_at: "2026-03-26T03:27:37.682050"
+completed_at: "2026-03-26T03:49:33.533437"
+result: ok

@@ -198,7 +198,7 @@ class AVRBridge {
 
       case 'baudRate':
         if (typeof msg.requestId === 'number' && msg.requestId < this._lastBaudResponseId) {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           break;
         }
         if (typeof msg.requestId === 'number') {
@@ -399,7 +399,7 @@ class AVRBridge {
 
     if (!resolve) return;
     if (!hex) {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       resolve(false);
       return;
     }
@@ -600,7 +600,7 @@ class AVRBridge {
 
   /**
    * Simulate INPUT_PULLUP behavior.
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
    * In real hardware, enabling INPUT_PULLUP pulls the pin HIGH via internal resistor.
    * avr8js doesn't do this automatically — pinValue defaults to 0, so digitalRead()
    * returns LOW even with pull-up enabled. We hook into port register writes to detect
@@ -801,7 +801,7 @@ class AVRBridge {
     if (this._useWorker && this._worker) {
       this._worker.postMessage({ type: 'stop' });
       return;
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     if (this._throttleTimer) {
@@ -1002,7 +1002,7 @@ class AVRBridge {
    */
   getSerialBuffer() {
     const buf = this.serialBuffer;
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
     this.serialBuffer = '';
     return buf;
   }
@@ -1203,7 +1203,7 @@ class AVRBridge {
     if (this._worker) {
       this._worker.terminate();
       this._worker = null;
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       this._useWorker = false;
       this._workerReady = false;
     }

@@ -198,7 +198,7 @@ function createPublicAPI() {
     /**
      * Move a component to new coordinates
      * @param {string} componentId
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
      * @param {number} x - horizontal position
      * @param {number} y - vertical position
      */
@@ -399,7 +399,7 @@ function createPublicAPI() {
       const refs = Array.isArray(pinRefs) ? pinRefs : [pinRefs];
       _simulatorRef?.highlightPin?.(refs);
     },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     /**
      * Write text to the serial monitor (AVR experiments)
@@ -600,7 +600,7 @@ function createPublicAPI() {
      */
     on(event, callback) {
       if (!window.__ELAB_EVENTS) window.__ELAB_EVENTS = {};
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       if (!window.__ELAB_EVENTS[event]) window.__ELAB_EVENTS[event] = [];
       window.__ELAB_EVENTS[event].push(callback);
       return () => {

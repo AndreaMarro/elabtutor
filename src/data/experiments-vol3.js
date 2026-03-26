@@ -198,7 +198,7 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 </block></value>
 <statement name="DO0">
 <block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
 <next><block type="arduino_tone"><field name="PIN">8</field><value name="FREQ"><shadow type="math_number"><field name="NUM">523</field></shadow></value>
 <next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
 <value name="CONTENT"><shadow type="text"><field name="TEXT">Giallo!</field></shadow></value>
@@ -399,7 +399,7 @@ const SERIAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
 </block></next></block></next></block>
 </statement>
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
 </block></xml>`;
 
 // Extra — Servo Sweep (pin 9, semplificato: 0° → 180° → ripeti)
@@ -600,7 +600,7 @@ void loop() {
           hint: "R2 è il resistore del LED giallo, nella fila E (sotto i LED)."
         },
         {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 5,
           text: "Prendi il LED giallo e mettilo nei fori D29 e D30. L'anodo (+) in D29!",
           componentId: "led2",
@@ -801,7 +801,7 @@ void loop() {
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
       ],
       // Button at col 20: pin1 e20, pin2 f20. D6 (W_D6) → a20, f20 col → GND bus (via j20)
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       // R1 (green) row c col 18-25, LED1 shifted to d27-d28, bridge d25→d27. D10 (W_D10) → a18
       // R2 (red) row g col 18-25, LED2 shifted to h27-h28, bridge h25→h27. D9 (W_D9) → f18
       // cathodes col 28 → GND bus
@@ -1002,7 +1002,7 @@ void loop() {
           xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_pin_mode"><field name="PIN">6</field><field name="MODE">INPUT_PULLUP</field><next><block type="arduino_pin_mode"><field name="PIN">10</field><field name="MODE">OUTPUT</field><next><block type="arduino_pin_mode"><field name="PIN">9</field><field name="MODE">OUTPUT</field></block></next></block></next></block></statement><statement name="LOOP"><block type="controls_if"><mutation else="1"/><value name="IF0"><block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="arduino_digital_read"><field name="PIN">6</field></block></value><value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block></statement></block></xml>`,
         },
         {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           label: "Controlla i 2 LED",
           description: "Nel SE: DigitalWrite pin 10 HIGH (verde acceso) e pin 9 LOW (rosso spento). Nell'ALTRIMENTI: pin 10 LOW (verde spento) e pin 9 HIGH (rosso acceso). Compila e prova!",
           explanation: "Quando premi il pulsante i LED si scambiano! Questa è la versione semplificata — guarda il codice C++ a destra per vedere come si fa il vero toggle con le variabili di stato e il debounce.",
@@ -1203,7 +1203,7 @@ void loop() {
         "lcd1:d6": "bb1:a29",
         "lcd1:d7": "bb1:a30",
         "lcd1:vcc": "bb1:bus-bot-plus-25",
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         "lcd1:gnd": "bb1:bus-bot-minus-25"
       },
       connections: [
@@ -1404,7 +1404,7 @@ void loop() {
       code: `#include <Servo.h>
 
 Servo myServo;
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 void setup() {
   myServo.attach(9);
@@ -1605,7 +1605,7 @@ void loop() {
         /* Buzzer: left side of breadboard, columns 10-11 */
         "buz1": { x: 355, y: 43.75 }
       },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
       steps: [
         "Carica il codice su Arduino.",
         "Osserva il lampeggio iniziale: tutti e 4 i LED si accendono insieme con un suono acuto.",
@@ -1806,7 +1806,7 @@ void loop() {
           componentId: "led3",
           componentType: "led",
           targetPins: { "led3:anode": "bb1:h23", "led3:cathode": "bb1:h24" },
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Stesso schema del LED rosso, ma nella sezione inferiore."
         },
         {
@@ -2007,7 +2007,7 @@ void loop() {
       scratchSteps: [
         {
           step: 1,
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Apri l'editor Scratch (tab Blocchi) e trascina il blocco 'Imposta pin 9 come USCITA' nel Setup — questo prepara il primo LED",
           hint: "Ogni LED ha bisogno del suo pinMode OUTPUT nel setup — ne servono 4 per i LED + 1 per il cicalino.",
           explanation: "Il Setup si esegue una sola volta all'accensione. Qui prepariamo i pin dicendo ad Arduino quali sono uscite (OUTPUT) e quali ingressi (INPUT_PULLUP)."

@@ -198,7 +198,7 @@ function getPWMDutyCycle(arduinoPin) {
     case 9: {
       // Pin 9 (OC1A) - Timer1 usa registro 16-bit OCR1A
       if (d[TCCR1A] & 0x80) {
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
         const ocr1a = (d[OCR1AH] << 8) | d[OCR1AL]; // Leggi 16-bit completo
         return (ocr1a & 0xFF) / 255; // Usiamo byte basso per analogWrite (8-bit)
       }
@@ -399,7 +399,7 @@ function stopExecution() {
   if (self._channel) {
     self._channel.port1.close();
     self._channel.port2.close();
-// © Andrea Marro — 23/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 26/03/2026 — ELAB Tutor — Tutti i diritti riservati
     self._channel = null;
   }
 }
