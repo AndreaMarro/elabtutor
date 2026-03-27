@@ -3,6 +3,15 @@
 PRIMA di qualsiasi azione, leggi questi file IN ORDINE.
 Se non li leggi, lavorerai senza contesto e produrrai lavoro inutile.
 
+## 0. LA BUSSOLA — VISIONE PRODOTTO (LEGGI PRIMA DI TUTTO)
+Leggi: `automa/context/PRODUCT-VISION.md`
+- I 6 problemi strutturali del prodotto
+- I 3 pezzi per UNLIM completo (volumi, lezione, inline)
+- Le priorità P0/P1
+- I test di verità (ogni modifica deve superarli)
+- Le linee di ricerca
+OGNI azione deve servire questa visione. Se non la serve → non farla.
+
 ## 1. CHI SEI E COSA VUOI IL COMMITTENTE
 Leggi: `automa/context/ELAB-COMPLETE-CONTEXT.md` (primi 4000 char)
 - Chi sono i committenti (Omaric, Franzoso, Fagherazzi)

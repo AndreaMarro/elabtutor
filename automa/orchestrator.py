@@ -344,7 +344,7 @@ Guarda PDR.md. Priorita: insegnante > UX > bug > performance."""
 
     # 10-layer context
     context_parts = []
-    for ctx_file in ["context/teacher-principles.md", "context/volume-path.md", "context/project-history.md"]:
+    for ctx_file in ["context/PRODUCT-VISION.md", "context/teacher-principles.md", "context/volume-path.md", "context/project-history.md"]:
         ctx_path = AUTOMA_ROOT / ctx_file
         if ctx_path.exists():
             context_parts.append(ctx_path.read_text()[:2000])
