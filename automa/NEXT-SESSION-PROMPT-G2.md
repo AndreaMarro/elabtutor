@@ -83,12 +83,29 @@ Massima onestà. Usa superpowers. CoV su tutto.
 - Creare task specifici per generare percorsi lezione v1-cap6-esp2, v1-cap6-esp3, v1-cap7-esp1, ecc.
 - Rilanciare l'automa se morto
 
-## BUGS DA FIXARE (dall'audit)
-- [ ] UnlimOverlay: clearTimeout non cancella fade timer su unmount
-- [ ] UnlimWrapper: showMessage nell'effect non in deps array
-- [ ] UnlimWrapper: handleSend timeout senza cleanup
-- [ ] Template: verificare "Resistore 470Ω" vs vocabolario vietato Cap 6
-- [ ] CSS: inline styles → CSS modules per consistenza
+## BUGS GIÀ FIXATI (Giorno 1 — NON rifare)
+- [x] UnlimOverlay: clearTimeout nested setTimeout — FIXATO (commit fac8d5a)
+- [x] UnlimWrapper: showMessage stale closure — FIXATO
+- [x] UnlimWrapper: handleSend timeout senza cleanup — FIXATO (ref + useEffect)
+- [x] Touch target 44px → 56px — FIXATO
+- [x] Font input 16px → 24px — FIXATO
+- [x] Switch position top:12px → top:52px — FIXATO
+- [x] `<style>` dentro `<button>` — FIXATO (Fragment)
+
+## BUGS RESIDUI
+- [ ] CSS: inline styles → CSS modules per consistenza (bassa priorità)
+- [ ] Mascotte è una "U" — serve SVG/immagine reale (P2)
+
+## CONTESTO BUSINESS CRITICO (scoperto sessione 27/03)
+- **Giovanni Fagherazzi** = ex Global Sales Director di ARDUINO (non consulente generico)
+- **Omaric Elettronica** = Strambino (TO) = stessa sede storica Smart Projects (produttore originale Arduino)
+- **Davide Fagherazzi** = gestisce MePA/procurement PA
+- Il team ha GIÀ la filiera: hardware (Omaric) + vendite (Giovanni) + procurement (Davide) + dev (Andrea)
+- NON serve CampuStore — il team È la distribuzione
+- **PNRR deadline 30/06/2026** — finestra che si chiude. Scuole DEVONO spendere.
+- **Teacher Dashboard MVP è OBBLIGATORIA** per vendere alle scuole
+- **Minaccia reale**: Arduino Education (12-18 mesi). MA Giovanni è nel team ELAB.
+- Il prodotto deve essere all'altezza di chi ha gestito le vendite globali di Arduino.
 
 ## REFERENCE
 - Build: `export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH" && npm run build`
@@ -99,9 +116,10 @@ Massima onestà. Usa superpowers. CoV su tutto.
 - Score: 0.946 (composite)
 - Palette: Navy #1E4D8C, Lime #7CB342
 - Test: "La Prof.ssa Rossi lo capirebbe in 5 secondi?"
+- Claude-mem: http://localhost:37777/api/health (ok v10.3.1)
 
 ## RULES
-1. Leggi SESSION-HANDOFF-G1 prima di tutto — non ripetere lavoro già fatto
+1. Leggi SESSION-HANDOFF-G1 e RESOCONTO prima di tutto — non ripetere lavoro già fatto
 2. Non toccare CircuitSolver, AVRBridge, evaluate.py, checks.py
 3. Build DEVE passare dopo ogni modifica
 4. Massima onestà — se qualcosa non funziona, dillo
@@ -109,18 +127,19 @@ Massima onestà. Usa superpowers. CoV su tutto.
 6. Il test è sempre: "La Prof.ssa Rossi lo capirebbe in 5 secondi?"
 7. Il prodotto UNLIM non funziona ancora — siamo al Giorno 2 di 14
 8. Deploy Vercel dopo ogni gruppo di fix significativo
+9. Il prodotto deve impressionare un ex Global Sales Director di Arduino
+10. La finestra PNRR si chiude il 30/06/2026 — ogni giorno conta
 
 ## PLAN
-1. Leggi tutti i file di contesto
+1. Leggi tutti i file di contesto (NON rileggere i 43 del Giorno 1 — solo handoff + resoconto + nuovi)
 2. Verifica stato: build, deploy, score, automa
-3. Fix bug dall'audit (overlay, wrapper, template)
-4. Connetti input bar → Galileo API
-5. Connetti LessonPathPanel → percorsi lezione
-6. Implementa "Monta il circuito per me"
-7. Deploy nanobot su Render
-8. Pulisci queue automa + dai task percorsi lezione
-9. Audit + CoV con superpowers
-10. Scrivi SESSION-HANDOFF per Giorno 3
+3. Connetti input bar → Galileo API (sendChat da src/services/api.js)
+4. Connetti LessonPathPanel → percorsi lezione JSON
+5. Implementa "Monta il circuito per me" via [INTENT:JSON]
+6. Deploy nanobot su Render
+7. Pulisci queue automa (rimuovi ~20 research generici) + dai task percorsi lezione
+8. Audit + CoV con superpowers
+9. Scrivi SESSION-HANDOFF per Giorno 3
 
 ## OUTPUT
 Alla fine della sessione:
