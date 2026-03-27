@@ -51,37 +51,39 @@ export default function UnlimWrapper({ children }) {
   }, [inputBarVisible]);
 
   // Quando l'utente invia un messaggio dalla barra input
-  // TODO Giorno 3-5: connettere a Galileo API via __ELAB_API.askUNLIM
+  // TODO Giorno 2: connettere a Galileo API via sendChat()
+  const speakingTimerRef = React.useRef(null);
   const handleSend = useCallback((text) => {
     setMascotState('speaking');
-    // Per ora, mostra un overlay di conferma
     showMessage(`Ho ricevuto: "${text}". La connessione a Galileo sarà attiva presto!`, {
       position: 'top-center',
       icon: '🤖',
       type: 'info',
       duration: 4000,
     });
-    setTimeout(() => setMascotState('active'), 3000);
+    clearTimeout(speakingTimerRef.current);
+    speakingTimerRef.current = setTimeout(() => setMascotState('active'), 3000);
   }, [showMessage]);
+  // Cleanup speaking timer on unmount
+  useEffect(() => () => clearTimeout(speakingTimerRef.current), []);
 
   // Mostra messaggio di benvenuto quando si cambia esperimento
-  React.useEffect(() => {
-    if (isUnlim && lessonPath) {
-      const preparePhase = lessonPath.phases?.[0];
-      if (preparePhase?.class_hook) {
-        // Piccolo ritardo per non sovrapporre con il caricamento
-        const timer = setTimeout(() => {
-          showMessage(preparePhase.class_hook, {
-            position: 'top-center',
-            icon: '💡',
-            type: 'hint',
-            duration: 8000,
-          });
-        }, 1500);
-        return () => clearTimeout(timer);
-      }
+  useEffect(() => {
+    if (!isUnlim || !currentExperimentId) return;
+    const path = getLessonPath(currentExperimentId);
+    const preparePhase = path?.phases?.[0];
+    if (preparePhase?.class_hook) {
+      const timer = setTimeout(() => {
+        showMessage(preparePhase.class_hook, {
+          position: 'top-center',
+          icon: '💡',
+          type: 'hint',
+          duration: 8000,
+        });
+      }, 1500);
+      return () => clearTimeout(timer);
     }
-  }, [currentExperimentId, isUnlim]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentExperimentId, isUnlim, showMessage]);
 
   // In Classic Mode: renderizza solo i children + switch
   if (!isUnlim) {
@@ -112,7 +114,7 @@ export default function UnlimWrapper({ children }) {
       {/* Switch UNLIM/Classic in alto a destra */}
       <div style={{
         position: 'fixed',
-        top: '12px',
+        top: '52px',
         right: '12px',
         zIndex: 1002,
       }}>

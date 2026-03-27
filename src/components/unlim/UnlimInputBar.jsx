@@ -104,7 +104,7 @@ export default function UnlimInputBar({
           padding: '0 16px',
           border: '2px solid var(--color-border, #E5E5EA)',
           borderRadius: 'var(--radius-full, 9999px)',
-          fontSize: 'var(--font-size-base, 16px)',
+          fontSize: 'var(--font-size-xl, 24px)',
           fontFamily: 'var(--font-sans)',
           color: 'var(--color-text, #1A1A2E)',
           background: 'var(--color-bg-secondary, #F7F7F8)',

@@ -51,15 +51,17 @@ function OverlayMessage({ message, onDismiss }) {
     // Fade in
     const showTimer = setTimeout(() => setVisible(true), 50);
 
-    // Auto-dismiss
+    // Auto-dismiss with proper cleanup for inner timeout
+    let innerDismiss;
     const fadeTimer = setTimeout(() => {
       setFading(true);
-      setTimeout(() => onDismiss(message.id), 400);
+      innerDismiss = setTimeout(() => onDismiss(message.id), 400);
     }, message.duration);
 
     return () => {
       clearTimeout(showTimer);
       clearTimeout(fadeTimer);
+      clearTimeout(innerDismiss);
     };
   }, [message.id, message.duration, onDismiss]);
 

@@ -67,8 +67,8 @@ export default function UnlimModeSwitch({ isUnlim, onToggle }) {
         fontFamily: 'var(--font-sans)',
         fontWeight: 'var(--font-weight-semibold, 600)',
         transition: 'all 0.2s ease',
-        minHeight: '44px',
-        minWidth: '44px',
+        minHeight: '56px',
+        minWidth: '56px',
       }}
     >
       <span style={{
