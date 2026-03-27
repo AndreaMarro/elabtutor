@@ -35,6 +35,43 @@ import v1Cap10Esp3 from './v1-cap10-esp3.json';
 import v1Cap10Esp4 from './v1-cap10-esp4.json';
 import v1Cap10Esp5 from './v1-cap10-esp5.json';
 import v1Cap10Esp6 from './v1-cap10-esp6.json';
+import v1Cap11Esp1 from './v1-cap11-esp1.json';
+import v1Cap11Esp2 from './v1-cap11-esp2.json';
+import v1Cap12Esp1 from './v1-cap12-esp1.json';
+import v1Cap12Esp2 from './v1-cap12-esp2.json';
+import v1Cap12Esp3 from './v1-cap12-esp3.json';
+import v1Cap12Esp4 from './v1-cap12-esp4.json';
+import v1Cap13Esp1 from './v1-cap13-esp1.json';
+import v1Cap13Esp2 from './v1-cap13-esp2.json';
+import v1Cap14Esp1 from './v1-cap14-esp1.json';
+
+// Volume 2 — Approfondiamo
+import v2Cap6Esp1 from './v2-cap6-esp1.json';
+import v2Cap6Esp2 from './v2-cap6-esp2.json';
+import v2Cap6Esp3 from './v2-cap6-esp3.json';
+import v2Cap6Esp4 from './v2-cap6-esp4.json';
+import v2Cap7Esp1 from './v2-cap7-esp1.json';
+import v2Cap7Esp2 from './v2-cap7-esp2.json';
+import v2Cap7Esp3 from './v2-cap7-esp3.json';
+import v2Cap7Esp4 from './v2-cap7-esp4.json';
+import v2Cap8Esp1 from './v2-cap8-esp1.json';
+import v2Cap8Esp2 from './v2-cap8-esp2.json';
+import v2Cap8Esp3 from './v2-cap8-esp3.json';
+import v2Cap9Esp1 from './v2-cap9-esp1.json';
+import v2Cap9Esp2 from './v2-cap9-esp2.json';
+import v2Cap10Esp1 from './v2-cap10-esp1.json';
+import v2Cap10Esp2 from './v2-cap10-esp2.json';
+import v2Cap10Esp3 from './v2-cap10-esp3.json';
+import v2Cap10Esp4 from './v2-cap10-esp4.json';
+import v2Cap12Esp1 from './v2-cap12-esp1.json';
+
+// Volume 3 — Arduino Programmato
+import v3Cap6Semaforo from './v3-cap6-semaforo.json';
+import v3Cap7Mini from './v3-cap7-mini.json';
+import v3Cap8Serial from './v3-cap8-serial.json';
+import v3ExtraLcdHello from './v3-extra-lcd-hello.json';
+import v3ExtraServoSweep from './v3-extra-servo-sweep.json';
+import v3ExtraSimon from './v3-extra-simon.json';
 
 // Registry percorsi lezione disponibili
 const LESSON_PATHS = {
@@ -67,6 +104,41 @@ const LESSON_PATHS = {
   'v1-cap10-esp4': v1Cap10Esp4,
   'v1-cap10-esp5': v1Cap10Esp5,
   'v1-cap10-esp6': v1Cap10Esp6,
+  'v1-cap11-esp1': v1Cap11Esp1,
+  'v1-cap11-esp2': v1Cap11Esp2,
+  'v1-cap12-esp1': v1Cap12Esp1,
+  'v1-cap12-esp2': v1Cap12Esp2,
+  'v1-cap12-esp3': v1Cap12Esp3,
+  'v1-cap12-esp4': v1Cap12Esp4,
+  'v1-cap13-esp1': v1Cap13Esp1,
+  'v1-cap13-esp2': v1Cap13Esp2,
+  'v1-cap14-esp1': v1Cap14Esp1,
+  // Volume 2
+  'v2-cap6-esp1': v2Cap6Esp1,
+  'v2-cap6-esp2': v2Cap6Esp2,
+  'v2-cap6-esp3': v2Cap6Esp3,
+  'v2-cap6-esp4': v2Cap6Esp4,
+  'v2-cap7-esp1': v2Cap7Esp1,
+  'v2-cap7-esp2': v2Cap7Esp2,
+  'v2-cap7-esp3': v2Cap7Esp3,
+  'v2-cap7-esp4': v2Cap7Esp4,
+  'v2-cap8-esp1': v2Cap8Esp1,
+  'v2-cap8-esp2': v2Cap8Esp2,
+  'v2-cap8-esp3': v2Cap8Esp3,
+  'v2-cap9-esp1': v2Cap9Esp1,
+  'v2-cap9-esp2': v2Cap9Esp2,
+  'v2-cap10-esp1': v2Cap10Esp1,
+  'v2-cap10-esp2': v2Cap10Esp2,
+  'v2-cap10-esp3': v2Cap10Esp3,
+  'v2-cap10-esp4': v2Cap10Esp4,
+  'v2-cap12-esp1': v2Cap12Esp1,
+  // Volume 3
+  'v3-cap6-semaforo': v3Cap6Semaforo,
+  'v3-cap7-mini': v3Cap7Mini,
+  'v3-cap8-serial': v3Cap8Serial,
+  'v3-extra-lcd-hello': v3ExtraLcdHello,
+  'v3-extra-servo-sweep': v3ExtraServoSweep,
+  'v3-extra-simon': v3ExtraSimon,
 };
 
 /**
