@@ -5,7 +5,7 @@
  * © Andrea Marro — 27/03/2026
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 /**
  * Barra input UNLIM — testo + microfono + invio
@@ -24,6 +24,9 @@ export default function UnlimInputBar({
 }) {
   const [text, setText] = useState('');
   const inputRef = useRef(null);
+
+  // M1 fix: auto-focus input al mount
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

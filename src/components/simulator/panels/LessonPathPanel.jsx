@@ -12,7 +12,7 @@
  *   onLoadExperiment: (id) => void — loads an experiment in the simulator
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { getCurriculum } from '../../../data/curriculumData';
 import { getLessonPath } from '../../../data/lesson-paths';
 
@@ -173,7 +173,8 @@ const PHASE_TITLES = [
 const PHASE_DURATIONS = ['prima della lezione', '2 min', '3 min', '15 min', 'quando serve', '5 min'];
 
 /* ─── Rich Lesson Path — Renderizza percorso lezione da JSON UNLIM ─── */
-function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClose, onSendToUNLIM, onLoadExperiment }) {
+function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClose, onLoadExperiment }) {
+  const [alreadyLoaded, setAlreadyLoaded] = useState(false);
   const phases = path.phases;
 
   // Progress bar visiva: ● PREPARA ○ MOSTRA ○ CHIEDI ○ OSSERVA ○ CONCLUDI
@@ -278,7 +279,8 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
             // Se l'esperimento è già caricato, non ricaricare
             const current = api.getCurrentExperiment?.();
             if (current?.id === experimentId) {
-              // Already loaded — noop, o potremmo triggerare il Passo Passo
+              setAlreadyLoaded(true);
+              setTimeout(() => setAlreadyLoaded(false), 2000);
               return;
             }
             // Carica l'esperimento nel simulatore (componenti + wires + layout)
@@ -286,9 +288,12 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
               api.loadExperiment(experimentId);
             }
           }}
-          style={RS.buildBtn}
+          style={{
+            ...RS.buildBtn,
+            ...(alreadyLoaded ? { background: '#558B2F', color: '#fff' } : {}),
+          }}
         >
-          🔧 {phase.build_circuit.button_label || 'Monta il circuito per me'}
+          {alreadyLoaded ? '✓ Già caricato!' : `🔧 ${phase.build_circuit.button_label || 'Monta il circuito per me'}`}
         </button>
       );
     }
@@ -590,7 +595,6 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
         expandedPhase={expandedPhase}
         onExpandPhase={setExpandedPhase}
         onClose={onClose}
-        onSendToUNLIM={onSendToUNLIM}
         onLoadExperiment={onLoadExperiment}
       />
     );

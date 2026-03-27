@@ -8,13 +8,33 @@
 // Import statici per i percorsi già pronti
 import v1Cap6Esp1 from './v1-cap6-esp1.json';
 import v1Cap6Esp2 from './v1-cap6-esp2.json';
+import v1Cap6Esp3 from './v1-cap6-esp3.json';
 import v1Cap7Esp1 from './v1-cap7-esp1.json';
+import v1Cap7Esp2 from './v1-cap7-esp2.json';
+import v1Cap7Esp3 from './v1-cap7-esp3.json';
+import v1Cap7Esp4 from './v1-cap7-esp4.json';
+import v1Cap7Esp5 from './v1-cap7-esp5.json';
+import v1Cap7Esp6 from './v1-cap7-esp6.json';
+import v1Cap8Esp1 from './v1-cap8-esp1.json';
+import v1Cap8Esp2 from './v1-cap8-esp2.json';
+import v1Cap9Esp1 from './v1-cap9-esp1.json';
+import v1Cap10Esp1 from './v1-cap10-esp1.json';
 
 // Registry percorsi lezione disponibili
 const LESSON_PATHS = {
   'v1-cap6-esp1': v1Cap6Esp1,
   'v1-cap6-esp2': v1Cap6Esp2,
+  'v1-cap6-esp3': v1Cap6Esp3,
   'v1-cap7-esp1': v1Cap7Esp1,
+  'v1-cap7-esp2': v1Cap7Esp2,
+  'v1-cap7-esp3': v1Cap7Esp3,
+  'v1-cap7-esp4': v1Cap7Esp4,
+  'v1-cap7-esp5': v1Cap7Esp5,
+  'v1-cap7-esp6': v1Cap7Esp6,
+  'v1-cap8-esp1': v1Cap8Esp1,
+  'v1-cap8-esp2': v1Cap8Esp2,
+  'v1-cap9-esp1': v1Cap9Esp1,
+  'v1-cap10-esp1': v1Cap10Esp1,
 };
 
 /**

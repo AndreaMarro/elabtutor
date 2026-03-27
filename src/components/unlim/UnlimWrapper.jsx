@@ -5,7 +5,7 @@
  * © Andrea Marro — 27/03/2026
  */
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import UnlimMascot from './UnlimMascot';
 import UnlimOverlay, { useOverlayMessages } from './UnlimOverlay';
 import UnlimInputBar from './UnlimInputBar';
@@ -30,25 +30,35 @@ export default function UnlimWrapper({ children }) {
 
   // Auto-rileva l'esperimento corrente dall'evento del simulatore
   // P1-2 fix: retry se __ELAB_API non è pronto al mount
+  // C1 fix: mountedRef previene memory leak se unmount durante retry
+  const mountedRef = useRef(true);
   useEffect(() => {
+    mountedRef.current = true;
     function trySubscribe() {
+      if (!mountedRef.current) return false;
       const api = window.__ELAB_API;
       if (!api?.on) return false;
       api.on('experimentChange', handleExpChange);
       return true;
     }
     function handleExpChange(data) {
+      if (!mountedRef.current) return;
       if (data?.experimentId) setCurrentExperimentId(data.experimentId);
     }
     if (!trySubscribe()) {
-      const retryTimer = setTimeout(trySubscribe, 800);
+      const retryTimer = setTimeout(() => {
+        if (!mountedRef.current) return;
+        trySubscribe();
+      }, 800);
       return () => {
+        mountedRef.current = false;
         clearTimeout(retryTimer);
         const api = window.__ELAB_API;
         if (api?.off) api.off('experimentChange', handleExpChange);
       };
     }
     return () => {
+      mountedRef.current = false;
       const api = window.__ELAB_API;
       if (api?.off) api.off('experimentChange', handleExpChange);
     };
