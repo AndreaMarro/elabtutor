@@ -1,13 +1,20 @@
 # Kimi Research — Cycle 6
-Topic: pedagogia docenti inesperti elettronica scuola media Italia
-Date: 2026-03-26T01:26:36.581462
+Topic: PNRR Scuola 4.0 bandi attivi simulatore didattico requisiti
+Date: 2026-03-27T03:13:14.342144
 
-INSIGHT-1: La didattica di elettronica nella scuola media italiana può trarre vantaggio dall'utilizzo di strumenti innovativi come il simulatore di circuiti browser e l'AI Galileo, che possono rendere l'apprendimento più interattivo e accessibile per gli studenti.
+BANDO-1: PNRR Scuola 4.0 - Sviluppo software didattico STEM per scuole medie italiane.
 
-INSIGHT-2: I docenti inesperti nell'ambito dell'elettronica possono beneficiare di formazione specifica per utilizzare al meglio queste tecnologie educative, migliorando così la qualità dell'insegnamento e l'engagement degli studenti.
+REQUISITI: 
+1. Software didattico STEM che integri simulatore circuiti educativo e AI tutor.
+2. Supporto per studenti tra 10-14 anni, con focus su scuola secondaria di secondo grado.
+3. Kit fisico incluso nel prezzo, con costo di €75.
+4. Licenza annuale tra €500-1000.
+5. Rispetto GDPR, con elaborazione dati solo all'interno dell'UE.
 
-INSIGHT-3: L'integrazione di AI come Galileo può aiutare a personalizzare l'esperienza di apprendimento degli studenti, offrendo loro suggerimenti e risorse in base alle loro esigenze e livelli di competenza.
+AZIONE-ELAB: 
+1. Presentare proposta dettagliata di ELAB UNLIM, includendo simulatore circuiti, AI tutor e kit fisico.
+2. Dimostrarne l'efficacia e l'impatto educativo, con particolare attenzione all'uso da parte di insegnanti inesperti.
+3. Includere piani di adozione e formazione per scuole e docenti.
+4. Garantire la conformità con i requisiti tecnici e normativi, inclusi i criteri di privacy GDPR.
 
-PROPOSTA: Implementare un programma di formazione continua per i docenti che copra l'uso di queste nuove tecnologie educative, con particolare attenzione all'utilizzo del simulatore di circuiti e dell'AI Galileo, per garantire che i docenti siano a proprio agio nell'integrarle nelle loro lezioni.
-
-SEVERITY: medium
+SEVERITY: high

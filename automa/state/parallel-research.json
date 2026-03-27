@@ -1,28 +1,6 @@
 {
   "findings": [
     {
-      "cycle": 11,
-      "topic_id": "circuit_accuracy",
-      "topic": "accuratezza simulatore circuiti educativo KCL KVL MNA errori comuni",
-      "timestamp": "2026-03-26T02:53:52.557112",
-      "elapsed_s": 5.1,
-      "raw_response": "EDGE-CASE-1: Circuito con LED non funzionante\nTEST-SUGGERITO: Collegare un LED in parallelo con una resistenza e verificare se il simulatore mostra il corretto comportamento di illuminazione.\nSEVERITY: medium\n\nEDGE-CASE-2: Cortocircuito in un circuito con resistenze\nTEST-SUGGERITO: Creare un cortocircuito tra due nodi di tensione diversa e verificare se il simulatore identifica il cortocircuito e si arresta correttamente.\nSEVERITY: high\n\nEDGE-CASE-3: Circuito con componenti in parallelo\nTEST-SUGGERITO: Collegare resistenze in parallelo e verificare se il simulatore calcola correttamente la resistenza equivalente.\nSEVERITY: medium\n\nEDGE-CASE-4: Circuito con KCL/KVL non rispettate\nTEST-SUGGERITO: Creare un circuito dove le leggi di Kirchhoff non sono rispettate e verificare se il simulatore segnala l'errore.\nSEVERITY: high\n\nEDGE-CASE-5: Circuito con solver MNA non accurato\nTEST-SUGGERITO: Testare il solver MNA con circuiti complessi per verificare la precisione delle soluzioni trovate.\nSEVERITY: high",
-      "status": "ok",
-      "severity": "medium",
-      "actioned": true
-    },
-    {
-      "cycle": 12,
-      "topic_id": "pedagogy",
-      "topic": "pedagogia docenti inesperti elettronica scuola media Italia",
-      "timestamp": "2026-03-26T03:10:49.602114",
-      "elapsed_s": 5.3,
-      "raw_response": "INSIGHT-1: La pedagogia docenti inesperti in elettronica nella scuola media italiana può trarre vantaggio dall'utilizzo di strumenti tecnologici come il simulatore di circuiti browser e l'AI Galileo, che semplificano l'insegnamento di concetti complessi.\n\nINSIGHT-2: I docenti con scarsa esperienza nell'ambito dell'elettronica possono beneficiare di una formazione specifica per utilizzare al meglio i tutor elettronici per bambini, migliorando così la qualità dell'insegnamento.\n\nINSIGHT-3: L'adozione di un approccio inclusivo e accessibile, come evidenziato dalla punteggio alto di \"responsive_a11y\", è fondamentale per garantire che tutti gli studenti possano fruire pienamente delle risorse didattiche.\n\nPROPOSTA: Integrare un modulo di formazione online per i docenti inesperti in elettronica, che copra argomenti di base e avanzati, utilizzando il simulatore di circuiti e l'AI Galileo come strumenti pratici per l'apprendimento.\n\nSEVERITY: medium",
-      "status": "ok",
-      "severity": "medium",
-      "actioned": true
-    },
-    {
       "cycle": 13,
       "topic_id": "competitor",
       "topic": "competitor EdTech simulatori elettronica 2026 Tinkercad Wokwi Arduino",
@@ -550,9 +528,31 @@
       "raw_response": "Gli errori più comuni nei simulatori di circuiti educativi includono:\n\n1. **Inaccuratezza nel solver**: Gli algoritmi di risoluzione come KCL, KVL e MNA devono essere accurati per simulare il comportamento dei circuiti. Un solver non accurato può portare a risultati errati e indurre gli studenti in errore.\n\n2. **Modellazione LED non corretta**: La modellazione di componenti come LED deve riflettere accuratamente il loro comportamento in realtà, inclusa la dipendenza della corrente e della tensione.\n\n3. **Problemi con componenti in parallelo**: La gestione di componenti in parallelo può essere complessa e richiede un'accurata implementazione del solver per evitare errori.\n\n4. **Cortocircuiti non gestiti**: I simulatori devono essere in grado di rilevare e gestire i cortocircuiti in modo sicuro e accurato, altrimenti possono fornire informazioni errate sul comportamento del circuito.\n\nPer l'ELAB che utilizza un MNA solver proprio, ecco alcuni edge case da testare:\n\n**EDGE-CASE-1: Componenti in parallelo con valori di resistenza molto diversi**\n- TEST-SUGGESTED: Connettere resistenze con valori molto diversi in parallelo e verificare se il solver calcola correttamente la tensione e la corrente totale.\n- SEVERITY: medium\n\n**EDGE-CASE-2: LED con tensione di attivazione vicina a zero**\n- TEST-SUGGESTED: Simulare un LED con una tensione di attivazione molto bassa per vedere se il simulatore gestisce correttamente il passaggio dalla conduzione alla non conduzione.\n- SEVERITY: high\n\n**EDGE-CASE-3: Cortocircuito con componenti di alta potenza**\n- TEST-SUGGESTED: Creare un cortocircuito con componenti che dovrebbero dissipare molta energia e verificare se il simulatore gestisce correttamente l'overflow di corrente.\n- SEVERITY: high\n\n**EDGE-CASE-4: Rete di circuiti con loop complessi**\n- TEST-SUGGESTED: Costruire una rete di circuiti con loop complessi e verificare l'accuratezza del solver in termini di velocità di risposta e precisione dei risultati.\n- SEVERITY: medium\n\nQuesti",
       "text": "Gli errori più comuni nei simulatori di circuiti educativi includono:\n\n1. **Inaccuratezza nel solver**: Gli algoritmi di risoluzione come KCL, KVL e MNA devono essere accurati per simulare il comportamento dei circuiti. Un solver non accurato può portare a risultati errati e indurre gli studenti in errore.\n\n2. **Modellazione LED non corretta**: La modellazione di componenti come LED deve riflettere accuratamente il loro comportamento in realtà, inclusa la dipendenza della corrente e della tensio",
       "status": "ok"
+    },
+    {
+      "cycle": 6,
+      "topic_id": "pnrr_bandi",
+      "topic": "PNRR Scuola 4.0 bandi attivi simulatore didattico requisiti",
+      "timestamp": "2026-03-27T03:12:57.106736",
+      "elapsed_s": 8.3,
+      "raw_response": "BANDO-1: PNRR Scuola 4.0 - Software Didattico STEM\n\nREQUISITI: \n- Software didattico STEM per scuole medie italiane (10-14 anni).\n- Integrazione di simulatore circuiti educativo e AI tutor.\n- Kit fisico incluso nel prezzo.\n- Compatibilità con React 19 + Vite, Vercel, Nanobot su Render, Brain V13 locale.\n- Rispettare GDPR: modelli locali + Mistral (EU) per produzione, nessun dato di minori su server USA.\n\nAZIONE-ELAB: \n- Elaborare un'offerta che include simulatore circuiti + AI tutor + kit fisico.\n- Prezzo target: €500-1000/anno.\n- Garantire che il software sia facile da usare per insegnanti inesperti, in linea con il PRINCIPIO ZERO.\n- Includere la possibilità di spiegare immediatamente la LIM (Limite di Isolamento di Maxwell).\n- Focus sui requisiti tecnici, importi e scadenze per candidarsi con ELAB UNLIM.\n\nSEVERITY: high\n\nIl contesto ciclo corrente mostra un'alta qualità del prodotto ELAB UNLIM, con punteggi elevati in diverse categorie, come la sicurezza, la funzionalità del simulatore, l'integrazione con AI e la qualità del codice. Tuttavia, è importante tenere presente che questi punteggi sono inflati e non provenienti da evaluate.py, ma da composite_v3. La nota di severità alta indica l'importanza di soddisfare questi requisiti per il successo nel bando PNRR Scuola 4.0.",
+      "text": "BANDO-1: PNRR Scuola 4.0 - Software Didattico STEM\n\nREQUISITI: \n- Software didattico STEM per scuole medie italiane (10-14 anni).\n- Integrazione di simulatore circuiti educativo e AI tutor.\n- Kit fisico incluso nel prezzo.\n- Compatibilità con React 19 + Vite, Vercel, Nanobot su Render, Brain V13 locale.\n- Rispettare GDPR: modelli locali + Mistral (EU) per produzione, nessun dato di minori su server USA.\n\nAZIONE-ELAB: \n- Elaborare un'offerta che include simulatore circuiti + AI tutor + kit fisico",
+      "status": "ok",
+      "severity": "high"
+    },
+    {
+      "cycle": 6,
+      "topic_id": "pnrr_bandi",
+      "topic": "PNRR Scuola 4.0 bandi attivi simulatore didattico requisiti",
+      "timestamp": "2026-03-27T03:13:14.342144",
+      "elapsed_s": 6.7,
+      "raw_response": "BANDO-1: PNRR Scuola 4.0 - Sviluppo software didattico STEM per scuole medie italiane.\n\nREQUISITI: \n1. Software didattico STEM che integri simulatore circuiti educativo e AI tutor.\n2. Supporto per studenti tra 10-14 anni, con focus su scuola secondaria di secondo grado.\n3. Kit fisico incluso nel prezzo, con costo di €75.\n4. Licenza annuale tra €500-1000.\n5. Rispetto GDPR, con elaborazione dati solo all'interno dell'UE.\n\nAZIONE-ELAB: \n1. Presentare proposta dettagliata di ELAB UNLIM, includendo simulatore circuiti, AI tutor e kit fisico.\n2. Dimostrarne l'efficacia e l'impatto educativo, con particolare attenzione all'uso da parte di insegnanti inesperti.\n3. Includere piani di adozione e formazione per scuole e docenti.\n4. Garantire la conformità con i requisiti tecnici e normativi, inclusi i criteri di privacy GDPR.\n\nSEVERITY: high",
+      "text": "BANDO-1: PNRR Scuola 4.0 - Sviluppo software didattico STEM per scuole medie italiane.\n\nREQUISITI: \n1. Software didattico STEM che integri simulatore circuiti educativo e AI tutor.\n2. Supporto per studenti tra 10-14 anni, con focus su scuola secondaria di secondo grado.\n3. Kit fisico incluso nel prezzo, con costo di €75.\n4. Licenza annuale tra €500-1000.\n5. Rispetto GDPR, con elaborazione dati solo all'interno dell'UE.\n\nAZIONE-ELAB: \n1. Presentare proposta dettagliata di ELAB UNLIM, includendo s",
+      "status": "ok",
+      "severity": "high"
     }
   ],
-  "last_cycle": 5,
+  "last_cycle": 6,
   "total_insights": 51,
-  "updated": "2026-03-27T02:56:00.613898"
+  "updated": "2026-03-27T03:13:14.343056"
 }
