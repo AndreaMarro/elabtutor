@@ -105,7 +105,7 @@
         },
         {
           "mistake": "Il LED si brucia girando il pot al minimo",
-          "teacher_response": "Serve la resistenza fissa in serie! Il pot da solo può arrivare a 0. La resistenza fissa è il limitatore di sicurezza.",
+          "teacher_response": "Serve la resistenza fissa di protezione! Il pot da solo può arrivare a 0. La resistenza fissa è il limitatore di sicurezza.",
           "analogy": "Come un limitatore di velocità"
         }
       ]

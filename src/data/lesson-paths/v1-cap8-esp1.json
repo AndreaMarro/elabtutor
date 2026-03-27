@@ -141,7 +141,7 @@
       "icon": "✅",
       "duration_minutes": 5,
       "teacher_message": "Oggi abbiamo scoperto il pulsante — un componente che apre e chiude il circuito.",
-      "teacher_tip": "Chiedi: 'Cosa fareste se voleste che il LED resti acceso senza tenere premuto?' Prepara per concetto di latch.",
+      "teacher_tip": "Chiedi: 'Cosa fareste se voleste che il LED resti acceso senza tenere premuto?' Anticipa il concetto di interruttore che resta in posizione.",
       "components_list": null,
       "class_hook": null,
       "action_tags": [],
@@ -154,7 +154,7 @@
 
   "assessment_invisible": [
     "Se capisce che il LED si spegne rilasciando → ha capito circuito aperto/chiuso",
-    "Se chiede 'posso fare che resta acceso senza tenere premuto?' → pronto per concetto latch/toggle",
+    "Se chiede 'posso fare che resta acceso senza tenere premuto?' → pronto per interruttore a scorrimento",
     "Se prova a mettere due pulsanti → curiosità verso serie/parallelo"
   ],
 

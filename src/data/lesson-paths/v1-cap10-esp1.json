@@ -53,7 +53,7 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Mostra la fotoresistenza: 2 piedini, senza polarità. Va in serie con il LED e il resistore di protezione.",
+      "teacher_message": "Mostra la fotoresistenza: 2 piedini, senza polarità. Va collegata uno dopo l'altro con il LED e il resistore di protezione.",
       "teacher_tip": "Dai la fotoresistenza prima di montare il circuito. Chiedi: 'Cosa notate quando la coprite con la mano?'",
       "components_list": null,
       "class_hook": null,
@@ -100,7 +100,7 @@
         },
         {
           "mistake": "Fotoresistenza al posto sbagliato",
-          "teacher_response": "Va in serie col LED, come una resistenza normale. È come il potenziometro, ma la manopola è la luce stessa.",
+          "teacher_response": "Va collegata nella stessa fila del LED, come una resistenza normale. È come il potenziometro, ma la manopola è la luce stessa.",
           "analogy": "Come il potenziometro, ma la manopola è la luce"
         },
         {
