@@ -190,10 +190,25 @@ def run_parallel_research(cycle_num: int, state: dict, blocking: bool = False):
 
         prompt = elab_context + "\n" + agenda_item["prompt_template"].format(topic=agenda_item["topic"])
 
-        # Add cycle context if available
+        # Add cycle context: last lesson + score + recent work
         last_eval = state.get("scores", {})
         if last_eval:
-            prompt += f"\n\nContesto ciclo corrente: score={json.dumps(last_eval)}"
+            prompt += f"\n\nScore attuale: composite={last_eval.get('composite', '?')}"
+
+        # Inject last 3 lessons so Kimi knows what the automa just did
+        lessons_path = Path(__file__).parent / "state" / "lessons.jsonl"
+        if lessons_path.exists():
+            lines = lessons_path.read_text().strip().splitlines()[-3:]
+            recent = []
+            for l in lines:
+                try:
+                    d = json.loads(l)
+                    recent.append(f"  C{d.get('cycle','?')}: {d.get('status','?')} — {d.get('task','?')[:60]}")
+                except:
+                    pass
+            if recent:
+                prompt += "\n\nULTIMI CICLI AUTOMA (rispondi a QUESTI, non in astratto):\n" + "\n".join(recent)
+                prompt += "\n\nRispondi con AZIONI CONCRETE relative a quello che l'automa sta facendo ORA. Non generico."
 
         # Call Kimi
         result = call_kimi(prompt, max_tokens=1500)
