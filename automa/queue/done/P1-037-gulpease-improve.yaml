@@ -6,7 +6,5 @@ success_criteria: >
 plan: 
 requeued_at: "2026-03-24T22:38:57.125539"
 requeue_reason: orchestrator_restart_stale
-claimed_at: "2026-03-26T16:25:37.903575"
+claimed_at: "2026-03-26T23:11:06.869163"
 claimed_by: orchestrator
-completed_at: "2026-03-26T16:32:42.074330"
-result: ok

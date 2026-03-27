@@ -1,9 +1,0 @@
-id: adv-gemini-c100
-priority: P1
-title: 'Fix Onboarding: Rimuovere Progressive Disclosure di default'
-description: |
-  From adversarial review cycle 100 (gemini).
-  **VALIDATORE UX ATTIVATO. ANALISI SPIETATA.**
-
-(1) **NO.** Non sopravvive. Il "progressive disclosure" (ciclo 47) è letale. La Prof.ssa Rossi, con zero esperienza e 25 paia di occhi puntati addosso, si troverà davanti un'interfaccia mezza vuota. Non saprà cosa cliccare per far apparire il resto. Pan
-tags: adversarial,auto-generated

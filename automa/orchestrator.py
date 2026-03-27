@@ -558,8 +558,9 @@ fare WebSearch per verificare. Nessun claim senza fonte.
 def run_claude_headless(prompt, max_time=1500):
     log_file = AUTOMA_ROOT / "logs" / f"claude-{datetime.now().strftime('%H%M%S')}.log"
     try:
+        claude_bin = "/Users/andreamarro/.npm-global/bin/claude"
         result = subprocess.run(
-            ["claude", "-p", prompt, "--output-format", "text",
+            [claude_bin, "-p", prompt, "--output-format", "text",
              "--dangerously-skip-permissions", "--model", "claude-opus-4-20250514", "--max-turns", "40"],
             capture_output=True, text=True, timeout=max_time,
             cwd=str(PROJECT_ROOT),
@@ -761,8 +762,9 @@ DEVE funzionare in 5 secondi senza spiegazioni. Mai mostrare tutto subito."""
             f"   description: file specifico, cosa cambiare, come verificare\n"
             f"Max 200 parole, italiano."
         )
+        claude_bin = "/Users/andreamarro/.npm-global/bin/claude"
         cr = subprocess.run(
-            ["claude", "-p", claude_prompt, "--output-format", "text",
+            [claude_bin, "-p", claude_prompt, "--output-format", "text",
              "--dangerously-skip-permissions", "--model", "claude-opus-4-20250514",
              "--max-turns", "5"],
             capture_output=True, text=True, timeout=300,

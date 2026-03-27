@@ -113,7 +113,7 @@ def call_gemini(prompt: str, images: list = None, model: str = "gemini-2.5-pro")
 
 # ─── Kimi K2.5 (review, second opinion) ─────────────────
 
-def call_gemini_cli(prompt: str, model: str = "gemini-2.5-flash", timeout: int = 60) -> str:
+def call_gemini_cli(prompt: str, model: str = "gemini-2.5-flash", timeout: int = 120) -> str:
     """Call Gemini via CLI (OAuth, no API key needed). Uses ermagician@gmail.com account."""
     import subprocess
     try:
