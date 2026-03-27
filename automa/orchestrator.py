@@ -596,7 +596,7 @@ def select_mode(cycle, check_results, task, state=None):
     return "IMPROVE"
 
 
-def ai_scoring(state, cycle):
+def run_ai_scoring(state, cycle):
     from tools import call_deepseek_reasoner, call_gemini, call_kimi
     rules = _load_executable_rules()
     skip_ds = rules.get("executable", {}).get("skip_deepseek_when_failing", False)
@@ -615,7 +615,7 @@ def ai_scoring(state, cycle):
             _persist_ai_feedback(f"[DeepSeek score] {score[:300]}")
 
     if cycle % 10 == 0:
-        analysis = call_gemini(
+        gemini_prompt = (
             "CONTESTO: ELAB UNLIM — simulatore circuiti + AI tutor per scuole medie italiane. "
             "67 esperimenti, 3 volumi, kit fisico €75, licenza €500-1000/anno. "
             "Committenti: Omaric (Franzoso, produttore Arduino) + Fagherazzi (Raas Impact). "
@@ -623,6 +623,9 @@ def ai_scoring(state, cycle):
             "ANALISI: mercato EdTech italiano 2026. Competitor CONCRETI di UNLIM? "
             "Cosa manca per vendere alle scuole? Bandi PNRR? Max 200 parole."
         )
+        analysis = call_gemini(gemini_prompt)
+        if "[SKIP]" in analysis or "[ERROR]" in analysis:
+            analysis = call_gemini_cli(gemini_prompt)  # Fallback OAuth
         results.append(f"Gemini market: {analysis[:300]}")
         _persist_ai_feedback(f"[Gemini market] {analysis[:300]}")
 
@@ -647,7 +650,7 @@ def ai_scoring(state, cycle):
 def run_adversarial_review(cycle_num, state):
     """Ogni 5 cicli: 3 critici con RUOLI DIVERSI producono TASK CONCRETI.
     Kimi = ricercatore, Gemini = validatore UX, Claude = architetto critico."""
-    from tools import call_kimi, call_gemini
+    from tools import call_kimi, call_gemini, call_gemini_cli
     import subprocess
 
     print(f"\n⚔️  Adversarial Review — Cycle {cycle_num}")
@@ -708,7 +711,7 @@ DEVE funzionare in 5 secondi senza spiegazioni. Mai mostrare tutto subito."""
     # ─── GEMINI = VALIDATORE UX ───
     # Valuta se la Prof.ssa Rossi sopravvive
     try:
-        gemini_r = call_gemini(
+        gemini_prompt = (
             f"Sei un VALIDATORE UX spietato. La Prof.ssa Rossi (52 anni, zero esperienza) "
             f"apre ELAB UNLIM sulla LIM davanti a 25 ragazzi di 12 anni.\n"
             f"Rispondi: (1) Sopravvive i primi 30 secondi? SI/NO e perche.\n"
@@ -716,6 +719,9 @@ DEVE funzionare in 5 secondi senza spiegazioni. Mai mostrare tutto subito."""
             f"(3) Il problema UX PIU' GRAVE ora. File e riga da fixare.\n"
             f"(4) Un TASK YAML concreto (id, priority, title, description).\n"
             f"Contesto: {base_context}\nMax 200 parole, italiano.")
+        gemini_r = call_gemini(gemini_prompt)
+        if "[SKIP]" in gemini_r or "[ERROR]" in gemini_r:
+            gemini_r = call_gemini_cli(gemini_prompt)  # Fallback OAuth
         results.append(f"## Gemini (Validatore UX)\n{gemini_r[:600]}")
         # Try to extract task
         if "priority:" in gemini_r.lower() or "P0" in gemini_r or "P1" in gemini_r:
@@ -936,7 +942,7 @@ def run_cycle(skip_slow=False, dry_run=False):
 
     # Step 2c: AI scoring
     print("\n  AI scoring...")
-    ai_result = ai_scoring(state, cycle_num) if not dry_run else None
+    ai_result = run_ai_scoring(state, cycle_num) if not dry_run else None
     if ai_result:
         print(f"   {ai_result[:200]}")
 

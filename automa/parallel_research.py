@@ -151,7 +151,7 @@ def save_findings(data: dict):
     FINDINGS_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False))
 
 
-def run_parallel_research(cycle_num: int, state: dict, blocking: bool = False) -> dict | None:
+def run_parallel_research(cycle_num: int, state: dict, blocking: bool = False):
     """Run Kimi K2.5 research in parallel with the main cycle.
 
     Args:

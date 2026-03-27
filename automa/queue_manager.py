@@ -65,7 +65,7 @@ def list_tasks(status: str = "pending") -> list:
     return tasks
 
 
-def get_next_task() -> dict | None:
+def get_next_task():
     """Get the highest-priority pending task."""
     tasks = list_tasks("pending")
     return tasks[0] if tasks else None
