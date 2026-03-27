@@ -7,3 +7,4 @@ d897c66	0.9745	IMPROVE	discard	C43: browser-check-fix + galileo-breve-didattico
 7f5e5f9	0.4500	IMPROVE	keep	Font self-hosted: rimosso Google Fonts CDN da index.html e src/index.css, attiva
 83bea86	0.9445	IMPROVE	keep	Fase 0.3: Chat UNLIM minimizzata per default, eliminare Sono qui
 83bea86	0.9415	IMPROVE	keep	Fase 0.2: Nascondere Dev/Dashboard/Admin dal menu per utenti normali
+d463400	0.9415	IMPROVE	keep	Fase 0.4: Eliminare toggle Modalità Guida OFF

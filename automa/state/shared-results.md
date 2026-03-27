@@ -204,3 +204,11 @@ Formato: ## [nome-task] YYYY-MM-DD HH:MM → risultati strutturati
 - **Best practice**: (1) Progressione universale Guidato→Semi-guidato→Autonomo, (2) Sessioni 45-50 min, (3) Insegnante non deve essere esperto, (4) Feedback immediato simulatore, (5) Starters/template pre-fatti, (6) Screenshot come "consegna", (7) Gruppi 2-3 studenti
 - **Cosa ELAB puo prendere**: (1) Struttura 5 step per sessione, (2) Starters/circuiti template, (3) Progressione 3 fasi come CTC GO, (4) Gestione classe integrata, (5) Galileo AI come guida DENTRO il simulatore (nessun competitor ce l'ha), (6) Passo Passo vocale (unico), (7) Collegamento Volume fisico ↔ lezione digitale (unico), (8) Report AI automatico per insegnante
 - **File completo**: `automa/knowledge/competitor-lesson-structures.md`
+
+## [adversarial] 2026-03-27 03:05
+- Score: 0.943
+- Critici: 3
+- Tasks creati: 1
+- ### Cosa 1: Interattività e Simulazioni Dinamiche (Confronto con PhET)
+- Ok, Andrea. Allacciati le cinture. Qui non si abbellisce niente.
+- Error: Reached max turns (5)

@@ -480,57 +480,7 @@ export default React.memo(function ChatOverlay({
                 </div>
             </div>
 
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '10px',
-                padding: '10px 16px',
-                background: 'var(--color-chat-suggestion-bg)',
-                borderBottom: '1px solid var(--color-chat-suggestion-border)',
-                flexShrink: 0,
-            }}>
-                <span style={{
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    color: 'var(--color-primary)',
-                    letterSpacing: '0.2px',
-                    fontFamily: 'Open Sans, sans-serif',
-                }}>
-                    Modalità Guida
-                </span>
-                <button
-                    type="button"
-                    onClick={() => onToggleSocraticMode?.()}
-                    aria-pressed={socraticMode}
-                    aria-label="Attiva o disattiva Modalità Guida"
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        border: socraticMode ? '1px solid var(--color-accent-hover)' : '1px solid var(--color-border-hover)',
-                        background: socraticMode ? 'var(--color-accent)' : 'var(--color-border)',
-                        color: socraticMode ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
-                        borderRadius: '999px',
-                        padding: '4px 10px 4px 4px',
-                        minHeight: '44px',
-                        cursor: 'pointer',
-                        transition: 'all 150ms ease',
-                        fontSize: '14px',
-                        fontWeight: 700,
-                    }}
-                >
-                    <span style={{
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        background: 'var(--color-bg)',
-                        display: 'inline-block',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                    }} />
-                    {socraticMode ? 'ON' : 'OFF'}
-                </button>
-            </div>
+            {/* Guide mode is always active — no toggle needed */}
 
             {/* ======== MESSAGES AREA ======== */}
             <div

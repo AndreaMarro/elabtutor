@@ -107,7 +107,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     }]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isSocraticMode, setIsSocraticMode] = useState(false);
+    const isSocraticMode = true; // Always active — guide mode IS the product
 
     // Active Experiment (for AI context) — MUST be declared before useCallbacks that depend on it
     const [activeExperiment, setActiveExperiment] = useState(null);
@@ -2323,7 +2323,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     selectedVolume={selectedVolume}
                     isMobile={isMobile}
                     socraticMode={isSocraticMode}
-                    onToggleSocraticMode={() => setIsSocraticMode(prev => !prev)}
+                    onToggleSocraticMode={null}
                     allowedGames={isDocente ? null : user?.classActiveGames ?? null}
                     voiceEnabled={voiceEnabled}
                     onVoiceToggle={handleVoiceToggle}

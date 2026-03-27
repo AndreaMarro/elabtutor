@@ -1707,3 +1707,8 @@ Kimi: Il tema "readability index Italian children" si riferisce all'analisi dell
 DeepSeek: **2 Problemi:**
 1.  **Complessità linguistica sottovalutata:** Gli indici tradizionali (es. Gulpease) considerano lunghezza di parole e frasi, ma non catturano pienamente ostacoli per i bambini come lessico astratto, costruzioni ipotattiche complesse o connettivi logici.
 2.  **Mancanza di adattamento al target:** Non integrano database lessicali specifici per fasce d'età, ignorando quali parole si
+
+## Cycle 5 - iPad touch interface educational
+DeepSeek: **Problemi per ELAB Tutor:**
+1.  **Sviluppo motorio limitato:** Le interazioni base (toccare, scorrere) non sviluppano la motricità fine necessaria per la scrittura manuale, creando un divario tra attività digitale e abilità tradizionali.
+2.  **Carico cognitivo elevato:** L'interfaccia multi-touch e le notifiche incoraggiano il multitasking, frammentando l'attenzione dello studente e riducendo la 
