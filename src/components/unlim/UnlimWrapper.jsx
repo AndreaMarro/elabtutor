@@ -5,12 +5,13 @@
  * © Andrea Marro — 27/03/2026
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import UnlimMascot from './UnlimMascot';
 import UnlimOverlay, { useOverlayMessages } from './UnlimOverlay';
 import UnlimInputBar from './UnlimInputBar';
 import UnlimModeSwitch, { useUnlimMode } from './UnlimModeSwitch';
 import { getLessonPath } from '../../data/lesson-paths';
+import { sendChat } from '../../services/api';
 
 /**
  * UnlimWrapper — avvolge il contenuto del tutor e aggiunge il layer UNLIM.
@@ -50,22 +51,56 @@ export default function UnlimWrapper({ children }) {
     }
   }, [inputBarVisible]);
 
-  // Quando l'utente invia un messaggio dalla barra input
-  // TODO Giorno 2: connettere a Galileo API via sendChat()
-  const speakingTimerRef = React.useRef(null);
-  const handleSend = useCallback((text) => {
+  // Quando l'utente invia un messaggio dalla barra input → Galileo API
+  const abortRef = useRef(null);
+  const handleSend = useCallback(async (text) => {
     setMascotState('speaking');
-    showMessage(`Ho ricevuto: "${text}". La connessione a Galileo sarà attiva presto!`, {
-      position: 'top-center',
-      icon: '🤖',
-      type: 'info',
-      duration: 4000,
-    });
-    clearTimeout(speakingTimerRef.current);
-    speakingTimerRef.current = setTimeout(() => setMascotState('active'), 3000);
-  }, [showMessage]);
-  // Cleanup speaking timer on unmount
-  useEffect(() => () => clearTimeout(speakingTimerRef.current), []);
+    // Abort precedente richiesta se ancora in corso
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const result = await sendChat(text, [], {
+        signal: controller.signal,
+        experimentId: currentExperimentId || undefined,
+        experimentContext: lessonPath
+          ? `Esperimento: ${lessonPath.title} (${lessonPath.experiment_id}). Obiettivo: ${lessonPath.objective || ''}`
+          : undefined,
+      });
+
+      // Se abortato nel frattempo, non mostrare
+      if (controller.signal.aborted) return;
+
+      if (result?.success && result.response) {
+        showMessage(result.response, {
+          position: 'top-center',
+          icon: '🤖',
+          type: 'info',
+          duration: 12000,
+        });
+      } else {
+        showMessage('Non sono riuscito a rispondere. Riprova tra poco!', {
+          position: 'top-center',
+          icon: '⚠️',
+          type: 'info',
+          duration: 4000,
+        });
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError' || controller.signal.aborted) return;
+      showMessage('Errore di connessione. Controlla la rete e riprova.', {
+        position: 'top-center',
+        icon: '⚠️',
+        type: 'info',
+        duration: 4000,
+      });
+    } finally {
+      if (!controller.signal.aborted) setMascotState('active');
+    }
+  }, [showMessage, currentExperimentId, lessonPath]);
+  // Cleanup abort controller on unmount
+  useEffect(() => () => { if (abortRef.current) abortRef.current.abort(); }, []);
 
   // Mostra messaggio di benvenuto quando si cambia esperimento
   useEffect(() => {

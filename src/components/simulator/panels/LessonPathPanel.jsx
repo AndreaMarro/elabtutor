@@ -14,6 +14,7 @@
 
 import React from 'react';
 import { getCurriculum } from '../../../data/curriculumData';
+import { getLessonPath } from '../../../data/lesson-paths';
 
 /* ─── Component type → Italian display name ─── */
 const COMP_NAMES = {
@@ -171,6 +172,401 @@ const PHASE_TITLES = [
 ];
 const PHASE_DURATIONS = ['prima della lezione', '2 min', '3 min', '15 min', 'quando serve', '5 min'];
 
+/* ─── Rich Lesson Path — Renderizza percorso lezione da JSON UNLIM ─── */
+function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClose, onSendToUNLIM, onLoadExperiment }) {
+  const phases = path.phases;
+
+  // Progress bar visiva: ● PREPARA ○ MOSTRA ○ CHIEDI ○ OSSERVA ○ CONCLUDI
+  const progressBar = (
+    <div style={RS.progressBar}>
+      {phases.map((phase, i) => (
+        <button
+          key={phase.name}
+          onClick={() => onExpandPhase(i)}
+          style={{
+            ...RS.progressStep,
+            ...(expandedPhase === i ? RS.progressStepActive : {}),
+          }}
+          title={phase.name}
+        >
+          <span style={expandedPhase === i ? RS.progressDotActive : RS.progressDot}>
+            {expandedPhase > i ? '✓' : phase.icon}
+          </span>
+          <span style={RS.progressLabel}>{phase.name}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  // Render contenuto di ogni fase
+  const renderPhaseContent = (phase, index) => {
+    const content = [];
+
+    // Teacher message (sempre)
+    if (phase.teacher_message) {
+      content.push(
+        <p key="msg" style={S.phaseText}>{phase.teacher_message}</p>
+      );
+    }
+
+    // Teacher tip (box evidenziato)
+    if (phase.teacher_tip) {
+      content.push(
+        <div key="tip" style={RS.teacherTipBox}>
+          <span style={RS.teacherTipIcon}>💡</span>
+          <span>{phase.teacher_tip}</span>
+        </div>
+      );
+    }
+
+    // Lista componenti (fase PREPARA)
+    if (phase.components_list) {
+      content.push(
+        <p key="comp" style={S.phaseNote}>{phase.components_list}</p>
+      );
+    }
+
+    // Class hook
+    if (phase.class_hook) {
+      content.push(
+        <div key="hook" style={RS.hookBox}>
+          <span style={RS.hookIcon}>🎤</span>
+          <em>{phase.class_hook}</em>
+        </div>
+      );
+    }
+
+    // Domanda provocatoria (fase CHIEDI)
+    if (phase.provocative_question) {
+      content.push(
+        <div key="question" style={S.questionBox}>
+          <span style={S.questionMark}>?</span>
+          <span style={S.questionText}>{phase.provocative_question}</span>
+        </div>
+      );
+    }
+
+    // Errori comuni (fase CHIEDI)
+    if (phase.common_mistakes?.length > 0) {
+      content.push(
+        <div key="mistakes">
+          <p style={S.phaseLabel}>Errori tipici e come reagire:</p>
+          <ul style={S.errorList}>
+            {phase.common_mistakes.map((m, i) => (
+              <li key={i} style={S.errorItem}>
+                <strong>{m.mistake}</strong> → {m.teacher_response}
+                {m.analogy && <em style={{ display: 'block', marginTop: 2, color: '#6B7280' }}>Analogia: {m.analogy}</em>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    // "Monta il circuito per me" (fase MOSTRA)
+    if (phase.build_circuit?.intent) {
+      content.push(
+        <button
+          key="build"
+          onClick={() => {
+            const api = window.__ELAB_API;
+            if (!api) return;
+            const intent = phase.build_circuit.intent;
+            // Piazza componenti e fili via __ELAB_API
+            if (intent.components) {
+              for (const comp of intent.components) {
+                if (api.addComponent) api.addComponent(comp.type, comp);
+              }
+            }
+            if (intent.wires) {
+              for (const wire of intent.wires) {
+                if (api.addWire) api.addWire(wire.from, wire.to, wire.color);
+              }
+            }
+          }}
+          style={RS.buildBtn}
+        >
+          🔧 {phase.build_circuit.button_label || 'Monta il circuito per me'}
+        </button>
+      );
+    }
+
+    // Osservazione (fase OSSERVA)
+    if (phase.observation_prompt) {
+      content.push(
+        <div key="obs" style={RS.observeBox}>
+          <span>👀</span>
+          <span>{phase.observation_prompt}</span>
+        </div>
+      );
+    }
+
+    // Analogie (fase OSSERVA)
+    if (phase.analogies?.length > 0) {
+      content.push(
+        <div key="analogies">
+          <p style={S.phaseLabel}>Analogie per spiegare:</p>
+          <ul style={S.errorList}>
+            {phase.analogies.map((a, i) => (
+              <li key={i} style={{ ...S.errorItem, borderLeftColor: '#7CB342' }}>
+                <strong>{a.concept.replace(/_/g, ' ')}</strong>
+                <p style={{ margin: '2px 0 0', fontSize: 14 }}>{a.text}</p>
+                {a.evidence && <em style={{ fontSize: 12, color: '#999' }}>({a.evidence})</em>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    // Summary (fase CONCLUDI)
+    if (phase.summary_for_class) {
+      content.push(
+        <div key="summary" style={RS.summaryBox}>
+          <strong>Da dire alla classe:</strong> {phase.summary_for_class}
+        </div>
+      );
+    }
+
+    // Concetti appresi
+    if (phase.concepts_learned?.length > 0) {
+      content.push(
+        <p key="concepts" style={S.phaseNote}>
+          Concetti: {phase.concepts_learned.join(', ')}
+        </p>
+      );
+    }
+
+    // Preview prossimo
+    if (phase.next_preview) {
+      content.push(
+        <p key="next" style={{ ...S.phaseHint, marginTop: 8 }}>{phase.next_preview}</p>
+      );
+    }
+
+    return content;
+  };
+
+  return (
+    <div style={S.root}>
+      {/* Header */}
+      <div style={S.header}>
+        <span style={S.headerIcon}>📚</span>
+        <span style={S.headerTitle}>Percorso Lezione</span>
+        <button onClick={onClose} style={S.closeBtn} title="Chiudi">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 3L11 11M3 11L11 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Experiment title + badge */}
+      <div style={S.expTitle}>
+        <span>{experiment.icon || '●'}</span>
+        <span style={{ flex: 1 }}>{path.title}</span>
+        <span style={RS.richBadge}>Percorso UNLIM</span>
+      </div>
+
+      {/* Obiettivo */}
+      {path.objective && (
+        <div style={RS.objectiveBox}>
+          <strong>Obiettivo:</strong> {path.objective}
+        </div>
+      )}
+
+      {/* Progress bar 5-step */}
+      {progressBar}
+
+      {/* Fasi — accordion */}
+      <div style={S.phases}>
+        {phases.map((phase, i) => (
+          <div key={i} style={S.phase}>
+            <button
+              onClick={() => onExpandPhase(expandedPhase === i ? -1 : i)}
+              style={{
+                ...S.phaseHeader,
+                ...(expandedPhase === i ? S.phaseHeaderActive : {}),
+              }}
+            >
+              <span style={S.phaseNum}>{i + 1}</span>
+              <span style={S.phaseIcon}>{phase.icon}</span>
+              <span style={S.phaseName}>{phase.name}</span>
+              <span style={S.phaseDuration}>{phase.duration_minutes ? `${phase.duration_minutes} min` : ''}</span>
+              <span style={S.phaseChevron}>{expandedPhase === i ? '▾' : '▸'}</span>
+            </button>
+            {expandedPhase === i && (
+              <div style={S.phaseContent}>
+                {renderPhaseContent(phase, i)}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Prossimo esperimento */}
+      {path.next_experiment && onLoadExperiment && (
+        <div style={{ padding: '8px 14px 14px' }}>
+          <p style={S.phaseText}>
+            <strong>Prossimo:</strong> {path.next_experiment.title}
+          </p>
+          {path.next_experiment.preview && (
+            <p style={S.phaseHint}>{path.next_experiment.preview}</p>
+          )}
+          <button
+            onClick={() => onLoadExperiment(path.next_experiment.id)}
+            style={RS.nextBtn}
+          >
+            Carica prossimo esperimento →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Styles for Rich Lesson Path ─── */
+const RS = {
+  progressBar: {
+    display: 'flex',
+    gap: 2,
+    padding: '8px 14px',
+    background: '#F8F9FA',
+    borderBottom: '1px solid #E5E5E5',
+  },
+  progressStep: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 2,
+    border: 'none',
+    background: 'transparent',
+    cursor: 'pointer',
+    padding: '4px 2px',
+    borderRadius: 6,
+    minHeight: 44,
+  },
+  progressStepActive: {
+    background: '#E3F2FD',
+  },
+  progressDot: {
+    fontSize: 14,
+    opacity: 0.5,
+  },
+  progressDotActive: {
+    fontSize: 16,
+    opacity: 1,
+  },
+  progressLabel: {
+    fontSize: 9,
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.3px',
+    color: '#666',
+  },
+  richBadge: {
+    fontSize: 10,
+    fontWeight: 700,
+    color: '#fff',
+    background: '#7CB342',
+    padding: '2px 8px',
+    borderRadius: 10,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    flexShrink: 0,
+  },
+  objectiveBox: {
+    padding: '8px 14px',
+    fontSize: 13,
+    color: '#444',
+    background: '#F0F7FF',
+    borderBottom: '1px solid #E5E5E5',
+    lineHeight: 1.5,
+  },
+  teacherTipBox: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 8,
+    padding: '8px 12px',
+    background: '#FFF8E1',
+    borderRadius: 8,
+    border: '1px solid #FFE082',
+    margin: '8px 0',
+    fontSize: 13,
+    lineHeight: 1.5,
+  },
+  teacherTipIcon: { flexShrink: 0, fontSize: 16 },
+  hookBox: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 8,
+    padding: '8px 12px',
+    background: '#E8F5E9',
+    borderRadius: 8,
+    border: '1px solid #C8E6C9',
+    margin: '8px 0',
+    fontSize: 14,
+    lineHeight: 1.5,
+  },
+  hookIcon: { flexShrink: 0, fontSize: 16 },
+  buildBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    width: '100%',
+    padding: '12px 16px',
+    margin: '10px 0',
+    border: 'none',
+    borderRadius: 10,
+    background: 'linear-gradient(135deg, #1E4D8C, #2A5FA0)',
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: 'pointer',
+    minHeight: 56,
+    fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
+  },
+  observeBox: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 8,
+    padding: '8px 12px',
+    background: '#E3F2FD',
+    borderRadius: 8,
+    border: '1px solid #BBDEFB',
+    margin: '8px 0',
+    fontSize: 14,
+    lineHeight: 1.5,
+  },
+  summaryBox: {
+    padding: '10px 12px',
+    background: '#E8F5E9',
+    borderRadius: 8,
+    border: '1px solid #C8E6C9',
+    fontSize: 14,
+    lineHeight: 1.5,
+    margin: '8px 0',
+  },
+  nextBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '10px 16px',
+    margin: '8px 0 0',
+    border: '2px solid #1E4D8C',
+    borderRadius: 10,
+    background: 'transparent',
+    color: '#1E4D8C',
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: 'pointer',
+    minHeight: 48,
+    fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
+  },
+};
+
 const LessonPathPanel = React.memo(function LessonPathPanel({
   experiment,
   allExperiments,
@@ -181,6 +577,22 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
   const [expandedPhase, setExpandedPhase] = React.useState(0);
 
   if (!experiment) return null;
+
+  // Se esiste un percorso lezione JSON ricco, usa quello
+  const richPath = getLessonPath(experiment.id);
+  if (richPath?.phases?.length > 0) {
+    return (
+      <RichLessonPath
+        path={richPath}
+        experiment={experiment}
+        expandedPhase={expandedPhase}
+        onExpandPhase={setExpandedPhase}
+        onClose={onClose}
+        onSendToUNLIM={onSendToUNLIM}
+        onLoadExperiment={onLoadExperiment}
+      />
+    );
+  }
 
   const curriculum = getCurriculum(experiment.id);
   const materials = buildMaterialList(experiment.components);
