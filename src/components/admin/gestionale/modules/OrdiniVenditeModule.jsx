@@ -7,6 +7,7 @@ import GestionaleTable from '../shared/GestionaleTable';
 import GestionaleForm from '../shared/GestionaleForm';
 import GestionaleCard from '../shared/GestionaleCard';
 import logger from '../../../../utils/logger';
+import { showToast } from '../../../common/Toast';
 
 const PIPELINE = ['bozza', 'confermato', 'in_lavorazione', 'spedito', 'consegnato'];
 const PIPELINE_COLORS = {
@@ -134,13 +135,13 @@ export default function OrdiniVenditeModule({ isMobile }) {
 
       const result = await fattureService.create(fatturaData);
       if (result) {
-        alert(` Fattura ${result.numero || 'FT-...'} creata in stato BOZZA!\nVai alla sezione Fatturazione per visualizzarla.`);
+        showToast(`Fattura ${result.numero || 'FT-...'} creata in stato BOZZA! Vai alla sezione Fatturazione per visualizzarla.`, 'success');
       } else {
-        alert(' Errore nella creazione della fattura. Riprova.');
+        showToast('Errore nella creazione della fattura. Riprova.', 'error');
       }
     } catch (e) {
       logger.error('Errore generazione fattura:', e);
-      alert(' Errore: ' + (e.message || 'Impossibile generare la fattura'));
+      showToast('Errore: ' + (e.message || 'Impossibile generare la fattura'), 'error');
     }
   };
 

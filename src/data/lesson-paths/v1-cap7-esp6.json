@@ -64,7 +64,8 @@
       "mescolare",
       "intensità",
       "luminosità",
-      "volt"
+      "volt",
+      "polarità"
     ],
     "forbidden": [
       "ohm",
@@ -232,7 +233,11 @@
       "components_list": null,
       "class_hook": null,
       "action_tags": [
-        "[AZIONE:play]"
+        "[AZIONE:play]",
+        "[AZIONE:highlight:rgb1]",
+        "[AZIONE:highlight:r1]",
+        "[AZIONE:highlight:r2]",
+        "[AZIONE:highlight:r3]"
       ],
       "auto_action": "play_and_highlight",
       "observation_prompt": "Cambiando i resistori, cambia l'intensità di ogni colore e quindi la tonalità finale. Siete diventati artisti dell'elettronica!",
@@ -252,7 +257,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Abbiamo capito come creare qualsiasi colore con 3 LED e 3 resistori. Questo è il principio di tutti gli schermi!",
       "teacher_tip": "Riepilogo capitolo 7: singolo colore → mescolanza 2 colori → mescolanza 3 colori → colore personalizzato. Un percorso progressivo.",
       "components_list": null,

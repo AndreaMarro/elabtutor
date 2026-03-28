@@ -52,7 +52,7 @@ const EMAIL_TEMPLATES = {
     .header { background: linear-gradient(135deg, #1E4D8C 0%, #0d1b2a 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
     .header h1 { color: #fff; margin: 0; font-size: 24px; }
     .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-    .button { display: inline-block; background: #558B2F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+    .button { display: inline-block; background: #4A7A25; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
     .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
     .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
     .info-box { background: #e8f4fd; border-left: 4px solid #1E4D8C; padding: 15px; margin: 20px 0; }
@@ -198,7 +198,7 @@ ELAB STEM - © 2026 Andrea Marro`
   </ul>
   
   <h3>Può gestire il consenso:</h3>
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
   <p>In qualsiasi momento può:</p>
   <ul>
     <li>Accedere ai dati di suo figlio: <a href="${data.parentDashboardUrl}">Area Genitori</a></li>
@@ -321,7 +321,7 @@ ELAB STEM - DPO: privacy@elab-stem.com`
   <style>
     body { font-family: 'Open Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
     .ready { background: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 10px; }
-    .button { display: inline-block; background: #558B2F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+    .button { display: inline-block; background: #4A7A25; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
     .expiry { color: #856404; background: #fff3cd; padding: 10px; border-radius: 5px; }
   </style>
 </head>
@@ -399,7 +399,7 @@ class EmailService {
    * Invia email via API
    * @param {Object} options - { to, subject, html, text, from }
    * @returns {Promise<Object>}
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
    */
   async send(options) {
     const { to, subject, html, text, from = { email: FROM_EMAIL, name: FROM_NAME } } = options;

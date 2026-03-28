@@ -10,7 +10,7 @@
  */
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
-const COLORS_PRESET = ['#1E4D8C', '#E54B3D', '#558B2F', '#E8941C', '#333333', '#FFFFFF'];
+const COLORS_PRESET = ['#1E4D8C', '#E54B3D', '#4A7A25', '#E8941C', '#333333', '#FFFFFF'];
 const THICKNESS = [2, 4, 8];
 const MAX_HISTORY = 30;
 const HANDLE_SIZE = 7;

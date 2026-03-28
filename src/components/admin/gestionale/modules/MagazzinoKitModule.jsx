@@ -7,6 +7,7 @@ import GestionaleTable from '../shared/GestionaleTable';
 import GestionaleForm from '../shared/GestionaleForm';
 import GestionaleCard from '../shared/GestionaleCard';
 import logger from '../../../../utils/logger';
+import { showToast } from '../../../common/Toast';
 
 const TIPI_MOVIMENTO = ['carico', 'scarico', 'rettifica'];
 const TIPI_LABELS = { carico: 'Carico', scarico: 'Scarico', rettifica: 'Rettifica' };
@@ -186,7 +187,7 @@ export default function MagazzinoKitModule({ isMobile }) {
     const componenti = checkComponentAvailability(kit);
     const insufficienti = componenti.filter(c => c.disponibile < c.quantita * n);
     if (insufficienti.length > 0) {
-      alert(`Componenti insufficienti: ${insufficienti.map(c => c.prodotto?.nome || c.prodottoId).join(', ')}`);
+      showToast(`Componenti insufficienti: ${insufficienti.map(c => c.prodotto?.nome || c.prodottoId).join(', ')}`, 'warning');
       return;
     }
     try {
@@ -208,8 +209,8 @@ export default function MagazzinoKitModule({ isMobile }) {
       });
       setKitQty({ ...kitQty, [kit.id]: '' });
       await loadData();
-      alert(`Kit "${kit.nome}" assemblato x${n} con successo!`);
-    } catch (e) { logger.error('Errore assemblaggio kit:', e); alert('Errore durante assemblaggio.'); }
+      showToast(`Kit "${kit.nome}" assemblato x${n} con successo!`, 'success');
+    } catch (e) { logger.error('Errore assemblaggio kit:', e); showToast('Errore durante assemblaggio.', 'error'); }
   };
 
   const tabs = [

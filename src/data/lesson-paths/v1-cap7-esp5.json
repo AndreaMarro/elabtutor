@@ -57,7 +57,8 @@
       "blu",
       "bianco",
       "mescolare",
-      "volt"
+      "volt",
+      "polarità"
     ],
     "forbidden": [
       "ohm",
@@ -195,7 +196,7 @@
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 5,
+      "duration_minutes": 7,
       "teacher_message": "Chiedi le ipotesi prima di premere Play. Che colore sarà R+G+B?",
       "teacher_tip": "La maggior parte dirà 'marrone' o 'arcobaleno'. Quasi nessuno dirà 'bianco'. L'effetto sorpresa è potentissimo!",
       "provocative_question": "Rosso + Verde + Blu tutti insieme: che colore vedrete? (Suggerimento: NON è quello che pensate!)",
@@ -246,7 +247,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "R+G+B = Bianco. Ogni schermo che usate funziona con questo principio!",
       "teacher_tip": "Chiedi: 'E se cambiassimo i resistori per fare più rosso e meno verde? Che colore verrebbe?'",
       "components_list": null,

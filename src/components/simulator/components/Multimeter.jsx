@@ -45,10 +45,10 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
 
       {/* LCD reading */}
       <text x="-2" y="-12" textAnchor="middle" fontSize="8"
-        fill="var(--color-accent, #558B2F)" fontFamily="Fira Code, monospace" fontWeight="bold">
+        fill="var(--color-accent, #4A7A25)" fontFamily="Fira Code, monospace" fontWeight="bold">
         {displayValue}
       </text>
-      <text x="12" y="-12" fontSize="5" fill="var(--color-accent, #558B2F)"
+      <text x="12" y="-12" fontSize="5" fill="var(--color-accent, #4A7A25)"
         fontFamily="Fira Code, monospace" opacity="0.9">
         {unit}
       </text>
@@ -63,7 +63,7 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
           <text key={label}
             x={Math.cos(a) * 12} y={3 + Math.sin(a) * 12}
             textAnchor="middle" fontSize="3.5"
-            fill={isActive ? 'var(--color-accent, #558B2F)' : '#555'}
+            fill={isActive ? 'var(--color-accent, #4A7A25)' : '#555'}
             fontFamily="Open Sans, sans-serif" fontWeight="bold">
             {label}
           </text>
@@ -126,7 +126,7 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       >
         {/* Snap glow when probe is over a valid pin */}
         {probeSnapped?.negative && (
-          <circle cx={negProbe.x} cy={negProbe.y} r="8" fill="var(--color-accent, #558B2F)" opacity="0.3">
+          <circle cx={negProbe.x} cy={negProbe.y} r="8" fill="var(--color-accent, #4A7A25)" opacity="0.3">
             <animate attributeName="r" values="8;11;8" dur="1s" repeatCount="indefinite" />
           </circle>
         )}
@@ -153,7 +153,7 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       >
         {/* Snap glow when probe is over a valid pin */}
         {probeSnapped?.positive && (
-          <circle cx={posProbe.x} cy={posProbe.y} r="8" fill="var(--color-accent, #558B2F)" opacity="0.3">
+          <circle cx={posProbe.x} cy={posProbe.y} r="8" fill="var(--color-accent, #4A7A25)" opacity="0.3">
             <animate attributeName="r" values="8;11;8" dur="1s" repeatCount="indefinite" />
           </circle>
         )}
@@ -169,7 +169,7 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       {/* AI Tutoring Highlight */}
       {highlighted && (
         <rect x="-22" y="-28" width="44" height="78" rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

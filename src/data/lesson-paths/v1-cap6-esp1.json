@@ -58,7 +58,9 @@
       "breadboard",
       "piedino lungo",
       "piedino corto",
-      "volt"
+      "volt",
+      "resistore",
+      "polarità"
     ],
     "forbidden": [
       "resistenza",

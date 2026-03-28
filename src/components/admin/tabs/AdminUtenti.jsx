@@ -13,7 +13,7 @@ import { utentiService } from '../../../services/notionService';
 // ============================================
 const COLORS = {
     primary: '#1E4D8C',
-    success: '#558B2F',
+    success: '#4A7A25',
     warning: '#F59E0B',
     danger: '#EF4444',
     bg: '#F0F4F8',

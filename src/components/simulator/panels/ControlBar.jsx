@@ -199,7 +199,7 @@ const CircuitStatusChip = ({ status }) => {
   if (!status || status.status === 'idle') return null;
 
   const config = {
-    ok: { icon: '✓', label: 'Circuito OK', bg: 'var(--color-accent-light, #E8F5E9)', color: 'var(--color-success, #2E7D32)', border: 'var(--color-accent, #558B2F)' },
+    ok: { icon: '✓', label: 'Circuito OK', bg: 'var(--color-accent-light, #E8F5E9)', color: 'var(--color-success, #2E7D32)', border: 'var(--color-accent, #4A7A25)' },
     warning: { icon: '⚠', label: `${status.warnings.length} avviso${status.warnings.length > 1 ? 'i' : ''}`, bg: 'var(--color-warning-light, #FFF8E1)', color: 'var(--color-warning-dark, #E65100)', border: 'var(--color-warning, #FFB300)' },
     error: { icon: '✗', label: `${status.errors.length} errore${status.errors.length > 1 ? 'i' : ''}`, bg: 'var(--color-danger-light, #FFEBEE)', color: 'var(--color-danger, #C62828)', border: 'var(--color-vol3, #E54B3D)' },
   };
@@ -286,8 +286,7 @@ const ControlBar = ({
   // Session 9: Whiteboard
   showWhiteboard = false,
   onToggleWhiteboard,
-  electronViewEnabled = false,
-  onToggleElectronView,
+
   // Session 30: Notes panel
   showNotes = false,
   onToggleNotes,
@@ -527,7 +526,7 @@ const ControlBar = ({
           onExportPng && { label: 'Cattura Immagine', action: onExportPng },
           onGenerateReport && { label: isGeneratingReport ? 'Generazione Report...' : 'Report PDF', action: onGenerateReport, disabled: isGeneratingReport },
           onToggleWhiteboard && { label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard },
-          onToggleElectronView && { label: 'Vista Elettroni', checked: electronViewEnabled, action: onToggleElectronView },
+
           /* ── Aiuto ── */
           { type: 'separator', label: 'Aiuto' },
           experiment && onAskUNLIM && { label: isAskingUNLIM ? 'UNLIM sta pensando...' : 'Chiedi a UNLIM', action: onAskUNLIM, disabled: isAskingUNLIM },

@@ -64,7 +64,8 @@
       "luce",
       "buio",
       "automatico",
-      "volt"
+      "volt",
+      "resistenza"
     ],
     "forbidden": [
       "ohm",

@@ -83,7 +83,7 @@ const Resistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, v
 
       {/* Current flow indicator */}
       {hasFlow && (
-        <circle cx="0" cy="0" r="1.2" fill="var(--color-accent, #558B2F)" opacity={0.5}>
+        <circle cx="0" cy="0" r="1.2" fill="var(--color-accent, #4A7A25)" opacity={0.5}>
           <animate attributeName="cx" values="-13;13" dur="0.4s" repeatCount="indefinite" />
         </circle>
       )}
@@ -91,7 +91,7 @@ const Resistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, v
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-29" y="-10" width="58" height="20" rx="3"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

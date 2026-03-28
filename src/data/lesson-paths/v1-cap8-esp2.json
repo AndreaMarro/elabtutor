@@ -78,15 +78,15 @@
     "v1-cap8-esp1"
   ],
   "next_experiment": {
-    "id": "v1-cap9-esp1",
-    "title": "Dimmer LED con manopola",
-    "preview": "E se potessi cambiare la luminosità GIRANDO una manopola? Scopriamo un nuovo componente!"
+    "id": "v1-cap8-esp3",
+    "title": "RGB + pulsante = viola",
+    "preview": "E se un pulsante potesse controllare più colori contemporaneamente? Scopriamolo!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Stessa configurazione dell'esperimento 1, ma con LED verde e resistore da 220Ω.",
       "teacher_tip": "Chiedi: 'Cosa cambierà usando un resistore più piccolo e un LED di colore diverso?'",
       "components_list": "Ti servono: 1 breadboard, 1 batteria 9V, 1 pulsante, 1 resistore 220Ω, 1 LED verde, 6 fili.",
@@ -97,7 +97,7 @@
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 8,
+      "duration_minutes": 10,
       "teacher_message": "Il circuito è identico a prima — cambia solo il LED (verde) e il resistore (220Ω).",
       "teacher_tip": "Evidenzia che l'architettura del circuito è la STESSA. Solo i componenti cambiano. Il pulsante funziona allo stesso modo.",
       "components_list": null,
@@ -182,7 +182,7 @@
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 5,
+      "duration_minutes": 7,
       "teacher_message": "Confronta con l'esperimento 1: LED blu con 470Ω vs LED verde con 220Ω.",
       "teacher_tip": "Chiedi: 'Il LED verde con 220Ω sarà più luminoso o meno luminoso del blu con 470Ω?' Ricorda il capitolo 6!",
       "provocative_question": "Il LED verde con un resistore più piccolo sarà più luminoso o meno luminoso del LED blu di prima?",
@@ -233,7 +233,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Lo stesso circuito con componenti diversi dà risultati diversi. La regola della resistenza funziona sempre!",
       "teacher_tip": "Chiedi: 'E se potessimo cambiare la luminosità SENZA cambiare il resistore? Con una manopola?' Anticipazione per il prossimo capitolo.",
       "components_list": null,

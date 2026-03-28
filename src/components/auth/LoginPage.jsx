@@ -68,7 +68,7 @@ export default function LoginPage({ onNavigate }) {
     const inputStyle = (field) => ({
         ...styles.input,
         borderColor: focusedField === field
-            ? '#558B2F'
+            ? '#4A7A25'
             : 'rgba(255,255,255,0.15)',
         boxShadow: focusedField === field
             ? '0 0 0 3px rgba(124,179,66,0.2)'
@@ -229,7 +229,7 @@ const styles = {
         fontWeight: '600',
         borderRadius: '10px',
         border: 'none',
-        background: 'linear-gradient(135deg, #558B2F, #6fa030)',
+        background: 'linear-gradient(135deg, #4A7A25, #6fa030)',
         color: '#1A1A2E',
         cursor: 'pointer',
         marginTop: '8px',
@@ -249,7 +249,7 @@ const styles = {
         marginTop: '24px',
     },
     link: {
-        color: '#558B2F',
+        color: '#4A7A25',
         background: 'none',
         border: 'none',
         cursor: 'pointer',

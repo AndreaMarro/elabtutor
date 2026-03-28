@@ -89,7 +89,7 @@ const Wire = ({
 
       {/* Current flow animation */}
       {hasFlow && (
-        <circle r="1.5" fill="var(--color-accent, #558B2F)" opacity="0.7">
+        <circle r="1.5" fill="var(--color-accent, #4A7A25)" opacity="0.7">
           <animateMotion
             path={path}
             dur={`${Math.max(0.3, 1 - current * 0.5)}s`}
@@ -110,7 +110,7 @@ const Wire = ({
       {highlighted && (
         <path
           d={path}
-          stroke="var(--color-accent, #558B2F)"
+          stroke="var(--color-accent, #4A7A25)"
           strokeWidth="7"
           fill="none"
           strokeLinecap="round"

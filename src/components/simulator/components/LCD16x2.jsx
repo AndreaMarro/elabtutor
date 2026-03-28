@@ -285,7 +285,7 @@ const LCD16x2 = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id
           width={PCB_W + 8}
           height={PCB_H + 24}
           rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

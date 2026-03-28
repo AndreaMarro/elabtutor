@@ -38,6 +38,8 @@ function updateProfile(updates) {
     try {
         localStorage.setItem(MEMORY_KEY, JSON.stringify(merged));
     } catch { /* localStorage full — silent */ }
+    // Mark dirty for backend sync — all callers (trackExperiment, trackMistake, etc.) trigger sync
+    _syncDirty = true;
 }
 
 /**
@@ -196,9 +198,9 @@ let _syncTimer = null;
 const SYNC_INTERVAL = 60_000; // 60 seconds
 
 /**
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
  * Get the session ID (same as api.js uses for tutor chat)
  * @returns {string} Tutor session ID
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function _getSessionId() {
     const KEY = 'elab_tutor_session';
@@ -325,17 +327,13 @@ function initSync() {
     }
 }
 
-// Mark dirty on any profile update (patch original updateProfile)
-const _origUpdateProfile = updateProfile;
-function updateProfileWithSync(updates) {
-    _origUpdateProfile(updates);
-    _syncDirty = true;
-}
+// Sync dirty flag is now set directly in updateProfile above
+// No separate patching needed — all internal callers trigger sync automatically
 
 // Public API
 export const unlimMemory = {
     getProfile,
-    updateProfile: updateProfileWithSync,
+    updateProfile,
     trackExperimentCompletion,
     trackQuizResult,
     trackMistake,

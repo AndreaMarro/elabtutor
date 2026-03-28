@@ -13,7 +13,7 @@ import React, { useRef, useCallback } from 'react';
 import ovStyles from '../overlays.module.css';
 
 const NAVY = '#1E4D8C';
-const LIME = '#558B2F';
+const LIME = '#4A7A25';
 
 const PotOverlay = React.memo(function PotOverlay({ value, onValueChange, onClose }) {
   const knobRef = useRef(null);

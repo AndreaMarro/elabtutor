@@ -10,7 +10,7 @@ import React, { useState, useMemo } from 'react';
 import { VOLUMES, getExperimentsByVolume, getChaptersForVolume } from '../../../data/experiments-index';
 
 const VOL_COLORS = {
-  1: 'var(--color-vol1, #558B2F)',
+  1: 'var(--color-vol1, #4A7A25)',
   2: 'var(--color-vol2, #E8941C)',
   3: 'var(--color-vol3, #E54B3D)',
 };
@@ -140,15 +140,8 @@ const ExperimentPicker = ({ onSelectExperiment, currentExperimentId = null, user
                     setSelectedChapter(chapter);
                     setView('experiments');
                   }}
+                  className="ep-chapter-card"
                   style={{ ...S.chapterCard, borderTop: '4px solid ' + volColor }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = 'var(--color-bg-secondary)';
-                    e.currentTarget.style.borderColor = volColor;
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'var(--color-bg)';
-                    e.currentTarget.style.borderColor = 'var(--color-border)';
-                  }}
                 >
                   <div style={{ ...S.chapterAccent, background: volColor }} />
                   <span style={S.chapterTitle}>{chapter}</span>
@@ -194,22 +187,11 @@ const ExperimentPicker = ({ onSelectExperiment, currentExperimentId = null, user
                   key={exp.id}
                   aria-label={`Carica esperimento: ${exp.title}`}
                   onClick={() => onSelectExperiment({ ...exp, buildMode: hasBuildSteps ? 'guided' : false })}
+                  className={isCurrent ? '' : 'ep-exp-card'}
                   style={{
                     ...S.expCard,
                     background: isCurrent ? `${volColor}12` : 'var(--color-bg)',
                     borderColor: isCurrent ? volColor : 'var(--color-border)',
-                  }}
-                  onMouseEnter={e => {
-                    if (!isCurrent) {
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-                      e.currentTarget.style.borderColor = 'var(--color-border-hover)';
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!isCurrent) {
-                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-                      e.currentTarget.style.borderColor = 'var(--color-border)';
-                    }
                   }}
                 >
                   <div style={S.expTop}>

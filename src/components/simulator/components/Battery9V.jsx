@@ -161,7 +161,7 @@ const Battery9V = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
       {highlighted && (
         <rect x={BODY_LEFT - 6} y={BODY_TOP - 8}
           width={BODY_W + CLIP_W + SEP_W + 12} height={BODY_H + 78}
-          rx="5" fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          rx="5" fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

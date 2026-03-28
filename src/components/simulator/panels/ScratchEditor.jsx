@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import * as Blockly from 'blockly';
 import { arduinoGenerator, generateArduinoCode } from './scratchGenerator';
+import logger from '../../../utils/logger';
 import './scratchBlocks';
 
 // ─── Blockly 12.4.1 safe-disposal patch ─────────────────────────────────
@@ -12,7 +13,7 @@ import './scratchBlocks';
 // ─────────────────────────────────────────────────────────────────────────
 
 // ─── ELAB Custom Theme ───────────────────────────────────────
-// Palette: Navy #1E4D8C, Lime #558B2F, Bg #1E2530, Grid #2a3040
+// Palette: Navy #1E4D8C, Lime #4A7A25, Bg #1E2530, Grid #2a3040
 const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
     name: 'elab',
     base: Blockly.Themes.Classic,
@@ -55,9 +56,9 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
         flyoutOpacity: 0.95,
         scrollbarColour: '#3A4050',
         scrollbarOpacity: 0.6,
-        insertionMarkerColour: '#558B2F',
+        insertionMarkerColour: '#4A7A25',
         insertionMarkerOpacity: 0.4,
-        cursorColour: '#558B2F',
+        cursorColour: '#4A7A25',
     },
     fontStyle: {
         family: "'Open Sans', 'Helvetica Neue', sans-serif",
@@ -248,7 +249,7 @@ const ELAB_BLOCKLY_CSS = `
   font-size: 14px !important;
   background: var(--color-blockly-input-bg, #0D1117) !important;
   color: var(--color-blockly-text, #C9D1D9) !important;
-  border: 1px solid var(--color-accent, #558B2F) !important;
+  border: 1px solid var(--color-accent, #4A7A25) !important;
   border-radius: 4px !important;
   padding: 4px 6px !important;
   min-height: 32px !important;
@@ -289,13 +290,13 @@ const ELAB_BLOCKLY_CSS = `
 
 /* Connection highlight — wider for touch precision */
 .blocklyHighlightedConnectionPath {
-  stroke: var(--color-accent, #558B2F) !important;
+  stroke: var(--color-accent, #4A7A25) !important;
   stroke-width: 4px !important;
 }
 
 /* Selected block glow */
 .blocklySelected > .blocklyPath {
-  stroke: var(--color-accent, #558B2F) !important;
+  stroke: var(--color-accent, #4A7A25) !important;
   stroke-width: 3px !important;
 }
 
@@ -378,7 +379,7 @@ const ScratchEditor = ({ onChange, initialCode }) => {
                 const xmlDoc = parser.parseFromString(initialCode, 'text/xml');
                 Blockly.Xml.domToWorkspace(xmlDoc.documentElement, workspace);
             } catch (e) {
-                console.error('[ScratchEditor] Invalid XML for Blockly', e);
+                logger.error('[ScratchEditor] Invalid XML for Blockly', e);
             }
         } else {
             const xml = `
@@ -409,7 +410,7 @@ const ScratchEditor = ({ onChange, initialCode }) => {
                 const code = generateArduinoCode(workspace);
                 onChangeRef.current?.(xmlText, code);
             } catch (err) {
-                console.warn('[ScratchEditor] Code generation error:', err?.message);
+                logger.warn('[ScratchEditor] Code generation error:', err?.message);
                 // Still save workspace XML even if code gen fails
                 try {
                     const xmlDom = Blockly.Xml.workspaceToDom(workspace);
@@ -459,7 +460,7 @@ const ScratchEditor = ({ onChange, initialCode }) => {
                 const xmlDoc = parser.parseFromString(initialCode, 'text/xml');
                 Blockly.Xml.domToWorkspace(xmlDoc.documentElement, workspace);
             } catch (e) {
-                console.error('[ScratchEditor] Invalid XML reload', e);
+                logger.error('[ScratchEditor] Invalid XML reload', e);
             }
         } else {
             const xml = `<xml xmlns="https://developers.google.com/blockly/xml">

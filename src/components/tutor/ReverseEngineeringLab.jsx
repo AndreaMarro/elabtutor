@@ -5,8 +5,9 @@
 // © Andrea Marro — 2026
 // ============================================
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { MYSTERY_CIRCUITS } from '../../data/mystery-circuits';
+import studentTracker from '../../services/studentTracker';
 import { LayerBadge, VolumeBadge, LAYER_COLORS } from './shared/LayerBadge';
 import { StarDisplay, StarResult, BadgeDisplay, calculateBadge } from './shared/StarRating';
 import ReflectionPrompt from './shared/ReflectionPrompt';
@@ -41,6 +42,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
   const [lockoutRemaining, setLockoutRemaining] = useState(0);
   const [filter, setFilter] = useState('all');
   const [earnedStars, setEarnedStars] = useState(0);
+  const gameStartTime = useRef(null);
   const [solvedIds, setSolvedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
     catch { return []; }
@@ -73,6 +75,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
     setShowReflection(false);
     setLockoutEnd(null);
     setEarnedStars(0);
+    gameStartTime.current = Date.now();
     logSession?.('reverse-start', { circuitId: circuit.id });
   }, [logSession]);
 
@@ -96,6 +99,8 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
       const stars = calcReverseStars(revealedPoints.length, selected.testPoints.length);
       setEarnedStars(stars);
       saveScore(selected.id, stars);
+      const timeSpent = gameStartTime.current ? Math.round((Date.now() - gameStartTime.current) / 1000) : 0;
+      studentTracker.logGameResult('reverse-engineering', stars, 3, timeSpent);
       setShowSolution(true);
       setShowReflection(true);
       const newSolved = [...new Set([...solvedIds, selected.id])];
@@ -255,15 +260,15 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
             return (
               <g key={point.id} onClick={() => !isRevealed && revealPoint(point.id)} style={{ cursor: isRevealed ? 'default' : 'pointer' }}>
                 <circle cx={point.x} cy={point.y} r={isRevealed ? 6 : 4}
-                  fill={isRevealed ? '#558B2F' : '#64748B'}
-                  stroke={isRevealed ? '#558B2F' : '#64748B'}
+                  fill={isRevealed ? '#4A7A25' : '#64748B'}
+                  stroke={isRevealed ? '#4A7A25' : '#64748B'}
                   strokeWidth="1.5"
                 />
                 {isRevealed && (
-                  <circle cx={point.x} cy={point.y} r="8" fill="none" stroke="#558B2F" strokeWidth="0.5" opacity="0.5" />
+                  <circle cx={point.x} cy={point.y} r="8" fill="none" stroke="#4A7A25" strokeWidth="0.5" opacity="0.5" />
                 )}
                 <text x={point.x} y={point.y - 8} textAnchor="middle"
-                  fill={isRevealed ? '#558B2F' : '#64748B'} fontSize="4" fontFamily="monospace"
+                  fill={isRevealed ? '#4A7A25' : '#64748B'} fontSize="4" fontFamily="monospace"
                 >
                   {point.label.split(' ')[0]}
                 </text>
@@ -272,11 +277,11 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
           })}
           {/* Mystery component */}
           <rect x="38" y="38" width="24" height="24" rx="3"
-            fill="none" stroke={showSolution ? '#558B2F' : '#ea580c'}
+            fill="none" stroke={showSolution ? '#4A7A25' : '#ea580c'}
             strokeWidth="1.5" strokeDasharray={showSolution ? 'none' : '3,2'}
           />
           <text x="50" y="53" textAnchor="middle"
-            fill={showSolution ? '#558B2F' : '#ea580c'} fontSize="6" fontWeight="bold"
+            fill={showSolution ? '#4A7A25' : '#ea580c'} fontSize="6" fontWeight="bold"
           >
             {showSolution ? '✓' : '?'}
           </text>

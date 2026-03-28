@@ -522,8 +522,8 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
                 marginLeft: 6,
                 fontSize: 14,
                 padding: '4px 12px',
-                color: 'var(--color-accent, #558B2F)',
-                borderColor: 'var(--color-accent, #558B2F)',
+                color: 'var(--color-accent, #4A7A25)',
+                borderColor: 'var(--color-accent, #4A7A25)',
               }}
               title="Chiedi a UNLIM di spiegare il codice"
               aria-label="Spiega il codice"
@@ -655,7 +655,7 @@ const codeEditorStyles = {
     padding: '6px 0',
     border: 'none',
     borderRadius: 4,
-    background: 'var(--color-accent, #558B2F)',
+    background: 'var(--color-accent, #4A7A25)',
     color: 'var(--color-text-inverse, #fff)',
     fontFamily: FONT_BODY,
     fontSize: 14,

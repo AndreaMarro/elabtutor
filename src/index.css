@@ -8,7 +8,7 @@
 /* ═══════════════════════════════════════════════════════════════ */
 /* ELAB BUILDER v4.0 — Modern Base Styles                         */
 /* Fonts: Inter (primary), Oswald (display), Fira Code (mono)     */
-/* Colors: Navy #1E4D8C, Green #558B2F                            */
+/* Colors: Navy #1E4D8C, Green #4A7A25                            */
 /* ═══════════════════════════════════════════════════════════════ */
 
 * {
@@ -198,13 +198,14 @@ body,
     border-radius: var(--radius-md);
     color: var(--color-text);
     transition: all var(--transition-fast);
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     min-height: var(--touch-min);
 }
 /* © Andrea Marro — 18/02/2026 */
 
 .elab-input:focus {
-    outline: none;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
     border-color: var(--color-primary);
     box-shadow: var(--shadow-focus);
 }
@@ -288,11 +289,35 @@ body,
 /* PRINT                                                           */
 /* ═══════════════════════════════════════════════════════════════ */
 
+@page {
+    size: A4;
+    margin: 15mm;
+}
+
 @media print {
     body {
         background: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
     .no-print {
+        display: none !important;
+    }
+    /* PNRR Report print styles */
+    .pnrr-report-area {
+        break-inside: avoid;
+    }
+    .pnrr-report-area table {
+        font-size: 9pt !important;
+        page-break-inside: auto;
+    }
+    .pnrr-report-area tr {
+        page-break-inside: avoid;
+    }
+    .pnrr-report-area button {
+        display: none !important;
+    }
+    .pnrr-report-area select {
         display: none !important;
     }
 }

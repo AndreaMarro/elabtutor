@@ -8,13 +8,14 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { waitlistService } from '../../../services/notionService';
 import logger from '../../../utils/logger';
+import { showToast } from '../../common/Toast';
 
 // ── Costanti ──────────────────────────────────────
 const COLORS = {
     primary: '#1E4D8C',
     primaryLight: '#2A4FA3',
     primaryBg: '#EBF0FA',
-    success: '#558B2F',
+    success: '#4A7A25',
     successBg: '#F0F7E4',
     warning: '#F59E0B',
     warningBg: '#FEF3C7',
@@ -200,7 +201,7 @@ export default function AdminWaitlist({ isMobile }) {
             setStatoModal(null);
         } catch (e) {
             logger.error('Errore cambio stato:', e);
-            alert('Errore nel cambio stato: ' + (e.message || 'Errore sconosciuto'));
+            showToast('Errore nel cambio stato: ' + (e.message || 'Errore sconosciuto'), 'error');
         }
         setActionLoading(false);
     }, []);
@@ -213,7 +214,7 @@ export default function AdminWaitlist({ isMobile }) {
             setNoteModal(null);
         } catch (e) {
             logger.error('Errore salvataggio nota:', e);
-            alert('Errore nel salvataggio nota: ' + (e.message || 'Errore sconosciuto'));
+            showToast('Errore nel salvataggio nota: ' + (e.message || 'Errore sconosciuto'), 'error');
         }
         setActionLoading(false);
     }, []);
@@ -231,7 +232,7 @@ export default function AdminWaitlist({ isMobile }) {
             });
         } catch (e) {
             logger.error('Errore eliminazione:', e);
-            alert('Errore nella rimozione: ' + (e.message || 'Errore sconosciuto'));
+            showToast('Errore nella rimozione: ' + (e.message || 'Errore sconosciuto'), 'error');
         }
         setActionLoading(false);
     }, []);
@@ -239,7 +240,7 @@ export default function AdminWaitlist({ isMobile }) {
     const handleAdd = useCallback(async () => {
         const form = addFormRef.current;
         if (!form.email || !form.email.includes('@')) {
-            alert('Inserisci un indirizzo email valido.');
+            showToast('Inserisci un indirizzo email valido.', 'warning');
             return;
         }
         setActionLoading(true);
@@ -262,7 +263,7 @@ export default function AdminWaitlist({ isMobile }) {
             };
         } catch (e) {
             logger.error('Errore aggiunta:', e);
-            alert('Errore: ' + (e.message || 'Impossibile aggiungere'));
+            showToast('Errore: ' + (e.message || 'Impossibile aggiungere'), 'error');
         }
         setActionLoading(false);
     }, [loadData]);
@@ -280,7 +281,7 @@ export default function AdminWaitlist({ isMobile }) {
             setBulkStatoModal(false);
         } catch (e) {
             logger.error('Errore bulk stato:', e);
-            alert('Errore nell\'aggiornamento in blocco');
+            showToast('Errore nell\'aggiornamento in blocco', 'error');
         }
         setActionLoading(false);
     }, [selected]);

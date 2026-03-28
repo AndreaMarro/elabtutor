@@ -5,8 +5,9 @@
 // © Andrea Marro — 2026
 // ============================================
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { POE_CHALLENGES } from '../../data/poe-challenges';
+import studentTracker from '../../services/studentTracker';
 import { LayerBadge, VolumeBadge, LAYER_COLORS } from './shared/LayerBadge';
 import { StarDisplay, StarResult, BadgeDisplay, calculateBadge } from './shared/StarRating';
 import ReflectionPrompt from './shared/ReflectionPrompt';
@@ -37,6 +38,7 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
   const [volumeFilter, setVolumeFilter] = useState(0);
   const [showReflection, setShowReflection] = useState(false);
   const [earnedStars, setEarnedStars] = useState(0);
+  const gameStartTime = useRef(null);
   const [completedIds, setCompletedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
     catch { return []; }
@@ -57,6 +59,7 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
     setExplanation('');
     setShowReflection(false);
     setEarnedStars(0);
+    gameStartTime.current = Date.now();
     logSession?.('poe-start', { challengeId: challenge.id, volume: challenge.volume });
   }, [logSession]);
 
@@ -80,6 +83,8 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
     saveScore(selectedChallenge.id, stars);
     const newCompleted = [...new Set([...completedIds, selectedChallenge.id])];
     setCompletedIds(newCompleted);
+    const timeSpent = gameStartTime.current ? Math.round((Date.now() - gameStartTime.current) / 1000) : 0;
+    studentTracker.logGameResult('predict-observe-explain', stars, 3, timeSpent);
     logSession?.('poe-explain', {
       challengeId: selectedChallenge.id,
       correct: isCorrect,

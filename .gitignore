@@ -77,3 +77,4 @@ npm-debug.log*
 *.temp
 .env*.local
 datasets/galileo-brain-20k.jsonl
+.claude/settings.local.json

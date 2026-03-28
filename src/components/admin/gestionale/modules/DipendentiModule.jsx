@@ -318,10 +318,8 @@ export default function DipendentiModule({ isMobile }) {
                 const initials = getInitials(dip.nome, dip.cognome);
                 const rc = REPARTI_COLORS[dip.reparto] || COLORS.info;
                 return (
-                  <div key={dip.id} style={{ ...S.cardCompact, cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}
-                    onClick={() => openEditDip(dip)}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = rc; e.currentTarget.style.boxShadow = `0 2px 10px ${rc}18`; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.boxShadow = 'none'; }}>
+                  <div key={dip.id} className="gest-hover-card" style={{ ...S.cardCompact, cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}
+                    onClick={() => openEditDip(dip)}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
                       <div style={{
                         width: 44, height: 44, borderRadius: '50%', background: `${rc}18`, color: rc,

@@ -18,7 +18,8 @@ export default function TutorTopBar({
     sessionLogLength,
 }) {
     const volumeLabels = { 1: 'Vol.1', 2: 'Vol.2', 3: 'Vol.3' };
-    const volumeColors = { 1: '#558B2F', 2: '#E8941C', 3: '#E54B3D' };
+    // WCAG AA: sfondo badge con testo bianco ≥ 4.5:1 contrasto
+    const volumeColors = { 1: '#4A7A25', 2: '#C47A0A', 3: '#C43A2D' };
 
     return (
         <header className="tutor-topbar">
@@ -37,7 +38,7 @@ export default function TutorTopBar({
                 </button>
 
                 <div className="topbar-brand">
-                    <img src="/elab-mascot.png" alt="ELAB" className="topbar-mascot" />
+                    <img src="/assets/mascot/logo-senza-sfondo.png" alt="ELAB" className="topbar-mascot" style={{ objectFit: 'contain' }} />
                     <div className="topbar-brand-text">
                         <span className="topbar-title">ELAB</span>
                         <span className="topbar-subtitle">UNLIM</span>

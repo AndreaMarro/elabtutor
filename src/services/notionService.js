@@ -198,7 +198,7 @@ function createEntityService(entityName, dbId) {
         // DELETE
         async delete(id) {
             const result = await notionFetch({
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
                 entity: entityName,
                 dbId,
                 action: 'delete',

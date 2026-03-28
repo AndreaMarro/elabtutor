@@ -17,11 +17,11 @@
   --color-primary-hover: #163A6B;
   --color-primary-light: #E8EEF6;
   --color-primary-subtle: rgba(30, 77, 140, 0.06);
-  --color-accent: #558B2F;
+  --color-accent: #4A7A25;
   --color-accent-hover: #3E6B1F;
   --color-accent-light: #E8F5E9;
   --color-accent-subtle: rgba(85, 139, 47, 0.08);
-  --color-vol1: #558B2F;
+  --color-vol1: #4A7A25;
   --color-vol2: #E8941C;
   --color-vol3: #E54B3D;
   --color-danger: #DC2626;
@@ -198,7 +198,7 @@
   --color-syntax-variable: #E5E7EB;
 
   /* --- S161.2: Volume gradient backgrounds --- */
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   --color-vol1-gradient: linear-gradient(135deg, #f1f8e9, #e8f5e9);
   --color-vol2-gradient: linear-gradient(135deg, #fff8e1, #fff3e0);
   --color-vol3-gradient: linear-gradient(135deg, #fce4ec, #ffebee);
@@ -208,7 +208,7 @@
 
   /* --- S77: Animation/highlight --- */
   --color-highlight-pulse: #E3F2FD;
-  --color-unlim-gradient-start: #558B2F;
+  --color-unlim-gradient-start: #4A7A25;
   --color-unlim-gradient-end: #3E6B1F;
   --color-unlim-dark: #122F57;
 
@@ -399,7 +399,7 @@
 
 /* Global focus-visible for ALL interactive elements (keyboard only) */
 :focus-visible {
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: var(--shadow-focus);

@@ -113,7 +113,7 @@ const BuzzerPiezo = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-16" y="-20" width="32" height="50" rx="4"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

@@ -65,7 +65,7 @@ const PushButton = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-12" y="-12" width="24" height="24" rx="3"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

@@ -48,14 +48,7 @@ function MobileCardLayout({ columns, data, onRowClick, emptyMessage, emptyIcon }
                         cursor: onRowClick ? 'pointer' : 'default',
                         transition: 'all 0.15s',
                     }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = COLORS.accentLight;
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(37,99,235,0.08)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = COLORS.border;
-                        e.currentTarget.style.boxShadow = 'none';
-                    }}
+                    className="gestionale-table-row"
                 >
                     {columns.map((col) => {
                         const cellValue = col.render

@@ -58,7 +58,8 @@
       "mescolare",
       "colori",
       "volt",
-      "sintesi additiva"
+      "sintesi additiva",
+      "polarità"
     ],
     "forbidden": [
       "ohm",
@@ -182,7 +183,7 @@
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 5,
+      "duration_minutes": 7,
       "teacher_message": "Prima di premere Play, chiedi alla classe che colore si aspettano.",
       "teacher_tip": "La maggior parte dei bambini dirà 'rosso e blu' o 'non lo so'. Pochi diranno 'viola'. NON dare la risposta — fai premere Play!",
       "provocative_question": "Se accendo rosso e blu insieme, che colore vedremo? Rosso? Blu? O qualcosa di completamente diverso?",
@@ -233,7 +234,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Abbiamo creato il viola mescolando rosso e blu! La luce si mescola in modo diverso dalla pittura.",
       "teacher_tip": "Chiedi: 'Se rosso+blu=viola, cosa faranno TUTTI E TRE insieme?' Preparali per il prossimo esperimento.",
       "components_list": null,

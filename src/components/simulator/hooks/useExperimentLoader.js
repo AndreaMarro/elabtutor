@@ -13,6 +13,7 @@ import { sessionMetrics } from '../../../services/sessionMetrics';
 import { sendAnalyticsEvent, EVENTS } from '../api/AnalyticsWebhook';
 import { buildPinComponentMap, buildLCDPinMapping, createOnPinChangeHandler } from '../utils/pinComponentMap';
 import { inferParentFromPinAssignments } from '../utils/parentChild';
+import { hasLessonPath } from '../../../data/lesson-paths';
 import logger from '../../../utils/logger';
 
 /**
@@ -197,8 +198,8 @@ export default function useExperimentLoader({
     recordEvent('experiment_loaded', { experimentId: experiment.id, experimentName: experiment.name || experiment.id });
     if (onExperimentChangeRef.current) onExperimentChangeRef.current(experiment);
     setIsRunning(false);
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     setSimulationTime(0);
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
     setSerialOutput('');
     setAvrReady(false);
 
@@ -214,7 +215,9 @@ export default function useExperimentLoader({
     setSelectedAnnotation(null);
     setShowBom(false);
     setShowQuiz(false);
-    setShowLessonPath(false);
+    // Principio Zero: il percorso lezione è la PRIMA cosa che il docente vede
+    // Si apre automaticamente se l'esperimento ha un lesson path
+    setShowLessonPath(hasLessonPath(experiment.id));
     setBuildStepIndex(
       experiment.buildMode === 'guided' ? -1
         : experiment.buildMode === 'sandbox' ? -1
@@ -396,10 +399,10 @@ export default function useExperimentLoader({
         avrTxLenRef.current = currentSerial.length;
         if (avrTxTimerRef.current) clearTimeout(avrTxTimerRef.current);
         avrTxTimerRef.current = setTimeout(() => {
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
           setComponentStates(prev => ({ ...prev, _txActive: false }));
         }, 80);
       }
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
       // Simulation time from CPU cycles
       if (avrRef.current.cpu) {

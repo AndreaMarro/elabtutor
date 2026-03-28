@@ -62,7 +62,7 @@
 
 .unlimPanel {
   background: var(--color-sim-bg, #FAFAF7);
-  border: 2px solid var(--color-accent, #558B2F);
+  border: 2px solid var(--color-accent, #4A7A25);
   border-radius: var(--radius-xl, 16px);
   box-shadow: var(--shadow-xl, 0 12px 48px rgba(0, 0, 0, 0.2));
   width: 100%;
@@ -134,10 +134,10 @@
 }
 
 .unlimRetryBtn {
-  border: 1px solid var(--color-accent, #558B2F);
+  border: 1px solid var(--color-accent, #4A7A25);
   border-radius: var(--radius-md, 8px);
   background: var(--color-bg, #fff);
-  color: var(--color-accent, #558B2F);
+  color: var(--color-accent, #4A7A25);
   cursor: pointer;
   padding: var(--space-2, 8px) 14px;
   font-size: var(--font-size-sm, 16px);
@@ -198,7 +198,7 @@
     padding: 4px 10px;
     gap: 6px;
     top: 4px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 
   .unlimBackdrop {

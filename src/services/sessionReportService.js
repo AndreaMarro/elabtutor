@@ -31,7 +31,7 @@ export function collectSessionData({
     : activeExperiment?.id?.startsWith('v2') ? 2
     : activeExperiment?.id?.startsWith('v3') ? 3 : 1;
 
-  const volumeColor = volumeNumber === 1 ? '#558B2F'
+  const volumeColor = volumeNumber === 1 ? '#4A7A25'
     : volumeNumber === 2 ? '#E8941C' : '#E54B3D';
 
   return {

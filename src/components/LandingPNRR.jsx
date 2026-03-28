@@ -4,7 +4,7 @@
 import React from 'react';
 
 const NAVY = '#1E4D8C';
-const LIME = '#558B2F';
+const LIME = '#4A7A25';
 const BG_LIGHT = '#F7F7F8';
 const TEXT = '#1A1A2E';
 const TEXT_SECONDARY = '#6B6B80';
@@ -306,7 +306,7 @@ export default function LandingPNRR({ onNavigate }) {
             ].map((item, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 <div style={{
-                  fontSize: '13px',
+                  fontSize: '14px',
                   fontWeight: 700,
                   color: LIME,
                   textTransform: 'uppercase',
@@ -496,8 +496,8 @@ export default function LandingPNRR({ onNavigate }) {
           © 2026 Andrea Marro — ELAB Tutor. Tutti i diritti riservati.
         </p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/privacy" style={{ color: NAVY, fontSize: '13px' }}>Privacy Policy</a>
-          <a href="https://www.elabtutor.school" style={{ color: NAVY, fontSize: '13px' }}>www.elabtutor.school</a>
+          <a href="/privacy" style={{ color: NAVY, fontSize: '14px' }}>Privacy Policy</a>
+          <a href="https://www.elabtutor.school" style={{ color: NAVY, fontSize: '14px' }}>www.elabtutor.school</a>
         </div>
       </footer>
     </div>

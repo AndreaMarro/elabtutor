@@ -78,16 +78,16 @@ const MosfetN = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id
         <>
           {/* Bright green border glow */}
           <rect x="-12" y="-14" width="24" height="26" rx="2.5"
-            fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="1.8" opacity="0.7">
+            fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="1.8" opacity="0.7">
             <animate attributeName="opacity" values="0.5;0.85;0.5" dur="1.2s" repeatCount="indefinite" />
           </rect>
           {/* Inner body glow */}
           <rect x="-10" y="-12" width="20" height="22" rx="1.5"
-            fill="var(--color-accent, #558B2F)" opacity="0.22">
+            fill="var(--color-accent, #4A7A25)" opacity="0.22">
             <animate attributeName="opacity" values="0.14;0.28;0.14" dur="1.2s" repeatCount="indefinite" />
           </rect>
           {/* Small green "power" indicator dot */}
-          <circle cx="6" cy="-7" r="1.5" fill="var(--color-accent, #558B2F)" opacity="0.9">
+          <circle cx="6" cy="-7" r="1.5" fill="var(--color-accent, #4A7A25)" opacity="0.9">
             <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
           </circle>
         </>
@@ -96,7 +96,7 @@ const MosfetN = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-25" y="-24" width="50" height="50" rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

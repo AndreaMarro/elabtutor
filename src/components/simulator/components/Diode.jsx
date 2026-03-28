@@ -58,7 +58,7 @@ const Diode = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id }
 
       {/* Current flow indicator */}
       {hasFlow && (
-        <circle cx="0" cy="0" r="1.2" fill="var(--color-accent, #558B2F)" opacity={0.5}>
+        <circle cx="0" cy="0" r="1.2" fill="var(--color-accent, #4A7A25)" opacity={0.5}>
           <animate attributeName="cx" values="-11;11" dur="0.4s" repeatCount="indefinite" />
         </circle>
       )}
@@ -67,11 +67,11 @@ const Diode = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id }
       {conducting && (
         <>
           <rect x="-13" y="-7" width="26" height="14" rx="7"
-            fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="1.5" opacity="0.6">
+            fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="1.5" opacity="0.6">
             <animate attributeName="opacity" values="0.4;0.75;0.4" dur="1.2s" repeatCount="indefinite" />
           </rect>
           <rect x="-11.5" y="-4.8" width="23" height="9.6" rx="4.8"
-            fill="var(--color-accent, #558B2F)" opacity="0.18">
+            fill="var(--color-accent, #4A7A25)" opacity="0.18">
             <animate attributeName="opacity" values="0.10;0.25;0.10" dur="1.2s" repeatCount="indefinite" />
           </rect>
         </>
@@ -80,7 +80,7 @@ const Diode = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id }
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-24" y="-10" width="48" height="20" rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

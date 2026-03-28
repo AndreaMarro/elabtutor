@@ -7,13 +7,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { eventiService } from '../../../services/notionService';
 import logger from '../../../utils/logger';
+import { showToast } from '../../common/Toast';
 
 // ============================================
 // CONSTANTS
 // ============================================
 const COLORS = {
     primary: '#1E4D8C',
-    success: '#558B2F',
+    success: '#4A7A25',
     warning: '#F59E0B',
     danger: '#EF4444',
     info: '#06B6D4',
@@ -326,7 +327,7 @@ export default function AdminEventi({ isMobile }) {
             await loadEvents();
         } catch (err) {
             logger.error('Errore eliminazione evento:', err);
-            alert('Errore nell\'eliminazione: ' + (err.message || 'Errore sconosciuto'));
+            showToast('Errore nell\'eliminazione: ' + (err.message || 'Errore sconosciuto'), 'error');
         }
     };
 

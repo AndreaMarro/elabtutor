@@ -4,6 +4,8 @@
 // © Andrea Marro — 15/02/2026
 // ============================================
 
+import logger from '../utils/logger';
+
 const GDPR_WEBHOOK_URL = import.meta.env.VITE_N8N_GDPR_URL || '';
 
 /**
@@ -15,7 +17,7 @@ const GDPR_WEBHOOK_URL = import.meta.env.VITE_N8N_GDPR_URL || '';
  */
 async function callGdprWebhook(action, data) {
     if (!GDPR_WEBHOOK_URL) {
-        console.warn('[GDPR] VITE_N8N_GDPR_URL non configurato — operazione locale');
+        logger.warn('[GDPR] VITE_N8N_GDPR_URL non configurato — operazione locale');
         return { success: true, action, local: true, message: 'Operazione registrata localmente' };
     }
 
@@ -63,7 +65,7 @@ export function saveConsent(consentData) {
         localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(data));
         return true;
     } catch (error) {
-        console.error('[GDPR] Errore salvataggio consenso:', error);
+        logger.error('[GDPR] Errore salvataggio consenso:', error);
         return false;
     }
 }
@@ -117,7 +119,7 @@ async function requestDataExport(userId) {
     try {
         return await callGdprWebhook('export', { userId });
     } catch (error) {
-        console.error('[GDPR] Errore esportazione:', error);
+        logger.error('[GDPR] Errore esportazione:', error);
         throw error;
     }
 }
@@ -143,7 +145,7 @@ export async function requestDataDeletion(userId, password, reason) {
 
         return result;
     } catch (error) {
-        console.error('[GDPR] Errore eliminazione:', error);
+        logger.error('[GDPR] Errore eliminazione:', error);
         throw error;
     }
 }
@@ -158,7 +160,7 @@ async function requestDataCorrection(userId, corrections) {
     try {
         return await callGdprWebhook('correct', { userId, corrections });
     } catch (error) {
-        console.error('[GDPR] Errore rettifica:', error);
+        logger.error('[GDPR] Errore rettifica:', error);
         throw error;
     }
 }
@@ -180,7 +182,7 @@ async function revokeConsent(userId) {
 
         return result;
     } catch (error) {
-        console.error('[GDPR] Errore revoca:', error);
+        logger.error('[GDPR] Errore revoca:', error);
         throw error;
     }
 }
@@ -196,9 +198,9 @@ function clearLocalData() {
     const keysToRemove = [];
     
     // Raccoglie tutte le chiavi elab_
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
         if (key && key.startsWith('elab_')) {
             keysToRemove.push(key);
         }
@@ -300,7 +302,7 @@ async function requestParentalConsent(data) {
 
         return result;
     } catch (error) {
-        console.error('[GDPR] Errore consenso parentale:', error);
+        logger.error('[GDPR] Errore consenso parentale:', error);
         throw error;
     }
 }
@@ -324,7 +326,7 @@ async function verifyParentalConsent(token) {
 
         return result;
     } catch (error) {
-        console.error('[GDPR] Errore verifica consenso:', error);
+        logger.error('[GDPR] Errore verifica consenso:', error);
         throw error;
     }
 }
@@ -397,9 +399,9 @@ async function pseudonymizeUserId(userId) {
  * @param {string} date - Data ISO
  * @param {number} maxDays - Giorni massimi
  * @returns {boolean}
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function isDataExpired(date, maxDays = 730) { // 2 anni default
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
     const dataDate = new Date(date);
     const expiryDate = new Date(dataDate.getTime() + (maxDays * 24 * 60 * 60 * 1000));
     return new Date() > expiryDate;

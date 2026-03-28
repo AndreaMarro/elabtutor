@@ -96,19 +96,12 @@ function FormField({ field, value, onChange, hasError }) {
                     placeholder={placeholder || `Inserisci ${label.toLowerCase()}...`}
                     disabled={disabled}
                     rows={rows || 3}
+                    className={`gestionale-field${hasError ? ' has-error' : ''}`}
                     style={{
                         ...baseInputStyle,
                         resize: 'vertical',
                         minHeight: '70px',
                         fontFamily: 'inherit',
-                    }}
-                    onFocus={(e) => {
-                        e.target.style.borderColor = COLORS.accentLight;
-                        e.target.style.boxShadow = `0 0 0 3px ${COLORS.accentLight}20`;
-                    }}
-                    onBlur={(e) => {
-                        e.target.style.borderColor = hasError ? COLORS.danger : COLORS.border;
-                        e.target.style.boxShadow = 'none';
                     }}
                 />
                 {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
@@ -128,6 +121,7 @@ function FormField({ field, value, onChange, hasError }) {
                     value={value || ''}
                     onChange={(e) => handleChange(e.target.value)}
                     disabled={disabled}
+                    className={`gestionale-field${hasError ? ' has-error' : ''}`}
                     style={{
                         ...baseInputStyle,
                         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -136,14 +130,6 @@ function FormField({ field, value, onChange, hasError }) {
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 12px center',
                         paddingRight: '32px',
-                    }}
-                    onFocus={(e) => {
-                        e.target.style.borderColor = COLORS.accentLight;
-                        e.target.style.boxShadow = `0 0 0 3px ${COLORS.accentLight}20`;
-                    }}
-                    onBlur={(e) => {
-                        e.target.style.borderColor = hasError ? COLORS.danger : COLORS.border;
-                        e.target.style.boxShadow = 'none';
                     }}
                 >
                     <option value="">{placeholder || `Seleziona ${label.toLowerCase()}...`}</option>
@@ -190,17 +176,10 @@ function FormField({ field, value, onChange, hasError }) {
                         min={min ?? 0}
                         max={max}
                         step="0.01"
+                        className={`gestionale-field${hasError ? ' has-error' : ''}`}
                         style={{
                             ...baseInputStyle,
                             paddingLeft: '30px',
-                        }}
-                        onFocus={(e) => {
-                            e.target.style.borderColor = COLORS.accentLight;
-                            e.target.style.boxShadow = `0 0 0 3px ${COLORS.accentLight}20`;
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = hasError ? COLORS.danger : COLORS.border;
-                            e.target.style.boxShadow = 'none';
                         }}
                     />
                 </div>
@@ -241,15 +220,8 @@ function FormField({ field, value, onChange, hasError }) {
                 disabled={disabled}
                 min={min}
                 max={max}
+                className={`gestionale-field${hasError ? ' has-error' : ''}`}
                 style={baseInputStyle}
-                onFocus={(e) => {
-                    e.target.style.borderColor = COLORS.accentLight;
-                    e.target.style.boxShadow = `0 0 0 3px ${COLORS.accentLight}20`;
-                }}
-                onBlur={(e) => {
-                    e.target.style.borderColor = hasError ? COLORS.danger : COLORS.border;
-                    e.target.style.boxShadow = 'none';
-                }}
             />
             {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
         </div>

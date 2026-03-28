@@ -335,8 +335,8 @@ export default React.memo(function ChatOverlay({
                     cursor: 'pointer',
                 }} onClick={() => setMinimized(false)}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <img src="/elab-mascot.png" alt="UNLIM"
-                            style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
+                        <img src="/assets/mascot/logo-senza-sfondo.png" alt="UNLIM"
+                            style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'contain', background: '#fff' }}
                         />
                         <span style={{ fontWeight: 600, fontSize: '15px', fontFamily: 'Oswald, sans-serif', letterSpacing: '0.3px' }}>
                             UNLIM
@@ -414,8 +414,8 @@ export default React.memo(function ChatOverlay({
                     userSelect: 'none', touchAction: 'none'
                 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img src="/elab-mascot.png" alt="UNLIM"
-                        style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)' }}
+                    <img src="/assets/mascot/logo-senza-sfondo.png" alt="UNLIM"
+                        style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'contain', background: '#fff', border: '2px solid rgba(255,255,255,0.3)' }}
                     />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontWeight: 600, fontSize: '15px', fontFamily: 'Oswald, sans-serif', letterSpacing: '0.3px' }}>
@@ -437,7 +437,7 @@ export default React.memo(function ChatOverlay({
                     <HeaderButton
                         onClick={() => setIsFullscreen(!isFullscreen)}
                         title={isFullscreen ? 'Riduci Finestra' : 'A Tutto Schermo'}
-                        style={isFullscreen ? { padding: '4px 10px', gap: 5, display: 'flex', alignItems: 'center', fontSize: 12, fontWeight: 600 } : undefined}
+                        style={isFullscreen ? { padding: '4px 10px', gap: 5, display: 'flex', alignItems: 'center', fontSize: 14, fontWeight: 600 } : undefined}
                     >
                         {isFullscreen ? (
                             <>
@@ -603,8 +603,7 @@ export default React.memo(function ChatOverlay({
                         boxSizing: 'border-box',
                         overflowY: 'auto',
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(30,77,140,0.08)'; }}
-                    onBlur={(e) => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                    className="elab-input"
                 />
 
                 {/* Screenshot button (always visible) */}
@@ -934,8 +933,7 @@ function MessageBubble({ msg, onRetry }) {
                             transition: 'border-color 150ms, box-shadow 150ms',
                             cursor: 'pointer',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-youtube-red)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255,0,0,0.1)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-chat-youtube-border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                        className="chat-youtube-link"
                     >
                         <span style={{ fontSize: '18px' }}>{'\u25B6\uFE0F'}</span>
                         <span>Cerca su YouTube: <strong>{msg.youtubeSearch.query}</strong></span>

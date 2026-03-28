@@ -19,7 +19,7 @@ const STATS = [
 
 const VOLUMES = [
     {
-        num: 1, color: '#558B2F', gradient: 'linear-gradient(135deg, #558B2F 0%, #9CCC65 100%)',
+        num: 1, color: '#4A7A25', gradient: 'linear-gradient(135deg, #4A7A25 0%, #9CCC65 100%)',
         title: 'Basi', experiments: 38,
         desc: 'LED, resistori, condensatori, pulsanti — dal primo circuito alle basi solide',
         chapters: '11 capitoli',
@@ -39,10 +39,10 @@ const VOLUMES = [
 ];
 
 const FEATURES = [
-    { icon: '\uD83D\uDCBB', title: 'Circuiti Interattivi', desc: 'Costruisci circuiti reali su breadboard con 21 componenti elettronici', accent: '#558B2F' },
+    { icon: '\uD83D\uDCBB', title: 'Circuiti Interattivi', desc: 'Costruisci circuiti reali su breadboard con 21 componenti elettronici', accent: '#4A7A25' },
     { icon: '\u26A1', title: 'Simulazione Tempo-Reale', desc: 'Vedi correnti, tensioni e LED accendersi davvero', accent: '#E8941C' },
     { icon: '\uD83D\uDE80', title: 'Compilatore Arduino', desc: 'Scrivi codice C++ e flashalo sul simulatore ATmega328p', accent: '#1E4D8C' },
-    { icon: '\uD83D\uDC63', title: '"Passo Passo" Guidato', desc: 'Assemblaggio step-by-step identico alle illustrazioni del libro', accent: '#558B2F' },
+    { icon: '\uD83D\uDC63', title: '"Passo Passo" Guidato', desc: 'Assemblaggio step-by-step identico alle illustrazioni del libro', accent: '#4A7A25' },
     { icon: '\uD83E\uDD16', title: 'UNLIM AI Tutor', desc: 'Assistente AI che spiega i concetti in modo semplice e chiaro', accent: '#E54B3D' },
     { icon: '\uD83C\uDFC6', title: '53 Sfide Interattive', desc: 'Trova il guasto, prevedi il risultato, decodifica circuiti', accent: '#E8941C' },
 ];
@@ -201,6 +201,32 @@ export default function VetrinaSimulatore({ onNavigate }) {
                             </div>
                         ))}
                     </div>
+
+                    {/* CTA Prova Subito — zero login */}
+                    <button
+                        onClick={() => onNavigate?.('prova')}
+                        style={{
+                            marginTop: '24px',
+                            padding: '14px 32px',
+                            background: '#4A7A25',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '17px',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            fontFamily: "'Open Sans', sans-serif",
+                            boxShadow: '0 4px 16px rgba(74,122,37,0.3)',
+                            minHeight: '48px',
+                            minWidth: '200px',
+                            transition: 'transform 0.15s, box-shadow 0.15s',
+                        }}
+                        onMouseEnter={(e) => { e.target.style.transform = 'scale(1.04)'; e.target.style.boxShadow = '0 6px 24px rgba(74,122,37,0.4)'; }}
+                        onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 16px rgba(74,122,37,0.3)'; }}
+                        aria-label="Prova il simulatore senza registrazione"
+                    >
+                        Prova Subito — Senza Login
+                    </button>
                 </div>
             </div>
 {/* (c) Andrea Marro — 24/02/2026 — ELAB Tutor — Tutti i diritti riservati */}
@@ -505,7 +531,7 @@ const S = {
         lineHeight: '1.1',
     },
     heroTitleAccent: {
-        background: 'linear-gradient(135deg, #558B2F, #AED581)',
+        background: 'linear-gradient(135deg, #4A7A25, #AED581)',
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
     },
@@ -545,7 +571,7 @@ const S = {
     sectionHeader: { textAlign: 'center', marginBottom: '28px' },
     sectionTag: {
         display: 'inline-block', fontSize: '14px', fontWeight: '700',
-        color: '#558B2F', letterSpacing: '2px', textTransform: 'uppercase',
+        color: '#4A7A25', letterSpacing: '2px', textTransform: 'uppercase',
         marginBottom: '6px',
     },
     sectionTitle: {
@@ -573,7 +599,7 @@ const S = {
         height: '3px', background: 'rgba(255,255,255,0.15)', zIndex: 3,
     },
     showcaseProgressFill: {
-        height: '100%', background: '#558B2F',
+        height: '100%', background: '#4A7A25',
         transition: 'width 0.05s linear', borderRadius: '0 2px 2px 0',
     },
     showcaseOverlay: {
@@ -605,7 +631,7 @@ const S = {
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
     },
     thumbActive: {
-        borderColor: '#1E4D8C',
+        border: '2px solid #1E4D8C',
         boxShadow: '0 4px 16px rgba(30,77,140,0.2)',
     },
     thumbImg: {
@@ -616,7 +642,7 @@ const S = {
         display: 'flex', flexDirection: 'column', gap: '1px',
     },
     thumbTag: {
-        fontSize: '14px', fontWeight: '700', color: '#558B2F',
+        fontSize: '14px', fontWeight: '700', color: '#4A7A25',
         textTransform: 'uppercase', letterSpacing: '0.5px',
     },
     thumbLabel: {
@@ -704,7 +730,7 @@ const S = {
         boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         transition: 'box-shadow 0.2s ease',
     },
-    expandIcon: { fontSize: '14px', color: '#558B2F', fontWeight: '700' },
+    expandIcon: { fontSize: '14px', color: '#4A7A25', fontWeight: '700' },
     expandText: { flex: 1, textAlign: 'left' },
     expandHint: {
         fontSize: '14px', color: '#6B7A8D', fontWeight: '500',
@@ -728,7 +754,7 @@ const S = {
     },
     activationGradientTop: {
         height: '4px',
-        background: 'linear-gradient(90deg, #558B2F, #1E4D8C, #E8941C, #E54B3D)',
+        background: 'linear-gradient(90deg, #4A7A25, #1E4D8C, #E8941C, #E54B3D)',
     },
     activationContent: {
         padding: '36px 32px', textAlign: 'center',
@@ -759,14 +785,14 @@ const S = {
     },
     activateBtn: {
         padding: '14px 32px', border: 'none', borderRadius: '12px',
-        background: 'linear-gradient(135deg, #558B2F, #6AA033)',
+        background: 'linear-gradient(135deg, #4A7A25, #6AA033)',
         color: '#1A1A2E', fontSize: '16px', fontWeight: '700',
         cursor: 'pointer', letterSpacing: '0.3px',
         transition: 'transform 0.2s, box-shadow 0.2s',
     },
     errorText: { color: '#E54B3D', fontSize: '14px', marginTop: '14px', fontWeight: '500' },
     successText: {
-        color: '#558B2F', fontSize: '18px', fontWeight: '700',
+        color: '#4A7A25', fontSize: '18px', fontWeight: '700',
         animation: 'vetrina-pulse 1.5s infinite',
     },
     divider: {

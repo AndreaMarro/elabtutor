@@ -5,6 +5,8 @@
 // © Andrea Marro — 13/03/2026
 // ============================================
 
+import logger from '../utils/logger';
+
 const NANOBOT_URL = (import.meta.env.VITE_NANOBOT_URL || '').trim() || null;
 
 // Audio recording state
@@ -73,7 +75,7 @@ export function unlockAudioPlayback() {
         silent.play().catch(() => {});
 
         audioUnlocked = true;
-        console.log('[Voice] Audio playback unlocked');
+        logger.debug('[Voice] Audio playback unlocked');
     } catch { /* silent */ }
 }
 
@@ -114,10 +116,10 @@ export async function startRecording() {
 
         // Collect data every 250ms for responsiveness
         mediaRecorder.start(250);
-        console.log(`[Voice] Recording started (${mimeType})`);
+        logger.debug(`[Voice] Recording started (${mimeType})`);
         return true;
     } catch (err) {
-        console.error('[Voice] Microphone access denied:', err);
+        logger.error('[Voice] Microphone access denied:', err);
         return false;
     }
 }
@@ -143,7 +145,7 @@ export function stopRecording() {
                 recordingStream = null;
             }
 
-            console.log(`[Voice] Recording stopped: ${(blob.size / 1024).toFixed(1)}KB`);
+            logger.debug(`[Voice] Recording stopped: ${(blob.size / 1024).toFixed(1)}KB`);
             resolve(blob);
         };
 
@@ -196,9 +198,9 @@ export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
 
     if (options.circuitState) {
         formData.append('circuitState', JSON.stringify(options.circuitState));
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     if (options.simulatorContext) {
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
         formData.append('simulatorContext', JSON.stringify(options.simulatorContext));
     }
 

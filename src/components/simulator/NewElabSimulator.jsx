@@ -23,7 +23,7 @@ import SimulatorCanvas from './canvas/SimulatorCanvas';
 import DrawingOverlay from './canvas/DrawingOverlay';
 import ExperimentPicker from './panels/ExperimentPicker';
 import ComponentPalette from './panels/ComponentPalette';
-import ControlBar from './panels/ControlBar';
+import MinimalControlBar from './panels/MinimalControlBar';
 import SerialMonitor from './panels/SerialMonitor';
 import SerialPlotter from './panels/SerialPlotter';
 import CircuitSolver from './engine/CircuitSolver';
@@ -32,6 +32,7 @@ import { compileCode as apiCompileCode } from '../../services/api';
 import { emitSimulatorEvent } from '../../services/simulator-api';
 import { pushActivity } from '../../services/activityBuffer';
 import { sendAnalyticsEvent, EVENTS } from './api/AnalyticsWebhook';
+import studentTracker from '../../services/studentTracker';
 import useUndoRedo from './hooks/useUndoRedo';
 import useCircuitStorage from './hooks/useCircuitStorage';
 import useMergedExperiment from './hooks/useMergedExperiment';
@@ -64,6 +65,7 @@ import { translateCompilationErrors } from './utils/errorTranslator';
 import { buildPinComponentMap } from './utils/pinComponentMap';
 import ConsentBanner from '../common/ConsentBanner';
 import logger from '../../utils/logger';
+import __useDisclosureLevel from './hooks/useDisclosureLevel';
 
 /* ═══════════════════════════════════════════════════════════════════
    ELAB Palette constants
@@ -95,6 +97,8 @@ const NewElabSimulator = ({
   quizResultsRef,
   sessionStartRef,
   circuitStateRef,
+  onTabChange,
+  disclosureLevel = 1,
 }) => {
   // ─── UNLIM API highlight state (internal, merged with props) ───
   const [apiHighlightedComponents, setApiHighlightedComponents] = useState([]);
@@ -111,8 +115,9 @@ const NewElabSimulator = ({
   useEffect(() => { isRunningRef.current = isRunning; }, [isRunning]);
   const [simulationTime, setSimulationTime] = useState(0);
   const [showSidebar, setShowSidebar] = useState(() => {
-    try { const v = localStorage.getItem('elab-sidebar-pref'); return v === null ? true : v === '1'; }
-    catch { return true; }
+    // G12 RESPIRA: sidebar hidden by default (progressive disclosure)
+    try { const v = localStorage.getItem('elab-sidebar-pref'); return v === '1'; }
+    catch { return false; }
   });
   const [serialOutput, setSerialOutput] = useState('');
   const [avrReady, setAvrReady] = useState(false);
@@ -153,7 +158,9 @@ const NewElabSimulator = ({
     try { localStorage.setItem(WELCOME_KEY, '1'); } catch {}
   }, []);
 
-  const recordMilestone = useCallback(() => {}, []);
+  // Progressive disclosure: milestone tracking per uso futuro
+  const _disclosureHook = __useDisclosureLevel();
+  const recordMilestone = _disclosureHook.recordMilestone;
 
   useEffect(() => {
     try { localStorage.setItem('elab-sidebar-pref', showSidebar ? '1' : '0'); } catch {}
@@ -181,7 +188,7 @@ const NewElabSimulator = ({
       if (dt > SWIPE_MAX_TIME || Math.abs(dx) < SWIPE_MIN_DIST || Math.abs(dy) > Math.abs(dx)) { swipeStart = null; return; }
       const rect = el.getBoundingClientRect();
       if (dx < 0 && rect.right - swipeStart.x < EDGE_ZONE) {
-        if (currentExperiment?.simulationMode === 'avr' && !showCodeEditor) setShowCodeEditor(true);
+        if (currentExperiment?.simulationMode === 'avr' && currentExperiment?.id?.startsWith('v3-') && !showCodeEditor) setShowCodeEditor(true);
       }
       swipeStart = null;
     };
@@ -367,6 +374,7 @@ const NewElabSimulator = ({
           if (warnLines.length > 0) setCompilationWarnings(translateCompilationErrors(warnLines.join('\n')));
         }
         trackedTimeout(() => { setCompilationStatus(null); setCompilationWarnings(null); }, 5000);
+        try { studentTracker.logCompilation(true); } catch { }
       } else {
         setCompilationStatus('error');
         const fullText = result.errors || 'Errore di compilazione sconosciuto';
@@ -374,6 +382,7 @@ const NewElabSimulator = ({
         for (const line of lines) { if (/warning:/i.test(line)) warnLines.push(line); else errorLines.push(line); }
         const rawErrors = errorLines.join('\n').trim() || fullText;
         setCompilationErrors(translateCompilationErrors(rawErrors));
+        try { studentTracker.logCompilation(false, rawErrors.slice(0, 100)); } catch { }
         if (warnLines.length > 0) setCompilationWarnings(translateCompilationErrors(warnLines.join('\n')));
         try { sendAnalyticsEvent(EVENTS.ERROR, { type: 'compilation_failed', errors: rawErrors.slice(0, 200) }); } catch { }
         const lineMatch = fullText.match(/\.ino:(\d+):\d+:.*error/);
@@ -453,7 +462,7 @@ const NewElabSimulator = ({
   const [exportToast, setExportToast] = useState(false);
   const [wireToast, setWireToast] = useState(null);
   const [showWhiteboard, setShowWhiteboard] = useState(false);
-  const [electronViewEnabled, setElectronViewEnabled] = useState(false);
+
   const [isAskingUNLIM, setIsAskingUNLIM] = useState(false);
   const [unlimResponse, setUnlimResponse] = useState(null);
   const [circuitWarning, setCircuitWarning] = useState(null);
@@ -684,18 +693,30 @@ const NewElabSimulator = ({
     if (initialExperimentId) { const exp = findExperimentById(initialExperimentId); if (exp) handleSelectExperiment(exp); onInitialExperimentConsumed?.(); }
   }, [initialExperimentId]);
 
+  // Principio Zero: auto-show LessonPath on EVERY new experiment load
+  // The lesson path is the teacher's primary guide — always show it first
+  useEffect(() => {
+    if (currentExperiment) {
+      setShowLessonPath(true);
+    }
+  }, [currentExperiment?.id]);
+
   // ─── Derived flags ───
   const isAvrMode = currentExperiment?.simulationMode === 'avr';
   const leftPanelMode = showPalette ? 'palette' : 'picker';
+  // Principio Zero: progressive disclosure — Vol1/Vol2 nascondono codice/serial
+  const isVol3 = currentExperiment?.id?.startsWith('v3-') ?? false;
 
   /* ═══════════════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════════════ */
   return (
     <div className="elab-simulator" style={{ position: 'relative' }}>
-      {/* ──── TOP: ControlBar ──── */}
+      {/* ──── TOP: MinimalControlBar (G12 RESPIRA) ──── */}
       <div className={lyStyles.controlBarRow}>
-        <ControlBar
+        <MinimalControlBar
+          minimalMode={true}
+          onTabChange={onTabChange}
           experiment={currentExperiment}
           isRunning={isRunning}
           onPlay={handlePlay}
@@ -706,7 +727,7 @@ const NewElabSimulator = ({
           showPalette={showPalette}
           onTogglePalette={currentExperiment ? () => { setShowPalette(prev => !prev); recordMilestone('usedPalette'); } : undefined}
           showCodeEditor={showCodeEditor}
-          onToggleCodeEditor={currentExperiment ? () => { setShowCodeEditor(prev => !prev); recordMilestone('usedCodeEditor'); } : undefined}
+          onToggleCodeEditor={currentExperiment && isVol3 ? () => { setShowCodeEditor(prev => !prev); recordMilestone('usedCodeEditor'); } : undefined}
           wireMode={wireMode}
           onToggleWireMode={currentExperiment ? () => setWireMode(prev => !prev) : undefined}
           onAskUNLIM={currentExperiment ? handleAskUNLIM : undefined}
@@ -730,16 +751,15 @@ const NewElabSimulator = ({
           onToggleShortcuts={() => setShowShortcuts(prev => !prev)}
           showSidebar={showSidebar}
           onToggleSidebar={() => setShowSidebar(prev => !prev)}
-          onCompile={currentExperiment?.simulationMode === 'avr' ? handleCompileOnly : undefined}
+          onCompile={isVol3 && currentExperiment?.simulationMode === 'avr' ? handleCompileOnly : undefined}
           compileStatus={compilationStatus}
           circuitStatus={circuitStatus}
           showBottomPanel={showBottomPanel}
-          onToggleBottomPanel={currentExperiment?.simulationMode === 'avr' ? () => setShowBottomPanel(prev => !prev) : undefined}
+          onToggleBottomPanel={isVol3 && currentExperiment?.simulationMode === 'avr' ? () => setShowBottomPanel(prev => !prev) : undefined}
           onAddAnnotation={currentExperiment ? handleAnnotationAdd : undefined}
           showWhiteboard={showWhiteboard}
           onToggleWhiteboard={currentExperiment ? () => setShowWhiteboard(prev => !prev) : undefined}
-          electronViewEnabled={electronViewEnabled}
-          onToggleElectronView={currentExperiment ? () => setElectronViewEnabled(prev => !prev) : undefined}
+
           showNotes={showNotes}
           onToggleNotes={currentExperiment ? () => toggleRightPanel('notes') : undefined}
           showQuiz={showQuiz}
@@ -762,7 +782,7 @@ const NewElabSimulator = ({
       {pdfReady && (
         <div style={{ position: 'absolute', top: 56, left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', alignItems: 'center', gap: 10, background: 'var(--color-primary, #1E4D8C)', color: 'var(--color-text-inverse, #fff)', padding: '10px 18px', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,.25)', fontFamily: "var(--font-sans)", fontSize: 14 }}>
           <span>📄 Report PDF pronto!</span>
-          <button onClick={handleDownloadPdf} style={{ background: 'var(--color-accent, #558B2F)', color: 'var(--color-text-inverse, #fff)', border: 'none', borderRadius: 6, padding: '6px 16px', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>⬇ Scarica</button>
+          <button onClick={handleDownloadPdf} style={{ background: 'var(--color-accent, #4A7A25)', color: 'var(--color-text-inverse, #fff)', border: 'none', borderRadius: 6, padding: '6px 16px', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>⬇ Scarica</button>
           <button onClick={() => { if (pdfReady.url) URL.revokeObjectURL(pdfReady.url); setPdfReady(null); }} style={{ background: 'transparent', color: '#fff9', border: 'none', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '2px 6px' }} aria-label="Chiudi">✕</button>
         </div>
       )}
@@ -773,7 +793,7 @@ const NewElabSimulator = ({
           <div style={{ display: 'flex', gap: 0, background: 'var(--color-bg-tertiary, #ECECF0)', borderRadius: 8, padding: 2 }}>
             {[
               { key: 'complete', label: 'Già Montato', color: 'var(--color-primary, #1E4D8C)' },
-              { key: 'guided', label: 'Passo Passo', color: 'var(--color-accent, #558B2F)' },
+              { key: 'guided', label: 'Passo Passo', color: 'var(--color-accent, #4A7A25)' },
               { key: 'sandbox', label: 'Libero', color: 'var(--color-primary, #1E4D8C)' },
             ].map(m => {
               const isActive = (m.key === 'complete' && !currentExperiment.buildMode) || currentExperiment.buildMode === m.key;
@@ -830,8 +850,8 @@ const NewElabSimulator = ({
                 {showBom && currentExperiment && (<BomPanel experiment={mergedExperiment} onClose={() => setShowBom(false)} />)}
                 {showLessonPath && currentExperiment && (<LessonPathPanel experiment={currentExperiment} allExperiments={ALL_EXPERIMENTS} onClose={() => setShowLessonPath(false)} onSendToUNLIM={onSendToUNLIM} onLoadExperiment={(id) => { const exp = findExperimentById(id); if (exp) handleSelectExperiment(exp); }} />)}
                 {showQuiz && currentExperiment?.quiz?.length > 0 && (<QuizPanel experiment={currentExperiment} onClose={() => setShowQuiz(false)} onSendToUNLIM={onSendToUNLIM} onQuizComplete={handleQuizComplete} />)}
-                {exportToast && (<div role="status" aria-live="polite" style={{ position: 'absolute', bottom: 50, left: '50%', transform: 'translateX(-50%)', background: 'var(--color-accent, #558B2F)', color: 'var(--color-text-inverse, #fff)', padding: '8px 20px', borderRadius: 8, fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 700, boxShadow: '0 4px 12px rgba(124,179,66,0.35)', zIndex: 100, pointerEvents: 'none' }}>Foto salvata!</div>)}
-                {wireToast && (<div role="status" aria-live="polite" style={{ position: 'absolute', bottom: 50, left: '50%', transform: 'translateX(-50%)', background: 'var(--color-vol2, #E8941C)', color: 'var(--color-text, #1A1A2E)', padding: '8px 20px', borderRadius: 8, fontFamily: "var(--font-display, 'Oswald', sans-serif)", fontSize: 14, fontWeight: 700, boxShadow: '0 4px 12px rgba(232,148,28,0.35)', zIndex: 100, pointerEvents: 'none' }}>{wireToast}</div>)}
+                {exportToast && (<div role="status" aria-live="polite" style={{ position: 'absolute', bottom: 50, left: '50%', transform: 'translateX(-50%)', background: 'var(--color-accent, #4A7A25)', color: 'var(--color-text-inverse, #fff)', padding: '8px 20px', borderRadius: 8, fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 700, boxShadow: '0 4px 12px rgba(124,179,66,0.35)', zIndex: 100, pointerEvents: 'none' }}>Foto salvata!</div>)}
+                {wireToast && (<div role="status" aria-live="polite" style={{ position: 'absolute', bottom: 50, left: '50%', transform: 'translateX(-50%)', background: 'var(--color-vol2, #E8941C)', color: 'var(--color-text, #1A1A2E)', padding: '8px 20px', borderRadius: 8, fontFamily: "var(--font-display, 'Oswald', sans-serif)", fontSize: 16, fontWeight: 700, boxShadow: '0 4px 12px rgba(232,148,28,0.35)', zIndex: 100, pointerEvents: 'none' }}>{wireToast}</div>)}
                 {wireMode && (<div className={lyStyles.wireModeIndicator} role="status" aria-live="polite"><span style={{ fontSize: 14 }}>&#x1F50C;</span><span>Collegamento fili attivo</span>{wireStartRef.current && (<span style={{ color: 'var(--color-vol2, #E8941C)' }}>Da: {wireStartRef.current} — clicca il pin destinazione</span>)}</div>)}
                 {currentExperiment && (currentExperiment.buildMode === 'guided' || currentExperiment.buildMode === 'sandbox') && (
                   <ComponentDrawer mode={currentExperiment.buildMode} experiment={currentExperiment} currentStep={buildStepIndex} onStepChange={handleBuildStepChange} volumeNumber={selectedVolume}
@@ -842,8 +862,8 @@ const NewElabSimulator = ({
                 <NotesPanel experimentId={currentExperiment?.id} visible={showNotes} onClose={() => setShowNotes(false)} />
               </div>
 
-              {/* BOTTOM PANEL: Serial Monitor / Plotter */}
-              {isAvrMode && (
+              {/* BOTTOM PANEL: Serial Monitor / Plotter — solo Vol3 (disclosure >= 2) */}
+              {isAvrMode && isVol3 && (
                 <div ref={bottomPanelRef} className="elab-simulator__bottom-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', transition: 'max-height 200ms ease', maxHeight: showBottomPanel ? 'min(220px, 30dvh)' : 40, flexShrink: 0 }}>
                   {!showBottomPanel && (<button onClick={() => setShowBottomPanel(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 44, minHeight: 44, background: 'var(--color-code-header, #181825)', border: 'none', borderTop: '1px solid var(--color-code-border, #313244)', cursor: 'pointer', width: '100%', fontFamily: FONT_BODY, fontSize: 14, fontWeight: 600, color: 'var(--color-text-gray-300, #888)' }} title="Apri Monitor Seriale"><span style={{ fontSize: 14 }}>{'\u25B2'}</span><span>Monitor Seriale</span>{isRunning && (<span style={{ width: 8, height: 8, borderRadius: '50%', background: LIME, boxShadow: '0 0 6px rgba(124,179,66,0.5)', flexShrink: 0 }} />)}</button>)}
                   {showBottomPanel && (<>
@@ -907,7 +927,7 @@ const NewElabSimulator = ({
             </div>
           )}
 
-          {!showCodeEditor && currentExperiment && currentExperiment.simulationMode === 'avr' && (
+          {!showCodeEditor && currentExperiment && currentExperiment.simulationMode === 'avr' && isVol3 && (
             <button onClick={() => setShowCodeEditor(true)} aria-label="Apri editor codice" style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 30, width: 24, height: 64, border: 'none', borderRadius: '6px 0 0 6px', background: 'var(--color-primary, #1E4D8C)', color: 'var(--color-text-inverse, #fff)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-md)', fontSize: 14, padding: 0, transition: 'opacity var(--transition-base)' }} title="Apri Editor">‹</button>
           )}
         </div>
@@ -917,7 +937,7 @@ const NewElabSimulator = ({
           <div ref={editorPanelRef} className={`${lyStyles.codeEditorPanel} ${editorMode === 'scratch' ? (scratchFullscreen ? lyStyles.codeEditorPanelScratchFullscreen : lyStyles.codeEditorPanelScratch) : ''}`}>
             <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--color-blockly-grid, #2a3040)', background: 'var(--color-editor-bg, #161B22)', flexShrink: 0 }}>
               <button onClick={() => setShowCodeEditor(false)} aria-label="Chiudi editor" title="Chiudi editor (torna al circuito)" style={{ width: 44, minHeight: 44, border: 'none', cursor: 'pointer', padding: 0, background: 'var(--color-editor-bg, #161B22)', color: 'var(--color-text-gray-400, #666)', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'color 150ms, background 150ms' }} onPointerEnter={e => { e.currentTarget.style.color = '#E54B3D'; e.currentTarget.style.background = 'rgba(229,75,61,0.1)'; }} onPointerLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.background = 'var(--color-editor-bg, #161B22)'; }}><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4L12 12M4 12L12 4"/></svg></button>
-              <button onClick={() => { setEditorMode('arduino'); setScratchFullscreen(false); }} style={{ flex: 1, padding: '7px 0', border: 'none', cursor: 'pointer', minHeight: 44, fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, background: editorMode === 'arduino' ? 'var(--color-editor-active-bg, #1E2530)' : 'var(--color-editor-bg, #161B22)', color: editorMode === 'arduino' ? 'var(--color-accent, #558B2F)' : 'var(--color-text-gray-400, #666)', borderBottom: editorMode === 'arduino' ? '2px solid var(--color-accent, #558B2F)' : '2px solid transparent' }}>{'</>  Arduino C++'}</button>
+              <button onClick={() => { setEditorMode('arduino'); setScratchFullscreen(false); }} style={{ flex: 1, padding: '7px 0', border: 'none', cursor: 'pointer', minHeight: 44, fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, background: editorMode === 'arduino' ? 'var(--color-editor-active-bg, #1E2530)' : 'var(--color-editor-bg, #161B22)', color: editorMode === 'arduino' ? 'var(--color-accent, #4A7A25)' : 'var(--color-text-gray-400, #666)', borderBottom: editorMode === 'arduino' ? '2px solid var(--color-accent, #4A7A25)' : '2px solid transparent' }}>{'</>  Arduino C++'}</button>
               {currentExperiment?.simulationMode === 'avr' && (<button onClick={() => setEditorMode('scratch')} style={{ flex: 1, padding: '7px 0', border: 'none', cursor: 'pointer', minHeight: 44, fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, background: editorMode === 'scratch' ? 'var(--color-editor-active-bg, #1E2530)' : 'var(--color-editor-bg, #161B22)', color: editorMode === 'scratch' ? 'var(--color-tab-scratch, #E67E22)' : 'var(--color-text-gray-400, #666)', borderBottom: editorMode === 'scratch' ? '2px solid var(--color-tab-scratch, #E67E22)' : '2px solid transparent' }}>{'🧩  Blocchi'}</button>)}
               {editorMode === 'scratch' && (<button onClick={() => setScratchFullscreen(f => !f)} title={scratchFullscreen ? 'Esci da schermo intero (Esc)' : 'Schermo intero'} aria-label={scratchFullscreen ? 'Esci da schermo intero' : 'Schermo intero'} style={{ padding: scratchFullscreen ? '7px 16px' : '7px 12px', border: 'none', cursor: 'pointer', minHeight: 44, minWidth: 56, fontFamily: "var(--font-sans)", fontSize: scratchFullscreen ? 14 : 18, fontWeight: scratchFullscreen ? 600 : 400, background: scratchFullscreen ? 'var(--color-tab-scratch, #E67E22)' : 'var(--color-editor-bg, #161B22)', color: scratchFullscreen ? '#fff' : 'var(--color-text-gray-400, #666)', borderLeft: scratchFullscreen ? 'none' : '1px solid var(--color-blockly-grid, #2a3040)', borderRadius: scratchFullscreen ? '6px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>{scratchFullscreen ? (<><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 2h4v4M6 14H2v-4M14 2L9.5 6.5M2 14l4.5-4.5"/></svg>Esci</>) : (<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 6V2h4M14 10v4h-4M2 2l4.5 4.5M14 14L9.5 9.5"/></svg>)}</button>)}
             </div>
@@ -928,7 +948,7 @@ const NewElabSimulator = ({
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
                 <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
                   <ScratchErrorBoundary>
-                    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-accent, #558B2F)', fontFamily: "var(--font-sans)", fontSize: 14, gap: 8, background: 'var(--color-editor-active-bg, #1E2530)' }}><span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⚙️</span>Caricamento editor blocchi…</div>}>
+                    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-accent, #4A7A25)', fontFamily: "var(--font-sans)", fontSize: 14, gap: 8, background: 'var(--color-editor-active-bg, #1E2530)' }}><span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⚙️</span>Caricamento editor blocchi…</div>}>
                       <ScratchEditor initialCode={scratchXml} onChange={(xml, generatedCode) => { setScratchXml(xml); setScratchGeneratedCode(generatedCode); codeNeedsCompileRef.current = true; if (currentExperiment?.id) { localStorage.setItem(`elab_scratch_${currentExperiment.id}`, xml); if (generatedCode) localStorage.setItem(`elab_scratch_code_${currentExperiment.id}`, generatedCode); } }} />
                     </Suspense>
                   </ScratchErrorBoundary>

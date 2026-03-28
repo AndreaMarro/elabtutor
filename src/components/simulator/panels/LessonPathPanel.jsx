@@ -290,7 +290,7 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
           }}
           style={{
             ...RS.buildBtn,
-            ...(alreadyLoaded ? { background: '#558B2F', color: '#fff' } : {}),
+            ...(alreadyLoaded ? { background: '#4A7A25', color: '#fff' } : {}),
           }}
         >
           {alreadyLoaded ? '✓ Già caricato!' : `🔧 ${phase.build_circuit.button_label || 'Monta il circuito per me'}`}
@@ -315,10 +315,10 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
           <p style={S.phaseLabel}>Analogie per spiegare:</p>
           <ul style={S.errorList}>
             {phase.analogies.map((a, i) => (
-              <li key={i} style={{ ...S.errorItem, borderLeftColor: '#558B2F' }}>
+              <li key={i} style={{ ...S.errorItem, borderLeftColor: '#4A7A25' }}>
                 <strong>{a.concept.replace(/_/g, ' ')}</strong>
                 <p style={{ margin: '2px 0 0', fontSize: 14 }}>{a.text}</p>
-                {a.evidence && <em style={{ fontSize: 12, color: '#999' }}>({a.evidence})</em>}
+                {a.evidence && <em style={{ fontSize: 14, color: '#999' }}>({a.evidence})</em>}
               </li>
             ))}
           </ul>
@@ -465,17 +465,17 @@ const RS = {
     opacity: 1,
   },
   progressLabel: {
-    fontSize: 9,
+    fontSize: 14,
     fontWeight: 700,
     textTransform: 'uppercase',
     letterSpacing: '0.3px',
     color: '#666',
   },
   richBadge: {
-    fontSize: 10,
+    fontSize: 16,
     fontWeight: 700,
     color: '#fff',
-    background: '#558B2F',
+    background: '#4A7A25',
     padding: '2px 8px',
     borderRadius: 10,
     textTransform: 'uppercase',
@@ -484,7 +484,7 @@ const RS = {
   },
   objectiveBox: {
     padding: '8px 14px',
-    fontSize: 13,
+    fontSize: 14,
     color: '#444',
     background: '#F0F7FF',
     borderBottom: '1px solid #E5E5E5',
@@ -499,7 +499,7 @@ const RS = {
     borderRadius: 8,
     border: '1px solid #FFE082',
     margin: '8px 0',
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 1.5,
   },
   teacherTipIcon: { flexShrink: 0, fontSize: 16 },
@@ -1109,7 +1109,7 @@ const S = {
   },
 
   curatedBadge: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: 600,
     color: '#16A34A',
     background: '#DCFCE7',
@@ -1149,7 +1149,7 @@ const S = {
   },
 
   teacherTipLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 700,
     color: '#7B1FA2',
     textTransform: 'uppercase',

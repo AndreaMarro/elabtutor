@@ -2222,6 +2222,7 @@ const SimulatorCanvas = ({
       return (
         <g
           key={comp.id}
+          data-component-id={comp.id}
           tabIndex={0}
           role="group"
           aria-label={`${comp.type} ${comp.id}`}
@@ -2280,11 +2281,11 @@ const SimulatorCanvas = ({
                 <rect
                   x={rectX} y={rectY} width={rectW} height={rectH} rx="5"
                   fill="none"
-                  stroke="var(--color-accent, #558B2F)"
+                  stroke="var(--color-accent, #4A7A25)"
                   strokeWidth="2"
                   strokeDasharray="5 3"
                   opacity="0.9"
-                  style={{ filter: 'drop-shadow(0 0 4px #558B2F)' }}
+                  style={{ filter: 'drop-shadow(0 0 4px #4A7A25)' }}
                 >
                   <animate
                     attributeName="stroke-opacity"
@@ -2610,9 +2611,9 @@ const SimulatorCanvas = ({
           return (
             <g transform={`translate(${dragPreview.x}, ${dragPreview.y})`} opacity="0.45" pointerEvents="none">
               <rect x="-20" y="-14" width="40" height="28" rx="6"
-                fill="var(--color-accent, #558B2F)" stroke="var(--color-accent, #558B2F)" strokeWidth="1.5" strokeDasharray="4 2" fillOpacity="0.15" />
-              <text x="0" y="1" textAnchor="middle" fontSize="16" fill="var(--color-accent, #558B2F)" fontWeight="bold">+</text>
-              <text x="0" y="22" textAnchor="middle" fontSize="7" fill="var(--color-accent, #558B2F)"
+                fill="var(--color-accent, #4A7A25)" stroke="var(--color-accent, #4A7A25)" strokeWidth="1.5" strokeDasharray="4 2" fillOpacity="0.15" />
+              <text x="0" y="1" textAnchor="middle" fontSize="16" fill="var(--color-accent, #4A7A25)" fontWeight="bold">+</text>
+              <text x="0" y="22" textAnchor="middle" fontSize="7" fill="var(--color-accent, #4A7A25)"
                 fontFamily="Open Sans, sans-serif">rilascia qui</text>
             </g>
           );
@@ -2674,7 +2675,7 @@ const SimulatorCanvas = ({
         {/* Sprint 2 Task 2.3: Green flash on correct placement */}
         {dropSuccess && (
           <rect x={viewBox.x} y={viewBox.y} width={viewBox.width} height={viewBox.height}
-            fill="var(--color-accent, #558B2F)" opacity="0.1" style={{ pointerEvents: 'none' }}>
+            fill="var(--color-accent, #4A7A25)" opacity="0.1" style={{ pointerEvents: 'none' }}>
             <animate attributeName="opacity" from="0.15" to="0" dur="0.6s" fill="freeze" />
           </rect>
         )}
@@ -2685,7 +2686,7 @@ const SimulatorCanvas = ({
           const isSliding = phase === 'slide' || phase === 'green';
           const cx = isSliding ? toX : fromX;
           const cy = isSliding ? toY : fromY;
-          const color = phase === 'red' ? '#E54B3D' : phase === 'green' ? '#558B2F' : '#E8941C';
+          const color = phase === 'red' ? '#E54B3D' : phase === 'green' ? '#4A7A25' : '#E8941C';
           const fillOpacity = phase === 'slide' ? 0.35 : 0.5;
           return (
             <g pointerEvents="none" style={{
@@ -2735,9 +2736,9 @@ const SimulatorCanvas = ({
                   width={isHalf ? 253 : 110}
                   height={isHalf ? 145 : 469}
                   rx={4}
-                  fill="var(--color-accent, #558B2F)"
+                  fill="var(--color-accent, #4A7A25)"
                   opacity={0.07}
-                  stroke="var(--color-accent, #558B2F)"
+                  stroke="var(--color-accent, #4A7A25)"
                   strokeWidth={1}
                   strokeDasharray="6,3"
                   strokeOpacity={0.3}
@@ -2756,7 +2757,7 @@ const SimulatorCanvas = ({
             height={snapGhost.h}
             rx={3}
             fill="none"
-            stroke="var(--color-accent, #558B2F)"
+            stroke="var(--color-accent, #4A7A25)"
             strokeWidth={1.5}
             strokeDasharray="4,3"
             opacity={0.6}
@@ -2773,9 +2774,9 @@ const SimulatorCanvas = ({
                 cx={hole.x}
                 cy={hole.y}
                 r={3.5}
-                fill={hole.occupied ? '#E54B3D' : '#558B2F'}
+                fill={hole.occupied ? '#E54B3D' : '#4A7A25'}
                 fillOpacity={hole.occupied ? 0.5 : 0.6}
-                stroke={hole.occupied ? '#E54B3D' : '#558B2F'}
+                stroke={hole.occupied ? '#E54B3D' : '#4A7A25'}
                 strokeWidth={1.2}
                 strokeOpacity={0.8}
               />
@@ -2789,12 +2790,12 @@ const SimulatorCanvas = ({
             {highlightedHoles.map((hole, i) => (
               <g key={i}>
                 <circle cx={hole.x} cy={hole.y} r="4.5"
-                  fill="var(--color-accent, #558B2F)" fillOpacity="0.25" stroke="var(--color-accent, #558B2F)" strokeWidth="1">
+                  fill="var(--color-accent, #4A7A25)" fillOpacity="0.25" stroke="var(--color-accent, #4A7A25)" strokeWidth="1">
                   <animate attributeName="r" values="3.5;5;3.5" dur="1.2s" repeatCount="indefinite" />
                   <animate attributeName="fillOpacity" values="0.15;0.35;0.15" dur="1.2s" repeatCount="indefinite" />
                 </circle>
                 <circle cx={hole.x} cy={hole.y} r="1.5"
-                  fill="var(--color-accent, #558B2F)" fillOpacity="0.7" />
+                  fill="var(--color-accent, #4A7A25)" fillOpacity="0.7" />
               </g>
             ))}
           </g>
@@ -2852,7 +2853,7 @@ const SimulatorCanvas = ({
             }
           },
           {
-            label: 'Collega Filo', icon: '\u26A1', color: 'var(--color-accent, #558B2F)', action: () => {
+            label: 'Collega Filo', icon: '\u26A1', color: 'var(--color-accent, #4A7A25)', action: () => {
               // S101: Enter wire mode from context menu
               if (onWireModeChange) onWireModeChange(true);
               setWireModeInternal(true);
@@ -2966,7 +2967,7 @@ const SimulatorCanvas = ({
           }}
           style={{
             ...zoomBtnStyle,
-            background: wireMode ? 'var(--color-accent, #558B2F)' : 'var(--color-bg-secondary, #FAFAF7)',
+            background: wireMode ? 'var(--color-accent, #4A7A25)' : 'var(--color-bg-secondary, #FAFAF7)',
             color: wireMode ? '#fff' : 'var(--color-text-gray-500, #555)',
             width: 'auto',
             paddingLeft: 10,
@@ -3026,7 +3027,7 @@ const SimulatorCanvas = ({
       {wireMode && (
         <div style={{
           position: 'absolute', top: 8, left: 8,
-          background: wireStart ? 'var(--color-vol2, #E8941C)' : 'var(--color-accent, #558B2F)',
+          background: wireStart ? 'var(--color-vol2, #E8941C)' : 'var(--color-accent, #4A7A25)',
           color: 'var(--color-text, #1A1A2E)',
           padding: '6px 12px',
           borderRadius: 8,

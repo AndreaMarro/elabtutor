@@ -355,7 +355,7 @@ export default function CanvasTab({
                 <div className="tool-group-separator" />
 
                 <div className="tool-group">
-                    {['#1E4D8C', '#558B2F', '#EF4444', '#F59E0B', '#000000', '#FFFFFF'].map(c => (
+                    {['#1E4D8C', '#4A7A25', '#EF4444', '#F59E0B', '#000000', '#FFFFFF'].map(c => (
                         <button
                             key={c}
                             className={`v4-color ${brushColor === c ? 'active' : ''}`}

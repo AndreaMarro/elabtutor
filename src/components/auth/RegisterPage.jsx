@@ -96,7 +96,7 @@ export default function RegisterPage({ onNavigate }) {
     const inputStyle = (field) => ({
         ...styles.input,
         borderColor: focusedField === field
-            ? '#558B2F'
+            ? '#4A7A25'
             : 'rgba(255,255,255,0.15)',
         boxShadow: focusedField === field
             ? '0 0 0 3px rgba(124,179,66,0.2)'
@@ -244,7 +244,7 @@ export default function RegisterPage({ onNavigate }) {
                                 aria-pressed={form.ruolo === 'user'}
                                 style={{
                                     ...styles.roleBtn,
-                                    background: form.ruolo === 'user' ? '#558B2F' : 'rgba(255,255,255,0.1)',
+                                    background: form.ruolo === 'user' ? '#4A7A25' : 'rgba(255,255,255,0.1)',
                                     color: form.ruolo === 'user' ? '#1A1A2E' : 'rgba(255,255,255,0.6)',
                                 }}>
                                 Studente
@@ -256,7 +256,7 @@ export default function RegisterPage({ onNavigate }) {
                                     ...styles.roleBtn,
                                     background: form.ruolo === 'docente' ? '#1E4D8C' : 'rgba(255,255,255,0.1)',
                                     color: form.ruolo === 'docente' ? 'white' : 'rgba(255,255,255,0.6)',
-                                    border: form.ruolo === 'docente' ? '2px solid #558B2F' : '2px solid transparent',
+                                    border: form.ruolo === 'docente' ? '2px solid #4A7A25' : '2px solid transparent',
                                 }}>
                                 Professore
                             </button>
@@ -402,7 +402,7 @@ const styles = {
         fontWeight: '600',
         borderRadius: '10px',
         border: 'none',
-        background: 'linear-gradient(135deg, #558B2F, #6fa030)',
+        background: 'linear-gradient(135deg, #4A7A25, #6fa030)',
         color: '#1A1A2E',
         cursor: 'pointer',
         marginTop: '8px',
@@ -435,7 +435,7 @@ const styles = {
     },
     footer: { color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginTop: '24px' },
     link: {
-        color: '#558B2F',
+        color: '#4A7A25',
         background: 'none',
         border: 'none',
         cursor: 'pointer',

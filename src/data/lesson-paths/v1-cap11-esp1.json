@@ -100,7 +100,7 @@
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 8,
+      "duration_minutes": 10,
       "teacher_message": "Mostra il circuito sulla LIM: batteria → bus → cicalino → bus → batteria. Il cicalino è collegato direttamente ai bus della breadboard.",
       "teacher_tip": "Usa il Passo Passo. Fai notare che la struttura è identica al primo circuito LED: cambiano solo i componenti. Il filo rosso va al + del cicalino.",
       "components_list": null,

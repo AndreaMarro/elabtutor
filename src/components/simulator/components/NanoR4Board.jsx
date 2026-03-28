@@ -737,7 +737,7 @@ const NanoR4Board = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
         <path
           d={BOARD_PATH}
           fill="none"
-          stroke="var(--color-accent, #558B2F)"
+          stroke="var(--color-accent, #4A7A25)"
           strokeWidth="1.5"
           strokeDasharray="4 2"
           transform="translate(-1.5, -1.5) scale(1.018)"

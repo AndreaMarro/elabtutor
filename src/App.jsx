@@ -8,12 +8,13 @@
 import React, { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import useIsMobile from './hooks/useIsMobile';
-// Watermark rimosso su richiesta utente
+
 import RequireAuth from './components/auth/RequireAuth';
 import RequireLicense from './components/auth/RequireLicense';
 import ConsentBanner from './components/common/ConsentBanner';
 import PrivacyPolicy from './components/common/PrivacyPolicy';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import ToastContainer from './components/common/Toast';
 // Lazy-loaded pages — caricate solo quando servono
 const ElabTutorV4 = lazy(() => import('./components/tutor/ElabTutorV4'));
 const AdminPage = lazy(() => import('./components/admin/AdminPage'));
@@ -49,11 +50,18 @@ function LoadingFallback() {
 }
 
 // Hash-based routing: maps hash fragments to page names (P0-6)
-const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'login', 'register', 'dashboard', 'showcase'];
+const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'login', 'register', 'dashboard', 'showcase', 'prova'];
 
 function getPageFromHash() {
-    const hash = window.location.hash.replace('#', '').toLowerCase();
-    return VALID_HASHES.includes(hash) ? hash : null;
+    const raw = window.location.hash.replace('#', '').split('?')[0].toLowerCase();
+    return VALID_HASHES.includes(raw) ? raw : null;
+}
+
+/** Extract ?exp=xxx from hash for deep-linking experiments */
+function getExpFromHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/[?&]exp=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
 }
 
 function SkipToContent() {
@@ -166,6 +174,25 @@ function AppRouter() {
         );
     }
 
+    // Modalita' prova — simulatore REALE senza login, esperimenti Vol.1
+    if (currentPage === 'prova') {
+        const deepLinkExp = getExpFromHash();
+        return (
+            <div>
+                <SkipToContent />
+                <main id="main-content" tabIndex="-1" style={{ outline: 'none' }}>
+                    <ErrorBoundary>
+                        <Suspense fallback={<LoadingFallback />}>
+                            <UnlimWrapper>
+                                <ElabTutorV4 provaMode onNavigate={navigate} initialExperimentId={deepLinkExp} />
+                            </UnlimWrapper>
+                        </Suspense>
+                    </ErrorBoundary>
+                </main>
+            </div>
+        );
+    }
+
     // Pagine full-screen senza navbar (tutor con auth + licenza)
     if (currentPage === 'tutor') {
         return (
@@ -246,9 +273,9 @@ function AppRouter() {
         <Suspense fallback={<LoadingFallback />}>
             <div style={{ height: '100%', overflowY: 'auto', background: '#F0F4F8' }}>
                 <Navbar currentPage={currentPage} onNavigate={navigate} />
-                {currentPage === 'admin' && (isAdmin ? <AdminPage onNavigate={navigate} /> : <AccessDeniedMessage onNavigate={navigate} />)}
-                {currentPage === 'dashboard' && <RequireAuth onNavigate={navigate}><StudentDashboard onNavigate={navigate} /></RequireAuth>}
-                {currentPage === 'teacher' && <RequireAuth onNavigate={navigate}>{isDocente || isAdmin ? <TeacherDashboard onNavigate={navigate} /> : <AccessDeniedMessage onNavigate={navigate} />}</RequireAuth>}
+                {currentPage === 'admin' && (isAdmin ? <ErrorBoundary><AdminPage onNavigate={navigate} /></ErrorBoundary> : <AccessDeniedMessage onNavigate={navigate} />)}
+                {currentPage === 'dashboard' && <RequireAuth onNavigate={navigate}><ErrorBoundary><StudentDashboard onNavigate={navigate} /></ErrorBoundary></RequireAuth>}
+                {currentPage === 'teacher' && <RequireAuth onNavigate={navigate}>{isDocente || isAdmin ? <ErrorBoundary><TeacherDashboard onNavigate={navigate} /></ErrorBoundary> : <AccessDeniedMessage onNavigate={navigate} />}</RequireAuth>}
             </div>
         </Suspense>
     );
@@ -303,8 +330,9 @@ function App() {
         <ErrorBoundary>
             <AuthProvider>
                 <AppRouter />
-                {/* Watermark rimosso */}
+
                 <ConsentBanner />
+                <ToastContainer />
             </AuthProvider>
         </ErrorBoundary>
     );
@@ -325,7 +353,7 @@ const topBarStyles = {
         position: 'relative',
     },
     brand: {
-        color: '#558B2F',
+        color: '#4A7A25',
         fontSize: '14px',
         fontWeight: '700',
         cursor: 'pointer',
@@ -351,7 +379,7 @@ const topBarStyles = {
     linkGreen: {
         background: 'rgba(145,191,69,0.2)',
         border: 'none',
-        color: '#558B2F',
+        color: '#4A7A25',
         fontSize: '14px',
         cursor: 'pointer',
         padding: '8px 12px',
@@ -427,7 +455,7 @@ const topBarStyles = {
     mobileLinkGreen: {
         background: 'rgba(145,191,69,0.2)',
         border: 'none',
-        color: '#558B2F',
+        color: '#4A7A25',
         fontSize: '14px',
         cursor: 'pointer',
         padding: '12px 16px',

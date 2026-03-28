@@ -69,7 +69,8 @@
       "manopola",
       "dimmer",
       "luminosità",
-      "volt"
+      "volt",
+      "resistenza"
     ],
     "forbidden": [
       "ohm",

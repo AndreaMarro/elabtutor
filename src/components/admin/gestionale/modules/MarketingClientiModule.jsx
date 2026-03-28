@@ -12,6 +12,7 @@ import GestionaleForm from '../shared/GestionaleForm';
 import GestionaleCard from '../shared/GestionaleCard';
 import { formatCurrency, formatDate } from '../shared/GestionaleUtils';
 import logger from '../../../../utils/logger';
+import { showToast } from '../../../common/Toast';
 
 // ── Costanti ──────────────────────────────────────
 const TIPI_CLIENTE = [
@@ -269,7 +270,7 @@ export default function MarketingClientiModule({ isMobile }) {
         try {
             const result = await clientiService.delete(id);
             if (result && result.success === false) {
-                alert(result.error || 'Impossibile eliminare il cliente');
+                showToast(result.error || 'Impossibile eliminare il cliente', 'error');
                 return;
             }
             await loadData();
@@ -328,7 +329,7 @@ export default function MarketingClientiModule({ isMobile }) {
         try {
             const result = await fornitoriService.delete(id);
             if (result && result.success === false) {
-                alert(result.error || 'Impossibile eliminare il fornitore');
+                showToast(result.error || 'Impossibile eliminare il fornitore', 'error');
                 return;
             }
             await loadData();

@@ -39,8 +39,9 @@
   position: relative;
 }
 
-.tutor-layout--fullscreen {
-  grid-template-rows: 1fr;
+.tutor-layout--fullscreen,
+.tutor-layout--no-nav {
+  grid-template-rows: 1fr !important;
 }
 
 /* ─── Tutor Body: sidebar + content ─── */
@@ -160,8 +161,8 @@
 
 .topbar-subtitle {
   font-family: var(--font-display);
-  font-size: 14px;
-  color: var(--color-accent, #558B2F);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -174,10 +175,10 @@
 }
 
 .topbar-volume-badge {
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 800;
   color: white;
   letter-spacing: 0.5px;
 }
@@ -197,8 +198,8 @@
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-radius: 8px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -398,8 +399,8 @@
   position: fixed;
   z-index: 300;
   background: var(--color-bg);
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-radius: 16px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -599,8 +600,8 @@
   border-bottom-left-radius: 4px;
 }
 
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
 .chat-msg.error .chat-bubble {
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-left: 3px solid var(--color-error-red);
   background: rgba(239, 68, 68, 0.05);
 }
@@ -800,8 +801,8 @@
 .chat-quick-actions {
   display: flex;
   gap: 6px;
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   padding: 8px 14px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   overflow-x: auto;
   border-top: 1px solid var(--color-bg-subtle);
   flex-shrink: 0;
@@ -1001,8 +1002,8 @@
 
   .topbar-mascot {
     width: 28px;
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     height: 28px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 
   .topbar-title {
@@ -1202,8 +1203,8 @@
 @media (pointer: coarse) and (min-width: 768px) and (max-width: 1023px) {
   /* Ensure sidebar toggle button is always visible on iPad */
   .topbar-sidebar-toggle {
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     display: flex !important;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
 
   /* Larger touch targets for sidebar items on iPad */

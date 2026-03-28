@@ -46,9 +46,9 @@ const RotateDeviceOverlay = () => {
           <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={styles.icon}>
             <rect x="8" y="12" width="48" height="32" rx="4" stroke="var(--color-primary, #1E4D8C)" strokeWidth="2.5" fill="none" />
             <circle cx="52" cy="28" r="2" fill="var(--color-primary, #1E4D8C)" />
-            <path d="M32 50 L26 56 L38 56 Z" fill="var(--color-accent, #558B2F)" />
-            <path d="M44 4 C52 4 56 8 56 12" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeLinecap="round" fill="none" />
-            <path d="M56 12 L58 8 L52 10" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M32 50 L26 56 L38 56 Z" fill="var(--color-accent, #4A7A25)" />
+            <path d="M44 4 C52 4 56 8 56 12" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeLinecap="round" fill="none" />
+            <path d="M56 12 L58 8 L52 10" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
           </svg>
         </div>
         <h3 style={styles.title}>Ruota il dispositivo</h3>

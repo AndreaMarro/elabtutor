@@ -95,10 +95,10 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
           /* Intro screen: empty board */
           <div style={introStyle}>
             <span style={{ fontSize: 20, display: 'block', textAlign: 'center', marginBottom: 6, fontWeight: 700, color: 'var(--color-primary)' }}>{'\u25B6'}</span>
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: 'var(--color-text-gray-700)', textAlign: 'center', fontWeight: 500 }}>
+            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5, color: 'var(--color-text-gray-700)', textAlign: 'center', fontWeight: 500 }}>
               Davanti a te c'è il banco vuoto con la breadboard e la batteria.
             </p>
-            <p style={{ margin: '6px 0 0', fontSize: 14, lineHeight: 1.4, color: 'var(--color-text-gray-400)', textAlign: 'center' }}>
+            <p style={{ margin: '6px 0 0', fontSize: 16, lineHeight: 1.4, color: 'var(--color-text-gray-400)', textAlign: 'center' }}>
               Premi <strong>Avanti</strong> per iniziare a montare il circuito pezzo per pezzo!
             </p>
           </div>

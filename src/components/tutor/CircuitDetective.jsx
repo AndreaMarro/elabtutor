@@ -5,8 +5,9 @@
 // © Andrea Marro — 2026
 // ============================================
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { BROKEN_CIRCUITS } from '../../data/broken-circuits';
+import studentTracker from '../../services/studentTracker';
 import { LayerBadge, DifficultyBadge, ConceptBadge, LAYER_COLORS } from './shared/LayerBadge';
 import ReflectionPrompt from './shared/ReflectionPrompt';
 import CrossNavigation from './shared/CrossNavigation';
@@ -39,6 +40,7 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
   const [filter, setFilter] = useState('all');
   const [showReflection, setShowReflection] = useState(false);
   const [earnedStars, setEarnedStars] = useState(0);
+  const gameStartTime = useRef(null);
   const [solvedIds, setSolvedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
     catch { return []; }
@@ -60,6 +62,7 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
     setGuessSubmitted(false);
     setShowReflection(false);
     setEarnedStars(0);
+    gameStartTime.current = Date.now();
     logSession?.('detective-start', { circuitId: circuit.id, difficulty: circuit.difficulty });
   }, [logSession]);
 
@@ -90,6 +93,8 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
     setShowReflection(true);
     const newSolved = [...new Set([...solvedIds, selectedCircuit.id])];
     setSolvedIds(newSolved);
+    const timeSpent = gameStartTime.current ? Math.round((Date.now() - gameStartTime.current) / 1000) : 0;
+    studentTracker.logGameResult('circuit-detective', stars, 3, timeSpent);
     logSession?.('detective-solved', {
       circuitId: selectedCircuit.id,
       hintsUsed,

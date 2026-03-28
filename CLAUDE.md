@@ -57,8 +57,8 @@ API globale: `window.__ELAB_API` (unified, include `.galileo` namespace)
 6. Target: bambini 8-12 anni — interfaccia chiara, feedback visivo forte
 
 ## Palette colori
-Navy: #1E4D8C / Lime: #558B2F / Vol1: #558B2F / Vol2: #E8941C / Vol3: #E54B3D
-> Nota: Lime aggiornato da #7CB342 a #558B2F il 27/03/2026 per WCAG AA (contrasto 2.50:1 → ~5.4:1 su bianco)
+Navy: #1E4D8C / Lime: #4A7A25 / Vol1: #4A7A25 / Vol2: #E8941C / Vol3: #E54B3D
+> Nota: Lime aggiornato #7CB342 → #558B2F (27/03) → #4A7A25 (28/03) per WCAG AA (contrasto 5.12:1 su bianco)
 
 ## Skills disponibili
 - `arduino-simulator` — compilatore + AVR emulation

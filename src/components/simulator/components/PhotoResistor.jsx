@@ -69,7 +69,7 @@ const PhotoResistor = ({ x = 0, y = 0, state = {}, highlighted = false, onIntera
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-18" y="-18" width="36" height="48" rx="4"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

@@ -15,7 +15,7 @@ const COLORS = {
     primary: '#1E4D8C',
     primaryLight: '#2a4fa3',
     primaryBg: '#eef2fa',
-    success: '#558B2F',
+    success: '#4A7A25',
     successBg: '#f0f7e4',
     warning: '#F59E0B',
     warningBg: '#fef9ee',

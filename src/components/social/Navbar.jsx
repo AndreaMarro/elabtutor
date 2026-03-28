@@ -87,7 +87,7 @@ export default function Navbar({ currentPage, onNavigate }) {
                                         ? 'rgba(145,191,69,0.25)'
                                         : 'transparent',
                                     color: currentPage === item.id
-                                        ? '#558B2F'
+                                        ? '#4A7A25'
                                         : 'rgba(255,255,255,0.7)',
                                 }}
                                 title={item.label}
@@ -158,10 +158,10 @@ export default function Navbar({ currentPage, onNavigate }) {
                                             ? 'rgba(145,191,69,0.15)'
                                             : 'transparent',
                                         color: currentPage === item.id
-                                            ? '#558B2F'
+                                            ? '#4A7A25'
                                             : 'rgba(255,255,255,0.85)',
                                         borderLeft: currentPage === item.id
-                                            ? '3px solid #558B2F'
+                                            ? '3px solid #4A7A25'
                                             : '3px solid transparent',
                                     }}
                                 >
@@ -260,8 +260,8 @@ export default function Navbar({ currentPage, onNavigate }) {
                                 style={{
                                     ...styles.navBtn,
                                     background: currentPage === item.id ? 'rgba(145,191,69,0.2)' : 'transparent',
-                                    color: currentPage === item.id ? '#558B2F' : 'rgba(255,255,255,0.7)',
-                                    borderBottom: currentPage === item.id ? '2px solid #558B2F' : '2px solid transparent',
+                                    color: currentPage === item.id ? '#4A7A25' : 'rgba(255,255,255,0.7)',
+                                    borderBottom: currentPage === item.id ? '2px solid #4A7A25' : '2px solid transparent',
                                 }}
                             >
                                 {item.label}
@@ -312,7 +312,7 @@ const styles = {
         zIndex: 1000,
     },
     brand: {
-        color: '#558B2F',
+        color: '#4A7A25',
         fontSize: '20px',
         fontWeight: '800',
         cursor: 'pointer',
@@ -323,7 +323,7 @@ const styles = {
         width: '32px',
         height: '32px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #558B2F, #6fa030)',
+        background: 'linear-gradient(135deg, #4A7A25, #6fa030)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -413,7 +413,7 @@ const styles = {
         fontWeight: '600',
     },
     registerBtn: {
-        background: 'linear-gradient(135deg, #558B2F, #6fa030)',
+        background: 'linear-gradient(135deg, #4A7A25, #6fa030)',
         border: 'none',
         color: 'white',
         padding: '6px 16px',
@@ -547,7 +547,7 @@ const styles = {
     },
     mobileRegisterBtn: {
         flex: 1,
-        background: 'linear-gradient(135deg, #558B2F, #6fa030)',
+        background: 'linear-gradient(135deg, #4A7A25, #6fa030)',
         border: 'none',
         color: 'white',
         padding: '10px 0',

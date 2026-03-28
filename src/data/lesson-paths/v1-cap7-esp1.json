@@ -63,7 +63,8 @@
       "blu",
       "resistore",
       "protezione",
-      "volt"
+      "volt",
+      "polarità"
     ],
     "forbidden": [
       "ohm",

@@ -92,7 +92,7 @@ const Led = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, color 
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-12" y="-16" width="24" height="46" rx="3"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="4 2" opacity="0.8">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="4 2" opacity="0.8">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

@@ -57,7 +57,8 @@
       "canale colore",
       "blu",
       "energia",
-      "volt"
+      "volt",
+      "polarità"
     ],
     "forbidden": [
       "ohm",
@@ -85,7 +86,7 @@
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Stessa configurazione. Questa volta colleghiamo il pin BLU (F5) del LED RGB.",
       "teacher_tip": "Chiedi: 'Avete notato differenze tra rosso e verde? Il blu sarà uguale?' (spoiler: il blu ha bisogno di più energia)",
       "components_list": "Stessi componenti: 1 breadboard, 1 batteria 9V, 1 resistore 470Ω, 1 LED RGB, 4 fili.",
@@ -96,7 +97,7 @@
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 8,
+      "duration_minutes": 10,
       "teacher_message": "Mostra il circuito. Filo blu dal resistore al pin blu (F5) del LED RGB.",
       "teacher_tip": "Dopo aver montato, chiedi: 'Notate qualcosa di diverso rispetto al rosso?' Il blu potrebbe sembrare leggermente meno luminoso con lo stesso resistore.",
       "components_list": null,
@@ -166,7 +167,7 @@
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 5,
+      "duration_minutes": 7,
       "teacher_message": "Il blu ha bisogno di più energia per accendersi. Chiedi se notano differenze.",
       "teacher_tip": "Il LED blu ha una 'porta' più alta da superare — serve più energia per farlo accendere. NON dire termini tecnici avanzati.",
       "provocative_question": "Il blu sembra diverso dal rosso e dal verde? Secondo voi perché?",
@@ -217,7 +218,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Abbiamo completato i 3 colori base! Ogni colore ha bisogno di una quantità diversa di energia.",
       "teacher_tip": "Anticipazione: 'Ora che sappiamo accendere ogni colore singolarmente... cosa succede se ne accendiamo DUE insieme?'",
       "components_list": null,

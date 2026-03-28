@@ -18,6 +18,7 @@ import React, { useState, useRef, useEffect } from 'react';
 export default function UnlimInputBar({
   onSend,
   onMicClick,
+  onReport,
   isListening = false,
   isLoading = false,
   placeholder = 'Chiedi qualcosa a UNLIM...',
@@ -25,8 +26,11 @@ export default function UnlimInputBar({
   const [text, setText] = useState('');
   const inputRef = useRef(null);
 
-  // M1 fix: auto-focus input al mount
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  // M1 fix: auto-focus input al mount — skip su touch devices (LIM) per evitare tastiera virtuale
+  useEffect(() => {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (!isTouch) inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -98,7 +102,7 @@ export default function UnlimInputBar({
         value={text}
         onChange={e => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={isListening ? 'Sto ascoltando...' : placeholder}
+        placeholder={placeholder}
         disabled={isLoading}
         autoComplete="off"
         style={{
@@ -107,16 +111,44 @@ export default function UnlimInputBar({
           padding: '0 16px',
           border: '2px solid var(--color-border, #E5E5EA)',
           borderRadius: 'var(--radius-full, 9999px)',
-          fontSize: 'var(--font-size-xl, 24px)',
+          fontSize: 'var(--font-size-lg, 18px)',
           fontFamily: 'var(--font-sans)',
           color: 'var(--color-text, #1A1A2E)',
           background: 'var(--color-bg-secondary, #F7F7F8)',
           outline: 'none',
           transition: 'border-color 0.2s ease',
         }}
-        onFocus={e => { e.target.style.borderColor = 'var(--color-primary, #1E4D8C)'; }}
-        onBlur={e => { e.target.style.borderColor = 'var(--color-border, #E5E5EA)'; }}
+        className="elab-input"
       />
+
+      {/* Report button */}
+      {onReport && (
+        <button
+          type="button"
+          onClick={onReport}
+          disabled={isLoading}
+          aria-label="Crea report della sessione"
+          title="Crea Report"
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            border: 'none',
+            background: 'var(--color-bg-tertiary, #ECECF1)',
+            color: 'var(--color-text-secondary, #6B6B80)',
+            cursor: isLoading ? 'default' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+            opacity: isLoading ? 0.5 : 1,
+          }}
+        >
+          {'\uD83D\uDCC4'}
+        </button>
+      )}
 
       {/* Send button */}
       <button

@@ -198,7 +198,7 @@ export default function useCircuitHandlers({
     }
     setSimulationTime(0);
     try { sendAnalyticsEvent(EVENTS.SIMULATION_RESET, { experimentId: currentExperiment?.id }); } catch { }
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     try { emitSimulatorEvent('stateChange', { state: 'reset', experimentId: currentExperiment?.id }); } catch { }
   }, [currentExperiment, handlePauseFn, clearSaved, clearSavedCode]);
 
@@ -399,7 +399,7 @@ export default function useCircuitHandlers({
   const handleComponentValueChange = useCallback((componentId, newValue) => {
     setComponentStates(prev => ({ ...prev, [componentId]: { ...(prev[componentId] || {}), ...newValue } }));
     if (solverRef.current) {
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       for (const [key, val] of Object.entries(newValue)) {
         solverRef.current.interact(componentId, `set${key.charAt(0).toUpperCase() + key.slice(1)}`, val);
       }
@@ -600,7 +600,7 @@ export default function useCircuitHandlers({
       }
     } else if (mergedExperiment && comp && !isContainer && !noSnapTypes.includes(comp.type)) {
       const originalPos = currentExperiment?.layout?.[componentId];
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       const SNAP_BACK_THRESHOLD = 3;
       if (originalPos && Math.hypot(newPos.x - originalPos.x, newPos.y - originalPos.y) < SNAP_BACK_THRESHOLD) {
         setCustomLayout(prev => { const next = { ...prev }; delete next[componentId]; return next; });
@@ -801,7 +801,7 @@ export default function useCircuitHandlers({
     setCustomLayout({});
     setCustomConnections([]);
     setCustomComponents([]);
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     setCustomPinAssignments({});
     setScratchXml('');
     setScratchGeneratedCode('');
@@ -1002,7 +1002,7 @@ export default function useCircuitHandlers({
     try { localStorage.setItem(`elab_notes_${currentExperiment.id}`, JSON.stringify(newAnnotations)); } catch { }
   }, [currentExperiment?.id]);
 
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
   useEffect(() => {
     if (!currentExperiment?.id) return;
     try {

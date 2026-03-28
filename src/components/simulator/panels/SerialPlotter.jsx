@@ -8,7 +8,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
-const CHANNEL_COLORS = ['#558B2F', '#3498DB', '#E54B3D', '#E8941C', '#9B59B6', '#1ABC9C'];
+const CHANNEL_COLORS = ['#4A7A25', '#3498DB', '#E54B3D', '#E8941C', '#9B59B6', '#1ABC9C'];
 const MAX_POINTS = 200;
 const PLOT_PADDING = { top: 12, right: 10, bottom: 20, left: 40 };
 

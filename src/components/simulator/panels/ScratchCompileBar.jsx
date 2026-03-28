@@ -5,13 +5,14 @@
  * Extracted from NewElabSimulator.jsx — Andrea Marro
  */
 import React, { useState, useEffect } from 'react';
+import logger from '../../../utils/logger';
 
 // ErrorBoundary for ScratchEditor — graceful fallback on Blockly crash
 // S161.4: retryKey forces full React remount on retry (cleans orphaned Blockly DOM)
 export class ScratchErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, retryKey: 0 }; }
   static getDerivedStateFromError() { return { hasError: true }; }
-  componentDidCatch(err) { console.error('[ScratchErrorBoundary]', err); }
+  componentDidCatch(err) { logger.error('[ScratchErrorBoundary]', err); }
   render() {
     if (this.state.hasError) {
       return (

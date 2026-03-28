@@ -263,7 +263,7 @@ const S = {
 
   progressFill: {
     height: '100%',
-    background: 'var(--color-accent, #558B2F)',
+    background: 'var(--color-accent, #4A7A25)',
     transition: 'width 300ms ease',
     borderRadius: '0 2px 2px 0',
   },
@@ -305,7 +305,7 @@ const S = {
   },
 
   optionCorrect: {
-    borderColor: 'var(--color-accent, #558B2F)',
+    borderColor: 'var(--color-accent, #4A7A25)',
     background: 'var(--color-accent-light, #E8F5E9)',
     color: 'var(--color-success, #16A34A)',
     cursor: 'default',
@@ -397,7 +397,7 @@ const S = {
     height: 80,
     borderRadius: '50%',
     background: 'linear-gradient(135deg, var(--color-accent-light), var(--color-success-light))',
-    border: '3px solid var(--color-accent, #558B2F)',
+    border: '3px solid var(--color-accent, #4A7A25)',
     marginBottom: 14,
   },
 

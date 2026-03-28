@@ -5,6 +5,7 @@
 // ============================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import logger from '../utils/logger';
 
 /**
  * Custom hook per gestire Text-to-Speech
@@ -20,6 +21,7 @@ export function useTTS() {
 
   const utteranceRef = useRef(null);
   const synthRef = useRef(null);
+  const pendingTextRef = useRef(null); // BUG-03 fix: queue text if voices not loaded yet
 
   // Inizializza il TTS e carica le voci
   useEffect(() => {
@@ -65,6 +67,18 @@ export function useTTS() {
     }
   }, []);
 
+  // BUG-03 fix: quando le voci vengono caricate, parla il testo in coda
+  useEffect(() => {
+    if (selectedVoice && pendingTextRef.current) {
+      const { text, options } = pendingTextRef.current;
+      pendingTextRef.current = null;
+      // speak sarà chiamato al prossimo render con selectedVoice disponibile
+      // Usiamo un micro-delay per assicurarci che lo stato sia committato
+      const t = setTimeout(() => speak(text, options), 50);
+      return () => clearTimeout(t);
+    }
+  }, [selectedVoice]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Pulisce l'utterance corrente
   const cleanup = useCallback(() => {
     if (synthRef.current) {
@@ -78,9 +92,11 @@ export function useTTS() {
 
   // Funzione principale per far parlare il testo
   const speak = useCallback((text, options = {}) => {
-    if (!isSupported || !selectedVoice || !text) {
-      console.warn('TTS non supportato o voce non disponibile');
-      return false;
+    if (!isSupported || !text) return false;
+    // BUG-03 fix: se voce non ancora caricata, metti in coda
+    if (!selectedVoice) {
+      pendingTextRef.current = { text, options };
+      return true; // "accettato" — sarà parlato quando le voci arrivano
     }
 
     // Stop del speech precedente
@@ -119,14 +135,11 @@ export function useTTS() {
         setIsPaused(false);
       };
 
-      utterance.onend = () => {
-        setIsSpeaking(false);
-        setIsPaused(false);
-        utteranceRef.current = null;
-      };
-
       utterance.onerror = (event) => {
-        console.error('TTS Error:', event.error);
+        // 'interrupted' and 'canceled' are normal when speech is stopped early
+        if (event.error !== 'interrupted' && event.error !== 'canceled') {
+          logger.error('TTS Error:', event.error);
+        }
         cleanup();
       };
 
@@ -140,10 +153,27 @@ export function useTTS() {
 
       utteranceRef.current = utterance;
       synthRef.current.speak(utterance);
-      
+
+      // BH-03 fix: safety timeout — if onend never fires (Firefox bug),
+      // reset isSpeaking after estimated duration (text length * 80ms + 3s buffer)
+      const safetyMs = Math.min(cleanText.length * 80 + 3000, 30000);
+      const safetyTimer = setTimeout(() => {
+        if (utteranceRef.current === utterance) {
+          setIsSpeaking(false);
+          setIsPaused(false);
+          utteranceRef.current = null;
+        }
+      }, safetyMs);
+      utterance.onend = () => {
+        clearTimeout(safetyTimer);
+        setIsSpeaking(false);
+        setIsPaused(false);
+        utteranceRef.current = null;
+      };
+
       return true;
     } catch (error) {
-      console.error('Errore TTS:', error);
+      logger.error('Errore TTS:', error);
       setIsLoading(false);
       return false;
     }
@@ -161,13 +191,14 @@ export function useTTS() {
       }
       return true;
     } catch (error) {
-      console.error('Errore toggle pause TTS:', error);
+      logger.error('Errore toggle pause TTS:', error);
       return false;
     }
   }, [isSupported, isSpeaking, isPaused]);
 
   // Stop
   const stop = useCallback(() => {
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     cleanup();
     return true;
   }, [cleanup]);
@@ -179,7 +210,7 @@ export function useTTS() {
 
   // Test della voce corrente
   const testVoice = useCallback(() => {
-    const testText = "Ciao! Sono Galileo, il tuo assistente per l'elettronica. Come posso aiutarti oggi?";
+    const testText = "Ciao! Sono UNLIM, il tuo compagno di avventure nell'elettronica!";
     return speak(testText);
   }, [speak]);
 
@@ -198,7 +229,6 @@ export function useTTS() {
     togglePause,
     changeVoice,
     testVoice,
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
     
     // Utility
     cleanup,

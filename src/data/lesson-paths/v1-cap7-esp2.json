@@ -56,7 +56,8 @@
       "piedino",
       "canale colore",
       "verde",
-      "volt"
+      "volt",
+      "polarità"
     ],
     "forbidden": [
       "ohm",
@@ -83,7 +84,7 @@
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Stessa configurazione dell'esperimento precedente. L'unica differenza: questa volta colleghiamo il pin VERDE del LED RGB.",
       "teacher_tip": "Chiedi: 'L'ultima volta abbiamo acceso il rosso. Secondo voi, come accendiamo il verde?'",
       "components_list": "Stessi componenti: 1 breadboard, 1 batteria 9V, 1 resistore 470Ω, 1 LED RGB, 4 fili.",
@@ -94,7 +95,7 @@
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 8,
+      "duration_minutes": 10,
       "teacher_message": "Mostra il circuito sulla LIM. L'unica differenza dal rosso è quale pin del LED RGB colleghiamo.",
       "teacher_tip": "Evidenzia che il circuito è IDENTICO — cambia solo il filo che va al pin verde (F4) invece che al rosso (F2).",
       "components_list": null,
@@ -164,7 +165,7 @@
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 5,
+      "duration_minutes": 7,
       "teacher_message": "Chiedi alla classe cosa è cambiato rispetto al circuito del rosso.",
       "teacher_tip": "La risposta attesa: 'Solo il filo va a un pin diverso'. Il circuito è lo stesso! Ogni canale è indipendente.",
       "provocative_question": "Cosa è cambiato nel circuito rispetto al rosso? Solo una cosa!",
@@ -215,7 +216,7 @@
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 3,
+      "duration_minutes": 5,
       "teacher_message": "Abbiamo scoperto che ogni canale del LED RGB funziona come un LED singolo. Basta cambiare quale pin colleghiamo!",
       "teacher_tip": "Chiedi: 'Se possiamo accendere rosso e verde separatamente... possiamo accenderli INSIEME?'",
       "components_list": null,

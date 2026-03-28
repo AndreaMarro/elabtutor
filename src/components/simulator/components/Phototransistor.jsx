@@ -81,7 +81,7 @@ const Phototransistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInte
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-14" y="-22" width="28" height="46" rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

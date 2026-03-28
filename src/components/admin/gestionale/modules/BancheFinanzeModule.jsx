@@ -11,6 +11,7 @@ import { financeService } from '../GestionaleService';
 import GestionaleTable from '../shared/GestionaleTable';
 import GestionaleForm from '../shared/GestionaleForm';
 import logger from '../../../../utils/logger';
+import { showToast } from '../../../common/Toast';
 
 const TIPI_CONTO = [
   { value: 'corrente', label: 'Conto Corrente' }, { value: 'risparmio', label: 'Conto Risparmio' },
@@ -154,7 +155,7 @@ export default function BancheFinanzeModule({ isMobile }) {
     if (!window.confirm('Eliminare questo conto bancario?')) return;
     try {
       const res = await financeService.deleteConto(id);
-      if (res && !res.success) { alert(res.error); return; }
+      if (res && !res.success) { showToast(res.error, 'error'); return; }
       await loadData();
     } catch (e) { logger.error(e); }
   };
@@ -266,10 +267,8 @@ export default function BancheFinanzeModule({ isMobile }) {
                 const tipoLabel = TIPI_CONTO.find(t => t.value === conto.tipo)?.label || conto.tipo;
                 const saldoPos = conto.saldoCalcolato >= 0;
                 return (
-                  <div key={conto.id} style={{ ...S.cardCompact, cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}
-                    onClick={() => openEditConto(conto)}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = COLORS.accentLight; e.currentTarget.style.boxShadow = '0 2px 10px rgba(37,99,235,0.1)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.boxShadow = 'none'; }}>
+                  <div key={conto.id} className="gest-hover-card" style={{ ...S.cardCompact, cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}
+                    onClick={() => openEditConto(conto)}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: 15, color: COLORS.textPrimary }}>{conto.nome}</div>

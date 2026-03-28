@@ -261,7 +261,7 @@ const BreadboardHalf = ({ x = 0, y = 0, state = {}, highlighted = false, onInter
       {/* Highlight for AI tutoring */}
       {highlighted && (
         <rect x="-3" y="-3" width={BOARD_W + 6} height={BOARD_H + 6} rx="6"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="6 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="6 3">
           <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

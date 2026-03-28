@@ -73,7 +73,7 @@ const RgbLed = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id 
       {/* AI tutoring highlight */}
       {highlighted && (
         <rect x="-18" y="-26" width="36" height="60" rx="5"
-          fill="none" stroke="var(--color-accent, #558B2F)" strokeWidth="2" strokeDasharray="5 3">
+          fill="none" stroke="var(--color-accent, #4A7A25)" strokeWidth="2" strokeDasharray="5 3">
           <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" />
         </rect>
       )}

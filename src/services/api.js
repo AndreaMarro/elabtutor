@@ -198,7 +198,7 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
             payload.images = images.map(img => ({
                 base64: img.base64,
                 mimeType: img.mimeType || 'image/png',
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             }));
         }
         const res = await fetch(`${NANOBOT_URL}${endpoint}`, {
@@ -399,7 +399,7 @@ function buildChatMessage(message, socraticMode, experimentContext) {
     if (socraticMode) parts.push(SOCRATIC_INSTRUCTION);
     if (experimentContext) parts.push(experimentContext);
     if (parts.length === 0) return message;
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     return `${parts.join('\n')}\n\nMessaggio studente:\n${message}`;
 }
 
@@ -600,7 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
                 return {
                     success: true,
                     response: safeContent,
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
                     source: 'backend-vision',
                     actions: extractActions(safeContent)
                 };
@@ -801,7 +801,7 @@ function extractActions(text, userMessage = '') {
             code,
             label: 'Apri nel Simulatore'
         });
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // ============================================

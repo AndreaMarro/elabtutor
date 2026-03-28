@@ -64,7 +64,7 @@ const IconGestionale = () => (
 
 const TABS = [
     { id: 'dashboard',   label: 'Dashboard',    icon: <IconDashboard />, color: '#1E4D8C' },
-    { id: 'utenti',      label: 'Utenti',       icon: <IconUsers />, color: '#558B2F' },
+    { id: 'utenti',      label: 'Utenti',       icon: <IconUsers />, color: '#4A7A25' },
     { id: 'ordini',      label: 'Ordini',       icon: <IconOrders />, color: '#F59E0B' },
     { id: 'corsi',       label: 'Corsi',        icon: <IconCourses />, color: '#8B5CF6' },
     { id: 'eventi',      label: 'Eventi',       icon: <IconEvents />, color: '#EC4899' },
@@ -302,7 +302,7 @@ export default function AdminPage({ onNavigate }) {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{
-                            background: connectionStatus?.connected ? '#558B2F' : '#EF4444',
+                            background: connectionStatus?.connected ? '#4A7A25' : '#EF4444',
                             width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block',
                         }} />
                         <span style={{
@@ -373,7 +373,7 @@ export default function AdminPage({ onNavigate }) {
                     <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{
                             width: '8px', height: '8px', borderRadius: '50%',
-                            background: connectionStatus?.connected ? '#558B2F' : connectionStatus === null ? '#F59E0B' : '#EF4444',
+                            background: connectionStatus?.connected ? '#4A7A25' : connectionStatus === null ? '#F59E0B' : '#EF4444',
                             display: 'inline-block',
                         }} />
                         <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>

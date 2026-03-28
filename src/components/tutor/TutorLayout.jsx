@@ -10,6 +10,7 @@ import TutorTopBar from './TutorTopBar';
 import TutorSidebar, { MobileBottomTabs } from './TutorSidebar';
 import ChatOverlay from './ChatOverlay';
 import KeyboardManager, { ShortcutsPanel } from './KeyboardManager';
+import { useUnlimMode } from '../unlim/UnlimModeSwitch';
 import './tutor-responsive.css';
 
 const ONBOARDING_KEY = 'elab_onboarding_seen';
@@ -118,7 +119,12 @@ export default function TutorLayout({
     onVoiceRecord,
     voicePlaying,
     voiceAvailable,
+    // G12 RESPIRA: hide all navigation for full-screen simulator
+    hideNavigation = false,
 }) {
+    // G14: Nascondi ChatOverlay in UNLIM mode — usa solo UnlimOverlay
+    const { isUnlim } = useUnlimMode();
+
     // S84: Auto-collapse left nav on iPad/tablet to maximize canvas space
     const [sidebarCollapsed, setSidebarCollapsed] = useState(
         typeof window !== 'undefined' && window.innerWidth <= 1365
@@ -161,7 +167,7 @@ export default function TutorLayout({
     }, [onTabChange]);
 
     return (
-        <div className={`tutor-layout ${isFullscreen ? 'tutor-layout--fullscreen' : ''}`}>
+        <div className={`tutor-layout ${isFullscreen ? 'tutor-layout--fullscreen' : ''} ${hideNavigation ? 'tutor-layout--no-nav' : ''}`}>
             {/* Keyboard Shortcuts Manager */}
             <KeyboardManager
                 onOpenSimulator={() => onTabChange('simulator')}
@@ -174,8 +180,8 @@ export default function TutorLayout({
                 showShortcuts={showShortcuts}
             />
 
-            {/* Top Bar */}
-            {!isFullscreen && (
+            {/* Top Bar — hidden in RESPIRA mode */}
+            {!isFullscreen && !hideNavigation && (
                 <TutorTopBar
                     selectedVolume={selectedVolume}
                     onToggleSidebar={handleToggleSidebar}
@@ -191,8 +197,8 @@ export default function TutorLayout({
 
             {/* Main body: sidebar + content */}
             <div className="tutor-body">
-                {/* Sidebar (desktop + tablet only, hidden on mobile via CSS) */}
-                {!isMobile && !isFullscreen && (
+                {/* Sidebar — hidden in RESPIRA mode */}
+                {!isMobile && !isFullscreen && !hideNavigation && (
                     <TutorSidebar
                         activeTab={activeTab}
                         onTabChange={onTabChange}
@@ -213,8 +219,8 @@ export default function TutorLayout({
                     {/* © Andrea Marro — 27/02/2026 — ELAB Tutor — Tutti i diritti riservati */}
                 </main>
 
-                {/* Chat Overlay (floating) */}
-                <ChatOverlay
+                {/* Chat Overlay (floating) — nascosto in UNLIM mode, usa UnlimOverlay */}
+                {!isUnlim && <ChatOverlay
                     messages={messages}
                     input={input}
                     onInputChange={onInputChange}
@@ -234,11 +240,11 @@ export default function TutorLayout({
                     voiceRecording={voiceRecording}
                     onVoiceRecord={onVoiceRecord}
                     voicePlaying={voicePlaying}
-                />
+                />}
             </div>
 
-            {/* Mobile bottom tabs */}
-            {isMobile && !isFullscreen && (
+            {/* Mobile bottom tabs — hidden in RESPIRA mode */}
+            {isMobile && !isFullscreen && !hideNavigation && (
                 <MobileBottomTabs
                     activeTab={activeTab}
                     onTabChange={onTabChange}
@@ -246,8 +252,8 @@ export default function TutorLayout({
                 />
             )}
 
-            {/* Footer */}
-            {!isFullscreen && (
+            {/* Footer — hidden in RESPIRA mode */}
+            {!isFullscreen && !hideNavigation && (
                 <footer className="tutor-footer">
                     <span>Laboratorio di Elettronica: Impara e sperimenta</span>
                 </footer>

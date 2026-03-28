@@ -12,11 +12,12 @@ import studentService from '../../services/studentService';
 import { adminService, usersLookup } from '../../services/userService';
 import { createClass, listClasses, removeStudent, updateClassGames } from '../../services/authService';
 import { useConfirmModal } from '../common/ConfirmModal';
+import LESSON_PATHS from '../../data/lesson-paths/index';
 // Colori ELAB ufficiali
 const C = {
     navy: '#1E4D8C',
     navyDark: '#152a5c',
-    lime: '#558B2F',
+    lime: '#4A7A25',
     limeDark: '#7da93d',
     limeLight: '#BBD789',
     limeSoft: '#E8F4D9',
@@ -77,39 +78,39 @@ const IconSeedDormant = ({ size = 18 }) => (
     </svg>
 );
 const IconSeed = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
         <ellipse cx="10" cy="14" rx="4" ry="3" fill="#D7CCC8" stroke="#8D6E63" />
-        <path d="M10 14 Q10 11 10 9" stroke="#558B2F" />
-        <path d="M10 10 Q12 8 13 9" stroke="#558B2F" />
+        <path d="M10 14 Q10 11 10 9" stroke="#4A7A25" />
+        <path d="M10 10 Q12 8 13 9" stroke="#4A7A25" />
         <line x1="4" y1="17" x2="16" y2="17" stroke="#8D6E63" />
     </svg>
 );
 const IconSprout = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
-        <line x1="10" y1="17" x2="10" y2="8" stroke="#558B2F" />
-        <path d="M10 10 Q7 7 5 8" stroke="#558B2F" fill="none" />
-        <path d="M10 8 Q13 5 15 6" stroke="#558B2F" fill="none" />
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+        <line x1="10" y1="17" x2="10" y2="8" stroke="#4A7A25" />
+        <path d="M10 10 Q7 7 5 8" stroke="#4A7A25" fill="none" />
+        <path d="M10 8 Q13 5 15 6" stroke="#4A7A25" fill="none" />
         <line x1="4" y1="17" x2="16" y2="17" stroke="#8D6E63" />
     </svg>
 );
 const IconBush = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
         <line x1="10" y1="17" x2="10" y2="10" stroke="#6D4C41" />
-        <circle cx="10" cy="7" r="5" fill="#A5D6A7" stroke="#558B2F" />
-        <circle cx="7" cy="9" r="3" fill="#81C784" stroke="#558B2F" />
-        <circle cx="13" cy="9" r="3" fill="#81C784" stroke="#558B2F" />
+        <circle cx="10" cy="7" r="5" fill="#A5D6A7" stroke="#4A7A25" />
+        <circle cx="7" cy="9" r="3" fill="#81C784" stroke="#4A7A25" />
+        <circle cx="13" cy="9" r="3" fill="#81C784" stroke="#4A7A25" />
         <line x1="4" y1="17" x2="16" y2="17" stroke="#8D6E63" />
     </svg>
 );
 const IconPine = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
         <rect x="9" y="15" width="2" height="3" fill="#6D4C41" stroke="#6D4C41" />
         <polygon points="10,2 4,10 7,10 3,15 17,15 13,10 16,10" fill="#66BB6A" stroke="#43A047" />
         <line x1="4" y1="18" x2="16" y2="18" stroke="#8D6E63" />
     </svg>
 );
 const IconOak = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
         <rect x="9" y="14" width="2" height="4" fill="#5D4037" stroke="#5D4037" />
         <circle cx="10" cy="8" r="6" fill="#66BB6A" stroke="#43A047" />
         <circle cx="6" cy="10" r="3.5" fill="#81C784" stroke="#43A047" />
@@ -146,11 +147,11 @@ const IconBloccato = ({ size = 16 }) => (
     </svg>
 );
 const IconFelice = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
-        <circle cx="10" cy="10" r="8" stroke="#558B2F" />
-        <circle cx="7" cy="8" r="1" fill="#558B2F" stroke="none" />
-        <circle cx="13" cy="8" r="1" fill="#558B2F" stroke="none" />
-        <path d="M6 12 Q10 16 14 12" stroke="#558B2F" fill="none" />
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+        <circle cx="10" cy="10" r="8" stroke="#4A7A25" />
+        <circle cx="7" cy="8" r="1" fill="#4A7A25" stroke="none" />
+        <circle cx="13" cy="8" r="1" fill="#4A7A25" stroke="none" />
+        <path d="M6 12 Q10 16 14 12" stroke="#4A7A25" fill="none" />
     </svg>
 );
 const IconFrustrato = ({ size = 16 }) => (
@@ -208,7 +209,7 @@ const IconReview = ({ size = 16 }) => (
 
 // Status icons
 const IconCheck = ({ size = 14, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || '#558B2F', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
         <circle cx="10" cy="10" r="8" stroke="currentColor" />
         <polyline points="6 10 9 13 14 7" stroke="currentColor" />
     </svg>
@@ -264,11 +265,11 @@ const MOOD_EMOJI = {
 
 const MOOD_COLORS = {
     energico: '#F5A623', concentrato: '#1E4D8C', confuso: '#9333EA', bloccato: '#E53935',
-    felice: '#558B2F', frustrato: '#EF4444', curioso: '#00B4D8', creativo: '#EC4899',
+    felice: '#4A7A25', frustrato: '#EF4444', curioso: '#00B4D8', creativo: '#EC4899',
 };
 
 // Avatar color from name hash (deterministic)
-const AVATAR_COLORS = ['#1E4D8C', '#558B2F', '#E8941C', '#E54B3D', '#9333EA', '#00B4D8', '#EC4899', '#6D4C41'];
+const AVATAR_COLORS = ['#1E4D8C', '#4A7A25', '#E8941C', '#E54B3D', '#9333EA', '#00B4D8', '#EC4899', '#6D4C41'];
 function getAvatarColor(name) {
     let hash = 0;
     for (let i = 0; i < (name || '').length; i++) hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
@@ -455,10 +456,10 @@ export default function TeacherDashboard({ onNavigate }) {
         return adminService.getAllUsers().filter(u => u.ruolo === 'user' && u.stato === 'attivo');
     }, []);
 
-    // Fallback a demo se nessuno studente reale E nessun dato server
-    const isDemoMode = realUsers.length === 0 && Object.keys(allStudentData).length === 0 && !isLoadingData;
+    // Stato vuoto: nessun dato reale disponibile
+    const isEmptyState = dataSource === 'empty' && realUsers.length === 0 && !isLoadingData;
     const allUsers = useMemo(() => {
-        if (isDemoMode) return DEMO_USERS;
+        if (isEmptyState) return [];
         if (realUsers.length > 0) return realUsers;
         // Se abbiamo dati server ma non utenti locali, costruisci lista da dati server
         // Cerca nome in tutti i campi possibili — MAI mostrare UUID
@@ -474,7 +475,7 @@ export default function TeacherDashboard({ onNavigate }) {
                 stato: 'attivo',
             };
         });
-    }, [realUsers, allStudentData, isDemoMode, isLoadingData]);
+    }, [realUsers, allStudentData, isEmptyState, isLoadingData]);
 
     // Fetch dati studenti dal server (asincrono)
     useEffect(() => {
@@ -501,18 +502,18 @@ export default function TeacherDashboard({ onNavigate }) {
                         const ids = Object.keys(localData);
                         setClassReport(studentService.getClassReport(ids));
                     } else {
-                        // Demo mode
-                        setAllStudentData(makeDemoStudentData());
-                        setClassReport(makeDemoClassReport());
-                        setDataSource('demo');
+                        // Nessun dato — stato vuoto reale (NO dati demo)
+                        setAllStudentData({});
+                        setClassReport(null);
+                        setDataSource('empty');
                     }
                 }
             } catch {
-                // Fallback completo a demo
+                // Fallback: stato vuoto (NO dati demo)
                 if (!cancelled) {
-                    setAllStudentData(makeDemoStudentData());
-                    setClassReport(makeDemoClassReport());
-                    setDataSource('demo');
+                    setAllStudentData({});
+                    setClassReport(null);
+                    setDataSource('empty');
                 }
             } finally {
                 if (!cancelled) setIsLoadingData(false);
@@ -568,6 +569,7 @@ export default function TeacherDashboard({ onNavigate }) {
         { id: 'studente', label: 'Dettaglio Studente' },
         { id: 'nudge', label: 'Nudge' },
         { id: 'documenti', label: 'Documentazione' },
+        { id: 'pnrr', label: 'Progresso PNRR' },
         { id: 'classi', label: 'Le mie classi' },
     ];
 
@@ -599,26 +601,32 @@ export default function TeacherDashboard({ onNavigate }) {
                         <h1 style={styles.headerTitle}>La Serra del Prof. {user.nome?.split(' ')[0]}</h1>
                         <p style={styles.headerSubtitle}>
                             {allUsers.length} studenti nel giardino
-                            {isDemoMode && <span style={{ color: '#F59E0B', fontWeight: 600 }}> (Demo)</span>}
+                            {isEmptyState && <span style={{ color: '#94A3B8', fontWeight: 600 }}> (in attesa di dati)</span>}
                         </p>
                     </div>
                 </div>
             </div>
-            {isDemoMode && (
+            {isEmptyState && (
                 <div style={{
-                    background: 'linear-gradient(90deg, #F59E0B22 0%, #F59E0B11 100%)',
-                    border: '1px solid #F59E0B44',
+                    background: 'linear-gradient(90deg, #1E4D8C11 0%, #4A7A2511 100%)',
+                    border: '1px solid #1E4D8C33',
                     borderRadius: 8,
-                    padding: '8px 16px',
+                    padding: '16px 20px',
                     margin: '0 20px 12px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
+                    gap: 12,
                     fontSize: 14,
-                    color: '#92400E',
+                    color: '#1E4D8C',
                 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700 }}></span>
-                    <span><strong>Modalità Demo</strong> — Dati fittizi di 6 studenti. Quando i tuoi studenti si registreranno, vedrai i loro dati reali.</span>
+                    <span style={{ fontSize: 24 }}>📊</span>
+                    <div>
+                        <strong>Nessun dato studente disponibile</strong>
+                        <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: 14 }}>
+                            I dati appariranno automaticamente quando gli studenti useranno il simulatore su questo dispositivo.
+                            Ogni esperimento aperto, compilazione e interazione viene tracciata in tempo reale.
+                        </p>
+                    </div>
                 </div>
             )}
             {dataSource === 'local' && (
@@ -640,10 +648,13 @@ export default function TeacherDashboard({ onNavigate }) {
             )}
 
             {/* Tabs */}
-            <div style={styles.tabBar}>
+            <div style={styles.tabBar} role="tablist">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
+                        role="tab"
+                        aria-selected={activeTab === tab.id}
+                        aria-controls={`tabpanel-${tab.id}`}
                         onClick={() => setActiveTab(tab.id)}
                         style={{
                             ...styles.tab,
@@ -657,7 +668,7 @@ export default function TeacherDashboard({ onNavigate }) {
             </div>
 
             {/* Content */}
-            <div style={styles.content}>
+            <div style={styles.content} role="tabpanel" id={`tabpanel-${activeTab}`}>
                 {activeTab === 'giardino' && (
                     <GiardinoTab
                         users={filteredUsers}
@@ -708,6 +719,13 @@ export default function TeacherDashboard({ onNavigate }) {
                         users={allUsers}
                         allData={allStudentData}
                         classReport={classReport}
+                        formatTempo={formatTempo}
+                    />
+                )}
+                {activeTab === 'pnrr' && (
+                    <ProgressoPNRRTab
+                        users={filteredUsers}
+                        allData={allStudentData}
                         formatTempo={formatTempo}
                     />
                 )}
@@ -1527,8 +1545,8 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
                     {cls.volumes?.map(v => (
                         <span key={v} style={{
                             fontSize: 14, padding: '2px 8px', borderRadius: 6,
-                            background: v === 'Volume 1' ? '#558B2F22' : v === 'Volume 2' ? '#E8941C22' : '#E54B3D22',
-                            color: v === 'Volume 1' ? '#558B2F' : v === 'Volume 2' ? '#E8941C' : '#E54B3D',
+                            background: v === 'Volume 1' ? '#4A7A2522' : v === 'Volume 2' ? '#E8941C22' : '#E54B3D22',
+                            color: v === 'Volume 1' ? '#4A7A25' : v === 'Volume 2' ? '#E8941C' : '#E54B3D',
                             fontWeight: 600,
                         }}>
                             {v}
@@ -1536,8 +1554,8 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
                     ))}
                     <span style={{
                         fontSize: 14, padding: '2px 8px', borderRadius: 6,
-                        background: cls.active ? '#558B2F22' : '#E5393522',
-                        color: cls.active ? '#558B2F' : '#E53935',
+                        background: cls.active ? '#4A7A2522' : '#E5393522',
+                        color: cls.active ? '#4A7A25' : '#E53935',
                         fontWeight: 600,
                     }}>
                         {cls.active ? 'Attiva' : 'Disattivata'}
@@ -1616,6 +1634,402 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
         </div>
     );
 }
+
+// ─── PROGRESSO PNRR ──────────────────────────────────
+// Catalogo curriculum dai 62 lesson paths
+const CURRICULUM = Object.entries(LESSON_PATHS).map(([id, lp]) => ({
+    id,
+    title: lp.title || id,
+    volume: lp.volume || (id.startsWith('v1') ? 1 : id.startsWith('v2') ? 2 : 3),
+    chapter: lp.chapter || 0,
+    chapterTitle: lp.chapter_title || '',
+})).sort((a, b) => a.volume - b.volume || a.chapter - b.chapter || a.id.localeCompare(b.id));
+
+const CURRICULUM_BY_VOL = {
+    1: CURRICULUM.filter(e => e.volume === 1),
+    2: CURRICULUM.filter(e => e.volume === 2),
+    3: CURRICULUM.filter(e => e.volume === 3),
+};
+const VOL_LABELS = { 1: 'Volume 1 — Cominciamo', 2: 'Volume 2 — Approfondiamo', 3: 'Volume 3 — Arduino' };
+const VOL_COLORS = { 1: '#4A7A25', 2: '#E8941C', 3: '#E54B3D' };
+
+function getStudentCompletedSet(studentData) {
+    if (!studentData?.esperimenti) return new Set();
+    return new Set(studentData.esperimenti.filter(e => e.completato).map(e => e.experimentId));
+}
+
+function getProgressStats(studentData, completedSet) {
+    const completed = completedSet || getStudentCompletedSet(studentData);
+    const byVol = {};
+    for (const vol of [1, 2, 3]) {
+        const total = CURRICULUM_BY_VOL[vol].length;
+        const done = CURRICULUM_BY_VOL[vol].filter(e => completed.has(e.id)).length;
+        byVol[vol] = { total, done, pct: total > 0 ? Math.round(done / total * 100) : 0 };
+    }
+    const totalAll = CURRICULUM.length;
+    const doneAll = CURRICULUM.filter(e => completed.has(e.id)).length;
+    return { byVol, total: totalAll, done: doneAll, pct: totalAll > 0 ? Math.round(doneAll / totalAll * 100) : 0 };
+}
+
+function getPaceLabel(pct) {
+    if (pct >= 60) return { label: 'Avanti', color: '#4A7A25', bg: 'rgba(85,139,47,0.1)' };
+    if (pct >= 25) return { label: 'In pari', color: '#1E4D8C', bg: 'rgba(30,77,140,0.1)' };
+    if (pct > 0) return { label: 'Indietro', color: '#E8941C', bg: 'rgba(232,148,28,0.1)' };
+    return { label: 'Non iniziato', color: '#94A3B8', bg: 'rgba(148,163,184,0.1)' };
+}
+
+function ProgressoPNRRTab({ users, allData, formatTempo }) {
+    const [selectedVol, setSelectedVol] = useState('tutti');
+    const [showMatrix, setShowMatrix] = useState(false);
+
+    const studentsProgress = useMemo(() => {
+        return users.map(u => {
+            const sd = allData[u.id];
+            const completed = getStudentCompletedSet(sd);
+            const stats = getProgressStats(sd, completed);
+            const pace = getPaceLabel(stats.pct);
+            return { user: u, stats, pace, completed };
+        }).sort((a, b) => b.stats.done - a.stats.done);
+    }, [users, allData]);
+
+    const classAvg = useMemo(() => {
+        if (studentsProgress.length === 0) return 0;
+        return Math.round(studentsProgress.reduce((s, sp) => s + sp.stats.pct, 0) / studentsProgress.length);
+    }, [studentsProgress]);
+
+    const paceGroups = useMemo(() => {
+        const g = { avanti: 0, inPari: 0, indietro: 0, nonIniziato: 0 };
+        studentsProgress.forEach(sp => {
+            if (sp.pace.label === 'Avanti') g.avanti++;
+            else if (sp.pace.label === 'In pari') g.inPari++;
+            else if (sp.pace.label === 'Indietro') g.indietro++;
+            else g.nonIniziato++;
+        });
+        return g;
+    }, [studentsProgress]);
+
+    const visibleExps = selectedVol === 'tutti' ? CURRICULUM : CURRICULUM_BY_VOL[parseInt(selectedVol)] || [];
+
+    const handlePrint = () => {
+        window.print();
+    };
+
+    const handleExportJSON = () => {
+        const exportData = {
+            report: 'ELAB Tutor — Report PNRR Scuola 4.0',
+            generato: new Date().toISOString(),
+            classe: {
+                studenti: users.length,
+                mediaProgresso: classAvg + '%',
+                esperimentiTotali: CURRICULUM.length,
+            },
+            distribuzione: {
+                avanti: paceGroups.avanti,
+                inPari: paceGroups.inPari,
+                indietro: paceGroups.indietro,
+                nonIniziato: paceGroups.nonIniziato,
+            },
+            studenti: studentsProgress.map(sp => ({
+                nome: sp.user.nome || sp.user.email?.split('@')[0] || 'Studente',
+                esperimentiCompletati: sp.stats.done,
+                esperimentiTotali: sp.stats.total,
+                percentuale: sp.stats.pct + '%',
+                stato: sp.pace.label,
+                dettaglioVolumi: {
+                    vol1: `${sp.stats.byVol[1]?.done || 0}/${sp.stats.byVol[1]?.total || 0}`,
+                    vol2: `${sp.stats.byVol[2]?.done || 0}/${sp.stats.byVol[2]?.total || 0}`,
+                    vol3: `${sp.stats.byVol[3]?.done || 0}/${sp.stats.byVol[3]?.total || 0}`,
+                },
+                esperimentiCompletatiLista: [...sp.completed],
+            })),
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `report-pnrr_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleExportCSV = () => {
+        const bom = '\uFEFF';
+        const headers = ['Studente', 'Completati', 'Totali', '%', 'Stato', 'Vol1', 'Vol2', 'Vol3'];
+        const rows = studentsProgress.map(sp => [
+            sp.user.nome || sp.user.email?.split('@')[0] || 'Studente',
+            sp.stats.done,
+            sp.stats.total,
+            sp.stats.pct + '%',
+            sp.pace.label,
+            `${sp.stats.byVol[1]?.done || 0}/${sp.stats.byVol[1]?.total || 0}`,
+            `${sp.stats.byVol[2]?.done || 0}/${sp.stats.byVol[2]?.total || 0}`,
+            `${sp.stats.byVol[3]?.done || 0}/${sp.stats.byVol[3]?.total || 0}`,
+        ]);
+        const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+        const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `report-pnrr_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    if (users.length === 0) {
+        return (
+            <div style={{ ...styles.section, textAlign: 'center', padding: 40 }}>
+                <p style={{ color: C.textMuted, fontSize: 16 }}>Nessun dato disponibile per questa classe.</p>
+                <p style={{ color: C.textMuted, fontSize: 14 }}>Aggiungi studenti dalla tab "Le mie classi" per visualizzare il progresso.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="pnrr-report-area">
+            {/* Header PNRR */}
+            <div style={{ ...styles.section, background: `linear-gradient(135deg, ${C.navy}, ${C.navyDark})`, color: C.white, border: 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                    <div>
+                        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, fontFamily: 'Oswald, sans-serif', color: C.white }}>
+                            Report Progresso — PNRR Scuola 4.0
+                        </h3>
+                        <p style={{ margin: '4px 0 0', fontSize: 14, color: C.limeLight }}>
+                            {users.length} studenti • {CURRICULUM.length} esperimenti nel curriculum • Media classe: {classAvg}%
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <button onClick={handleExportJSON} style={{
+                            ...styles.primaryBtn, background: C.white, color: C.navy, marginTop: 0,
+                            display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14,
+                        }}>
+                            Esporta JSON
+                        </button>
+                        <button onClick={handleExportCSV} style={{
+                            ...styles.primaryBtn, background: C.white, color: C.navy, marginTop: 0,
+                            display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14,
+                        }}>
+                            Esporta CSV
+                        </button>
+                        <button onClick={handlePrint} style={{
+                            ...styles.primaryBtn, background: C.white, color: C.navy, marginTop: 0,
+                            display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14,
+                        }}>
+                            <IconPrint /> Stampa
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* KPI Cards */}
+            <div style={styles.statGrid}>
+                <div style={styles.statCard}>
+                    <div style={{ ...styles.statValue, color: C.navy }}>{users.length}</div>
+                    <div style={styles.statLabel}>Studenti</div>
+                </div>
+                <div style={styles.statCard}>
+                    <div style={{ ...styles.statValue, color: '#4A7A25' }}>{paceGroups.avanti}</div>
+                    <div style={styles.statLabel}>Avanti (&ge;60%)</div>
+                </div>
+                <div style={styles.statCard}>
+                    <div style={{ ...styles.statValue, color: C.navy }}>{paceGroups.inPari}</div>
+                    <div style={styles.statLabel}>In pari (25-59%)</div>
+                </div>
+                <div style={styles.statCard}>
+                    <div style={{ ...styles.statValue, color: '#E8941C' }}>{paceGroups.indietro}</div>
+                    <div style={styles.statLabel}>Indietro (&lt;25%)</div>
+                </div>
+            </div>
+
+            {/* Progress per student */}
+            <div style={styles.section}>
+                <h3 style={styles.sectionTitle}>Progresso Individuale</h3>
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th scope="col" style={styles.th}>Studente</th>
+                                <th scope="col" style={{ ...styles.th, width: 70 }}>Totale</th>
+                                <th scope="col" style={{ ...styles.th, minWidth: 120 }}>Vol 1 ({CURRICULUM_BY_VOL[1].length})</th>
+                                <th scope="col" style={{ ...styles.th, minWidth: 120 }}>Vol 2 ({CURRICULUM_BY_VOL[2].length})</th>
+                                <th scope="col" style={{ ...styles.th, minWidth: 120 }}>Vol 3 ({CURRICULUM_BY_VOL[3].length})</th>
+                                <th scope="col" style={{ ...styles.th, width: 100 }}>Stato</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {studentsProgress.map((sp, i) => (
+                                <tr key={sp.user.id} style={i % 2 === 0 ? styles.trEven : {}}>
+                                    <td style={{ ...styles.td, fontWeight: 600 }}>
+                                        {sp.user.nome || sp.user.email?.split('@')[0] || 'Studente'}
+                                    </td>
+                                    <td style={styles.td}>
+                                        <strong>{sp.stats.done}</strong>/{sp.stats.total}
+                                    </td>
+                                    {[1, 2, 3].map(vol => {
+                                        const v = sp.stats.byVol[vol];
+                                        return (
+                                            <td key={vol} style={styles.td}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <div style={{
+                                                        flex: 1, height: 8, background: '#E2E8F0',
+                                                        borderRadius: 4, overflow: 'hidden', minWidth: 60,
+                                                    }}>
+                                                        <div style={{
+                                                            height: '100%', borderRadius: 4,
+                                                            background: VOL_COLORS[vol],
+                                                            width: `${v.pct}%`,
+                                                            transition: 'width 0.3s',
+                                                        }} />
+                                                    </div>
+                                                    <span style={{ fontSize: 14, color: C.textMuted, minWidth: 36 }}>
+                                                        {v.done}/{v.total}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        );
+                                    })}
+                                    <td style={styles.td}>
+                                        <span style={{
+                                            padding: '4px 10px', borderRadius: 6, fontSize: 14,
+                                            fontWeight: 600, color: sp.pace.color, background: sp.pace.bg,
+                                        }}>
+                                            {sp.pace.label}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Matrice completamento */}
+            <div style={styles.section}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+                    <h3 style={{ ...styles.sectionTitle, margin: 0 }}>Matrice Completamento Esperimenti</h3>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        <select
+                            value={selectedVol}
+                            onChange={e => setSelectedVol(e.target.value)}
+                            aria-label="Filtra per volume"
+                            style={{ ...styles.select, width: 'auto', minWidth: 140 }}
+                        >
+                            <option value="tutti">Tutti ({CURRICULUM.length})</option>
+                            <option value="1">Volume 1 ({CURRICULUM_BY_VOL[1].length})</option>
+                            <option value="2">Volume 2 ({CURRICULUM_BY_VOL[2].length})</option>
+                            <option value="3">Volume 3 ({CURRICULUM_BY_VOL[3].length})</option>
+                        </select>
+                        <button
+                            onClick={() => setShowMatrix(!showMatrix)}
+                            style={{
+                                ...styles.primaryBtn, marginTop: 0, fontSize: 14,
+                                background: showMatrix ? C.navy : `linear-gradient(135deg, ${C.lime}, ${C.limeDark})`,
+                            }}
+                        >
+                            {showMatrix ? 'Nascondi matrice' : 'Mostra matrice'}
+                        </button>
+                    </div>
+                </div>
+
+                {showMatrix && (
+                    <div style={{ overflowX: 'auto', maxHeight: 'min(500px, 60vh)', overflowY: 'auto' }}>
+                        <table style={{ ...styles.table, fontSize: 14 }}>
+                            <thead>
+                                <tr>
+                                    <th style={{ ...styles.th, position: 'sticky', left: 0, background: C.white, zIndex: 2, minWidth: 120 }}>
+                                        Studente
+                                    </th>
+                                    {visibleExps.map((exp, idx) => {
+                                        const isVolStart = idx === 0 || visibleExps[idx - 1].volume !== exp.volume;
+                                        return (
+                                        <th key={exp.id} style={{
+                                            ...styles.th, fontSize: 12, padding: '6px 3px',
+                                            writingMode: 'vertical-rl', textOrientation: 'mixed',
+                                            whiteSpace: 'nowrap', maxWidth: 28, minWidth: 28,
+                                            borderLeft: isVolStart ? `3px solid ${VOL_COLORS[exp.volume]}` : `1px solid ${C.border}`,
+                                            color: VOL_COLORS[exp.volume],
+                                        }} title={`${exp.title} (Cap ${exp.chapter})`}>
+                                            {exp.id.replace(/^v\d-/, '')}
+                                        </th>);
+                                    })}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {studentsProgress.map((sp, i) => (
+                                    <tr key={sp.user.id} style={i % 2 === 0 ? { background: 'rgba(31,61,133,0.02)' } : {}}>
+                                        <td style={{
+                                            ...styles.td, fontWeight: 600, fontSize: 14,
+                                            position: 'sticky', left: 0,
+                                            background: i % 2 === 0 ? '#F8FAFC' : C.white, zIndex: 1,
+                                        }}>
+                                            {sp.user.nome?.split(' ')[0] || 'Studente'}
+                                        </td>
+                                        {visibleExps.map((exp, idx) => {
+                                            const done = sp.completed.has(exp.id);
+                                            const isVolStart = idx === 0 || visibleExps[idx - 1].volume !== exp.volume;
+                                            return (
+                                                <td key={exp.id} style={{
+                                                    ...styles.td, textAlign: 'center', padding: '4px 2px',
+                                                    borderLeft: isVolStart ? `3px solid ${VOL_COLORS[exp.volume]}` : `1px solid ${C.border}`,
+                                                    background: done ? `${VOL_COLORS[exp.volume]}15` : 'transparent',
+                                                }} title={done ? `${sp.user.nome}: ${exp.title} — Completato` : `${sp.user.nome}: ${exp.title}`}>
+                                                    {done ? (
+                                                        <span style={{ color: VOL_COLORS[exp.volume], fontWeight: 700 }}>✓</span>
+                                                    ) : (
+                                                        <span style={{ color: '#CBD5E1' }}>·</span>
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {!showMatrix && (
+                    <p style={{ color: C.textMuted, fontSize: 14, fontStyle: 'italic' }}>
+                        Clicca "Mostra matrice" per vedere il dettaglio esperimento-per-esperimento di ogni studente.
+                    </p>
+                )}
+            </div>
+
+            {/* Legenda */}
+            <div style={{ ...styles.section, background: '#FAFBFC' }}>
+                <h4 style={{ margin: '0 0 8px', fontSize: 14, color: C.navy, fontFamily: 'Oswald, sans-serif' }}>Legenda</h4>
+                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 14 }}>
+                    <span><strong style={{ color: '#4A7A25' }}>■</strong> Volume 1 — Cominciamo ({CURRICULUM_BY_VOL[1].length} esp.)</span>
+                    <span><strong style={{ color: '#E8941C' }}>■</strong> Volume 2 — Approfondiamo ({CURRICULUM_BY_VOL[2].length} esp.)</span>
+                    <span><strong style={{ color: '#E54B3D' }}>■</strong> Volume 3 — Arduino ({CURRICULUM_BY_VOL[3].length} esp.)</span>
+                </div>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14, marginTop: 8 }}>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(85,139,47,0.1)', color: '#4A7A25', fontWeight: 600 }}>Avanti: ≥60%</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(30,77,140,0.1)', color: '#1E4D8C', fontWeight: 600 }}>In pari: 25-59%</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(232,148,28,0.1)', color: '#E8941C', fontWeight: 600 }}>Indietro: &lt;25%</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(148,163,184,0.1)', color: '#94A3B8', fontWeight: 600 }}>Non iniziato</span>
+                </div>
+            </div>
+
+            {/* Note per il dirigente */}
+            <div style={{ ...styles.section, borderLeft: `4px solid ${C.navy}` }}>
+                <h4 style={{ margin: '0 0 8px', fontSize: 14, color: C.navy, fontFamily: 'Oswald, sans-serif' }}>Note per la rendicontazione PNRR</h4>
+                <p style={{ fontSize: 14, lineHeight: 1.7, color: C.textMuted, margin: 0 }}>
+                    Questo report documenta l'utilizzo del software didattico ELAB Tutor nell'ambito del piano Scuola 4.0.
+                    Il curriculum comprende {CURRICULUM.length} esperimenti di elettronica e Arduino distribuiti su 3 volumi progressivi.
+                    Ogni esperimento completato è tracciato con timestamp. Per stampare il report, usare il pulsante "Stampa Report"
+                    in alto — il PDF generato è idoneo come allegato alla rendicontazione PNRR.
+                </p>
+            </div>
+        </div>
+    );
+}
+
+// SVG print icon
+const IconPrint = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" />
+    </svg>
+);
 
 // © Andrea Marro — 20/02/2026
 
@@ -1732,7 +2146,7 @@ const styles = {
     select: {
         width: '100%', padding: '10px 14px', border: `1px solid ${C.border}`,
         borderRadius: 8, fontSize: 14, outline: 'none', boxSizing: 'border-box',
-        background: C.white,
+        background: C.white, minHeight: 44,
     },
     studentHeader: {
         display: 'flex', alignItems: 'center', gap: 16,
@@ -1754,7 +2168,7 @@ const styles = {
         background: `linear-gradient(135deg, ${C.lime}, ${C.limeDark})`,
         border: 'none', color: C.white, padding: '10px 20px',
         borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600,
-        marginTop: 8,
+        marginTop: 8, minHeight: 44,
     },
     nudgeItem: {
         display: 'flex', gap: 12, padding: '14px 0',

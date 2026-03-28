@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
+import logger from '../utils/logger';
 
 const AuthContext = createContext(null);
 
@@ -22,7 +23,7 @@ export function AuthProvider({ children }) {
             if (!authService.isAuthenticated()) {
                 // DEV bypass: su localhost senza token, usa mock user per testing
                 if (import.meta.env.DEV && !cancelled) {
-                    console.warn('[AuthContext] DEV mode — mock user attivo');
+                    logger.warn('[AuthContext] DEV mode — mock user attivo');
                     setUser({
                         id: 'dev-mock-001', email: 'dev@localhost',
                         username: 'dev.test', name: 'Dev', surname: 'Tester',
@@ -55,7 +56,7 @@ export function AuthProvider({ children }) {
                 // Token invalido o server non raggiungibile
                 // DEV fallback: se il server non risponde in dev, usa mock
                 if (import.meta.env.DEV && !cancelled) {
-                    console.warn('[AuthContext] DEV mode — server unreachable, mock user attivo');
+                    logger.warn('[AuthContext] DEV mode — server unreachable, mock user attivo');
                     setUser({
                         id: 'dev-mock-001', email: 'dev@localhost',
                         username: 'dev.test', name: 'Dev', surname: 'Tester',

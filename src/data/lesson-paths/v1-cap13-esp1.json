@@ -98,7 +98,7 @@
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 8,
+      "duration_minutes": 10,
       "teacher_message": "Forma due strisce separate di elettropongo. Metti un piedino del LED in ogni striscia. Collega la batteria alle strisce.",
       "teacher_tip": "IMPORTANTE: le due strisce NON devono toccarsi! Altrimenti la corrente salta il LED e fa un cortocircuito. Spiega con un disegno alla lavagna.",
       "components_list": null,

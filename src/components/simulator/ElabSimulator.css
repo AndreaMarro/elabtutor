@@ -177,7 +177,7 @@
 }
 
 .sim-welcome__step:hover:not(:disabled) {
-  border-color: var(--color-accent, #558B2F);
+  border-color: var(--color-accent, #4A7A25);
   box-shadow: 0 2px 12px rgba(124, 179, 66, 0.15);
   transform: translateY(-1px);
 }
@@ -198,7 +198,7 @@
   color: #fff;
   font-weight: 700;
   font-size: 18px;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   font-family: var(--font-display, 'Oswald', sans-serif);
 }
 
@@ -227,7 +227,7 @@
   padding: 10px 28px;
   border-radius: 8px;
   border: none;
-  background: var(--color-accent, #558B2F);
+  background: var(--color-accent, #4A7A25);
   color: #fff;
   font-family: var(--font-sans, 'Open Sans', sans-serif);
   font-size: 16px;
@@ -242,17 +242,6 @@
   transform: scale(1.02);
 }
 
-/* Watermark ELAB */
-.elab-simulator__watermark {
-  position: absolute;
-  bottom: 4px;
-  left: 8px;
-  font-size: 14px;
-  color: var(--color-sim-scrollbar, #D4C9B0);
-  font-family: var(--font-sans, 'Open Sans', sans-serif);
-  pointer-events: none;
-  user-select: none;
-}
 
 /* ─── BUG FIX: Missing @keyframes spin (used by CodeEditor compile spinner) ─── */
 @keyframes spin {
@@ -399,7 +388,6 @@
     max-height: min(120px, 20dvh);
   }
 }
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 /* ─── Mobile: Hamburger + overflow visible, secondary hidden ─── */
 @media (max-width: 599px) {
@@ -411,6 +399,7 @@
 
   /* Show overflow "..." button */
   .toolbar-btn--overflow {
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
     display: flex;
   }
 
@@ -600,7 +589,6 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--radius-sm, 6px);
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   border: 1px solid transparent;
   background: transparent;
   color: var(--color-text-secondary, #6B6B80);
@@ -612,6 +600,7 @@
   min-width: var(--touch-min, 56px);
   line-height: 1;
   white-space: nowrap;
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   transition: all var(--transition-spring);
   user-select: none;
   -webkit-user-select: none;
@@ -699,7 +688,7 @@
 
 /* Success (Play) */
 .toolbar-btn--success {
-  color: var(--color-accent, #558B2F);
+  color: var(--color-accent, #4A7A25);
 }
 
 @media (hover: hover) {
@@ -799,9 +788,8 @@
 /* Wire mode active */
 .toolbar-btn--wire.toolbar-btn--active {
   background: var(--color-accent-light, #E8F5E9);
-  color: var(--color-accent, #558B2F);
+  color: var(--color-accent, #4A7A25);
   border-color: rgba(85, 139, 47, 0.2);
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
 }
 
 @media (hover: hover) {
@@ -810,9 +798,10 @@
   }
 }
 
-/* UNLIM (gradient CTA) — S76: uses corrected ELAB Lime #558B2F */
+/* UNLIM (gradient CTA) — S76: uses corrected ELAB Lime #4A7A25 */
 .toolbar-btn--unlim {
-  background: linear-gradient(135deg, var(--color-unlim-gradient-start, #558B2F) 0%, var(--color-unlim-gradient-end, #558B2F) 100%);
+  background: linear-gradient(135deg, var(--color-unlim-gradient-start, #4A7A25) 0%, var(--color-unlim-gradient-end, #4A7A25) 100%);
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   color: var(--color-text-inverse, #FFFFFF);
   border: none;
   padding: 6px 16px;
@@ -826,7 +815,7 @@
 
 @media (hover: hover) {
   .toolbar-btn--unlim:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--color-unlim-gradient-end, #558B2F) 0%, var(--color-unlim-gradient-pressed-start) 100%);
+    background: linear-gradient(135deg, var(--color-unlim-gradient-end, #4A7A25) 0%, var(--color-unlim-gradient-pressed-start) 100%);
     color: var(--color-text-inverse, #FFFFFF);
     box-shadow: var(--shadow-accent-md);
     transform: translateY(-1px);
@@ -868,7 +857,7 @@
 
 /* Suggerimenti — lime accent */
 .toolbar-btn--hints {
-  background: var(--color-accent, #558B2F);
+  background: var(--color-accent, #4A7A25);
   color: var(--color-text-inverse, #FFFFFF);
   border: none;
   padding: 6px 12px;
@@ -887,7 +876,7 @@
 }
 
 .toolbar-btn--hints:active:not(:disabled) {
-  background: var(--color-accent-hover, #558B2F);
+  background: var(--color-accent-hover, #4A7A25);
   color: var(--color-text-inverse, #FFFFFF);
   transform: scale(0.95);
 }
@@ -945,7 +934,7 @@
   }
 }
 
-/* Compile success flash — briefly shows #558B2F (ELAB Lime) background */
+/* Compile success flash — briefly shows #4A7A25 (ELAB Lime) background */
 /* Use .toolbar-btn--compile-success (not --success which is the Play color variant) */
 /* Andrea Marro — 18/02/2026 */
 .toolbar-btn--compile-success {
@@ -954,16 +943,16 @@
 
 @keyframes toolbar-compile-success-flash {
   0% {
-    background: var(--color-accent, #558B2F);
+    background: var(--color-accent, #4A7A25);
     color: var(--color-text-inverse, #FFFFFF);
-    border-color: var(--color-unlim-gradient-end, #558B2F);
+    border-color: var(--color-unlim-gradient-end, #4A7A25);
     transform: scale(1.04);
   }
 
   60% {
-    background: var(--color-accent, #558B2F);
+    background: var(--color-accent, #4A7A25);
     color: var(--color-text-inverse, #FFFFFF);
-    border-color: var(--color-unlim-gradient-end, #558B2F);
+    border-color: var(--color-unlim-gradient-end, #4A7A25);
     transform: scale(1.0);
   }
 
@@ -1002,7 +991,6 @@
   gap: 1px;
   text-align: center;
   min-width: 0;
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   font-size: var(--font-size-sm, 16px);
   /* allow text truncation */
 }
@@ -1014,6 +1002,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   max-width: 280px;
 }
 
@@ -1103,7 +1092,7 @@
 }
 
 .elab-simulator button:not(.toolbar-btn):focus-visible {
-  outline: 2px solid var(--color-accent, #558B2F);
+  outline: 2px solid var(--color-accent, #4A7A25);
   outline-offset: 2px;
 }
 
@@ -1168,7 +1157,7 @@
 }
 
 .elab-pin-tooltip__label {
-  color: var(--color-accent, #558B2F);
+  color: var(--color-accent, #4A7A25);
   margin-right: 4px;
 }
 
@@ -1203,7 +1192,6 @@
   margin-top: 0;
   animation: elab-pin-tooltip-in-below 120ms ease-out forwards;
 }
-/* © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati */
 .elab-pin-tooltip--below::after {
   bottom: auto;
   top: -5px;
@@ -1215,6 +1203,7 @@
     opacity: 0;
     transform: translate(-50%, 5px);
   }
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   to {
     opacity: 1;
     transform: translate(-50%, 10px);
@@ -1279,5 +1268,230 @@
     width: 60px;
     height: 60px;
     opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* G12 "RESPIRA" — MinimalControlBar                              */
+/* Progressive Disclosure: 3 bottoni + overflow                   */
+/* © Andrea Marro — 28/03/2026                                    */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.minimal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-surface, #fff);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  min-height: 48px;
+  position: relative;
+  z-index: 10;
+}
+
+.minimal-toolbar__primary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Base button ── */
+.minimal-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease, transform 0.1s ease;
+  color: var(--color-text, #333);
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.minimal-toolbar__btn:hover:not(:disabled) {
+  background: var(--color-hover, rgba(0,0,0,0.06));
+}
+
+.minimal-toolbar__btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.minimal-toolbar__btn:focus-visible {
+  outline: 2px solid var(--color-accent, #4A7A25);
+  outline-offset: 2px;
+}
+
+.minimal-toolbar__btn--active {
+  background: var(--color-hover, rgba(0,0,0,0.08));
+}
+
+/* ── PLAY button — big, lime, unmissable ── */
+.minimal-toolbar__btn--play {
+  background: var(--color-accent, #4A7A25);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  min-width: 48px;
+  min-height: 44px;
+  box-shadow: 0 2px 8px rgba(74, 122, 37, 0.3);
+  font-weight: 700;
+}
+
+.minimal-toolbar__btn--play:hover:not(:disabled) {
+  background: var(--color-accent-dark, #3d6620);
+  box-shadow: 0 4px 12px rgba(74, 122, 37, 0.4);
+}
+
+.minimal-toolbar__btn--play:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(74, 122, 37, 0.3);
+}
+
+/* Pause state — amber */
+.minimal-toolbar__btn--pause-state {
+  background: var(--color-warning, #FFB300);
+  color: #333;
+  box-shadow: 0 2px 8px rgba(255, 179, 0, 0.3);
+}
+
+.minimal-toolbar__btn--pause-state:hover:not(:disabled) {
+  background: var(--color-warning-dark, #E65100);
+  color: #fff;
+}
+
+/* ── Reset — subtle ── */
+.minimal-toolbar__btn--reset {
+  color: var(--color-text-muted, #666);
+  padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ── Compile — subtle ── */
+.minimal-toolbar__btn--compile {
+  color: var(--color-text-muted, #666);
+  padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.minimal-toolbar__btn--compile-ok {
+  color: var(--color-success, #2E7D32);
+}
+
+.minimal-toolbar__btn--compile-err {
+  color: var(--color-danger, #C62828);
+}
+
+/* ── Overflow ── */
+.minimal-toolbar__btn--overflow {
+  color: var(--color-text-muted, #888);
+}
+
+/* ── UNLIM button — branded ── */
+.minimal-toolbar__btn--unlim {
+  background: linear-gradient(135deg, var(--color-primary, #1E4D8C), var(--color-primary-dark, #153a6a));
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 10px;
+  gap: 6px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(30, 77, 140, 0.25);
+}
+
+.minimal-toolbar__btn--unlim:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-primary-dark, #153a6a), var(--color-primary, #1E4D8C));
+/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+  box-shadow: 0 4px 12px rgba(30, 77, 140, 0.35);
+}
+
+.minimal-toolbar__btn--unlim:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.minimal-toolbar__unlim-label {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Experiment name — clickable pill ── */
+.minimal-toolbar__experiment {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1.5px solid var(--color-border, #e0e0e0);
+  border-radius: 20px;
+  background: var(--color-surface, #fff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  max-width: 320px;
+  overflow: hidden;
+}
+
+.minimal-toolbar__experiment:hover {
+  border-color: var(--color-accent, #4A7A25);
+  background: var(--color-accent-light, #E8F5E9);
+}
+
+.minimal-toolbar__experiment:active {
+  transform: scale(0.97);
+}
+
+.minimal-toolbar__experiment:focus-visible {
+  outline: 2px solid var(--color-accent, #4A7A25);
+  outline-offset: 2px;
+}
+
+.minimal-toolbar__experiment-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.minimal-toolbar__experiment-title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text, #333);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Loading animation for UNLIM/compile ── */
+.minimal-toolbar__btn--loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ── Responsive: tablet/mobile ── */
+@media (max-width: 768px) {
+  .minimal-toolbar {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .minimal-toolbar__experiment {
+    max-width: 180px;
+    padding: 4px 10px;
+  }
+
+  .minimal-toolbar__experiment-title {
+    font-size: 14px;
+  }
+
+  .minimal-toolbar__unlim-label {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .minimal-toolbar__experiment {
+    max-width: 120px;
   }
 }

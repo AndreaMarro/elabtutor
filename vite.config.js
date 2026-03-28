@@ -86,9 +86,65 @@ export default defineConfig(({ mode }) => ({
                 ],
             },
             workbox: {
-                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB — ElabTutorV4 chunk is ~1.1MB
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+                // G11: Only precache critical path — NOT all chunks
+                // Lazy chunks (react-pdf, mammoth, admin, games) cached at runtime
+                globPatterns: [
+                    'index.html',
+                    'assets/index-*.js',          // main entry + react-vendor
+                    'assets/index-*.css',          // main CSS
+                    'assets/ElabTutorV4-*.js',     // tutor core
+                    'assets/ElabTutorV4-*.css',    // tutor CSS
+                    'assets/codemirror-*.js',       // code editor
+                    'assets/avr-*.js',             // AVR emulation (if separate)
+                    'registerSW.js',
+                    'fonts/*.woff2',
+                ],
+                // Exclude heavy chunks from precache
+                globIgnores: [
+                    'assets/react-pdf*',
+                    'assets/mammoth*',
+                    'assets/html2canvas*',
+                    'assets/DashboardGestionale*',
+                    'assets/ScratchEditor*',
+                    'assets/GestionalePage*',
+                    'assets/Admin*',
+                    'assets/Fatturazione*',
+                    'assets/CircuitDetective*',
+                    'assets/ReverseEngineering*',
+                    'assets/PredictObserve*',
+                    'assets/TeacherDashboard*',
+                    'assets/StudentDashboard*',
+                    'assets/VetrinaSimulatore*',
+                ],
                 runtimeCaching: [
+                    {
+                        // Lazy-loaded JS chunks — cache after first load
+                        urlPattern: /\/assets\/.*\.js$/i,
+                        handler: 'StaleWhileRevalidate',
+                        options: {
+                            cacheName: 'elab-lazy-chunks',
+                            expiration: { maxEntries: 60, maxAgeSeconds: 604800 }, // 7 days
+                        },
+                    },
+                    {
+                        // Images and SVGs
+                        urlPattern: /\/assets\/.*\.(png|svg|jpg|webp)$/i,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'elab-images',
+                            expiration: { maxEntries: 100, maxAgeSeconds: 2592000 }, // 30 days
+                        },
+                    },
+                    {
+                        // Hex files for AVR
+                        urlPattern: /\/hex\/.*\.hex$/i,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'elab-hex',
+                            expiration: { maxEntries: 30, maxAgeSeconds: 2592000 },
+                        },
+                    },
                     {
                         urlPattern: /^https:\/\/elab-galileo\.onrender\.com\/.*/i,
                         handler: 'NetworkFirst',

@@ -29,7 +29,7 @@ const IcoBook = () => <StudentIcon><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-
 const C = {
     navy: '#1E4D8C',
     navyDark: '#152a5c',
-    lime: '#558B2F',
+    lime: '#4A7A25',
     limeDark: '#7da93d',
     limeLight: '#BBD789',
     limeSoft: '#E8F4D9',
@@ -59,7 +59,7 @@ const MOOD_COLORS = {
     concentrato: '#1E4D8C',
     confuso: '#9333EA',
     bloccato: '#E53935',
-    felice: '#558B2F',
+    felice: '#4A7A25',
     frustrato: '#EF4444',
     curioso: '#00B4D8',
     creativo: '#EC4899',
@@ -717,7 +717,7 @@ function ClasseTab({ user }) {
                 <div style={styles.section}>
                     <h3 style={styles.sectionTitle}>La tua classe</h3>
                     <div style={{
-                        background: 'linear-gradient(135deg, #1E4D8C08, #558B2F08)',
+                        background: 'linear-gradient(135deg, #1E4D8C08, #4A7A2508)',
                         borderRadius: 12, padding: 20,
                         border: `1px solid ${C.border}`,
                     }}>

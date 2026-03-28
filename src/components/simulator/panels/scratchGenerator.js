@@ -198,7 +198,7 @@ arduinoGenerator.forBlock['logic_compare'] = function (block) {
     const OPERATORS = {
         'EQ': '==',
         'NEQ': '!=',
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
         'LT': '<',
         'LTE': '<=',
         'GT': '>',
@@ -399,7 +399,7 @@ arduinoGenerator.forBlock['variables_set'] = function (block) {
     // Always emit plain assignment — declaration is global in header
     return `  ${varName} = ${value};\n`;
 };
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['variables_get'] = function (block) {
     const varField = block.getField('VAR');

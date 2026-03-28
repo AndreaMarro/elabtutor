@@ -198,7 +198,7 @@ export default function useSimulatorAPI({
           const highCurrent = comps.filter(c => (states[c.id] || {}).current > 50);
           if (highCurrent.length > 0) healthSummary += '⚠️ CORRENTE ALTA: ' + highCurrent.map(c => c.id + '=' + Math.round((states[c.id]?.current || 0)) + 'mA').join(', ') + '\n';
           if (diag.disconnectedPins?.length > 0) {
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             const discPins = diag.disconnectedPins.slice(0, 10);
             healthSummary += 'ℹ️ PIN SCOLLEGATI: ' + discPins.map(d => `${d.compId}:${d.pinName}`).join(', ') + '\n';
           }
@@ -399,7 +399,7 @@ export default function useSimulatorAPI({
       showBom: () => setShowBom(true),
       hideBom: () => setShowBom(false),
       showLessonPath: () => { setShowLessonPath(true); setShowBom(false); setShowNotes(false); setShowQuiz(false); },
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       hideLessonPath: () => setShowLessonPath(false),
       showSerialMonitor: () => { setShowCodeEditor(true); setBottomPanel('monitor'); },
       hideSerialMonitor: () => { setShowCodeEditor(false); },

@@ -6,12 +6,15 @@
 // Tutti i diritti riservati
 // ============================================
 
-import React, { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import './ElabTutorV4.css';
 import { sendChat, analyzeImage, checkRateLimit, diagnoseCircuit, getExperimentHints } from '../../services/api';
 import { getTotalExperiments, EXPERIMENTS_VOL1, EXPERIMENTS_VOL2, EXPERIMENTS_VOL3 } from '../../data/experiments-index';
+import { buildClassProfile, getNextLessonSuggestion } from '../../services/classProfile';
 import { validateMessage, sanitizeOutput } from '../../utils/contentFilter';
 import unlimMemory from '../../services/unlimMemory'; // UNLIM Onnipotente: persistent memory
+import studentTracker from '../../services/studentTracker';
+import { showToast } from '../common/Toast';
 import { formatForContext as formatActivityContext, pushActivity } from '../../services/activityBuffer'; // Sprint 1 Context Mastery
 import { sessionMetrics } from '../../services/sessionMetrics'; // Sprint 1 Context Mastery: session metrics
 import { findVideo, getYouTubeSearchUrl } from '../../data/unlim-videos'; // UNLIM Onnipotente: curated YouTube DB
@@ -84,26 +87,23 @@ const VOL1_COUNT = EXPERIMENTS_VOL1?.experiments?.length || 0;
 const VOL2_COUNT = EXPERIMENTS_VOL2?.experiments?.length || 0;
 const VOL3_COUNT = EXPERIMENTS_VOL3?.experiments?.length || 0;
 
-export default function ElabTutorV4() {
+export default function ElabTutorV4({ provaMode = false, onNavigate, initialExperimentId: deepLinkExpId }) {
     // ===================== STATE =====================
     const { user, isDocente } = useAuth();
     const { confirm: confirmModal, ConfirmDialog } = useConfirmModal();
 
-    // Chat State
+    // Chat State — Principio Zero: welcome dinamico basato sulla storia classe
+    const _classProfile = buildClassProfile();
+    const _nextSuggestion = getNextLessonSuggestion();
+    const _welcomeText = _classProfile.isFirstTime
+        ? `**Ciao! Sono UNLIM** 🤖\n\nOggi accendiamo il primo LED insieme!\nPremi **▶ Inizia** per partire — ti guido io passo passo.`
+        : _nextSuggestion
+            ? `**Bentornati!** 🎉\n\nL'ultima volta avete fatto *"${_classProfile.lastExperimentTitle}"*.\nOggi: **${_nextSuggestion.title}** — premi **▶ Inizia** per partire!`
+            : `**Bentornati!** 🎉\n\nPronti a continuare? Scegliete un esperimento o chiedetemi qualcosa!`;
     const [messages, setMessages] = useState([{
         id: 'welcome',
         role: 'assistant',
-        content: `**Ciao, sono UNLIM**
-
-Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
-
-**Da dove vuoi partire?**
-▸ **Manuale** — ad esempio: *"apri volume 1 pagina 5"*
-▸ **Simulatore** — ${TOTAL_EXPERIMENTS} esperimenti pronti
-▸ **Immagine** — inviami una foto del circuito per analizzarla
-▸ **Circuit Detective** — prova a trovare il guasto
-
-*Se preferisci, usa i pulsanti rapidi qui sotto.*`
+        content: _welcomeText,
     }]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -111,6 +111,14 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
 
     // Active Experiment (for AI context) — MUST be declared before useCallbacks that depend on it
     const [activeExperiment, setActiveExperiment] = useState(null);
+
+    // Principio Zero: progressive disclosure basata sul volume
+    // Vol1/Vol2 = LIVELLO 1 (solo breadboard, lesson path, UNLIM)
+    // Vol3 = LIVELLO 2 (+ editor codice, Scratch, Serial Monitor)
+    const disclosureLevel = useMemo(() => {
+        if (!activeExperiment?.id) return 1;
+        return activeExperiment.id.startsWith('v3-') ? 2 : 1;
+    }, [activeExperiment?.id]);
 
     // Voice State (UNLIM speaks — realtime via nanobot)
     const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -122,7 +130,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     useEffect(() => {
         if (!isLoading) return;
         const timeout = setTimeout(() => {
-            console.warn('[UNLIM] isLoading stuck for 30s — auto-resetting');
+            logger.warn('[UNLIM] isLoading stuck for 30s — auto-resetting');
             setIsLoading(false);
         }, 30000);
         return () => clearTimeout(timeout);
@@ -133,7 +141,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         checkVoiceCapabilities().then(caps => {
             const available = caps.stt && caps.tts && caps.microphone;
             setVoiceAvailable(available);
-            console.log(`[Voice] Capabilities: STT=${caps.stt} TTS=${caps.tts} Mic=${caps.microphone}`, available ? '✅ Ready' : '❌ Not available');
+            logger.debug(`[Voice] Capabilities: STT=${caps.stt} TTS=${caps.tts} Mic=${caps.microphone}`, available ? '✅ Ready' : '❌ Not available');
         }).catch(() => setVoiceAvailable(false));
     }, []);
 
@@ -147,7 +155,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
      */
     const handleVoiceToggle = useCallback((enabled) => {
         if (enabled && !voiceAvailable) {
-            console.warn('[Voice] Not available — cannot enable');
+            logger.warn('[Voice] Not available — cannot enable');
             return;
         }
         if (enabled) unlockAudioPlayback(); // Unlock browser autoplay on user gesture
@@ -158,7 +166,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             setVoiceRecording(false);
             setVoicePlaying(false);
         }
-        console.log(`[Voice] ${enabled ? 'Enabled' : 'Disabled'}`);
+        logger.debug(`[Voice] ${enabled ? 'Enabled' : 'Disabled'}`);
     }, [voiceAvailable]);
 
     /**
@@ -253,7 +261,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                         try {
                             await playTracked(result.audio, result.audioFormat || 'audio/mpeg');
                         } catch (e) {
-                            console.error('[Voice] Playback failed:', e);
+                            logger.error('[Voice] Playback failed:', e);
                         }
                         setVoicePlaying(false);
                     }
@@ -265,7 +273,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                     ));
                 }
             } catch (err) {
-                console.error('[Voice] Error:', err);
+                logger.error('[Voice] Error:', err);
                 setMessages(prev => [...prev, {
                     id: 'voice-err-' + Date.now(),
                     role: 'assistant',
@@ -315,7 +323,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
                 const audioData = await synthesizeSpeech(lastMsg.content);
                 await playTracked(audioData, 'audio/mpeg');
             } catch (e) {
-                console.error('[Voice] Auto-speak failed:', e);
+                logger.error('[Voice] Auto-speak failed:', e);
             } finally {
                 setVoicePlaying(false);
             }
@@ -325,11 +333,13 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
     // (CodePanel rimosso — editor Arduino eliminato)
 
     // Context Panel State
-    const [activeTab, _setActiveTab] = useState('manual');
+    const [activeTab, _setActiveTab] = useState('simulator');
     const setActiveTab = useCallback((tab) => {
       _setActiveTab(prev => { if (prev !== tab) pushActivity('tab_switch', `${prev}→${tab}`); return tab; });
     }, []);
-    const [pendingExperimentId, setPendingExperimentId] = useState(null);
+    const [pendingExperimentId, setPendingExperimentId] = useState(
+        deepLinkExpId || (provaMode ? 'v1-cap6-esp1' : null)
+    );
     const [pdfZoom, setPdfZoom] = useState(1);
     const [fitMode, setFitMode] = useState('width');
 
@@ -934,7 +944,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             setViewMode('manual');
         } catch (err) {
             logger.error('Errore caricamento volume:', err);
-            alert(`Errore nel caricamento del Volume ${volNum}. Controlla la connessione.`);
+            showToast(`Errore nel caricamento del Volume ${volNum}. Controlla la connessione.`, 'error');
         }
 
         setLoadingVolume(null);
@@ -994,7 +1004,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         }
 
         if (!imageData) {
-            alert('Nessun documento visualizzato da inviare');
+            showToast('Nessun documento visualizzato da inviare', 'warning');
             return;
         }
 
@@ -1144,7 +1154,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             localStorage.setItem('elab-notebooks', JSON.stringify(updated));
         } catch (e) {
             if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                alert('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi per liberare spazio.');
+                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
             }
         }
         setNotebookTitle('');
@@ -1177,7 +1187,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             localStorage.setItem('elab-notebooks', JSON.stringify(updated));
         } catch (e) {
             if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                alert('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi per liberare spazio.');
+                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
             }
         }
     };
@@ -1196,7 +1206,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
             localStorage.setItem('elab-notebooks', JSON.stringify(updated));
         } catch (e) {
             if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                alert('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi per liberare spazio.');
+                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
             }
         }
         setActivePageIndex(prev => prev + 1);
@@ -1252,6 +1262,7 @@ Ti accompagno nei laboratori ELAB con spiegazioni pratiche e domande guida.
         const parts = [];
         parts.push(`tab=${activeTab}`);
         if (activeExperiment) parts.push(`esp=${activeExperiment.id} "${activeExperiment.title || ''}"`);
+        parts.push(`disclosure=${disclosureLevel}`);
         if (selectedVolume) parts.push(`manuale=Vol${selectedVolume} p.${currentDocPage + 1}`);
         if (currentVideoId) parts.push(`video=youtube:${currentVideoId}`);
         else if (meetActive) parts.push(`video=meet-attivo`);
@@ -1398,9 +1409,11 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
 3. CONTESTO REALE: Se led=[led1:OFF] → il LED e' spento. Se fili=0 → non ci sono fili. Basa OGNI risposta su questi dati.
 4. DOMANDE OFF-TOPIC: Rispondi brevemente (max 1 frase) e ridireziona all'elettronica. Non fare lezioni step-by-step su matematica o altro.
 5. TAG FORMATO: [AZIONE:comando:args] — AZIONE sempre MAIUSCOLO, tag alla FINE della risposta, dopo la spiegazione.
-6. PER RIMUOVERE TUTTI I FILI: Se fili=N, emetti N tag [AZIONE:removewire:i] per i da N-1 a 0 (partendo dall'ultimo).${memoryContext ? `\n\n${memoryContext}` : ''}`;
+6. PER RIMUOVERE TUTTI I FILI: Se fili=N, emetti N tag [AZIONE:removewire:i] per i da N-1 a 0 (partendo dall'ultimo).
+7. LINGUAGGIO 10-14 ANNI: Max 30 parole per risposta. Mai termini come "dispositivo a semiconduttore", "diodo a emissione di luce", "componente elettronico passivo". Usa analogie: LED="lampadina minuscola", resistore="tubo stretto per l'acqua", corrente="acqua che scorre", tensione="pressione dell'acqua".
+8. ANALOGIA OBBLIGATORIA: Per ogni domanda "cos'e' X?" inizia SEMPRE con "E' come..." prima di qualsiasi spiegazione tecnica. Sii entusiasta e concreto.${memoryContext ? `\n\n${memoryContext}` : ''}`;
     }, [activeTab, activeExperiment, selectedVolume, currentDocPage,
-        currentVideoId, meetActive,
+        currentVideoId, meetActive, disclosureLevel,
         activeNotebookId, notebooks, activePageIndex, isSocraticMode, messages.length]);
 
     // ===================== AUTO-SCREENSHOT (UNLIM Onnipotente — FASE 4) =====================
@@ -1488,7 +1501,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 }
             }
         } catch (err) {
-            if (typeof console !== 'undefined') console.warn('[UNLIM] Active tab screenshot fallback failed:', err?.message || err);
+            logger.warn('[UNLIM] Active tab screenshot fallback failed:', err?.message || err);
         }
 
         return { dataUrl: null, source: null };
@@ -1675,14 +1688,14 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         // ── PlacementEngine intent resolution ──
         const PLACEMENT_ENGINE_ENABLED = true;
         const intentTags = extractIntentTags(aiResponse);
-        console.log('[UNLIM-DEBUG] intentTags:', intentTags.length, 'api:', !!api, 'actionTags:', actionTags.length);
-        if (intentTags.length > 0) console.log('[UNLIM-DEBUG] INTENT json:', intentTags.map(t => t.json));
+        logger.debug('[UNLIM-DEBUG] intentTags:', intentTags.length, 'api:', !!api, 'actionTags:', actionTags.length);
+        if (intentTags.length > 0) logger.debug('[UNLIM-DEBUG] INTENT json:', intentTags.map(t => t.json));
 
         if (PLACEMENT_ENGINE_ENABLED && intentTags.length > 0 && api) {
             try {
                 const { resolvePlacement } = await import('../simulator/engine/PlacementEngine');
                 const currentLayout = api.getLayout?.() || {};
-                console.log('[UNLIM-DEBUG] Layout: comps=', currentLayout.components?.length, 'pins=', Object.keys(currentLayout.pinAssignments || {}).length);
+                logger.debug('[UNLIM-DEBUG] Layout: comps=', currentLayout.components?.length, 'pins=', Object.keys(currentLayout.pinAssignments || {}).length);
                 const snapshot = {
                     components: currentLayout.components || [],
                     connections: currentLayout.connections || [],
@@ -1693,40 +1706,40 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 for (const tag of intentTags) {
                     try {
                         const intent = JSON.parse(tag.json);
-                        console.log('[UNLIM-DEBUG] Parsed intent:', intent);
+                        logger.debug('[UNLIM-DEBUG] Parsed intent:', intent);
                         const placementResult = resolvePlacement(intent, snapshot);
-                        console.log('[UNLIM-DEBUG] PlacementResult:', placementResult.success, 'actions:', placementResult.actions?.length, 'errors:', placementResult.errors);
+                        logger.debug('[UNLIM-DEBUG] PlacementResult:', placementResult.success, 'actions:', placementResult.actions?.length, 'errors:', placementResult.errors);
                         if (placementResult.success) {
                             peActions.push(...placementResult.actions);
                             for (const action of placementResult.actions) {
                                 if (action.pinAssignments) Object.assign(snapshot.pinAssignments, action.pinAssignments);
                             }
                         }
-                        if (placementResult.errors.length > 0) console.warn('[PlacementEngine]', placementResult.errors);
+                        if (placementResult.errors.length > 0) logger.warn('[PlacementEngine]', placementResult.errors);
                     } catch (parseErr) {
-                        console.warn('[PlacementEngine] Invalid INTENT JSON:', parseErr.message);
+                        logger.warn('[PlacementEngine] Invalid INTENT JSON:', parseErr.message);
                     }
                 }
-                console.log('[UNLIM-DEBUG] peActions:', peActions.length, peActions.map(a => `${a.type}:${a.tag}`));
+                logger.debug('[UNLIM-DEBUG] peActions:', peActions.length, peActions.map(a => `${a.type}:${a.tag}`));
                 if (peActions.length > 0) {
                     const peIdMap = {};
                     for (const action of peActions) {
                         if (action.type !== 'addcomponent') continue;
                         try {
                             const tagMatch = action.tag.match(/addcomponent:([^:]+):(-?\d+):(-?\d+)/);
-                            console.log('[UNLIM-DEBUG] tagMatch:', tagMatch, 'from:', action.tag);
+                            logger.debug('[UNLIM-DEBUG] tagMatch:', tagMatch, 'from:', action.tag);
                             if (!tagMatch) continue;
                             const type = TYPE_ALIASES[normalizeComponentToken(tagMatch[1])] || tagMatch[1];
                             const x = parseInt(tagMatch[2], 10) || 200;
                             const y = parseInt(tagMatch[3], 10) || 150;
-                            console.log('[UNLIM-DEBUG] addComponent:', type, x, y, 'api.addComponent:', !!api.addComponent);
+                            logger.debug('[UNLIM-DEBUG] addComponent:', type, x, y, 'api.addComponent:', !!api.addComponent);
                             if (api.addComponent) {
                                 const realId = api.addComponent(type, { x, y });
-                                console.log('[UNLIM-DEBUG] addComponent result:', realId);
+                                logger.debug('[UNLIM-DEBUG] addComponent result:', realId);
                                 if (realId && action.componentId) peIdMap[action.componentId] = realId;
                                 executedActions.push(`addcomponent:${realId || type}`);
                             }
-                        } catch (err) { console.error('[UNLIM-DEBUG] addComponent error:', err); recordActionFailure(action.tag, err.message); }
+                        } catch (err) { logger.error('[UNLIM-DEBUG] addComponent error:', err); recordActionFailure(action.tag, err.message); }
                     }
                     for (const action of peActions) {
                         if (action.type !== 'addwire') continue;
@@ -1748,12 +1761,12 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     }
                 }
             } catch (err) {
-                console.warn('[PlacementEngine] fallback to raw AZIONE tags:', err.message);
+                logger.warn('[PlacementEngine] fallback to raw AZIONE tags:', err.message);
             }
         }
 
         // ── Execute [AZIONE:cmd:args] tags ──
-        console.log('[UNLIM-DEBUG] AZIONE tags to execute:', actionTags);
+        logger.debug('[UNLIM-DEBUG] AZIONE tags to execute:', actionTags);
         for (const tag of actionTags) {
             const colonIdx = tag.indexOf(':');
             if (colonIdx < 0) continue;
@@ -1761,7 +1774,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const parts = inner.split(':').map(s => s.trim());
             const cmd = parts[0]?.toLowerCase();
             const tagText = `[AZIONE:${inner}]`;
-            console.log('[UNLIM-DEBUG] Executing AZIONE:', cmd, 'parts:', parts, 'api:', !!api);
+            logger.debug('[UNLIM-DEBUG] Executing AZIONE:', cmd, 'parts:', parts, 'api:', !!api);
             try {
                 if (cmd === 'play') {
                     if (!api?.play) throw new Error('API simulatore non disponibile');
@@ -1779,6 +1792,16 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     if (!resolvedTargets.length) throw new Error('componenti da evidenziare non trovati');
                     api.unlim.highlightComponent(resolvedTargets);
                     setTimeout(() => api.unlim.clearHighlights(), 4000);
+                    // Notifica UnlimWrapper per messaggio contestuale accanto al componente
+                    window.dispatchEvent(new CustomEvent('unlim-contextual-message', {
+                      detail: {
+                        text: displayText,
+                        targetComponentId: resolvedTargets[0],
+                        type: 'hint',
+                        icon: '🔍',
+                        duration: 5000,
+                      },
+                    }));
                     executedActions.push(`highlight:${resolvedTargets.join(',')}`);
                 } else if (cmd === 'loadexp' && parts[1]) {
                     const resolvedId = resolveExperimentId(parts[1]);
@@ -1903,18 +1926,28 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     handleDiagnoseCircuit();
                     executedActions.push('diagnose');
                 } else if (cmd === 'openeditor') {
-                    if (!api?.showEditor) throw new Error('showEditor non disponibile');
-                    api.showEditor(); executedActions.push('openeditor');
+                    if (disclosureLevel < 2) {
+                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `L'editor del codice Arduino si usa nel **Volume 3**! Per adesso concentriamoci sul circuito 🔧`, proactive: true }]);
+                        executedActions.push('openeditor:blocked-disclosure');
+                    } else {
+                        if (!api?.showEditor) throw new Error('showEditor non disponibile');
+                        api.showEditor(); executedActions.push('openeditor');
+                    }
                 } else if (cmd === 'closeeditor') {
                     if (!api?.hideEditor) throw new Error('hideEditor non disponibile');
                     api.hideEditor(); executedActions.push('closeeditor');
                 } else if (cmd === 'switcheditor') {
-                    if (!api?.setEditorMode) throw new Error('setEditorMode non disponibile');
-                    const mode = (parts[1] || '').toLowerCase();
-                    if (mode !== 'scratch' && mode !== 'arduino') throw new Error(`modo editor non valido: ${mode}`);
-                    if (!api.isEditorVisible?.()) api.showEditor?.();
-                    api.setEditorMode(mode);
-                    executedActions.push(`switcheditor:${mode}`);
+                    if (disclosureLevel < 2) {
+                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `I blocchi e il codice Arduino si usano nel **Volume 3**! Per adesso concentriamoci sul circuito 🔧`, proactive: true }]);
+                        executedActions.push('switcheditor:blocked-disclosure');
+                    } else {
+                        if (!api?.setEditorMode) throw new Error('setEditorMode non disponibile');
+                        const mode = (parts[1] || '').toLowerCase();
+                        if (mode !== 'scratch' && mode !== 'arduino') throw new Error(`modo editor non valido: ${mode}`);
+                        if (!api.isEditorVisible?.()) api.showEditor?.();
+                        api.setEditorMode(mode);
+                        executedActions.push(`switcheditor:${mode}`);
+                    }
                 } else if (cmd === 'loadblocks') {
                     if (!api?.loadScratchWorkspace) throw new Error('loadScratchWorkspace non disponibile');
                     const xml = parts.slice(1).join(':');
@@ -2027,7 +2060,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const uniqueFailures = [...new Set(actionFailures)];
             errorHistoryRef.current.push(...uniqueFailures.map(f => `action_fail:${f}`));
             if (errorHistoryRef.current.length > 10) errorHistoryRef.current = errorHistoryRef.current.slice(-10);
-            console.warn('[UNLIM] Action failures:', uniqueFailures);
+            logger.warn('[UNLIM] Action failures:', uniqueFailures);
         }
 
         // ── Quiz fallback ──
@@ -2105,7 +2138,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             localResponse = detectIntent(userMessage);
         } catch (err) {
             // Log silently — never break chat flow due to detectIntent bugs
-            if (typeof console !== 'undefined') console.warn('[UNLIM] detectIntent error:', err.message);
+            logger.warn('[UNLIM] detectIntent error:', err.message);
         }
         if (localResponse) {
             setMessages(prev => [...prev, {
@@ -2162,7 +2195,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 }
             } catch (err) {
                 // Never break chat flow due to screenshot failure
-                if (typeof console !== 'undefined') console.warn('[UNLIM] Auto-screenshot failed:', err.message);
+                logger.warn('[UNLIM] Auto-screenshot failed:', err.message);
             }
         }
 
@@ -2195,6 +2228,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         });
 
         if (result.success) {
+            try { studentTracker.logChatInteraction(userMessage); } catch { }
             const rawResponse = (typeof result.response === 'string') ? result.response : (result.response ? JSON.stringify(result.response) : 'Errore: risposta non valida.');
             const aiResponse = sanitizeOutput(rawResponse);
             // Use shared processAiResponse for tag stripping + action execution
@@ -2304,9 +2338,45 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
     return (
         <SessionRecorderProvider>
             <div className={`elab-v4 ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+                {provaMode && (
+                    <div style={{
+                        background: 'linear-gradient(90deg, #1E4D8C, #2563EB)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '12px',
+                        fontFamily: "'Open Sans', sans-serif",
+                        zIndex: 100,
+                    }}>
+                        <span>Versione di prova — Volume 1 ({VOL1_COUNT} esperimenti)</span>
+                        {onNavigate && (
+                            <button
+                                onClick={() => onNavigate('register')}
+                                style={{
+                                    background: '#4A7A25',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '4px 14px',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    minHeight: '32px',
+                                }}
+                            >
+                                Tutti i {TOTAL_EXPERIMENTS} esperimenti
+                            </button>
+                        )}
+                    </div>
+                )}
                 <TutorLayout
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
+                    hideNavigation={activeTab === 'simulator'}
                     messages={messages}
                     input={input}
                     onInputChange={setInput}
@@ -2388,7 +2458,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                             }
                         } catch (err) {
                             setIsLoading(false);
-                            if (typeof console !== 'undefined') console.warn('[Screenshot] Error:', err);
+                            logger.warn('[Screenshot] Error:', err);
                         }
                     }}
                 >
@@ -2429,7 +2499,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onCircuitEvent={handleCircuitEvent}
                                 initialExperimentId={pendingExperimentId}
                                 onInitialExperimentConsumed={() => setPendingExperimentId(null)}
-                                userKits={isDocente || user?.ruolo === 'admin' ? null : (user?.kits || [])}
+                                userKits={provaMode ? ['Volume 1'] : (isDocente || user?.ruolo === 'admin' ? null : (user?.kits || []))}
                                 onDiagnoseCircuit={handleDiagnoseCircuit}
                                 onGetHints={handleGetHints}
                                 onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
@@ -2438,6 +2508,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 quizResultsRef={quizResultsForReportRef}
                                 sessionStartRef={sessionStartRef}
                                 circuitStateRef={circuitStateRef}
+                                onTabChange={setActiveTab}
+                                disclosureLevel={disclosureLevel}
                             />
                         </div>
 

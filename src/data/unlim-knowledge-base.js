@@ -198,7 +198,7 @@ const KNOWLEDGE_BASE = [
     question: 'Cosa posso costruire con Arduino?',
     answer: 'Con Arduino e i componenti di ELAB puoi costruire tantissime cose:\n\n **Semaforo** — LED rosso, giallo, verde con temporizzazione\n **Stazione meteo** — Sensore di temperatura + display\n **Piano elettronico** — Pulsanti + buzzer per suonare note\n **Robot evita-ostacoli** — Sensore ultrasuoni + motori\n **Lampada smart** — Fotoresistenza per accensione automatica\n **Gioco di reazione** — LED casuale + pulsante + timer\n **Irrigazione automatica** — Sensore umidità + pompa\n\nInzia dai progetti del libro ELAB e poi modifica e combina le idee. La creatività è il tuo superpotere!',
   },
-// © Andrea Marro — 27/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
   {
     keywords: ['aiuto', 'help', 'come', 'iniziare', 'principiante', 'base'],
     question: 'Come inizio con ELAB?',

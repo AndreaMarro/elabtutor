@@ -16,6 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getConsent, saveConsent, isCOPPAApplicable } from '../../services/gdprService';
+import { showToast } from './Toast';
 
 const CONSENT_KEY = 'elab_consent_v2';
 
@@ -51,7 +52,7 @@ export default function ConsentBanner() {
           timestamp: new Date().toISOString(),
         });
         // Non nascondere banner - mostra messaggio per genitore
-        alert('Chiedi a un genitore o tutore di confermare!');
+        showToast('Chiedi a un genitore o tutore di confermare!', 'info');
         return;
       }
       
@@ -173,7 +174,7 @@ const styles = {
   privacyLink: {
     background: 'none',
     border: 'none',
-    color: '#558B2F',
+    color: '#4A7A25',
     textDecoration: 'underline',
     cursor: 'pointer',
     fontSize: '14px',
@@ -200,7 +201,7 @@ const styles = {
     padding: '10px 24px',
     border: 'none',
     borderRadius: '8px',
-    backgroundColor: '#558B2F',
+    backgroundColor: '#4A7A25',
     color: '#1A1A2E',
     fontWeight: 600,
     fontSize: '14px',
