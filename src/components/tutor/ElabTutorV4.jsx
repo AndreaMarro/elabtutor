@@ -2365,7 +2365,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                     fontSize: '14px',
                                     fontWeight: 600,
                                     cursor: 'pointer',
-                                    minHeight: '32px',
+                                    minHeight: '44px',
                                 }}
                             >
                                 Tutti i {TOTAL_EXPERIMENTS} esperimenti

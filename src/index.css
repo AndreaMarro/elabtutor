@@ -204,9 +204,9 @@ body,
 /* © Andrea Marro — 18/02/2026 */
 
 .elab-input:focus {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-color: var(--color-primary);
+    border-color: var(--color-accent);
     box-shadow: var(--shadow-focus);
 }
 

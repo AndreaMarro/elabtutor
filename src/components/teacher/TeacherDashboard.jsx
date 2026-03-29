@@ -1942,7 +1942,7 @@ function ProgressoPNRRTab({ users, allData, formatTempo }) {
                                         const isVolStart = idx === 0 || visibleExps[idx - 1].volume !== exp.volume;
                                         return (
                                         <th key={exp.id} style={{
-                                            ...styles.th, fontSize: 12, padding: '6px 3px',
+                                            ...styles.th, fontSize: 14, padding: '6px 3px',
                                             writingMode: 'vertical-rl', textOrientation: 'mixed',
                                             whiteSpace: 'nowrap', maxWidth: 28, minWidth: 28,
                                             borderLeft: isVolStart ? `3px solid ${VOL_COLORS[exp.volume]}` : `1px solid ${C.border}`,
