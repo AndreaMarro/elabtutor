@@ -840,7 +840,7 @@ const NewElabSimulator = ({
                   buildValidation={currentExperiment?.buildMode === 'guided' ? { currentStep: buildStepIndex, buildSteps: currentExperiment?.buildSteps || [] } : null}
                   onBuildValidationResult={(result) => { if (result.valid) handleBuildStepChange(result.stepIndex + 1); }}
                   snapToGrid={currentExperiment?.buildMode === 'sandbox'} onSelectionChange={setSelectedComponentId}
-                  electronViewEnabled={electronViewEnabled} className="elab-simulator__canvas" style={{ flex: 1 }}
+                  className="elab-simulator__canvas" style={{ flex: 1 }}
                 />
                 <WhiteboardOverlay active={showWhiteboard} experimentId={currentExperiment?.id} onClose={() => setShowWhiteboard(false)} onSendToUNLIM={onSendImageToUNLIM ? (dataUrl) => { setShowWhiteboard(false); onSendImageToUNLIM(dataUrl, 'Analizza questo disegno dalla lavagna e dimmi cosa rappresenta. Se è uno schema elettrico, controlla se è corretto.'); } : undefined} />
                 <DrawingOverlay drawingEnabled={drawingEnabled} canvasWidth={canvasContainerRef.current?.offsetWidth || 800} canvasHeight={canvasContainerRef.current?.offsetHeight || 600} onPathsChange={() => {}} />
