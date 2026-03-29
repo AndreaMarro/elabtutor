@@ -11,6 +11,48 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 const DEFAULT_DURATION = 6000;
 
 /**
+ * Mini markdown renderer — gestisce **grassetto**, *corsivo*, e \n → <br>.
+ * Zero dipendenze esterne. Ritorna un array di React elements.
+ */
+function renderMiniMarkdown(text) {
+  if (!text) return null;
+  // Split on newlines first
+  return text.split('\n').flatMap((line, li, lines) => {
+    // Parse **bold** and *italic* within each line
+    const parts = [];
+    let remaining = line;
+    let key = 0;
+    while (remaining) {
+      // Bold: **text**
+      const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+      // Italic: *text* (not inside **)
+      const italicMatch = remaining.match(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/);
+      const match = boldMatch && italicMatch
+        ? (boldMatch.index <= italicMatch.index ? boldMatch : italicMatch)
+        : boldMatch || italicMatch;
+      if (!match) {
+        parts.push(remaining);
+        break;
+      }
+      if (match.index > 0) parts.push(remaining.slice(0, match.index));
+      const isBold = match[0].startsWith('**');
+      parts.push(
+        isBold
+          ? React.createElement('strong', { key: `b${li}-${key}` }, match[1])
+          : React.createElement('em', { key: `i${li}-${key}` }, match[1])
+      );
+      key++;
+      remaining = remaining.slice(match.index + match[0].length);
+    }
+    // Add <br/> between lines (not after the last)
+    if (li < lines.length - 1) {
+      parts.push(React.createElement('br', { key: `br${li}` }));
+    }
+    return parts;
+  });
+}
+
+/**
  * Trova la posizione sullo schermo di un componente del circuito.
  * Cerca l'elemento SVG con data-component-id nel DOM.
  * Ritorna { x, y, width, height } in coordinate viewport, o null se non trovato.
@@ -270,7 +312,7 @@ function OverlayMessage({ message, onDismiss, containerRef }) {
       {message.icon && (
         <span style={{ fontSize: '26px', flexShrink: 0, lineHeight: 1 }}>{message.icon}</span>
       )}
-      <span>{message.text}</span>
+      <span>{renderMiniMarkdown(message.text)}</span>
     </div>
   );
 }

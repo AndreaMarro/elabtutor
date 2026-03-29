@@ -34,7 +34,13 @@ const SOCRATIC_INSTRUCTION = [
     '[AUTOCOSCIENZA — Chi sei e cosa puoi fare]',
     'Sei UNLIM, tutor AI di ELAB con POTERI REALI sul simulatore. Non sei solo una chat: puoi ESEGUIRE azioni.',
     'Accompagni studenti 8-14 anni. Rispondi SEMPRE in italiano, chiaro, concreto, entusiasta.',
-    'Fai 1 domanda guida breve, poi dai la spiegazione completa. Usa analogie (corrente=acqua, resistore=strettoia).',
+    '',
+    '[REGOLA ASSOLUTA — BREVITÀ]',
+    'MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. Se la risposta è più lunga, TAGLIA.',
+    'I tag [AZIONE:...] NON contano nel limite parole.',
+    'Esempio buono: "Il LED è come una porta girevole: passa solo in un verso! Gira il piedino lungo verso il + della batteria. Prova! [AZIONE:highlight:led1]"',
+    '',
+    'Fai 1 domanda guida breve, poi dai la spiegazione. Usa analogie (corrente=acqua, resistore=strettoia).',
     '',
     'RAGIONAMENTO (interno, non scriverlo): 1. CAPISCO cosa vuole? 2. POSSO farlo? 3. AGISCO o CHIEDO chiarimenti.',
     '',
@@ -192,13 +198,13 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
             sessionId: getTutorSessionId(),
             circuitState: circuitState || null,
             experimentId: experimentId || null,
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             simulatorContext: simulatorContext || null,
         };
         if (images.length > 0) {
             payload.images = images.map(img => ({
                 base64: img.base64,
                 mimeType: img.mimeType || 'image/png',
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             }));
         }
         const res = await fetch(`${NANOBOT_URL}${endpoint}`, {
@@ -393,13 +399,13 @@ function friendlyError(error) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 function buildChatMessage(message, socraticMode, experimentContext) {
     const parts = [];
     if (socraticMode) parts.push(SOCRATIC_INSTRUCTION);
     if (experimentContext) parts.push(experimentContext);
     if (parts.length === 0) return message;
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     return `${parts.join('\n')}\n\nMessaggio studente:\n${message}`;
 }
 
@@ -522,11 +528,12 @@ export async function sendChat(message, images = [], options = {}) {
         return MODERATION_RESPONSE;
     }
 
-    // Nanobot message: solo experiment context (il system prompt è nel nanobot.yml)
+    // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
+    const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
     const nanobotMessage = experimentContext
-        ? `${experimentContext}\n\nMessaggio studente:\n${message}`
-        : message;
+        ? `${BREVITY_RULE}\n${experimentContext}\n\nMessaggio studente:\n${message}`
+        : `${BREVITY_RULE}\n\nMessaggio studente:\n${message}`;
     const webhookMessage = buildChatMessage(message, socraticMode, experimentContext);
 
     // 0. Try local server first (Ollama, 100% offline, zero config)
@@ -593,6 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
                     content = analyzeData[0].output || analyzeData[0].text || analyzeData[0].response || JSON.stringify(analyzeData[0]);
                 } else {
                     content = analyzeData.output || analyzeData.response || analyzeData.text || JSON.stringify(analyzeData);
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
                 }
 
                 const { filtered: safeContent } = filterAIResponse(content);
@@ -600,7 +608,6 @@ export async function sendChat(message, images = [], options = {}) {
                 return {
                     success: true,
                     response: safeContent,
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
                     source: 'backend-vision',
                     actions: extractActions(safeContent)
                 };
@@ -794,6 +801,7 @@ function extractActions(text, userMessage = '') {
     const codeMarkerMatch = text.match(/:::(?:WOKWI|CODE):::([\s\S]*?):::END:::/);
     if (codeMarkerMatch) {
         const code = codeMarkerMatch[1].trim();
+// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
         actions.commands.push({ type: 'loadSimulator', code, auto: true });
         actions.route = 'simulator';
         actions.buttons.push({
@@ -801,7 +809,6 @@ function extractActions(text, userMessage = '') {
             code,
             label: 'Apri nel Simulatore'
         });
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // ============================================

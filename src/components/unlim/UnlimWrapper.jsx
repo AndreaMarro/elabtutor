@@ -226,12 +226,17 @@ export default function UnlimWrapper({ children }) {
 
     const path = currentExperimentId ? getLessonPath(currentExperimentId) : null;
 
-    // Inject class context into experiment context for AI
+    // Inject class context + forbidden vocabulary into experiment context for AI
     const classCtx = buildClassContext();
     const expCtx = path
       ? `Esperimento: ${path.title} (${path.experiment_id}). Obiettivo: ${path.objective || ''}`
       : undefined;
-    const fullContext = [expCtx, classCtx].filter(Boolean).join('\n') || undefined;
+    // Vocabulary constraint: inject forbidden words so AI avoids them
+    const forbidden = path?.vocabulary?.forbidden;
+    const vocabCtx = forbidden?.length
+      ? `VOCABOLARIO VIETATO — NON usare MAI queste parole: ${forbidden.join(', ')}. Usa solo parole dalla lista consentita del livello attuale.`
+      : undefined;
+    const fullContext = [expCtx, vocabCtx, classCtx].filter(Boolean).join('\n') || undefined;
 
     try {
       const result = await sendChat(text, [], {
