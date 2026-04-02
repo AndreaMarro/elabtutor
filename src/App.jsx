@@ -8,6 +8,8 @@
 import React, { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import useIsMobile from './hooks/useIsMobile';
+import useOnlineStatus from './hooks/useOnlineStatus';
+import { startSyncInterval, stopSyncInterval } from './services/supabaseSync';
 
 import RequireAuth from './components/auth/RequireAuth';
 import RequireLicense from './components/auth/RequireLicense';
@@ -28,6 +30,7 @@ const ShowcasePage = lazy(() => import('./components/ShowcasePage'));
 const LandingPNRR = lazy(() => import('./components/LandingPNRR'));
 const Navbar = lazy(() => import('./components/social/Navbar'));
 const UnlimWrapper = lazy(() => import('./components/unlim/UnlimWrapper'));
+const LavagnaShell = lazy(() => import('./components/lavagna/LavagnaShell'));
 
 function LoadingFallback() {
     return (
@@ -50,7 +53,7 @@ function LoadingFallback() {
 }
 
 // Hash-based routing: maps hash fragments to page names (P0-6)
-const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'login', 'register', 'dashboard', 'showcase', 'prova'];
+const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'login', 'register', 'dashboard', 'showcase', 'prova', 'lavagna'];
 
 function getPageFromHash() {
     const raw = window.location.hash.replace('#', '').split('?')[0].toLowerCase();
@@ -193,6 +196,23 @@ function AppRouter() {
         );
     }
 
+    // S8: #tutor ora punta alla Lavagna (Strangler Fig switch)
+    if (currentPage === 'tutor') {
+        // Redirect silenzioso: aggiorna URL ma non ricaricare la pagina
+        if (typeof window !== 'undefined') {
+            window.history.replaceState(null, '', '/#lavagna');
+        }
+    }
+
+    // Lavagna — nuova esperienza workspace
+    if (currentPage === 'lavagna' || currentPage === 'tutor') {
+        return (
+            <Suspense fallback={<LoadingFallback />}>
+                <LavagnaShell />
+            </Suspense>
+        );
+    }
+
     // Pagine full-screen senza navbar (tutor con auth + licenza)
     if (currentPage === 'tutor') {
         return (
@@ -212,9 +232,9 @@ function AppRouter() {
                                     {user ? (
                                         <>
                                             <span style={topBarStyles.mobileLink}>{user.name?.split(' ')[0] || user.username}</span>
-                                            {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.mobileLink}>🏠 Dashboard</button>}
-                                            {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.mobileLinkTeacher}>📚 Area Docente</button>}
-                                            {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.mobileLinkAdmin}>⚙️ Admin</button>}
+                                            {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.mobileLink}>Dashboard</button>}
+                                            {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.mobileLinkTeacher}>Area Docente</button>}
+                                            {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.mobileLinkAdmin}>Admin</button>}
                                         </>
                                     ) : (
                                         <>
@@ -230,9 +250,9 @@ function AppRouter() {
                             {user ? (
                                 <>
                                     <span style={topBarStyles.link}>{user.name?.split(' ')[0] || user.username}</span>
-                                    {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.link}>🏠 Dashboard</button>}
-                                    {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.linkTeacher}>📚 Area Docente</button>}
-                                    {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.linkAdmin}>⚙️ Admin</button>}
+                                    {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.link}>Dashboard</button>}
+                                    {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.linkTeacher}>Area Docente</button>}
+                                    {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.linkAdmin}>Admin</button>}
                                 </>
                             ) : (
                                 <>
@@ -325,10 +345,35 @@ function AccessDeniedMessage({ onNavigate }) {
     );
 }
 
+function OfflineBanner() {
+    const isOnline = useOnlineStatus();
+    if (isOnline) return null;
+    return (
+        <div role="alert" aria-live="assertive" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, zIndex: 10000,
+            background: 'linear-gradient(135deg, #E8941C, #D08018)', color: '#fff',
+            padding: '10px 16px',
+            fontSize: 14, fontFamily: 'var(--font-sans)', textAlign: 'center',
+            fontWeight: 600, boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+            <span aria-hidden="true" style={{ fontSize: 18 }}>{'//\u00A0'}</span>
+            <span>Sei offline &mdash; il simulatore e gli esperimenti funzionano! Galileo e la compilazione di nuovo codice no.</span>
+        </div>
+    );
+}
+
 function App() {
+    // G49: Start Supabase sync queue processing on mount
+    useEffect(() => {
+        startSyncInterval();
+        return () => stopSyncInterval();
+    }, []);
+
     return (
         <ErrorBoundary>
             <AuthProvider>
+                <OfflineBanner />
                 <AppRouter />
 
                 <ConsentBanner />
