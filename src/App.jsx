@@ -31,6 +31,7 @@ const LandingPNRR = lazy(() => import('./components/LandingPNRR'));
 const Navbar = lazy(() => import('./components/social/Navbar'));
 const UnlimWrapper = lazy(() => import('./components/unlim/UnlimWrapper'));
 const LavagnaShell = lazy(() => import('./components/lavagna/LavagnaShell'));
+const VetrinaV2 = lazy(() => import('./components/lavagna/VetrinaV2'));
 
 function LoadingFallback() {
     return (
@@ -53,7 +54,7 @@ function LoadingFallback() {
 }
 
 // Hash-based routing: maps hash fragments to page names (P0-6)
-const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'login', 'register', 'dashboard', 'showcase', 'prova', 'lavagna'];
+const VALID_HASHES = ['tutor', 'admin', 'teacher', 'vetrina', 'vetrina2', 'login', 'register', 'dashboard', 'showcase', 'prova', 'lavagna'];
 
 function getPageFromHash() {
     const raw = window.location.hash.replace('#', '').split('?')[0].toLowerCase();
@@ -162,6 +163,18 @@ function AppRouter() {
         return (
             <Suspense fallback={<LoadingFallback />}>
                 <ShowcasePage onNavigate={navigate} />
+            </Suspense>
+        );
+    }
+
+    // VetrinaV2 — nuova landing page (test)
+    if (currentPage === 'vetrina2') {
+        return (
+            <Suspense fallback={<LoadingFallback />}>
+                <VetrinaV2
+                    onLogin={() => navigate('login')}
+                    onRegister={() => navigate('register')}
+                />
             </Suspense>
         );
     }
