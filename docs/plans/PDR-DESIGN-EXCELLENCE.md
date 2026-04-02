@@ -4,6 +4,116 @@
 
 ---
 
+## COME ESEGUIRE QUESTO PDR IN UNA NUOVA SESSIONE
+
+Copia e incolla questa stringa:
+
+```
+Leggi COMPLETAMENTE questi file PRIMA di qualsiasi azione, nell'ordine esatto:
+1. CLAUDE.md — contesto progetto, stack tecnico, regole immutabili
+2. docs/plans/PDR-DESIGN-EXCELLENCE.md — QUESTO FILE, il piano completo
+3. docs/plans/2026-04-01-lavagna-redesign.md — architettura Strangler Fig, layout lavagna
+4. docs/prompts/ANDREA-VISION-COMPLETE.md — la visione di Andrea (Principio Zero, UNLIM ovunque, estetica)
+5. docs/prompts/LAVAGNA-FINAL-REPORT.md — stato attuale con numeri reali
+6. docs/prompts/LAVAGNA-CURRENT-STATE.md — stato tecnico corrente
+
+Poi verifica:
+- npm run build (DEVE passare)
+- npx vitest run (1053+ test DEVONO passare)
+- Naviga a #lavagna nel browser e fai screenshot baseline
+
+Poi esegui il PDR sessione per sessione (S1→S8). Ogni sessione ha 3 aspetti.
+Usa /elab-quality-gate e /lavagna-benchmark a 1/3, 1/2, e fine sessione.
+ZERO REGRESSIONI. Score senza screenshot = 0.
+```
+
+---
+
+## CONTESTO PROGETTO
+
+### Cos'e ELAB
+Tutor educativo per elettronica e Arduino per bambini 8-14 anni. Include simulatore di circuiti proprietario (CircuitSolver + AVRBridge + avr8js), chat AI "UNLIM" (tutor pedagogico), 62 esperimenti in 3 volumi, editor Arduino C++ e Scratch blocks.
+
+### Stack
+React 19 + Vite 7 | Deploy Vercel | Backend AI: n8n su Hostinger | CPU emulation: avr8js
+
+### File Critici (da NON toccare)
+```
+src/components/simulator/engine/CircuitSolver.js (1702 LOC) — INTOCCABILE
+src/components/simulator/engine/AVRBridge.js (1051 LOC) — INTOCCABILE
+src/components/simulator/engine/SimulationManager.js (302 LOC) — INTOCCABILE
+src/components/simulator/engine/avrWorker.js (348 LOC) — INTOCCABILE
+src/components/simulator/NewElabSimulator.jsx (1900 LOC) — NON modificare
+src/components/unlim/* (11 file, 2430 LOC) — solo wrappare, mai modificare
+```
+
+### Architettura Lavagna (Strangler Fig)
+`#tutor` fa redirect a `#lavagna`. La lavagna e in `src/components/lavagna/` (24 file). Il vecchio codice in `src/components/tutor/` resta come dead code. TUTTO il nuovo codice va in `src/components/lavagna/`.
+
+### File Lavagna Esistenti (da S1-S8 + PDR S1)
+```
+src/components/lavagna/
+  AppHeader.jsx + .module.css          — Header 48px glassmorphism
+  ExperimentPicker.jsx + .module.css   — Modal 3 volumi, 62 esperimenti
+  FloatingToolbar.jsx + .module.css    — 6 strumenti flottanti
+  FloatingWindow.jsx + .module.css     — Finestra drag/resize (usata per UNLIM)
+  GalileoAdapter.jsx + .module.css     — UNLIM wrappato in FloatingWindow
+  LavagnaShell.jsx + .module.css       — Shell principale (assembla tutto)
+  LavagnaStateManager.js               — State machine 5 stati
+  MascotPresence.jsx + .module.css     — Mascotte ELAB visibile (PDR S1 — DA VERIFICARE)
+  RetractablePanel.jsx + .module.css   — Pannello slide-in 3 direzioni
+  UnlimBar.jsx + .module.css           — Input UNLIM sempre visibile (PDR S1 — DA VERIFICARE)
+  useGalileoChat.js                    — Hook chat Galileo
+  VetrinaV2.jsx + .module.css          — Landing page pre-login
+  VideoFloat.jsx + .module.css         — YouTube + videocorsi
+```
+
+### Palette Colori
+- Navy: #1E4D8C (brand, header, primary)
+- Lime: #4A7A25 (Volume 1, accento, successo)
+- Orange: #E8941C (Volume 2)
+- Red: #E54B3D (Volume 3)
+- Muted: #737373 (testo secondario)
+- BG: #F0F4F8 / #F8FAFB (sfondo)
+- Text: #1A1A2E (testo principale)
+- Border: #E2E8F0
+
+### Font
+- Display: Oswald (titoli, UPPERCASE, bold)
+- Body: Open Sans (testo, 14-16px)
+- Code: Fira Code (monospace, editor)
+
+### Riferimenti Visivi Obbligatori
+- **ELAB Tres Jolie**: cartella con foto scatole, volumi, logo, rendering. Il tutor digitale DEVE sembrare parte dello stesso prodotto.
+- **Mascotte**: robottino con cuffie e cacciavite verde. File: `/assets/mascot/logo-senza-sfondo.png`
+- **Colori volume**: devono corrispondere ai volumi fisici (Lime=Vol1, Orange=Vol2, Red=Vol3)
+
+### Metriche Attuali
+- Build: PASS | Test: 1053 | Precache: 33 entries ~3969KB
+- Console errors: 0
+- Viewport testate: desktop 1280x800, LIM 1024x768, iPad 768x1024, Chromebook 1366x768, mobile 375x812
+- Score ONESTO: 8.6/10
+
+### La Visione di Andrea (MEMORIZZA)
+1. **Principio Zero**: il docente arriva alla LIM e insegna IMMEDIATAMENTE
+2. **UNLIM Ovunque**: non un pannello chat isolato, ma l'intelligenza interconnessa a TUTTO
+3. **Riconoscibilita > Stilizzazione**: icone che un bambino di 10 anni riconosce, non linee astratte
+4. **Kit + Volumi + Tutor = Unico Prodotto**: estetica coerente con i volumi fisici
+5. **YouTube deve funzionare davvero**: video reali, non placeholder
+6. **La mascotte e sempre presente**: non nascosta in un bottone
+7. **Input UNLIM sempre visibile**: come ChatGPT, la barra e sempre li
+8. **Overlay cognitivo ZERO**: max 3 azioni visibili, il resto e progressive disclosure
+9. **Adattabilita perfetta**: LIM, iPad, PC — tutto deve essere bello e funzionante
+
+### PDR S1 Parzialmente Completato
+- Dot pattern canvas: AGGIUNTO (CSS in LavagnaShell.module.css)
+- MascotPresence.jsx: CREATO (da verificare nel browser)
+- UnlimBar.jsx: CREATO (da verificare nel browser)
+- Entrambi wired in LavagnaShell.jsx
+- Build + test NON ancora verificati (timeout durante il tentativo)
+
+---
+
 ## AUTOCRITICA BRUTALE — Cosa c'e che non va ADESSO
 
 Guardando gli screenshot reali della lavagna su desktop/LIM/iPad, ecco i problemi ONESTI:
