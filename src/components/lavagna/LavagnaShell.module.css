@@ -1,0 +1,136 @@
+/* LavagnaShell — Shell principale per la Lavagna ELAB */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #F0F4F8;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'Oswald', sans-serif;
+  color: #1E4D8C;
+  font-size: 18px;
+}
+
+/* ── Quick Component Panel (left RetractablePanel content) ── */
+
+.quickComponents {
+  padding: 12px 8px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.panelTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E4D8C;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 4px 8px;
+  border-bottom: 1px solid rgba(30, 77, 140, 0.15);
+  margin-bottom: 8px;
+}
+
+.componentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.componentBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid rgba(30, 77, 140, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, transform 100ms ease;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  color: #1E4D8C;
+  text-align: left;
+}
+
+.componentBtn:hover {
+  background: rgba(30, 77, 140, 0.06);
+  border-color: rgba(30, 77, 140, 0.25);
+}
+
+.componentBtn:active {
+  transform: scale(0.97);
+}
+
+.componentBtn:focus-visible {
+  outline: 2px solid #1E4D8C;
+  outline-offset: -1px;
+}
+
+.componentLabel {
+  font-weight: 500;
+}
+
+/* ── Dashboard view ── */
+.dashboardView {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--color-bg, #F0F4F8);
+}
+
+.lavagnaView {
+  display: contents;
+}
+
+/* ── Bottom placeholder ── */
+.bottomPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  color: #737373;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .componentBtn {
+    min-height: 44px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .panelTitle {
+    font-size: 12px;
+  }
+}
+
+@media (pointer: coarse) {
+  .componentBtn {
+    min-height: 48px;
+  }
+}

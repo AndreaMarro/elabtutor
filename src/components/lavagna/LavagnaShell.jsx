@@ -5,7 +5,8 @@
  * (c) Andrea Marro — 01/04/2026
  */
 
-import React, { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import AppHeader from './AppHeader';
 import FloatingToolbar from './FloatingToolbar';
 import RetractablePanel from './RetractablePanel';
@@ -16,6 +17,8 @@ import { deriveState, computePanelActions, STATES } from './LavagnaStateManager'
 import css from './LavagnaShell.module.css';
 
 const NewElabSimulator = lazy(() => import('../simulator/NewElabSimulator'));
+const TeacherDashboard = lazy(() => import('../teacher/TeacherDashboard'));
+const StudentDashboard = lazy(() => import('../student/StudentDashboard'));
 
 // Component quick-add buttons for left panel (uses __ELAB_API) — SVG icons, Feather-style
 const QUICK_COMPONENTS = [
@@ -101,6 +104,8 @@ function QuickComponentPanel() {
 }
 
 export default function LavagnaShell() {
+  const { user, isDocente, isStudente } = useAuth();
+  const [activeTab, setActiveTab] = useState('lavagna'); // 'lavagna' | 'classe' | 'progressi'
   const [activeTool, setActiveTool] = useState('select');
   const [galileoOpen, setGalileoOpen] = useState(true);
   const [videoOpen, setVideoOpen] = useState(false);
@@ -249,44 +254,67 @@ export default function LavagnaShell() {
         galileoOpen={galileoOpen}
         onVideoToggle={toggleVideo}
         videoOpen={videoOpen}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        showClasseTab={isDocente}
+        showProgressiTab={isStudente}
       />
 
       <div className={css.body}>
-        {/* Left panel — quick component palette */}
-        <RetractablePanel
-          id="lavagna-left"
-          direction="left"
-          open={leftPanelOpen}
-          onToggle={toggleLeftPanel}
-          defaultSize={180}
-          minSize={140}
-          maxSize={280}
-        >
-          <QuickComponentPanel />
-        </RetractablePanel>
+        {/* === LAVAGNA VIEW (simulatore + pannelli) === */}
+        <div className={css.lavagnaView} style={{ display: activeTab === 'lavagna' ? 'contents' : 'none' }}>
+          {/* Left panel — quick component palette */}
+          <RetractablePanel
+            id="lavagna-left"
+            direction="left"
+            open={leftPanelOpen}
+            onToggle={toggleLeftPanel}
+            defaultSize={180}
+            minSize={140}
+            maxSize={280}
+          >
+            <QuickComponentPanel />
+          </RetractablePanel>
 
-        {/* Center — simulator canvas + floating toolbar */}
-        <main className={css.canvas}>
-          <Suspense fallback={
-            <div className={css.loading}>
-              <span>Caricamento simulatore...</span>
-            </div>
-          }>
-            <NewElabSimulator />
-          </Suspense>
+          {/* Center — simulator canvas + floating toolbar */}
+          <main className={css.canvas}>
+            <Suspense fallback={
+              <div className={css.loading}>
+                <span>Caricamento simulatore...</span>
+              </div>
+            }>
+              <NewElabSimulator />
+            </Suspense>
 
-          <FloatingToolbar
-            activeTool={activeTool}
-            onToolChange={handleToolChange}
-            abovePanel={bottomPanelOpen}
+            <FloatingToolbar
+              activeTool={activeTool}
+              onToolChange={handleToolChange}
+              abovePanel={bottomPanelOpen}
+            />
+          </main>
+
+          {/* Right — Galileo AI in FloatingWindow */}
+          <GalileoAdapter
+            visible={galileoOpen}
+            onClose={() => setGalileoOpen(false)}
           />
-        </main>
+        </div>
 
-        {/* Right — Galileo AI in FloatingWindow */}
-        <GalileoAdapter
-          visible={galileoOpen}
-          onClose={() => setGalileoOpen(false)}
-        />
+        {/* === DASHBOARD VIEW (docente o studente) === */}
+        {activeTab === 'classe' && isDocente && (
+          <div className={css.dashboardView}>
+            <Suspense fallback={<div className={css.loading}><span>Caricamento dashboard...</span></div>}>
+              <TeacherDashboard />
+            </Suspense>
+          </div>
+        )}
+        {activeTab === 'progressi' && isStudente && (
+          <div className={css.dashboardView}>
+            <Suspense fallback={<div className={css.loading}><span>Caricamento progressi...</span></div>}>
+              <StudentDashboard />
+            </Suspense>
+          </div>
+        )}
 
         {/* Video — YouTube + Videocorsi in FloatingWindow */}
         <VideoFloat
