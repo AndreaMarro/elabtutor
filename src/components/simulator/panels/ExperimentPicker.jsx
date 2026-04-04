@@ -43,6 +43,19 @@ const ExperimentPicker = ({ onSelectExperiment, currentExperimentId = null, user
     return userKits.includes(volumeToKitName(volNum));
   };
 
+  // G22: Auto-skip volume selection when only 1 volume is accessible
+  const accessibleVolumes = useMemo(() =>
+    [1, 2, 3].filter(v => hasVolumeAccess(v)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [userKits]
+  );
+  React.useEffect(() => {
+    if (view === 'volumes' && accessibleVolumes.length === 1 && !selectedVolume) {
+      setSelectedVolume(accessibleVolumes[0]);
+      setView('chapters');
+    }
+  }, [view, accessibleVolumes, selectedVolume]);
+
   const volumeExperiments = useMemo(() => {
     if (!selectedVolume) return [];
     return getExperimentsByVolume(selectedVolume);
@@ -231,7 +244,7 @@ const ExperimentPicker = ({ onSelectExperiment, currentExperimentId = null, user
 // ─── Styles (Apple card pattern) ───
 const S = {
   panel: {
-    background: 'var(--color-bg, #FFFFFF)',
+    backgroundColor: 'var(--color-bg, #FFFFFF)',
     borderRadius: 12,
     border: '1px solid var(--color-border, #E5E5E5)',
     boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
@@ -377,7 +390,7 @@ const S = {
 
   chapterCount: {
     fontSize: 14,
-    color: 'var(--color-text-gray-200, #999)',
+    color: 'var(--color-text-gray-200, #737373)',
     fontFamily: 'var(--font-sans)',
     flexShrink: 0,
   },

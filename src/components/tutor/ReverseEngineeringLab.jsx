@@ -14,6 +14,7 @@ import ReflectionPrompt from './shared/ReflectionPrompt';
 import CrossNavigation from './shared/CrossNavigation';
 import useGameScore from '../../hooks/useGameScore';
 import './TutorTools.css';
+import css from './ReverseEngineeringLab.module.css';
 
 const STORAGE_KEY = 'elab_reverse_solved';
 const LOCKOUT_SECONDS = 15;
@@ -147,7 +148,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
               Misteri risolti: {solvedIds.length}/{MYSTERY_CIRCUITS.length}
               {(() => {
                 const badge = calculateBadge(getAllScores());
-                return badge ? <span style={{ marginLeft: 8 }}><BadgeDisplay badge={badge} /></span> : null;
+                return badge ? <span className={css.badgeInline}><BadgeDisplay badge={badge} /></span> : null;
               })()}
             </div>
           )}
@@ -177,12 +178,12 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
                 <span className="elab-tool__list-item-icon">
                   {isSolved ? '\u2713' : circuit.icon}
                   {getScore(circuit.id) > 0 && (
-                    <span style={{ display: 'block', marginTop: 2 }}><StarDisplay stars={getScore(circuit.id)} size={12} /></span>
+                    <span className={css.starBlock}><StarDisplay stars={getScore(circuit.id)} size={12} /></span>
                   )}
                 </span>
                 <div className="elab-tool__list-item-body">
-                  <div style={{ display: 'flex', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-                    <h3 className="elab-tool__list-item-title" style={{ margin: 0 }}>{circuit.title}</h3>
+                  <div className={css.badgeRow}>
+                    <h3 className={`elab-tool__list-item-title ${css.titleRow}`}>{circuit.title}</h3>
                     <LayerBadge layer={circuit.layer} />
                     <VolumeBadge volume={circuit.volume} chapter={circuit.chapter} />
                   </div>
@@ -206,13 +207,13 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
       <button onClick={goBack} className="elab-tool__back">← Torna alla lista</button>
 
       {/* Header */}
-      <div className="elab-tool__card" style={{ borderTop: `4px solid ${LAYER_COLORS[selected.layer].text}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <span style={{ fontSize: '2rem' }}>{selected.icon}</span>
+      <div className={`elab-tool__card ${css.cardBorder}`} style={{ '--card-accent-color': LAYER_COLORS[selected.layer].text }}>
+        <div className={css.headerRow}>
+          <span className={css.headerIcon}>{selected.icon}</span>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem' }}>{selected.title}</h3>
+            <h3 className={css.headerTitle}>{selected.title}</h3>
             {/* © Andrea Marro — 20/02/2026 */}
-            <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+            <div className={css.headerMeta}>
               <LayerBadge layer={selected.layer} />
               <VolumeBadge volume={selected.volume} chapter={selected.chapter} />
             </div>
@@ -224,13 +225,13 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
       {/* Comportamento osservato */}
       <div className="elab-tool__card">
         <h3>Cosa osservi</h3>
-        <p style={{ fontStyle: 'italic' }}>"{selected.behavior}"</p>
+        <p className={css.behaviorText}>"{selected.behavior}"</p>
       </div>
 
       {/* Componenti visibili */}
       <div className="elab-tool__card">
         <h3>Componenti visibili</h3>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div className={css.partsRow}>
           {selected.visibleParts.map((part, i) => (
             <span key={i} className="elab-tool__tag">{part}</span>
           ))}
@@ -243,14 +244,12 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
       {/* SVG Circuit Board con test points */}
       <div className="elab-tool__card">
         <h3>Sonde virtuali</h3>
-        <p style={{ color: 'var(--elab-muted)', fontSize: '0.875rem', marginBottom: 12 }}>
+        <p className={css.probeHint}>
           Clicca su un punto di test per misurare. Usa meno sonde possibile!
         </p>
 
         {/* Mini SVG circuit board */}
-        <svg viewBox="0 0 100 100" className="elab-tool__circuit-svg" style={{
-          background: '#0f172a', borderRadius: 8, padding: 8
-        }}>
+        <svg viewBox="0 0 100 100" className={`elab-tool__circuit-svg ${css.circuitSvg}`}>
           {/* Board trace lines */}
           <line x1="10" y1="50" x2="90" y2="50" stroke="#334155" strokeWidth="1" />
           <line x1="50" y1="10" x2="50" y2="90" stroke="#334155" strokeWidth="1" />
@@ -288,7 +287,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
         </svg>
 
         {/* Probe details */}
-        <div style={{ display: 'grid', gap: 10, marginTop: 12 }}>
+        <div className={css.probeGrid}>
           {selected.testPoints.map((point) => {
             const isRevealed = revealedPoints.includes(point.id);
             return (
@@ -310,7 +309,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
             );
           })}
         </div>
-        <div style={{ marginTop: 8, fontSize: '0.875rem', color: 'var(--elab-muted)', textAlign: 'center' }}>
+        <div className={css.probeCounter}>
           Sonde usate: {revealedPoints.length}/{selected.testPoints.length}
         </div>
       </div>
@@ -327,7 +326,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
       {!showSolution && revealedPoints.length > 0 && !isLocked && (
         <div className="elab-tool__card">
           <h3>Cos'è il componente misterioso?</h3>
-          <div style={{ display: 'grid', gap: 8 }}>
+          <div className={css.guessGrid}>
             {selected.guessOptions.map((option, i) => {
               const isSelected = guess === i;
               const isWrong = isSelected && !isCorrectGuess;
@@ -346,7 +345,7 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
             })}
           </div>
           {guess !== null && !isCorrectGuess && (
-            <p style={{ color: '#ea580c', fontSize: '0.875rem', marginTop: 8, textAlign: 'center' }}>
+            <p className={css.wrongHint}>
               Non è quello! Usa più sonde per raccogliere indizi.
             </p>
           )}
@@ -355,25 +354,24 @@ export default function ReverseEngineeringLab({ onOpenSimulator, logSession, onS
 
       {/* Soluzione */}
       {showSolution && (
-        <div className="elab-tool__card elab-tool__card--success" style={{ animation: 'elab-slideUp 0.4s ease' }}>
-          <div style={{ textAlign: 'center', marginBottom: 12 }}>
-            <h3 style={{ color: '#16a34a', fontSize: '1.1rem' }}>Bravo! Hai scoperto il mistero!</h3>
+        <div className={`elab-tool__card elab-tool__card--success ${css.successCard}`}>
+          <div className={css.successCenter}>
+            <h3 className={css.successTitle}>Bravo! Hai scoperto il mistero!</h3>
           </div>
-          <p style={{ marginBottom: 12 }}>{selected.solution}</p>
-          <div style={{ marginBottom: 12 }}>
+          <p className={css.solutionText}>{selected.solution}</p>
+          <div className={css.starWrap}>
             <StarResult stars={earnedStars} message={REVERSE_STAR_MESSAGES[earnedStars]} />
           </div>
           <div className="elab-tool__learn">
             {selected.connectionToVolume}
           </div>
-          <div style={{ marginTop: 8, fontSize: '0.875rem', color: 'var(--elab-muted)', textAlign: 'center' }}>
+          <div className={css.usedProbes}>
             Hai usato {revealedPoints.length} sond{revealedPoints.length === 1 ? 'a' : 'e'} su {selected.testPoints.length} disponibili
           </div>
           {onSendToUNLIM && (
             <button
               onClick={() => onSendToUNLIM(`Nel Reverse Engineering "${selected.title}", il componente misterioso era "${selected.hiddenPart.name}". Spiegami come funziona questo componente nel circuito.`)}
-              className="elab-tool__btn elab-tool__btn--secondary elab-tool__btn--full"
-              style={{ marginTop: 12 }}
+              className={`elab-tool__btn elab-tool__btn--secondary elab-tool__btn--full ${css.unlimBtn}`}
             >
               UNLIM, spiegami come funziona
             </button>

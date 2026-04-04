@@ -1,20 +1,32 @@
 /**
  * UNLIM ONNIPOTENTE — Persistent Memory Service
- * (c) Andrea Marro — 28/02/2026 — ELAB Tutor — Tutti i diritti riservati
+ * (c) Andrea Marro — 01/04/2026 — ELAB Tutor — Tutti i diritti riservati
  *
- * Two-tier memory: localStorage (immediate) + optional backend.
+ * Three-tier memory:
+ *   1. localStorage (immediate, always available)
+ *   2. Supabase lesson_contexts (cross-device, durable)
+ *   3. Nanobot /memory (AI-enriched analysis, optional)
+ *
  * Tracks student learning profile across sessions:
  * - Experiments completed and attempts
  * - Quiz results per experiment
  * - Common mistakes (category + detail)
  * - Session summaries (last 10)
+ * - Lesson contexts per class (for UNLIM cross-session awareness)
  *
  * Exposed globally as window.__unlimMemory for use by buildTutorContext().
  */
 
+import supabase, { isSupabaseConfigured } from './supabaseClient';
+import logger from '../utils/logger';
+
 const MEMORY_KEY = 'elab_unlim_memory';
+const CONTEXTS_KEY = 'elab_lesson_contexts';
 const MAX_HISTORY_SESSIONS = 10;
 const MAX_MISTAKES = 50;
+const MAX_CONTEXTS = 30;
+
+// ─── Local Profile (tier 1: localStorage) ──────────────────────
 
 /**
  * Get the full student profile from localStorage
@@ -38,8 +50,9 @@ function updateProfile(updates) {
     try {
         localStorage.setItem(MEMORY_KEY, JSON.stringify(merged));
     } catch { /* localStorage full — silent */ }
-    // Mark dirty for backend sync — all callers (trackExperiment, trackMistake, etc.) trigger sync
     _syncDirty = true;
+    // Keep beacon payload fresh for beforeunload
+    _refreshBeaconPayload();
 }
 
 /**
@@ -62,9 +75,6 @@ function trackExperimentCompletion(experimentId, result = 'success') {
 
 /**
  * Track quiz result for an experiment
- * @param {string} experimentId
- * @param {number} correct - Number of correct answers
- * @param {number} total - Total questions
  */
 function trackQuizResult(experimentId, correct, total) {
     const profile = getProfile();
@@ -80,8 +90,6 @@ function trackQuizResult(experimentId, correct, total) {
 
 /**
  * Track a mistake the student made
- * @param {string} category - e.g., 'polarita', 'cortocircuito', 'resistenza-mancante'
- * @param {string} detail - Brief description
  */
 function trackMistake(category, detail) {
     const profile = getProfile();
@@ -91,7 +99,6 @@ function trackMistake(category, detail) {
         detail,
         timestamp: Date.now(),
     });
-    // Keep last N mistakes
     if (profile.mistakes.length > MAX_MISTAKES) {
         profile.mistakes = profile.mistakes.slice(-MAX_MISTAKES);
     }
@@ -99,8 +106,7 @@ function trackMistake(category, detail) {
 }
 
 /**
- * Save a summary of the current session (called on session end / tab close)
- * @param {string} summary - Brief description of the session
+ * Save a summary of the current session
  */
 function saveSessionSummary(summary) {
     const profile = getProfile();
@@ -109,7 +115,6 @@ function saveSessionSummary(summary) {
         summary,
         timestamp: Date.now(),
     });
-    // Keep last N sessions
     if (profile.sessionSummaries.length > MAX_HISTORY_SESSIONS) {
         profile.sessionSummaries = profile.sessionSummaries.slice(-MAX_HISTORY_SESSIONS);
     }
@@ -118,26 +123,21 @@ function saveSessionSummary(summary) {
 
 /**
  * Build a compressed context string for the AI
- * Used by buildTutorContext() in ElabTutorV4.jsx
  * @returns {string} Memory context block or empty string
  */
 function buildMemoryContext() {
     const p = getProfile();
-    // Don't output anything if there's no meaningful data
     if (!p.experiments && !p.mistakes && !p.quizzes && !p.sessionSummaries) return '';
 
     const parts = ['[MEMORIA STUDENTE]'];
 
-    // Experiments completed
     if (p.experiments) {
         const completed = Object.keys(p.experiments).filter(k => p.experiments[k].completed);
         parts.push(`Esperimenti completati: ${completed.length}/69`);
-        // Show last 3 completed
         const recent = completed.slice(-3);
         if (recent.length > 0) parts.push(`Ultimi: ${recent.join(', ')}`);
     }
 
-    // Quiz performance aggregate
     if (p.quizzes) {
         const quizEntries = Object.entries(p.quizzes);
         if (quizEntries.length > 0) {
@@ -146,7 +146,6 @@ function buildMemoryContext() {
             if (totalQuestions > 0) {
                 parts.push(`Quiz: ${totalCorrect}/${totalQuestions} (${Math.round((totalCorrect / totalQuestions) * 100)}%)`);
             }
-            // Find weak areas (quiz < 50%)
             const weak = quizEntries
                 .filter(([, q]) => q.total > 0 && q.percentage < 50)
                 .map(([id]) => id);
@@ -154,7 +153,6 @@ function buildMemoryContext() {
         }
     }
 
-    // Common mistakes (top 3 categories)
     if (p.mistakes?.length > 0) {
         const categories = {};
         p.mistakes.forEach(m => {
@@ -166,13 +164,11 @@ function buildMemoryContext() {
         parts.push(`Errori frequenti: ${top3.map(([k, v]) => `${k}(x${v})`).join(', ')}`);
     }
 
-    // Last session summary
     if (p.sessionSummaries?.length > 0) {
         const last = p.sessionSummaries[p.sessionSummaries.length - 1];
         parts.push(`Sessione precedente: ${last.summary}`);
     }
 
-    // Backend-enriched data (from /memory/sync merge — FASE 5)
     if (p._backendLevel) parts.push(`Livello backend: ${p._backendLevel}`);
     if (p._backendWeaknesses?.length) parts.push(`Debolezze: ${p._backendWeaknesses.join(', ')}`);
     if (p._backendStrengths?.length) parts.push(`Punti forti: ${p._backendStrengths.join(', ')}`);
@@ -185,41 +181,235 @@ function buildMemoryContext() {
  */
 function resetMemory() {
     localStorage.removeItem(MEMORY_KEY);
+    localStorage.removeItem(CONTEXTS_KEY);
 }
 
-// ─── Backend Sync (UNLIM Onnipotente — FASE 5) ──────────────────────────
-// Two-way sync: localStorage ↔ nanobot /memory endpoints
-// localStorage is source of truth for immediate UX; backend is durable storage
-
-// CRITICAL FIX S62: .trim() prevents trailing whitespace/newline in Vercel env vars
-const NANOBOT_URL = ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_NANOBOT_URL) || '').trim() || null;
-let _syncDirty = false; // tracks if localStorage changed since last sync
-let _syncTimer = null;
-const SYNC_INTERVAL = 60_000; // 60 seconds
+// ─── Lesson Context (tier 2: Supabase cross-session) ──────────
 
 /**
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
- * Get the session ID (same as api.js uses for tutor chat)
- * @returns {string} Tutor session ID
+ * Salva il contesto di una lezione per la classe.
+ * Permette ad UNLIM di sapere cosa è stato fatto nelle lezioni precedenti.
+ * @param {string} classId - ID classe (null per studente singolo)
+ * @param {string} experimentId - e.g. 'v1-cap6-esp1'
+ * @param {object} context - {summary, concepts_covered, mistakes, quiz_results}
  */
+async function saveContext(classId, experimentId, context) {
+    // Always save locally first
+    _saveContextLocal(classId, experimentId, context);
+
+    if (!isSupabaseConfigured()) return;
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+
+    try {
+        const userId = _getCurrentUserId();
+        if (!userId) return;
+
+        await supabase.from('lesson_contexts').insert({
+            class_id: classId || null,
+            student_id: userId,
+            experiment_id: experimentId,
+            context_data: context,
+            session_summary: context.summary || '',
+        });
+    } catch (err) {
+        logger.warn('[UnlimMemory] saveContext to Supabase failed:', err.message);
+    }
+}
+
+/**
+ * Carica TUTTO il contesto precedente di una classe.
+ * Usato da UNLIM per costruire la conoscenza delle lezioni passate.
+ * @param {string} classId - ID classe
+ * @returns {Promise<Array<{experimentId, context, summary, timestamp}>>}
+ */
+async function loadContext(classId) {
+    if (!isSupabaseConfigured() || !classId) {
+        return _loadContextLocal(classId);
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('lesson_contexts')
+            .select('experiment_id, context_data, session_summary, created_at')
+            .eq('class_id', classId)
+            .order('created_at', { ascending: false })
+            .limit(MAX_CONTEXTS);
+
+        if (error) throw error;
+
+        return (data || []).map(row => ({
+            experimentId: row.experiment_id,
+            context: row.context_data,
+            summary: row.session_summary,
+            timestamp: row.created_at,
+        }));
+    } catch (err) {
+        logger.warn('[UnlimMemory] loadContext from Supabase failed:', err.message);
+        return _loadContextLocal(classId);
+    }
+}
+
+/**
+ * Ritorna l'ultima lezione fatta dalla classe.
+ * @param {string} classId
+ * @returns {Promise<{experimentId, summary, timestamp}|null>}
+ */
+async function getLastLesson(classId) {
+    const contexts = await loadContext(classId);
+    if (contexts.length === 0) {
+        // Fallback: use local session summaries
+        const profile = getProfile();
+        const last = profile.sessionSummaries?.[profile.sessionSummaries.length - 1];
+        if (!last) return null;
+        return { experimentId: null, summary: last.summary, timestamp: last.timestamp };
+    }
+    return contexts[0]; // Already sorted DESC
+}
+
+/**
+ * Ritorna esperimenti completati e concetti acquisiti per la classe.
+ * @param {string} classId
+ * @returns {Promise<{completedExperiments: string[], conceptsAcquired: string[]}>}
+ */
+async function getProgress(classId) {
+    const contexts = await loadContext(classId);
+    const experiments = new Set();
+    const concepts = new Set();
+
+    for (const ctx of contexts) {
+        experiments.add(ctx.experimentId);
+        if (ctx.context?.concepts_covered) {
+            ctx.context.concepts_covered.forEach(c => concepts.add(c));
+        }
+    }
+
+    // Also merge local profile data
+    const profile = getProfile();
+    if (profile.experiments) {
+        Object.entries(profile.experiments)
+            .filter(([, v]) => v.completed)
+            .forEach(([k]) => experiments.add(k));
+    }
+
+    return {
+        completedExperiments: [...experiments],
+        conceptsAcquired: [...concepts],
+    };
+}
+
+/**
+ * Build enhanced context string including cross-session data.
+ * This is the main function UNLIM uses to know what happened before.
+ * @param {string} [classId]
+ * @returns {Promise<string>}
+ */
+async function buildEnhancedContext(classId) {
+    const parts = [];
+
+    // Base memory (local)
+    const base = buildMemoryContext();
+    if (base) parts.push(base);
+
+    // Cross-session context (Supabase or localStorage)
+    const lastLesson = await getLastLesson(classId);
+    if (lastLesson) {
+        parts.push(`[ULTIMA LEZIONE] ${lastLesson.summary || lastLesson.experimentId || 'Sconosciuta'}`);
+    }
+
+    const progress = await getProgress(classId);
+    if (progress.completedExperiments.length > 0) {
+        parts.push(`[PERCORSO CLASSE] ${progress.completedExperiments.length} esperimenti completati: ${progress.completedExperiments.slice(-5).join(', ')}`);
+    }
+    if (progress.conceptsAcquired.length > 0) {
+        parts.push(`[CONCETTI ACQUISITI] ${progress.conceptsAcquired.join(', ')}`);
+    }
+
+    return parts.join('\n');
+}
+
+// ─── Local context storage ─────────────────────────────────
+
+function _saveContextLocal(classId, experimentId, context) {
+    try {
+        const key = classId || '_self';
+        const all = JSON.parse(localStorage.getItem(CONTEXTS_KEY) || '{}');
+        if (!all[key]) all[key] = [];
+        all[key].push({
+            experimentId,
+            context,
+            summary: context.summary || '',
+            timestamp: Date.now(),
+        });
+        // Cap per class
+        if (all[key].length > MAX_CONTEXTS) {
+            all[key] = all[key].slice(-MAX_CONTEXTS);
+        }
+        localStorage.setItem(CONTEXTS_KEY, JSON.stringify(all));
+    } catch { /* localStorage full */ }
+}
+
+function _loadContextLocal(classId) {
+    try {
+        const key = classId || '_self';
+        const all = JSON.parse(localStorage.getItem(CONTEXTS_KEY) || '{}');
+        return (all[key] || []).reverse(); // Most recent first
+    } catch {
+        return [];
+    }
+}
+
+// Cache Supabase user ID on auth state change (avoids async in sync function)
+let _cachedSupabaseUserId = null;
+if (isSupabaseConfigured() && supabase?.auth) {
+    supabase.auth.getSession().then(({ data }) => {
+        _cachedSupabaseUserId = data?.session?.user?.id || null;
+    }).catch(() => {});
+    supabase.auth.onAuthStateChange((_event, session) => {
+        _cachedSupabaseUserId = session?.user?.id || null;
+    });
+}
+
+function _getCurrentUserId() {
+    try {
+        if (_cachedSupabaseUserId) return _cachedSupabaseUserId;
+
+        const token = localStorage.getItem('elab_auth_token');
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                return payload.userId || payload.sub || null;
+            } catch { /* invalid token */ }
+        }
+        return localStorage.getItem('elab_tutor_session') || null;
+    } catch {
+        return null;
+    }
+}
+
+// ─── Backend Sync (tier 3: nanobot — AI-enriched) ──────────────
+
+const NANOBOT_URL = ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_NANOBOT_URL) || '').trim() || null;
+let _syncDirty = false;
+let _syncTimer = null;
+let _autoSaveTimer = null;
+let _beaconPayload = null; // Pre-serialized for beforeunload
+const SYNC_INTERVAL = 60_000;
+const AUTOSAVE_INTERVAL = 30_000;
+
 function _getSessionId() {
     const KEY = 'elab_tutor_session';
     try {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return localStorage.getItem(KEY) || '';
     } catch { return ''; }
 }
 
-/**
- * Push localStorage profile to backend /memory/sync
- * Fire-and-forget — never blocks UI
- */
 async function syncWithBackend() {
     if (!NANOBOT_URL) return;
     const sessionId = _getSessionId();
     if (!sessionId) return;
 
     const profile = getProfile();
-    // Only sync if there's meaningful data
     if (!profile.lastUpdated) return;
 
     try {
@@ -232,14 +422,10 @@ async function syncWithBackend() {
             _syncDirty = false;
         }
     } catch {
-        // Silent — backend may be down (Render free tier)
+        // Silent — backend may be down
     }
 }
 
-/**
- * Pull backend profile and merge with localStorage (backend wins for errors/patterns)
- * Called once on page load to restore cross-session memory
- */
 async function loadFromBackend() {
     if (!NANOBOT_URL) return;
     const sessionId = _getSessionId();
@@ -253,11 +439,8 @@ async function loadFromBackend() {
 
         const backend = data.profile;
         const local = getProfile();
-
-        // Merge strategy: backend has richer error analysis, local has latest UX state
         const merged = { ...local };
 
-        // Backend wins: experiments_completed (superset)
         if (backend.experiments_completed?.length) {
             if (!merged.experiments) merged.experiments = {};
             for (const expId of backend.experiments_completed) {
@@ -267,71 +450,104 @@ async function loadFromBackend() {
             }
         }
 
-        // Backend wins: quiz totals (cumulative)
         if (backend.quiz_results?.total > 0) {
             if (!merged.quizzes) merged.quizzes = {};
             const localQuizTotal = Object.values(merged.quizzes || {}).reduce((s, q) => s + (q.total || 0), 0);
-            // Only apply if backend has MORE data than local
             if (backend.quiz_results.total > localQuizTotal) {
                 merged._backendQuiz = backend.quiz_results;
             }
         }
 
-        // Backend wins: level (more accurate with error history)
         if (backend.level && backend.level !== 'principiante') {
             merged._backendLevel = backend.level;
         }
-
-        // Backend wins: weaknesses + strengths
         if (backend.weaknesses?.length) merged._backendWeaknesses = backend.weaknesses;
         if (backend.strengths?.length) merged._backendStrengths = backend.strengths;
 
         updateProfile(merged);
     } catch {
-        // Silent — backend may be unavailable
+        // Silent
+    }
+}
+
+function stopSync() {
+    if (_syncTimer) {
+        clearInterval(_syncTimer);
+        _syncTimer = null;
+    }
+    if (_autoSaveTimer) {
+        clearInterval(_autoSaveTimer);
+        _autoSaveTimer = null;
     }
 }
 
 /**
- * Initialize auto-sync: periodic push + beforeunload
- * Call once when the tutor loads
+ * Pre-serialize beacon payload so beforeunload sends already-prepared data.
+ * Called on every auto-save cycle and after each profile update.
  */
+function _refreshBeaconPayload() {
+    try {
+        const sessionId = _getSessionId();
+        if (sessionId && NANOBOT_URL) {
+            const profile = getProfile();
+            _beaconPayload = new Blob(
+                [JSON.stringify({ sessionId, profile })],
+                { type: 'application/json' }
+            );
+        }
+    } catch { /* silent */ }
+}
+
+/**
+ * Periodic auto-save: ensures localStorage profile is written regularly
+ * so beforeunload is just a last-resort, not the only save point.
+ */
+function _autoSave() {
+    // Force a profile touch to ensure lastUpdated is current
+    const profile = getProfile();
+    if (profile.lastUpdated) {
+        try {
+            localStorage.setItem(MEMORY_KEY, JSON.stringify(profile));
+        } catch { /* localStorage full */ }
+    }
+    // Pre-serialize beacon payload while we can
+    if (_syncDirty) _refreshBeaconPayload();
+}
+
 function initSync() {
-    // Load from backend on startup (async, non-blocking)
     loadFromBackend();
 
-    // Periodic sync every 60s (only if dirty)
-    if (!_syncTimer) {
-        _syncTimer = setInterval(() => {
-            if (_syncDirty) syncWithBackend();
-        }, SYNC_INTERVAL);
-    }
+    // Clear any existing timers to prevent leaks on re-init
+    stopSync();
 
-    // Sync on tab close
+    // Backend sync every 60s (if dirty)
+    _syncTimer = setInterval(() => {
+        if (_syncDirty) syncWithBackend();
+    }, SYNC_INTERVAL);
+
+    // Auto-save profile to localStorage every 30s + pre-serialize beacon
+    _autoSaveTimer = setInterval(_autoSave, AUTOSAVE_INTERVAL);
+
     if (typeof window !== 'undefined') {
         window.addEventListener('beforeunload', () => {
-            if (_syncDirty) {
-                // Use sendBeacon for reliability on tab close
-                const sessionId = _getSessionId();
-                if (sessionId && NANOBOT_URL) {
-                    const profile = getProfile();
-                    try {
-                        navigator.sendBeacon(
-                            `${NANOBOT_URL}/memory/sync`,
-                            new Blob([JSON.stringify({ sessionId, profile })], { type: 'application/json' })
-                        );
-                    } catch { /* last resort — silent */ }
-                }
+            // Last-chance auto-save to localStorage
+            _autoSave();
+            // Send pre-serialized payload via beacon (no serialization during event)
+            if (_syncDirty && _beaconPayload && NANOBOT_URL) {
+                try {
+                    navigator.sendBeacon(
+                        `${NANOBOT_URL}/memory/sync`,
+                        _beaconPayload
+                    );
+                } catch { /* last resort */ }
             }
         });
     }
 }
 
-// Sync dirty flag is now set directly in updateProfile above
-// No separate patching needed — all internal callers trigger sync automatically
-
 // Public API
 export const unlimMemory = {
+    // Tier 1: Local profile
     getProfile,
     updateProfile,
     trackExperimentCompletion,
@@ -340,13 +556,20 @@ export const unlimMemory = {
     saveSessionSummary,
     buildMemoryContext,
     resetMemory,
-    // FASE 5: Backend sync
+    // Tier 2: Supabase cross-session
+    saveContext,
+    loadContext,
+    getLastLesson,
+    getProgress,
+    buildEnhancedContext,
+    // Tier 3: Nanobot backend
     syncWithBackend,
     loadFromBackend,
     initSync,
+    stopSync,
 };
 
-// Expose globally for buildTutorContext() access (avoids circular imports)
+// Expose globally for buildTutorContext() access
 if (typeof window !== 'undefined') {
     window.__unlimMemory = unlimMemory;
 }

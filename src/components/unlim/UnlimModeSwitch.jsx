@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import css from './unlim-mode-switch.module.css';
 
 const STORAGE_KEY = 'elab-unlim-mode';
 
@@ -46,53 +47,14 @@ export default function UnlimModeSwitch({ isUnlim, onToggle }) {
   return (
     <button
       onClick={onToggle}
-      aria-label={isUnlim ? 'Passa a modalità Classic' : 'Passa a modalità UNLIM'}
-      title={isUnlim ? 'Modalità UNLIM attiva — clicca per Classic' : 'Modalità Classic — clicca per UNLIM'}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 16px',
-        border: '2px solid',
-        borderColor: isUnlim ? 'var(--color-accent, #4A7A25)' : 'var(--color-border, #E5E5EA)',
-        borderRadius: 'var(--radius-full, 9999px)',
-        background: isUnlim
-          ? 'var(--color-accent-light, #E8F5E9)'
-          : 'var(--color-bg, #FFFFFF)',
-        color: isUnlim
-          ? 'var(--color-accent-hover, #4A7A25)'
-          : 'var(--color-text-secondary, #6B6B80)',
-        cursor: 'pointer',
-        fontSize: 'var(--font-size-sm, 16px)',
-        fontFamily: 'var(--font-sans)',
-        fontWeight: 'var(--font-weight-semibold, 600)',
-        transition: 'all 0.2s ease',
-        minHeight: '56px',
-        minWidth: '56px',
-      }}
+      aria-label={isUnlim ? 'Passa a modalità Classic' : 'Passa a modalità Galileo'}
+      title={isUnlim ? 'Modalità Galileo attiva — clicca per Classic' : 'Modalità Classic — clicca per Galileo'}
+      className={isUnlim ? css.switchBtnActive : css.switchBtn}
     >
-      <span style={{
-        display: 'inline-block',
-        width: '36px',
-        height: '20px',
-        borderRadius: '10px',
-        background: isUnlim ? 'var(--color-accent, #4A7A25)' : '#ccc',
-        position: 'relative',
-        transition: 'background 0.2s ease',
-      }}>
-        <span style={{
-          position: 'absolute',
-          top: '2px',
-          left: isUnlim ? '18px' : '2px',
-          width: '16px',
-          height: '16px',
-          borderRadius: '50%',
-          background: '#fff',
-          transition: 'left 0.2s ease',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-        }} />
+      <span className={isUnlim ? css.trackActive : css.track}>
+        <span className={isUnlim ? css.thumbActive : css.thumb} />
       </span>
-      <span>{isUnlim ? 'UNLIM' : 'Classic'}</span>
+      <span>{isUnlim ? 'Galileo' : 'Classic'}</span>
     </button>
   );
 }

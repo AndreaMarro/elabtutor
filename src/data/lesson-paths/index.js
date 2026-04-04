@@ -67,8 +67,9 @@ import v2Cap12Esp1 from './v2-cap12-esp1.json';
 
 // Volume 3 — Arduino Programmato
 import v3Cap6Semaforo from './v3-cap6-semaforo.json';
-import v3Cap7Mini from './v3-cap7-mini.json';
-import v3Cap8Serial from './v3-cap8-serial.json';
+import v3Cap6Morse from './v3-cap6-morse.json';
+import v3Cap6Esp6 from './v3-cap6-esp6.json';
+import v3Cap8Esp3 from './v3-cap8-esp3.json';
 import v3ExtraLcdHello from './v3-extra-lcd-hello.json';
 import v3ExtraServoSweep from './v3-extra-servo-sweep.json';
 import v3ExtraSimon from './v3-extra-simon.json';
@@ -134,8 +135,9 @@ const LESSON_PATHS = {
   'v2-cap12-esp1': v2Cap12Esp1,
   // Volume 3
   'v3-cap6-semaforo': v3Cap6Semaforo,
-  'v3-cap7-mini': v3Cap7Mini,
-  'v3-cap8-serial': v3Cap8Serial,
+  'v3-cap6-morse': v3Cap6Morse,
+  'v3-cap6-esp6': v3Cap6Esp6,
+  'v3-cap8-esp3': v3Cap8Esp3,
   'v3-extra-lcd-hello': v3ExtraLcdHello,
   'v3-extra-servo-sweep': v3ExtraServoSweep,
   'v3-extra-simon': v3ExtraSimon,
@@ -171,6 +173,6 @@ export function getAvailableLessonPaths() {
  * Nomi delle 5 fasi standard
  */
 export const PHASE_NAMES = ['PREPARA', 'MOSTRA', 'CHIEDI', 'OSSERVA', 'CONCLUDI'];
-export const PHASE_ICONS = ['📋', '🔧', '❓', '👀', '✅'];
+export const PHASE_ICONS = [null, null, null, null, null];
 
 export default LESSON_PATHS;

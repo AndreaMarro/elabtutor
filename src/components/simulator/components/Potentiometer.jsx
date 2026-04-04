@@ -12,6 +12,7 @@ import { registerComponent } from './registry';
 const Potentiometer = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, value = 10000, id }) => {
   const position = state.position || 0.5;
   const angle = -135 + position * 270;
+  const uid = `pot-${id}`;
 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="potentiometer" role="img"
@@ -21,7 +22,27 @@ const Potentiometer = ({ x = 0, y = 0, state = {}, highlighted = false, onIntera
       {/* Transparent click area */}
       <circle cx="0" cy="5" r="22" fill="transparent" />
 
-      {/* Wire leads — thin neutral gray (Tinkercad style) */}
+      <defs>
+        {/* Radial gradient for blue dial — 3D dome effect */}
+        <radialGradient id={`${uid}-dial`} cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="#9ECCE8" />
+          <stop offset="50%" stopColor="#6EA4CE" />
+          <stop offset="100%" stopColor="#3A7AA8" />
+        </radialGradient>
+        {/* Radial gradient for housing */}
+        <radialGradient id={`${uid}-housing`} cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stopColor="#3A4E5C" />
+          <stop offset="100%" stopColor="#1C2A34" />
+        </radialGradient>
+        {/* Metallic pivot gradient */}
+        <radialGradient id={`${uid}-pivot`} cx="35%" cy="30%" r="60%">
+          <stop offset="0%" stopColor="#E8E8E8" />
+          <stop offset="50%" stopColor="#BDBDBD" />
+          <stop offset="100%" stopColor="#7E7E7E" />
+        </radialGradient>
+      </defs>
+
+      {/* Wire leads — metallic */}
       <line x1="-7.5" y1="15.2" x2="-7.5" y2="22.5"
         stroke="#9E9E9E" strokeWidth="1.4" strokeLinecap="round" />
       <line x1="0" y1="15.2" x2="0" y2="22.5"
@@ -29,18 +50,18 @@ const Potentiometer = ({ x = 0, y = 0, state = {}, highlighted = false, onIntera
       <line x1="7.5" y1="15.2" x2="7.5" y2="22.5"
         stroke="#9E9E9E" strokeWidth="1.4" strokeLinecap="round" />
 
-      {/* Housing body */}
-      <circle cx="0" cy="0" r="15.6" fill="#2B3A46" stroke="#141C22" strokeWidth="0.8" />
-      {/* Outer rim */}
-      <circle cx="0" cy="0" r="14.6" fill="none" stroke="#0F151B" strokeWidth="1.6" opacity="0.55" />
+      {/* Housing shadow */}
+      <circle cx="0.5" cy="0.8" r="15.6" fill="#000000" opacity="0.1" />
 
-      {/* Blue dial face — bright, flat */}
-      <circle cx="0" cy="0" r="11.6" fill="#6EA4CE" stroke="#2E6D9C" strokeWidth="0.6" />
-      {/* Subtle top highlight (flat overlay, no gradients) */}
-      <path
-        d="M -10.2 -2.5 A 11 11 0 0 1 10.2 -2.5 L 10.2 -5.4 A 11 11 0 0 0 -10.2 -5.4 Z"
-        fill="#FFFFFF" opacity="0.14"
-      />
+      {/* Housing body with gradient */}
+      <circle cx="0" cy="0" r="15.6" fill={`url(#${uid}-housing)`} stroke="#141C22" strokeWidth="0.8" />
+      {/* Outer rim — beveled edge */}
+      <circle cx="0" cy="0" r="14.6" fill="none" stroke="#0F151B" strokeWidth="1.6" opacity="0.55" />
+      {/* Top rim highlight */}
+      <path d="M -12 -8 A 14.6 14.6 0 0 1 12 -8" fill="none" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.08" />
+
+      {/* Blue dial face — radial gradient for dome */}
+      <circle cx="0" cy="0" r="11.6" fill={`url(#${uid}-dial)`} stroke="#2E6D9C" strokeWidth="0.6" />
 
       {/* Dense tick marks (Tinkercad dial look) */}
       {Array.from({ length: 41 }, (_, i) => {
@@ -61,14 +82,17 @@ const Potentiometer = ({ x = 0, y = 0, state = {}, highlighted = false, onIntera
         );
       })}
 
-      {/* Knob indicator — rotates with position (no center specular) */}
+      {/* Knob indicator — rotates with position */}
       <g transform={`rotate(${angle})`}>
         {/* Position indicator line */}
         <line x1="0" y1="0" x2="0" y2="-9"
           stroke="#1F2A33" strokeWidth="2.0" strokeLinecap="round" />
-        {/* Center metallic pivot — flat circle */}
-        <circle cx="0" cy="0" r="3.1" fill="#BDBDBD" stroke="#7E7E7E" strokeWidth="0.35" />
+        {/* Center metallic pivot — gradient circle */}
+        <circle cx="0" cy="0" r="3.1" fill={`url(#${uid}-pivot)`} stroke="#7E7E7E" strokeWidth="0.35" />
+        {/* Specular highlight on pivot */}
         <circle cx="-0.7" cy="-0.7" r="1.1" fill="#FFFFFF" opacity="0.35" />
+        {/* Rim detail */}
+        <circle cx="0" cy="0" r="2.8" fill="none" stroke="#FFFFFF" strokeWidth="0.2" opacity="0.1" />
       </g>
 
       {/* AI tutoring highlight */}

@@ -47,6 +47,7 @@ export default function useSimulatorAPI({
   handleComponentDeleteRef,
   handleLayoutChangeRef,
   handleBuildModeSwitchRef,
+  handlePropChangeRef,
   // Undo/redo
   getCurrentSnapshotRef,
   pushSnapshotRef,
@@ -83,7 +84,13 @@ export default function useSimulatorAPI({
   currentExperiment,
   componentStates,
   buildStepIndex,
+  // Wire mode
+  setWireMode,
+  wireMode,
 }) {
+  // Ref for wireMode to avoid stale closure
+  const wireModeRef = useRef(wireMode);
+  wireModeRef.current = wireMode;
   // Phase 7: Structured AI context API
   const buildStructuredState = useCallback(() => {
     const exp = mergedExperimentRef.current || currentExperimentRef.current;
@@ -191,22 +198,22 @@ export default function useSimulatorAPI({
       if (solverRef.current) {
         try {
           const diag = solverRef.current.getDiagnostics?.() || {};
-          if (diag.shortCircuit) healthSummary += '🔴 CORTOCIRCUITO RILEVATO — simulazione in pausa\n';
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+          if (diag.shortCircuit) healthSummary += 'CORTOCIRCUITO RILEVATO — simulazione in pausa\n';
           const burned = comps.filter(c => (states[c.id] || {}).burned);
-          if (burned.length > 0) healthSummary += '⚠️ COMPONENTI BRUCIATI: ' + burned.map(c => c.id).join(', ') + '\n';
-          if (diag.overloadWarnings?.length > 0) healthSummary += '⚠️ SOVRACCARICO: ' + diag.overloadWarnings.map(w => w.message).join('; ') + '\n';
+          if (burned.length > 0) healthSummary += 'COMPONENTI BRUCIATI: ' + burned.map(c => c.id).join(', ') + '\n';
+          if (diag.overloadWarnings?.length > 0) healthSummary += 'SOVRACCARICO: ' + diag.overloadWarnings.map(w => w.message).join('; ') + '\n';
           const highCurrent = comps.filter(c => (states[c.id] || {}).current > 50);
-          if (highCurrent.length > 0) healthSummary += '⚠️ CORRENTE ALTA: ' + highCurrent.map(c => c.id + '=' + Math.round((states[c.id]?.current || 0)) + 'mA').join(', ') + '\n';
+          if (highCurrent.length > 0) healthSummary += 'CORRENTE ALTA: ' + highCurrent.map(c => c.id + '=' + Math.round((states[c.id]?.current || 0)) + 'mA').join(', ') + '\n';
           if (diag.disconnectedPins?.length > 0) {
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             const discPins = diag.disconnectedPins.slice(0, 10);
-            healthSummary += 'ℹ️ PIN SCOLLEGATI: ' + discPins.map(d => `${d.compId}:${d.pinName}`).join(', ') + '\n';
+            healthSummary += 'PIN SCOLLEGATI: ' + discPins.map(d => `${d.compId}:${d.pinName}`).join(', ') + '\n';
           }
           const deadLeds = comps.filter(c =>
             (c.type === 'led' || c.type === 'rgb-led') &&
             !(states[c.id]?.brightness > 0) && !(states[c.id]?.glowing)
           );
-          if (deadLeds.length > 0) healthSummary += 'ℹ️ LED spenti (possibile errore di collegamento): ' + deadLeds.map(c => c.id).join(', ') + '\n';
+          if (deadLeds.length > 0) healthSummary += 'LED spenti (possibile errore di collegamento): ' + deadLeds.map(c => c.id).join(', ') + '\n';
         } catch { /* solver may not be ready */ }
       }
 
@@ -262,7 +269,7 @@ export default function useSimulatorAPI({
           onCircuitEvent({
             type: 'led-burned',
             componentId: c.id,
-            message: `⚡ Oh no! Il LED "${c.id}" si è bruciato! Probabilmente manca un resistore o il suo valore è troppo basso. Vuoi che UNLIM ti spieghi cosa è successo?`
+            message: `Oh no! Il LED "${c.id}" si e bruciato! Probabilmente manca un resistore o il suo valore e troppo basso. Vuoi che UNLIM ti spieghi cosa e successo?`
           });
         }
       }
@@ -277,7 +284,7 @@ export default function useSimulatorAPI({
           onCircuitEvent({
             type: 'high-current',
             componentId: c.id,
-            message: `⚠️ Attenzione: il LED "${c.id}" sta ricevendo ${Math.round(s.current)}mA — è troppo! Rischia di bruciarsi. Prova ad aggiungere un resistore o aumentarne il valore.`
+            message: `Attenzione: il LED "${c.id}" sta ricevendo ${Math.round(s.current)}mA — e troppo! Rischia di bruciarsi. Prova ad aggiungere un resistore o aumentarne il valore.`
           });
         }
       }
@@ -324,6 +331,7 @@ export default function useSimulatorAPI({
       removeWire: (index) => handleWireDeleteRef.current?.(index),
       addComponent: (type, pos) => handleComponentAddRef.current?.(type, pos),
       removeComponent: (id) => handleComponentDeleteRef.current?.(id),
+      setComponentValue: (id, field, value) => handlePropChangeRef.current?.(id, field, value),
       getEditorCode: () => editorModeRef?.current === 'scratch' ? scratchGeneratedCodeRef.current : editorCodeRef.current,
       setEditorCode: (code) => { setEditorCode(code); codeNeedsCompileRef.current = true; },
       setHighlightedComponents: (ids) => setApiHighlightedComponents(Array.isArray(ids) ? ids : (ids ? [ids] : [])),
@@ -381,12 +389,17 @@ export default function useSimulatorAPI({
       canRedo: () => canRedoRef.current,
       highlightPin: (refs) => setApiHighlightedPins(Array.isArray(refs) ? refs : (refs ? [refs] : [])),
       setBuildMode: (mode) => handleBuildModeSwitchRef.current?.(mode),
-      getBuildMode: () => currentExperimentRef.current?.buildMode || false,
+      getBuildMode: () => {
+        const mode = currentExperimentRef.current?.buildMode;
+        if (mode === false || mode === undefined || mode === null) return 'complete';
+        return mode; // 'guided' or 'sandbox'
+      },
       nextStep: () => {
         const steps = currentExperimentRef.current?.buildSteps || [];
         setBuildStepIndex(prev => {
           const next = steps.length > 0 ? Math.min(prev + 1, steps.length - 1) : prev;
           if (next !== prev) pushActivity('build_step_next', `step ${next + 1}/${steps.length}`);
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           return next;
         });
       },
@@ -399,12 +412,15 @@ export default function useSimulatorAPI({
       showBom: () => setShowBom(true),
       hideBom: () => setShowBom(false),
       showLessonPath: () => { setShowLessonPath(true); setShowBom(false); setShowNotes(false); setShowQuiz(false); },
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       hideLessonPath: () => setShowLessonPath(false),
       showSerialMonitor: () => { setShowCodeEditor(true); setBottomPanel('monitor'); },
       hideSerialMonitor: () => { setShowCodeEditor(false); },
       isSimulating: () => isRunningRef.current || false,
       getSimulationStatus: () => isRunningRef.current ? 'running' : 'stopped',
+      /** Set tool mode: 'select' or 'wire' */
+      setToolMode: (mode) => { if (setWireMode) { setWireMode(mode === 'wire'); wireModeRef.current = mode === 'wire'; } },
+      /** Get current tool mode */
+      getToolMode: () => wireModeRef.current ? 'wire' : 'select',
       getSelectedComponent: () => {
         const id = selectedComponentIdRef.current;
         if (!id) return null;

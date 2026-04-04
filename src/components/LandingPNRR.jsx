@@ -1,7 +1,8 @@
 // Landing Page PNRR — Per dirigenti scolastici e animatori digitali
 // Fondi PNRR Scuola 4.0 + acquisto MePA
-// © Andrea Marro — 27/03/2026 — Tutti i diritti riservati
-import React from 'react';
+// G39: Comparison table, contact form, Omaric footer
+// © Andrea Marro — 30/03/2026 — Tutti i diritti riservati
+import React, { useState } from 'react';
 
 const NAVY = '#1E4D8C';
 const LIME = '#4A7A25';
@@ -54,6 +55,23 @@ const btnOutline = {
   border: '2px solid rgba(255,255,255,0.6)',
 };
 
+const thStyle = {
+  padding: '14px 16px',
+  textAlign: 'left',
+  fontWeight: 700,
+  fontSize: '14px',
+  letterSpacing: '0.3px',
+};
+
+const tdStyle = {
+  padding: '12px 16px',
+  color: TEXT_SECONDARY,
+  fontSize: '14px',
+  lineHeight: 1.4,
+};
+
+const WEBHOOK_URL = import.meta.env.VITE_CONTACT_WEBHOOK || null;
+
 export default function LandingPNRR({ onNavigate }) {
   return (
     <div style={{
@@ -91,7 +109,7 @@ export default function LandingPNRR({ onNavigate }) {
             marginBottom: '16px',
             lineHeight: 1.1,
           }}>
-            ELAB Tutor per la tua scuola
+            Il laboratorio di elettronica che funziona sulla LIM
           </h1>
           <p style={{
             fontSize: 'clamp(17px, 2.5vw, 22px)',
@@ -100,8 +118,8 @@ export default function LandingPNRR({ onNavigate }) {
             margin: '0 auto 32px',
             lineHeight: 1.5,
           }}>
-            Insegna elettronica e Arduino nella tua scuola media.
-            Acquistabile su MePA con fondi PNRR residui o budget scolastico ordinario.
+            L'insegnante arriva, accende la LIM e insegna. Zero competenze pregresse.
+            Acquistabile su MePA con fondi PNRR o budget ordinario.
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <a
@@ -119,6 +137,110 @@ export default function LandingPNRR({ onNavigate }) {
           </div>
         </div>
       </header>
+
+      {/* 3 Benefit chiari — il dirigente capisce in 10 secondi */}
+      <section style={sectionStyle}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '20px',
+        }}>
+          {[
+            {
+              icon: null,
+              title: 'Funziona subito',
+              desc: 'L\'insegnante apre la LIM, clicca un link e insegna. Zero installazione, zero formazione tecnica. Il tutor AI guida tutto.',
+              color: LIME,
+            },
+            {
+              icon: null,
+              title: 'GDPR compliant',
+              desc: 'Nessun dato personale degli studenti. Server europei. L\'insegnante usa la LIM, gli studenti i kit fisici. Privacy by design.',
+              color: NAVY,
+            },
+            {
+              icon: null,
+              title: 'Allineato PNRR Scuola 4.0',
+              desc: 'Software STEM + kit fisici + curriculum strutturato. Rientra nelle voci D.M. 218/2022. Acquistabile su MePA.',
+              color: '#C47A0A',
+            },
+          ].map((item, i) => (
+            <div key={i} style={{
+              ...cardStyle,
+              borderTop: `4px solid ${item.color}`,
+              textAlign: 'center',
+              padding: '28px 24px',
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{item.icon}</div>
+              <h3 style={{
+                fontFamily: "'Oswald', sans-serif",
+                fontSize: '20px',
+                fontWeight: 700,
+                color: TEXT,
+                margin: '0 0 10px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                {item.title}
+              </h3>
+              <p style={{ fontSize: '15px', color: TEXT_SECONDARY, lineHeight: 1.6, margin: 0 }}>
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Tabella comparativa — solo fatti */}
+      <section style={{ background: BG_LIGHT }}>
+        <div style={sectionStyle}>
+          <h2 style={headingStyle}>Confronto obiettivo</h2>
+          <p style={{ fontSize: '15px', color: TEXT_SECONDARY, marginBottom: '20px' }}>
+            Dati verificabili. Nessun marketing.
+          </p>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: '15px',
+              background: '#fff',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+            }}>
+              <thead>
+                <tr style={{ background: NAVY, color: '#fff' }}>
+                  <th style={thStyle}>Caratteristica</th>
+                  <th style={{ ...thStyle, background: LIME }}>ELAB Tutor</th>
+                  <th style={thStyle}>Tinkercad Circuits</th>
+                  <th style={thStyle}>Arduino IDE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['Lingua italiana completa', 'Si', 'Parziale', 'No'],
+                  ['Tutor AI integrato', 'Si (Galileo)', 'No', 'No'],
+                  ['GDPR — server EU', 'Si', 'No (Server USA)', 'Solo locale'],
+                  ['Funziona su LIM (browser)', 'Si', 'Si', 'No (Richiede install)'],
+                  ['Kit fisici inclusi', 'Si', 'No', 'No'],
+                  ['Acquistabile su MePA', 'Si', 'No', 'No (Open source)'],
+                  ['Curriculum strutturato', '67 esperimenti', 'Progetti liberi', 'Nessuno'],
+                  ['Guida passo-passo', 'Si (Passo Passo)', 'No', 'No'],
+                  ['Dashboard docente', 'Si', 'No', 'No'],
+                  ['Prezzo indicativo', 'Kit €75 + licenza scuola', 'Gratis (no kit)', 'Gratis (no kit)'],
+                ].map((row, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: TEXT }}>{row[0]}</td>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: LIME }}>{row[1]}</td>
+                    <td style={tdStyle}>{row[2]}</td>
+                    <td style={tdStyle}>{row[3]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       {/* Cos'è il PNRR Scuola 4.0 */}
       <section style={{ ...sectionStyle }}>
@@ -447,52 +569,22 @@ export default function LandingPNRR({ onNavigate }) {
         </div>
       </section>
 
-      {/* CTA finale */}
-      <section style={{
-        background: `linear-gradient(135deg, ${NAVY} 0%, #2E6DB4 100%)`,
-        color: '#fff',
-        padding: '56px 24px',
-        textAlign: 'center',
-      }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <h2 style={{
-            fontFamily: "'Oswald', sans-serif",
-            fontSize: 'clamp(24px, 4vw, 32px)',
-            marginBottom: '16px',
-          }}>
-            Porta ELAB nella tua scuola
-          </h2>
-          <p style={{ fontSize: '17px', opacity: 0.9, marginBottom: '28px', lineHeight: 1.6 }}>
-            Fondi PNRR residui o budget scolastico ordinario: ti guidiamo
-            nella procedura MePA e nella documentazione necessaria.
-          </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a
-              href="mailto:info@elabtutor.school?subject=Preventivo%20ELAB%20Tutor%20PNRR"
-              style={btnPrimary}
-            >
-              Richiedi Preventivo
-            </a>
-            <button
-              onClick={() => onNavigate('showcase')}
-              style={btnOutline}
-            >
-              Torna alla Home
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* Form contatto — Richiedi Preventivo MePA */}
+      <ContactForm onNavigate={onNavigate} />
 
-      {/* Footer */}
+      {/* Footer — Omaric branding */}
       <footer style={{
-        padding: '24px',
+        padding: '32px 24px',
         textAlign: 'center',
         fontSize: '14px',
         color: TEXT_SECONDARY,
         borderTop: `1px solid ${BORDER}`,
         background: '#fff',
       }}>
-        <p style={{ margin: '0 0 8px' }}>
+        <p style={{ margin: '0 0 6px', fontWeight: 600, color: TEXT }}>
+          Omaric Elettronica — Strambino (TO) — Filiera Arduino Italiana
+        </p>
+        <p style={{ margin: '0 0 12px' }}>
           © 2026 Andrea Marro — ELAB Tutor. Tutti i diritti riservati.
         </p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -501,5 +593,138 @@ export default function LandingPNRR({ onNavigate }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+/** G39: Contact form — sends to webhook or falls back to mailto */
+function ContactForm({ onNavigate }) {
+  const [form, setForm] = useState({ nome: '', scuola: '', email: '', messaggio: '' });
+  const [status, setStatus] = useState(null); // null | 'sending' | 'sent' | 'error'
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.nome.trim() || !form.email.trim()) return;
+
+    if (WEBHOOK_URL) {
+      setStatus('sending');
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...form, source: 'landing-scuole', timestamp: new Date().toISOString() }),
+        });
+        setStatus(res.ok ? 'sent' : 'error');
+      } catch {
+        setStatus('error');
+      }
+    } else {
+      // Mailto fallback
+      const subject = encodeURIComponent(`Preventivo ELAB Tutor — ${form.scuola || 'Scuola'}`);
+      const body = encodeURIComponent(
+        `Nome: ${form.nome}\nScuola: ${form.scuola}\nEmail: ${form.email}\n\n${form.messaggio}`
+      );
+      window.open(`mailto:info@elabtutor.school?subject=${subject}&body=${body}`, '_self');
+      setStatus('sent');
+    }
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    fontSize: '16px',
+    border: '2px solid rgba(255,255,255,0.2)',
+    borderRadius: '8px',
+    background: 'rgba(255,255,255,0.1)',
+    color: '#fff',
+    fontFamily: "'Open Sans', sans-serif",
+    minHeight: '48px',
+    outline: 'none',
+    boxSizing: 'border-box',
+  };
+
+  return (
+    <section style={{
+      background: `linear-gradient(135deg, ${NAVY} 0%, #2E6DB4 100%)`,
+      color: '#fff',
+      padding: '56px 24px',
+    }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+        <h2 style={{
+          fontFamily: "'Oswald', sans-serif",
+          fontSize: 'clamp(24px, 4vw, 32px)',
+          marginBottom: '8px',
+          textAlign: 'center',
+        }}>
+          Richiedi Preventivo MePA
+        </h2>
+        <p style={{ fontSize: '16px', opacity: 0.85, marginBottom: '28px', lineHeight: 1.5, textAlign: 'center' }}>
+          Compila il form e ti ricontattiamo entro 24 ore con un preventivo personalizzato.
+        </p>
+
+        {status === 'sent' ? (
+          <div style={{ textAlign: 'center', padding: '32px 0' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>OK</div>
+            <p style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>Richiesta inviata!</p>
+            <p style={{ opacity: 0.85 }}>Ti ricontattiamo entro 24 ore.</p>
+            <button onClick={() => onNavigate('showcase')} style={{ ...btnOutline, marginTop: '20px' }}>
+              Torna alla Home
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <input
+                type="text"
+                placeholder="Nome e cognome *"
+                required
+                value={form.nome}
+                onChange={(e) => setForm(f => ({ ...f, nome: e.target.value }))}
+                style={inputStyle}
+              />
+              <input
+                type="text"
+                placeholder="Nome scuola"
+                value={form.scuola}
+                onChange={(e) => setForm(f => ({ ...f, scuola: e.target.value }))}
+                style={inputStyle}
+              />
+            </div>
+            <input
+              type="email"
+              placeholder="Email istituzionale *"
+              required
+              value={form.email}
+              onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
+              style={inputStyle}
+            />
+            <textarea
+              placeholder="Messaggio (opzionale) — es. numero classi, budget disponibile"
+              value={form.messaggio}
+              onChange={(e) => setForm(f => ({ ...f, messaggio: e.target.value }))}
+              rows={3}
+              style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }}
+            />
+            <button
+              type="submit"
+              disabled={status === 'sending'}
+              style={{
+                ...btnPrimary,
+                opacity: status === 'sending' ? 0.7 : 1,
+                width: '100%',
+                fontSize: '18px',
+              }}
+            >
+              {status === 'sending' ? 'Invio in corso...' : 'Invia Richiesta'}
+            </button>
+            {status === 'error' && (
+              <p style={{ color: '#FFCDD2', fontSize: '14px', textAlign: 'center', margin: 0 }}>
+                Errore nell'invio. Scrivi direttamente a{' '}
+                <a href="mailto:info@elabtutor.school" style={{ color: '#fff' }}>info@elabtutor.school</a>
+              </p>
+            )}
+          </form>
+        )}
+      </div>
+    </section>
   );
 }

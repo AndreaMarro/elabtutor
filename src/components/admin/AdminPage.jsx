@@ -73,11 +73,28 @@ const TABS = [
     { id: 'gestionale',  label: 'Gestionale',   icon: <IconGestionale />, color: '#0F172A' },
 ];
 
+// Admin password hash (SHA-256 of the real password, computed at build time)
+// To change: echo -n "your_password" | shasum -a 256
+const ADMIN_PWD_HASH = 'a5e8cdee037af3d0c6421f6bf766d840d38fed0c23ec56f24ffb56cc75616140';
+
+async function hashPassword(pwd) {
+    const enc = new TextEncoder().encode(pwd);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export default function AdminPage({ onNavigate }) {
     const { user, isAdmin } = useAuth();
     const isMobile = useIsMobile();
     const [tab, setTab] = useState('dashboard');
     const [connectionStatus, setConnectionStatus] = useState(null);
+
+    // Admin auth gate — password-based if not already admin via auth system
+    const [adminUnlocked, setAdminUnlocked] = useState(false);
+    const [pwdInput, setPwdInput] = useState('');
+    const [pwdError, setPwdError] = useState(false);
+
+    const effectiveAdmin = isAdmin || adminUnlocked;
 
     // Licenze state (kept local — already working via backend)
     const [licenseCode, setLicenseCode] = useState('');
@@ -87,18 +104,42 @@ export default function AdminPage({ onNavigate }) {
 
     // Check connection on mount
     useEffect(() => {
-        if (!isAdmin) return;
+        if (!effectiveAdmin) return;
         testConnection().then(setConnectionStatus).catch(() => setConnectionStatus({ connected: false }));
         try { setLicenseHistory(JSON.parse(localStorage.getItem('elab_license_history') || '[]')); } catch {}
-    }, [isAdmin]);
+    }, [effectiveAdmin]);
 
-    if (!isAdmin) {
+    const handleAdminLogin = async (e) => {
+        e?.preventDefault();
+        const hash = await hashPassword(pwdInput);
+        if (hash === ADMIN_PWD_HASH) {
+            setAdminUnlocked(true);
+            setPwdError(false);
+        } else {
+            setPwdError(true);
+            setPwdInput('');
+        }
+    };
+
+    if (!effectiveAdmin) {
         return (
             <div style={S.denied}>
-                <div style={{ fontSize: '48px', marginBottom: '16px', color: '#EF4444', fontWeight: 700 }}>{'\u26D4'}</div>
-                <h2 style={{ color: '#EF4444', margin: '0 0 8px' }}>Accesso Negato</h2>
-                <p style={{ color: '#666', margin: '0 0 20px' }}>Solo gli amministratori possono accedere a questa pagina.</p>
-                <button onClick={() => onNavigate('tutor')} style={S.primaryBtn}>Torna al Tutor</button>
+                <h2 style={{ color: '#1E4D8C', margin: '0 0 16px' }}>Accesso Admin</h2>
+                <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                    <input
+                        type="password"
+                        value={pwdInput}
+                        onChange={e => { setPwdInput(e.target.value); setPwdError(false); }}
+                        placeholder="Password admin"
+                        autoFocus
+                        style={{ padding: '10px 16px', borderRadius: '8px', border: pwdError ? '2px solid #EF4444' : '1px solid #ccc', fontSize: '15px', width: '240px' }}
+                    />
+                    {pwdError && <p style={{ color: '#EF4444', margin: 0, fontSize: '14px' }}>Password errata</p>}
+                    <button type="submit" style={S.primaryBtn}>Accedi</button>
+                </form>
+                <button onClick={() => onNavigate('tutor')} style={{ ...S.primaryBtn, background: 'transparent', color: '#666', marginTop: '12px' }}>
+                    {'\u2190'} Torna alla home
+                </button>
             </div>
         );
     }
@@ -131,8 +172,8 @@ export default function AdminPage({ onNavigate }) {
     };
 
     const tabFallback = (
-        <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-            <div style={{ fontSize: '24px', marginBottom: '8px', color: '#999' }}>...</div>
+        <div style={{ padding: '40px', textAlign: 'center', color: '#737373' }}>
+            <div style={{ fontSize: '24px', marginBottom: '8px', color: '#737373' }}>...</div>
             <div style={{ fontSize: '14px' }}>Caricamento...</div>
         </div>
     );
@@ -231,7 +272,7 @@ export default function AdminPage({ onNavigate }) {
                         <div style={{ marginTop: '12px' }}>
                             <b>Stato Backend Admin:</b>{' '}
                             {connectionStatus === null ? (
-                                <span style={{ color: '#999' }}>Verificando...</span>
+                                <span style={{ color: '#737373' }}>Verificando...</span>
                             ) : connectionStatus.connected ? (
                                 <span style={{ color: '#16a34a', fontWeight: '600' }}>Connesso</span>
                             ) : (
@@ -275,7 +316,7 @@ export default function AdminPage({ onNavigate }) {
                                     </span>
                                 </span>
                                 <span style={{ flex: 1, fontSize: '14px', color: '#666' }}>{h.result?.school || '—'}</span>
-                                <span style={{ flex: 1, fontSize: '14px', color: '#999' }}>{new Date(h.timestamp).toLocaleString('it-IT')}</span>
+                                <span style={{ flex: 1, fontSize: '14px', color: '#737373' }}>{new Date(h.timestamp).toLocaleString('it-IT')}</span>
                             </div>
                         ))}
                     </div>
@@ -457,7 +498,7 @@ export default function AdminPage({ onNavigate }) {
                         <h1 style={{ margin: 0, fontSize: '22px', color: '#1E4D8C', fontWeight: '800' }}>
                             {TABS.find(t => t.id === tab)?.icon} {TABS.find(t => t.id === tab)?.label}
                         </h1>
-                        <p style={{ margin: '2px 0 0', fontSize: '14px', color: '#999' }}>
+                        <p style={{ margin: '2px 0 0', fontSize: '14px', color: '#737373' }}>
                             {tab === 'dashboard' && 'Panoramica KPI e statistiche real-time'}
                             {tab === 'utenti' && 'Gestione utenti registrati — Notion Database'}
                             {tab === 'ordini' && 'Ordini e transazioni — Notion'}
@@ -514,7 +555,7 @@ const S = {
     tableHeader: {
         display: 'flex', padding: '10px 16px', background: '#f8f9fa',
         borderBottom: '2px solid #e8e8e8', fontSize: '14px',
-        fontWeight: '700', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px',
+        fontWeight: '700', color: '#737373', textTransform: 'uppercase', letterSpacing: '0.5px',
     },
     tableRow: {
         display: 'flex', padding: '10px 16px',

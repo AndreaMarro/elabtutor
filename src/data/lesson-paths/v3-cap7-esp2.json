@@ -1,0 +1,96 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-04",
+    "source": "PDR auto-generated from experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap7-esp2",
+  "volume": 3,
+  "chapter": 7,
+  "title": "Pulsante spegne LED",
+  "chapter_title": "I pin di input",
+  "difficulty": 1,
+  "duration_minutes": 40,
+  "target_age": "10-14 anni",
+  "objective": "Capire come un pulsante puo spegnere un LED normalmente acceso. Il LED parte acceso e si spegne solo quando teniamo premuto il pulsante. Introduciamo digitalRead e la logica invertita: premere = LOW.",
+  "components_needed": [
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
+    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
+    { "name": "LED rosso", "quantity": 1, "icon": "led" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
+    { "name": "Fili di collegamento", "quantity": 5, "icon": "wire" }
+  ],
+  "vocabulary": {
+    "allowed": ["Arduino", "pin", "INPUT_PULLUP", "pulsante", "digitalRead", "LED", "resistore", "breadboard", "codice", "programma", "GND", "HIGH", "LOW", "OUTPUT"],
+    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico"],
+    "note": "Cap 7 Vol 3 — primo esperimento con pulsante, digitalRead, logica invertita."
+  },
+  "prerequisites": ["v3-cap6-esp6"],
+  "next_experiment": {
+    "id": "v3-cap7-esp3",
+    "title": "Pulsante con INPUT_PULLUP",
+    "preview": "Nel prossimo esperimento scopriamo la resistenza interna di Arduino: INPUT_PULLUP! Non servira piu un resistore esterno per il pulsante."
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 5,
+      "teacher_message": "Finora Arduino ha solo comandato i LED: acceso o spento. Oggi facciamo il contrario! Il LED parte acceso e si spegne quando premiamo un pulsante. Arduino impara ad ASCOLTARE il mondo esterno.",
+      "teacher_tip": "Inizia chiedendo alla classe: chi ha mai usato un pulsante per spegnere qualcosa? Il telecomando della TV, il campanello di casa. Ogni volta che premi, mandi un segnale. Oggi Arduino riceve quel segnale.",
+      "class_hook": "Immaginate un campanello: quando lo premete, suona. Quando lo lasciate, smette. Oggi il nostro pulsante fa il contrario: quando lo premete, il LED si spegne!",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito ha due parti: il LED su un pin OUTPUT e il pulsante su un pin INPUT. Quando il pulsante non e premuto, digitalRead legge HIGH e il LED resta acceso. Quando lo premiamo, legge LOW e il LED si spegne.",
+      "teacher_tip": "Spiega il concetto di INPUT vs OUTPUT con un paragone semplice: OUTPUT e come parlare (Arduino comanda), INPUT e come ascoltare (Arduino riceve). Fino ad ora abbiamo solo parlato, oggi impariamo ad ascoltare.",
+      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp2]"],
+      "auto_action": "load_experiment"
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "Il LED e acceso. Il pulsante e collegato. Cosa pensate che succeda quando lo premiamo? E perche quando rilasciamo il pulsante, il LED torna ad accendersi? Arduino ha memoria di cosa e successo?",
+      "teacher_tip": "Guida la riflessione: Arduino non ricorda nulla tra un ciclo e l'altro del loop. Ogni volta legge il pulsante e decide. Se il pulsante e premuto, spegne il LED. Se non e premuto, lo accende. Non c'e memoria, solo lettura istantanea.",
+      "provocative_question": "Se il loop di Arduino gira migliaia di volte al secondo, perche non vediamo il LED che lampeggia? Come fa Arduino a sembrare cosi veloce?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 10,
+      "teacher_message": "Premi Play! Il LED rosso si accende. Ora cliccate sul pulsante nel simulatore e tenetelo premuto: il LED si spegne. Rilasciate: torna acceso. E un comportamento momentaneo, non un toggle.",
+      "teacher_tip": "Fai notare la differenza con un interruttore di casa: quello resta nella posizione in cui lo metti. Il pulsante invece torna su da solo quando lo lasci. Chiedi: servirebbe una variabile per farlo restare spento?",
+      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:led1]", "[AZIONE:highlight:btn1]"],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "LED acceso normalmente. Premi il pulsante: si spegne. Rilascia: torna acceso. Il comportamento e immediato perche il loop legge il pulsante migliaia di volte al secondo."
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "Avete costruito il primo circuito interattivo! Arduino ora sa ascoltare un pulsante con digitalRead. INPUT e OUTPUT sono le due direzioni della comunicazione tra Arduino e il mondo.",
+      "teacher_tip": "Recap: pinMode(pin, INPUT) configura un pin per ascoltare. digitalRead(pin) legge il valore: HIGH o LOW. Il pulsante e momentaneo: funziona solo mentre lo tieni premuto. Per un toggle serve una variabile, che vedremo presto.",
+      "summary_for_class": "Arduino puo sia comandare (OUTPUT) che ascoltare (INPUT). Con digitalRead leggiamo il pulsante: HIGH quando rilasciato, LOW quando premuto. Il LED si spegne solo finche teniamo premuto. Per farlo restare spento servira una variabile di stato!",
+      "concepts_learned": [
+        "digitalRead() per leggere un pin",
+        "pin INPUT vs OUTPUT",
+        "pulsante momentaneo",
+        "logica HIGH/LOW"
+      ],
+      "next_preview": "Nel prossimo esperimento scopriamo INPUT_PULLUP: una resistenza nascosta dentro Arduino che semplifica il circuito del pulsante!"
+    }
+  ],
+  "session_save": {
+    "concepts_covered": ["digitalRead", "pin_INPUT", "pulsante_momentaneo", "HIGH_LOW"],
+    "next_suggested": "v3-cap7-esp3",
+    "resume_message": "Avete imparato a leggere un pulsante con digitalRead! Prossimo: INPUT_PULLUP e la resistenza interna."
+  }
+}

@@ -176,7 +176,7 @@ export default function Navbar({ currentPage, onNavigate }) {
                         {/* User section */}
                         {user ? (
                             <div style={styles.mobileUserSection}>
-                                <div style={styles.mobileUserRow} onClick={() => handleNavigate('profile')}>
+                                <div style={styles.mobileUserRow} role="button" tabIndex={0} onClick={() => handleNavigate('profile')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavigate('profile'); } }} aria-label="Profilo utente">
                                     <div style={styles.avatar}>
                                         {user.avatar ? (
                                             <img src={user.avatar} alt="" style={styles.avatarImg} />
@@ -274,7 +274,7 @@ export default function Navbar({ currentPage, onNavigate }) {
             <div style={styles.right}>
                 {user ? (
                     <div style={styles.userArea}>
-                        <div style={styles.avatar} onClick={() => onNavigate('profile')}>
+                        <div style={styles.avatar} role="button" tabIndex={0} onClick={() => onNavigate('profile')} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('profile'); } }} aria-label="Profilo utente">
                             {user.avatar ? (
                                 <img src={user.avatar} alt="" style={styles.avatarImg} />
                             ) : (

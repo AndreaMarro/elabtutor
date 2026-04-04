@@ -11,13 +11,14 @@ import React from 'react';
  * Supporta: **bold**, *italic*, `code`, ```codeblock```, newline, liste.
  * Escapa TUTTI i tag HTML.
  */
-export default function SafeMarkdown({ text, className = '' }) {
+export default function SafeMarkdown({ text, className = '', stripActions = false }) {
   if (!text) return null;
 
-  const elements = parseMarkdown(text);
+  const cleanText = stripActions ? text.replace(/\[AZIONE:[^\]]+\]/gi, '') : text;
+  const elements = parseMarkdown(cleanText);
 
   return (
-    <div className={`safe-markdown ${className}`} style={{ fontSize: '0.88rem', color: 'var(--color-text-body)', lineHeight: 1.6 }}>
+    <div className={`safe-markdown ${className}`} style={{ fontSize: '0.88rem', color: 'var(--color-text-body, #1A1A2E)', lineHeight: 1.6 }}>
       {elements}
     </div>
   );
@@ -48,7 +49,7 @@ function parseMarkdown(text) {
     if (part.type === 'codeblock') {
       return (
         <pre key={i} style={{
-          background: 'var(--color-code-bg)', color: 'var(--color-code-text)', padding: 12,
+          background: 'var(--color-code-bg, #1E1E2E)', color: 'var(--color-code-text, #CDD6F4)', padding: 12,
           borderRadius: 8, overflowX: 'auto', fontSize: '0.875rem',
           margin: '8px 0', fontFamily: "'Fira Code', 'Consolas', monospace",
           lineHeight: 1.5
@@ -99,26 +100,22 @@ function parseInlineMarkdown(text) {
 
 function parseInlineFormatting(text, lineKey = 0) {
   const parts = [];
-  // Match bold, italic, inline code
-  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`([^`]+)`)/g;
+  // Match bold, italic, inline code, markdown links [text](url), raw URLs
+  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<)"]+))/g;
   let lastIndex = 0;
   let match;
   let idx = 0;
 
   while ((match = regex.exec(text)) !== null) {
-    // Plain text before match
     if (match.index > lastIndex) {
       parts.push(escapeHtml(text.slice(lastIndex, match.index)));
     }
 
     if (match[2]) {
-      // Bold
       parts.push(<strong key={`b-${lineKey}-${idx}`}>{escapeHtml(match[2])}</strong>);
     } else if (match[3]) {
-      // Italic
       parts.push(<em key={`i-${lineKey}-${idx}`}>{escapeHtml(match[3])}</em>);
     } else if (match[4]) {
-      // Inline code
       parts.push(
         <code key={`c-${lineKey}-${idx}`} style={{
           background: 'rgba(0,0,0,0.06)', padding: '2px 6px', borderRadius: 4,
@@ -127,13 +124,26 @@ function parseInlineFormatting(text, lineKey = 0) {
           {escapeHtml(match[4])}
         </code>
       );
+    } else if (match[5] && match[6]) {
+      parts.push(
+        <a key={`a-${lineKey}-${idx}`} href={match[6]} target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>
+          {escapeHtml(match[5])}
+        </a>
+      );
+    } else if (match[7]) {
+      parts.push(
+        <a key={`u-${lineKey}-${idx}`} href={match[7]} target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>
+          {escapeHtml(match[7])}
+        </a>
+      );
     }
 
     lastIndex = match.index + match[0].length;
     idx++;
   }
 
-  // Remaining text
   if (lastIndex < text.length) {
     parts.push(escapeHtml(text.slice(lastIndex)));
   }

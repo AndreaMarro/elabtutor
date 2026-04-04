@@ -5,6 +5,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
+import { isSupabaseConfigured } from '../services/supabaseClient';
+import * as supabaseAuth from '../services/supabaseAuth';
 import logger from '../utils/logger';
 
 const AuthContext = createContext(null);
@@ -15,24 +17,30 @@ export function AuthProvider({ children }) {
     const [licenseExpired, setLicenseExpired] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Al mount: verifica token in sessionStorage → chiedi profilo al server
+    // Al mount: verifica sessione (Supabase → legacy token → DEV mock)
     useEffect(() => {
         let cancelled = false;
 
         async function initAuth() {
-            if (!authService.isAuthenticated()) {
-                // DEV bypass: su localhost senza token, usa mock user per testing
-                if (import.meta.env.DEV && !cancelled) {
-                    logger.warn('[AuthContext] DEV mode — mock user attivo');
-                    setUser({
-                        id: 'dev-mock-001', email: 'dev@localhost',
-                        username: 'dev.test', name: 'Dev', surname: 'Tester',
-                        ruolo: 'admin', userType: 'family',
-                        kits: ['Volume 1', 'Volume 2', 'Volume 3'],
-                        premium: true, points: 999, level: 99
-                    });
-                    setHasLicense(true);
+            // ── Supabase path: se configurato, controlla sessione Supabase ──
+            if (isSupabaseConfigured()) {
+                try {
+                    const supaUser = await supabaseAuth.getCurrentUser();
+                    if (!cancelled && supaUser) {
+                        setUser(supaUser);
+                        setHasLicense(true);
+                        setLoading(false);
+                        return;
+                    }
+                } catch (e) {
+                    logger.warn('[AuthContext] Supabase session check failed:', e);
                 }
+                // Supabase configurato ma nessuna sessione → continua con legacy
+            }
+
+            // ── Legacy path: token in sessionStorage → profilo dal server ──
+            if (!authService.isAuthenticated()) {
+                // No token = no user. Admin requires real login.
                 setLoading(false);
                 return;
             }
@@ -44,25 +52,21 @@ export function AuthProvider({ children }) {
                     setHasLicense(profile.hasLicense);
                     setLicenseExpired(profile.licenseExpired || false);
 
-                    // Timer per notifica scadenza token
                     authService.startAutoRefresh(() => {
-                        // Token sta per scadere → forza logout
                         setUser(null);
                         setHasLicense(false);
                         setLicenseExpired(false);
                     });
                 }
             } catch {
-                // Token invalido o server non raggiungibile
-                // DEV fallback: se il server non risponde in dev, usa mock
                 if (import.meta.env.DEV && !cancelled) {
-                    logger.warn('[AuthContext] DEV mode — server unreachable, mock user attivo');
+                    logger.warn('[AuthContext] DEV mode — server unreachable, mock user attivo (solo localhost)');
                     setUser({
                         id: 'dev-mock-001', email: 'dev@localhost',
                         username: 'dev.test', name: 'Dev', surname: 'Tester',
-                        ruolo: 'admin', userType: 'family',
+                        ruolo: 'docente', userType: 'family',
                         kits: ['Volume 1', 'Volume 2', 'Volume 3'],
-                        premium: true, points: 999, level: 99
+                        premium: true, points: 0, level: 1
                     });
                     setHasLicense(true);
                 }
@@ -72,18 +76,45 @@ export function AuthProvider({ children }) {
         }
 
         initAuth();
-        return () => { cancelled = true; authService.stopAutoRefresh(); };
+
+        // Supabase auth state listener
+        let unsubscribe;
+        if (isSupabaseConfigured()) {
+            const { data } = supabaseAuth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' && session?.user) {
+                    const mapped = supabaseAuth.getCurrentUser().then(u => { if (u) { setUser(u); setHasLicense(true); } });
+                } else if (event === 'SIGNED_OUT') {
+                    setUser(null);
+                    setHasLicense(false);
+                }
+            });
+            unsubscribe = data?.subscription?.unsubscribe;
+        }
+
+        return () => { cancelled = true; authService.stopAutoRefresh(); unsubscribe?.(); };
     }, []);
 
     // Andrea Marro — 18/02/2026
 
     const login = useCallback(async (emailOrUsername, password) => {
+        // Supabase login se configurato
+        if (isSupabaseConfigured()) {
+            const sbResult = await supabaseAuth.signIn(emailOrUsername, password);
+            if (sbResult.success) {
+                setUser(sbResult.user);
+                setHasLicense(true);
+                setLicenseExpired(false);
+                return sbResult;
+            }
+            // Se Supabase fallisce con errore non di rete, ritorna errore
+            if (!sbResult.error?.includes('non configurato')) return sbResult;
+        }
+        // Fallback a legacy auth
         const result = await authService.login(emailOrUsername, password);
         if (result.success) {
             setUser(result.user);
             setHasLicense(result.hasLicense || false);
-            setLicenseExpired(false); // Fresh login → not expired
-
+            setLicenseExpired(false);
             authService.startAutoRefresh(() => {
                 setUser(null);
                 setHasLicense(false);
@@ -94,11 +125,29 @@ export function AuthProvider({ children }) {
     }, []);
 
     const register = useCallback(async (data) => {
+        // Supabase register se configurato
+        if (isSupabaseConfigured()) {
+            const sbResult = await supabaseAuth.signUp({
+                email: data.email,
+                password: data.password,
+                nome: data.name || data.nome || data.username,
+                cognome: data.surname || data.cognome || '',
+                ruolo: data.ruolo || data.role || 'studente',
+                scuola: data.scuola || data.school || '',
+                citta: data.citta || data.city || '',
+            });
+            if (sbResult.success) {
+                setUser(sbResult.user);
+                setHasLicense(false);
+                return sbResult;
+            }
+            if (!sbResult.error?.includes('non configurato')) return sbResult;
+        }
+        // Fallback a legacy auth
         const result = await authService.register(data);
         if (result.success) {
             setUser(result.user);
-            setHasLicense(false); // Nuovi utenti non hanno licenza
-
+            setHasLicense(false);
             authService.startAutoRefresh(() => {
                 setUser(null);
                 setHasLicense(false);
@@ -109,11 +158,11 @@ export function AuthProvider({ children }) {
 
     const logout = useCallback(async () => {
         authService.stopAutoRefresh();
+        if (isSupabaseConfigured()) await supabaseAuth.signOut();
         await authService.logout();
         setUser(null);
         setHasLicense(false);
         setLicenseExpired(false);
-        // Always redirect to login after logout (fix: teacher/admin pages staying on protected routes)
         window.history.replaceState(null, '', '#login');
     }, []);
 
@@ -150,8 +199,8 @@ export function AuthProvider({ children }) {
             licenseExpired,
             isAuthenticated: !!user,
             isAdmin: user?.ruolo === 'admin',
-            isDocente: user?.ruolo === 'teacher',
-            isStudente: user?.ruolo === 'student',
+            isDocente: user?.ruolo === 'docente' || user?.ruolo === 'teacher',
+            isStudente: user?.ruolo === 'studente' || user?.ruolo === 'student',
             login,
             register,
             logout,

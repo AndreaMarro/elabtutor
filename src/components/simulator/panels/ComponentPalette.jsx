@@ -114,6 +114,7 @@ const ComponentPalette = ({
     <div
       className={className}
       style={{ ...S.panel, ...style }}
+      data-elab-palette="true"
     >
       {/* Compact header */}
       <div style={S.header}>
@@ -202,7 +203,7 @@ const S = {
   headerCount: {
     fontSize: 14,
     fontWeight: 600,
-    color: 'var(--color-sim-text-muted, #999)',
+    color: 'var(--color-sim-text-muted, #737373)',
     background: 'var(--color-border-light, #F0F0F0)',
     borderRadius: 10,
     padding: '2px 7px',

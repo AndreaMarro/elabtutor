@@ -1,6 +1,8 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import css from './FloatingWindow.module.css';
 
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 let zCounter = 100;
 
 const STORAGE_PREFIX = 'elab-fw-';
@@ -41,11 +43,19 @@ export default function FloatingWindow({
   const resizeState = useRef(null);
 
   const saved = loadPosition(id, { ...defaultPosition, ...defaultSize });
-  const [pos, setPos] = useState({ x: saved.x ?? defaultPosition.x, y: saved.y ?? defaultPosition.y });
-  const [size, setSize] = useState({ w: saved.w ?? defaultSize.w, h: saved.h ?? defaultSize.h });
+  // Clamp saved values to viewport to prevent panels covering entire screen
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1920;
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 1080;
+  const clampedW = Math.min(saved.w ?? defaultSize.w, vw - 40);
+  const clampedH = Math.min(saved.h ?? defaultSize.h, vh - 80);
+  const clampedX = Math.max(0, Math.min(saved.x ?? defaultPosition.x, vw - 100));
+  const clampedY = Math.max(0, Math.min(saved.y ?? defaultPosition.y, vh - 100));
+  const [pos, setPos] = useState({ x: clampedX, y: clampedY });
+  const [size, setSize] = useState({ w: clampedW, h: clampedH });
   const [zIndex, setZIndex] = useState(() => ++zCounter);
 
   const bringToFront = useCallback(() => {
+    if (zCounter > 5000) zCounter = 100;
     setZIndex(++zCounter);
     onFocus?.();
   }, [onFocus]);
@@ -56,6 +66,40 @@ export default function FloatingWindow({
       savePosition(id, { x: pos.x, y: pos.y, w: size.w, h: size.h });
     }
   }, [id, pos, size, maximized]);
+
+  // Cleanup drag/resize listeners on unmount (prevents memory leaks)
+  useEffect(() => {
+    return () => {
+      dragState.current = null;
+      resizeState.current = null;
+    };
+  }, []);
+
+  // Focus trap — Tab cycles within the floating window (WCAG 2.4.3)
+  useEffect(() => {
+    const win = winRef.current;
+    if (!win) return;
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = win.querySelectorAll(FOCUSABLE_SELECTOR);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    win.addEventListener('keydown', handleKeyDown);
+    return () => win.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // --- DRAG ---
   const handleDragStart = useCallback((e) => {
@@ -71,8 +115,8 @@ export default function FloatingWindow({
       const cx = ev.clientX ?? ev.touches?.[0]?.clientX ?? 0;
       const cy = ev.clientY ?? ev.touches?.[0]?.clientY ?? 0;
       setPos({
-        x: Math.max(0, Math.min(window.innerWidth - 100, cx - dragState.current.startX)),
-        y: Math.max(0, Math.min(window.innerHeight - 48, cy - dragState.current.startY)),
+        x: Math.max(0, Math.min(window.innerWidth - 280, cx - dragState.current.startX)),
+        y: Math.max(0, Math.min(window.innerHeight - 100, cy - dragState.current.startY)),
       });
     };
     const handleUp = () => {
@@ -135,12 +179,13 @@ export default function FloatingWindow({
       className={classNames}
       style={windowStyle}
       role="dialog"
+      aria-modal="true"
       aria-label={title}
       onPointerDown={bringToFront}
     >
       {/* Title bar — drag handle */}
       <div className={css.titleBar} onPointerDown={handleDragStart}>
-        <span className={css.titleText}>{title}</span>
+        <span className={css.titleText} title={title}>{title}</span>
         {onMinimize && (
           <button
             className={css.btn}

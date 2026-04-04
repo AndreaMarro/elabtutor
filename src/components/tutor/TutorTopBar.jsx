@@ -1,13 +1,16 @@
 // ============================================
 // ELAB Tutor - Top Bar Component
-// Part of the TutorLayout redesign
-// © Andrea Marro — 13/02/2026
+// G22: Volume Sections — shows active volume + [Cambia]
+// © Andrea Marro — 13/02/2026, G22 29/03/2026
 // ============================================
 
 import React from 'react';
+import { VOLUMES } from '../../data/experiments-index';
 
 export default function TutorTopBar({
     selectedVolume,
+    activeVolume,
+    onChangeVolume,
     onToggleSidebar,
     sidebarCollapsed,
     onToggleChat,
@@ -17,9 +20,21 @@ export default function TutorTopBar({
     onExportSession,
     sessionLogLength,
 }) {
-    const volumeLabels = { 1: 'Vol.1', 2: 'Vol.2', 3: 'Vol.3' };
     // WCAG AA: sfondo badge con testo bianco ≥ 4.5:1 contrasto
-    const volumeColors = { 1: '#4A7A25', 2: '#C47A0A', 3: '#C43A2D' };
+    const volumeColors = { 1: '#4A7A25', 2: '#C47A0A', 3: '#C43A2D', inventor: '#1E4D8C' };
+
+    // Build volume label with experiment count
+    const getVolumeInfo = () => {
+        if (!activeVolume) return null;
+        if (activeVolume === 'inventor') {
+            return { label: 'Inventore', count: null, color: volumeColors.inventor };
+        }
+        const vol = VOLUMES[activeVolume - 1];
+        const count = vol?.experiments?.length || 0;
+        return { label: `Volume ${activeVolume}`, count, color: volumeColors[activeVolume] || '#1E4D8C' };
+    };
+
+    const volInfo = getVolumeInfo();
 
     return (
         <header className="tutor-topbar">
@@ -47,15 +62,41 @@ export default function TutorTopBar({
             </div>
 
             <div className="topbar-center">
-                {selectedVolume && (
-                    <div
-                        className="topbar-volume-badge"
-                        style={{ background: volumeColors[selectedVolume] || '#1E4D8C' }}
-                    >
-                        {volumeLabels[selectedVolume] || `Vol.${selectedVolume}`}
+                {volInfo && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                            className="topbar-volume-badge"
+                            style={{ background: volInfo.color }}
+                        >
+                            {volInfo.label}
+                            {volInfo.count != null && (
+                                <span style={{ fontWeight: 400, marginLeft: '6px', opacity: 0.9 }}>
+                                    — {volInfo.count} esp.
+                                </span>
+                            )}
+                        </div>
+                        {onChangeVolume && (
+                            <button
+                                onClick={onChangeVolume}
+                                style={{
+                                    background: 'rgba(255,255,255,0.1)',
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    borderRadius: '8px',
+                                    padding: '6px 12px',
+                                    fontSize: '14px',
+                                    color: 'rgba(255,255,255,0.8)',
+                                    cursor: 'pointer',
+                                    fontFamily: 'var(--font-sans, system-ui)',
+                                    minHeight: '44px',
+                                    whiteSpace: 'nowrap',
+                                }}
+                                title="Cambia volume"
+                            >
+                                Cambia
+                            </button>
+                        )}
                     </div>
                 )}
-
             </div>
 
             <div className="topbar-right">
@@ -73,7 +114,7 @@ export default function TutorTopBar({
                 <button
                     className={`topbar-btn ${showChat ? 'active' : ''}`}
                     onClick={onToggleChat}
-                    title={showChat ? 'Nascondi Chat UNLIM (Ctrl+K)' : 'Mostra Chat UNLIM (Ctrl+K)'}
+                    title={showChat ? 'Nascondi Chat Galileo (Ctrl+K)' : 'Mostra Chat Galileo (Ctrl+K)'}
                 >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />

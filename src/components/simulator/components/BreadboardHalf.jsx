@@ -218,16 +218,37 @@ const BreadboardHalf = ({ x = 0, y = 0, state = {}, highlighted = false, onInter
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="breadboard-half" role="img"
        aria-label={`Breadboard Half ${id}`}>
-      {/* Board shadow */}
-      <rect x="1.5" y="2" width={BOARD_W} height={BOARD_H} rx="3" fill="#00000012" />
+      <defs>
+        <linearGradient id={`${id}-bbh-surface`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="40%" stopColor="#F5F5F5" />
+          <stop offset="100%" stopColor="#E8E8E8" />
+        </linearGradient>
+        <pattern id={`${id}-bbh-texture`} width="3" height="3" patternUnits="userSpaceOnUse">
+          <rect width="1" height="1" x="0" y="0" fill="#000" opacity="0.02" />
+          <rect width="1" height="1" x="2" y="1" fill="#000" opacity="0.03" />
+          <rect width="1" height="1" x="1" y="2" fill="#000" opacity="0.025" />
+        </pattern>
+        <filter id={`${id}-bbh-shadow`}>
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" />
+          <feOffset dx="1" dy="1.5" />
+          <feComposite in2="SourceAlpha" operator="out" />
+          <feComponentTransfer><feFuncA type="linear" slope="0.1" /></feComponentTransfer>
+          <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
 
-      {/* Board body — clean white (Tinkercad) */}
+      {/* Board body with gradient + texture */}
       <rect x="0" y="0" width={BOARD_W} height={BOARD_H} rx="3"
-        fill={BOARD_BG} stroke={BOARD_EDGE} strokeWidth="0.6" />
+        fill={`url(#${id}-bbh-surface)`} stroke={BOARD_EDGE} strokeWidth="0.6"
+        filter={`url(#${id}-bbh-shadow)`} />
+      <rect x="0" y="0" width={BOARD_W} height={BOARD_H} rx="3"
+        fill={`url(#${id}-bbh-texture)`} />
 
-      {/* Subtle inner highlight */}
-      <rect x="0.7" y="0.7" width={BOARD_W - 1.4} height={BOARD_H - 1.4} rx="2.4"
-        fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.55" />
+      {/* Top edge highlight bevel */}
+      <line x1="4" y1="0.5" x2={BOARD_W - 4} y2="0.5" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.6" />
+      {/* Bottom edge shadow */}
+      <line x1="4" y1={BOARD_H - 0.3} x2={BOARD_W - 4} y2={BOARD_H - 0.3} stroke="#C0C0C0" strokeWidth="0.4" opacity="0.5" />
 
       {/* === TOP POWER BUS === */}
       <BusRow y={Y_BUS_TOP_PLUS} color={BUS_RED} label="top-plus" activeHoles={activeHoles} onHoleClick={onHoleClick} />

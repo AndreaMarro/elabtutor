@@ -200,7 +200,7 @@ const CircuitStatusChip = ({ status }) => {
 
   const config = {
     ok: { icon: '✓', label: 'Circuito OK', bg: 'var(--color-accent-light, #E8F5E9)', color: 'var(--color-success, #2E7D32)', border: 'var(--color-accent, #4A7A25)' },
-    warning: { icon: '⚠', label: `${status.warnings.length} avviso${status.warnings.length > 1 ? 'i' : ''}`, bg: 'var(--color-warning-light, #FFF8E1)', color: 'var(--color-warning-dark, #E65100)', border: 'var(--color-warning, #FFB300)' },
+    warning: { icon: '!', label: `${status.warnings.length} avviso${status.warnings.length > 1 ? 'i' : ''}`, bg: 'var(--color-warning-light, #FFF8E1)', color: 'var(--color-warning-dark, #E65100)', border: 'var(--color-warning, #FFB300)' },
     error: { icon: '✗', label: `${status.errors.length} errore${status.errors.length > 1 ? 'i' : ''}`, bg: 'var(--color-danger-light, #FFEBEE)', color: 'var(--color-danger, #C62828)', border: 'var(--color-vol3, #E54B3D)' },
   };
   const c = config[status.status] || config.ok;
@@ -286,6 +286,9 @@ const ControlBar = ({
   // Session 9: Whiteboard
   showWhiteboard = false,
   onToggleWhiteboard,
+  // UNLIM Onnipotente: Drawing overlay on circuit canvas
+  showDrawingOverlay = false,
+  onToggleDrawingOverlay,
 
   // Session 30: Notes panel
   showNotes = false,
@@ -300,6 +303,8 @@ const ControlBar = ({
   // Session Report
   onGenerateReport,
   isGeneratingReport = false,
+  // Fumetto report (comic)
+  onOpenFumetto,
   // Responsive: sidebar toggle
   showSidebar = true,
   onToggleSidebar,
@@ -525,11 +530,13 @@ const ControlBar = ({
           onToggleBottomPanel && { label: 'Monitor Seriale', checked: showBottomPanel, action: onToggleBottomPanel },
           onExportPng && { label: 'Cattura Immagine', action: onExportPng },
           onGenerateReport && { label: isGeneratingReport ? 'Generazione Report...' : 'Report PDF', action: onGenerateReport, disabled: isGeneratingReport },
+          onOpenFumetto && { label: 'Fumetto della Lezione', action: onOpenFumetto },
           onToggleWhiteboard && { label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard },
+          onToggleDrawingOverlay && { label: 'Penna Circuito', checked: showDrawingOverlay, action: onToggleDrawingOverlay },
 
           /* ── Aiuto ── */
           { type: 'separator', label: 'Aiuto' },
-          experiment && onAskUNLIM && { label: isAskingUNLIM ? 'UNLIM sta pensando...' : 'Chiedi a UNLIM', action: onAskUNLIM, disabled: isAskingUNLIM },
+          experiment && onAskUNLIM && { label: isAskingUNLIM ? 'Galileo sta pensando...' : 'Chiedi a Galileo', action: onAskUNLIM, disabled: isAskingUNLIM },
           onDiagnoseCircuit && { label: 'Controlla Circuito', action: onDiagnoseCircuit },
           onGetHints && { label: 'Suggerimenti', action: onGetHints },
           experimentName && {
@@ -617,14 +624,14 @@ const ControlBar = ({
               className={`toolbar-btn toolbar-btn--unlim ${isAskingUNLIM ? 'toolbar-btn--loading' : ''}`}
               onClick={onAskUNLIM}
               disabled={isAskingUNLIM}
-              title="Chiedi a UNLIM di spiegare questo esperimento"
-              aria-label="Chiedi a UNLIM"
+              title="Chiedi a Galileo di spiegare questo esperimento"
+              aria-label="Chiedi a Galileo"
             >
               <span className="toolbar-btn__icon" aria-hidden="true">
                 {isAskingUNLIM ? <SpinnerIcon /> : <UNLIMIcon />}
               </span>
               <span className="toolbar-btn__label toolbar-btn__label--unlim">
-                {isAskingUNLIM ? 'UNLIM...' : 'UNLIM'}
+                {isAskingUNLIM ? 'Galileo...' : 'Galileo'}
               </span>
             </button>
           </div>

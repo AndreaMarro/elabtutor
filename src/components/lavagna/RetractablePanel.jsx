@@ -27,11 +27,17 @@ export default function RetractablePanel({
   maxSize = 600,
   children,
   className,
+  onSizeChange,
 }) {
   const [size, setSize] = useState(() => loadSize(id, defaultSize));
   const resizeRef = useRef(null);
 
-  useEffect(() => { saveSize(id, size); }, [id, size]);
+  useEffect(() => { saveSize(id, size); onSizeChange?.(size); }, [id, size, onSizeChange]);
+
+  // Cleanup resize refs on unmount (prevents orphaned listeners)
+  useEffect(() => {
+    return () => { resizeRef.current = null; };
+  }, []);
 
   const isHorizontal = direction === 'left' || direction === 'right';
   const sizeStyle = isHorizontal ? { width: size } : { height: size };

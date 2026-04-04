@@ -389,7 +389,7 @@ export default function CanvasTab({
                     <button
                         className="v4-toolbar-btn primary"
                         onClick={askUNLIMAboutCanvas}
-                        title="Chiedi a UNLIM di analizzare il disegno"
+                        title="Chiedi a Galileo di analizzare il disegno"
                         style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
                     >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/><path d="M8 8l2 2 4-4" strokeWidth="1.5"/></svg>
@@ -433,7 +433,7 @@ export default function CanvasTab({
             {slides.length > 0 && (
                 <div className="v4-slide-bar">
                     <span className="v4-slide-count">{slides.length} slide</span>
-                    <button className="v4-present-btn" onClick={() => onSetIsPresentationMode(true)}>▶ Presenta</button>
+                    <button className="v4-present-btn" onClick={() => onSetIsPresentationMode(true)}>Presenta</button>
                 </div>
             )}
 

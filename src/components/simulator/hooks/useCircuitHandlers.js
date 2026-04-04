@@ -9,7 +9,8 @@
  */
 import { useCallback, useEffect, useRef } from 'react';
 import { getAutoWireColor } from '../canvas/WireRenderer';
-import { compileCode as apiCompileCode, sendChat as apiSendChat } from '../../../services/api';
+import { sendChat as apiSendChat } from '../../../services/api';
+import { compileArduinoCode, getLastCompileSource } from '../../../services/compiler';
 import { emitSimulatorEvent } from '../../../services/simulator-api';
 import { pushActivity } from '../../../services/activityBuffer';
 import { sessionMetrics } from '../../../services/sessionMetrics';
@@ -17,11 +18,12 @@ import { sendAnalyticsEvent, EVENTS } from '../api/AnalyticsWebhook';
 import { translateCompilationErrors } from '../utils/errorTranslator';
 import { buildLCDPinMapping, createOnPinChangeHandler } from '../utils/pinComponentMap';
 import { computeAutoPinAssignment, generateComponentId } from '../utils/breadboardSnap';
+import { findBestPositionInExperiment } from '../utils/autoPlacement';
 import { getComponent } from '../components/registry';
 import { exportCanvasPng } from '../utils/exportPng';
 import { collectSessionData, captureCircuit, fetchAISummary } from '../../../services/sessionReportService';
 import { generateSessionReportPDF } from '../../report/SessionReportPDF';
-import { hashCode, getCachedHex, setCachedHex } from '../utils/compileCache';
+// compileCache now handled internally by compiler service
 import logger from '../../../utils/logger';
 
 /**
@@ -196,9 +198,9 @@ export default function useCircuitHandlers({
         setIsRunning(true);
       }
     }
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setSimulationTime(0);
     try { sendAnalyticsEvent(EVENTS.SIMULATION_RESET, { experimentId: currentExperiment?.id }); } catch { }
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     try { emitSimulatorEvent('stateChange', { state: 'reset', experimentId: currentExperiment?.id }); } catch { }
   }, [currentExperiment, handlePauseFn, clearSaved, clearSavedCode]);
 
@@ -397,9 +399,9 @@ export default function useCircuitHandlers({
   }, [pushSnapshot, getCurrentSnapshot]);
 
   const handleComponentValueChange = useCallback((componentId, newValue) => {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setComponentStates(prev => ({ ...prev, [componentId]: { ...(prev[componentId] || {}), ...newValue } }));
     if (solverRef.current) {
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       for (const [key, val] of Object.entries(newValue)) {
         solverRef.current.interact(componentId, `set${key.charAt(0).toUpperCase() + key.slice(1)}`, val);
       }
@@ -422,7 +424,7 @@ export default function useCircuitHandlers({
   const handleAskUNLIM = useCallback(async () => {
     if (!mergedExperiment || isAskingUNLIM) return;
     setIsAskingUNLIM(true);
-    setUnlimResponse({ text: '⏳ UNLIM sta analizzando l\'esperimento... Potrebbe richiedere fino a 30 secondi.', timestamp: Date.now(), loading: true });
+    setUnlimResponse({ text: 'Galileo sta analizzando l\'esperimento... Potrebbe richiedere fino a 30 secondi.', timestamp: Date.now(), loading: true });
 
     try {
       const ledStates = (mergedExperiment.components || [])
@@ -477,14 +479,14 @@ export default function useCircuitHandlers({
       if (result.success) {
         setUnlimResponse({ text: result.response, timestamp: Date.now() });
       } else {
-        const errorText = result.response || '❌ UNLIM non è disponibile al momento.';
+        const errorText = result.response || 'Galileo non e disponibile al momento.';
         setUnlimResponse({ text: errorText + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
       }
     } catch (err) {
       logger.error('[ELAB] Ask UNLIM error:', err);
       const msg = err?.message?.includes('abort') || err?.message?.includes('timeout')
-        ? 'UNLIM ci sta mettendo troppo. Il servizio potrebbe essere temporaneamente non disponibile.'
-        : 'Errore di connessione con UNLIM.';
+        ? 'Galileo ci sta mettendo troppo. Il servizio potrebbe essere temporaneamente non disponibile.'
+        : 'Errore di connessione con Galileo.';
       setUnlimResponse({ text: msg + '\n\nPuoi comunque leggere la guida dell\'esperimento nel pannello a destra.', timestamp: Date.now() });
     } finally {
       setIsAskingUNLIM(false);
@@ -598,9 +600,9 @@ export default function useCircuitHandlers({
           return changed ? next : prev;
         });
       }
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     } else if (mergedExperiment && comp && !isContainer && !noSnapTypes.includes(comp.type)) {
       const originalPos = currentExperiment?.layout?.[componentId];
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       const SNAP_BACK_THRESHOLD = 3;
       if (originalPos && Math.hypot(newPos.x - originalPos.x, newPos.y - originalPos.y) < SNAP_BACK_THRESHOLD) {
         setCustomLayout(prev => { const next = { ...prev }; delete next[componentId]; return next; });
@@ -717,14 +719,22 @@ export default function useCircuitHandlers({
      ═══════════════════════════════════════════════════════════════ */
   const handleComponentAdd = useCallback((type, position) => {
     pushSnapshot(getCurrentSnapshot());
-    const id = generateComponentId(type);
+    const existingIds = new Set([
+      ...(mergedExperiment?.components || []).map(c => c.id),
+      ...(customComponents || []).map(c => c.id),
+    ]);
+    const id = generateComponentId(type, existingIds);
     const newComp = { id, type };
     if (type === 'resistor') newComp.value = 1000;
     if (type === 'led') newComp.color = 'red';
     if (type === 'capacitor') newComp.value = 100e-6;
 
-    const dropX = position?.x ?? 200;
-    const dropY = position?.y ?? 150;
+    // Auto-placement: if no position given, find the best free slot on the breadboard
+    const autoPos = (!position && mergedExperiment)
+      ? findBestPositionInExperiment(type, mergedExperiment)
+      : null;
+    const dropX = position?.x ?? autoPos?.x ?? 200;
+    const dropY = position?.y ?? autoPos?.y ?? 150;
     const noSnapTypes = ['breadboard-half', 'breadboard-full', 'battery9v', 'nano-r4', 'multimeter'];
     let finalX = dropX, finalY = dropY, newPinAssignments = {}, snappedBbId = null;
 
@@ -791,6 +801,7 @@ export default function useCircuitHandlers({
   /* ═══════════════════════════════════════════════════════════════
      Reset experiment to original state
      ═══════════════════════════════════════════════════════════════ */
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   const handleResetExperiment = useCallback(() => {
     if (!currentExperiment) return;
     pushSnapshot(getCurrentSnapshot());
@@ -801,7 +812,6 @@ export default function useCircuitHandlers({
     setCustomLayout({});
     setCustomConnections([]);
     setCustomComponents([]);
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     setCustomPinAssignments({});
     setScratchXml('');
     setScratchGeneratedCode('');
@@ -841,22 +851,12 @@ export default function useCircuitHandlers({
     setCompilationSize(null);
 
     try {
-      const codeHash = await hashCode(code);
-      const cached = getCachedHex(codeHash);
-      let result;
-
-      if (cached) {
-        result = { success: true, hex: cached.hex, size: cached.size, output: null };
-      } else {
-        result = await apiCompileCode(code);
-        if (result.success && result.hex) {
-          const hexBytes = result.size || Math.floor(result.hex.replace(/[^0-9a-fA-F]/g, '').length / 2);
-          setCachedHex(codeHash, result.hex, hexBytes);
-        }
-      }
+      const experimentId = (mergedExperiment || currentExperiment)?.id;
+      const result = await compileArduinoCode(code, { experimentId });
 
       if (result.success && result.hex) {
-        setCompilationStatus('success');
+        const compileSource = getLastCompileSource();
+        setCompilationStatus(compileSource === 'precompiled' ? 'success-local' : 'success');
         codeNeedsCompileRef.current = false;
         if (window.innerHeight > 820) setShowBottomPanel(true);
 
@@ -898,7 +898,7 @@ export default function useCircuitHandlers({
           }
         }
 
-        pushActivity('compile_success', `${hexBytes}/${FLASH_TOTAL}B`);
+        pushActivity('compile_success', `${hexBytes}/${FLASH_TOTAL}B (${result.source})`);
         sessionMetrics.trackCompilation(true);
         if (result.output) {
           const warnLines = result.output.split('\n').filter(l => /warning:/i.test(l));
@@ -1002,7 +1002,7 @@ export default function useCircuitHandlers({
     try { localStorage.setItem(`elab_notes_${currentExperiment.id}`, JSON.stringify(newAnnotations)); } catch { }
   }, [currentExperiment?.id]);
 
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   useEffect(() => {
     if (!currentExperiment?.id) return;
     try {

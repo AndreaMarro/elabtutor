@@ -23,25 +23,25 @@ export const STATE_PANELS = {
   [STATES.CLEAN]: {
     leftPanel: false,
     bottomPanel: false,
-    galileo: false,
+    galileo: true,       // Galileo sempre disponibile (Principio Zero: docente ha sempre accesso)
     toolbar: true,
   },
   [STATES.BUILD]: {
     leftPanel: true,      // Componenti aperti per drag
     bottomPanel: false,    // Codice chiuso durante montaggio
-    galileo: false,        // Minimizzato, non serve ora
+    galileo: true,         // Galileo disponibile per il docente (Principio Zero)
     toolbar: true,
   },
   [STATES.CODE]: {
     leftPanel: false,      // Componenti chiusi
     bottomPanel: true,     // Editor codice aperto
-    galileo: false,
+    galileo: true,         // Galileo disponibile durante coding
     toolbar: false,        // Non serve durante coding
   },
   [STATES.RUN]: {
     leftPanel: false,
     bottomPanel: true,     // Monitor seriale visibile
-    galileo: false,
+    galileo: true,         // Galileo disponibile durante simulazione
     toolbar: false,
   },
   [STATES.STUCK]: {

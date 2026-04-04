@@ -58,7 +58,7 @@
     "note": "Extra Vol 3 — display LCD 16x2, protocollo HD44780 4-bit, LiquidCrystal."
   },
   "prerequisites": [
-    "v3-cap8-serial"
+    "v3-cap8-esp3"
   ],
   "next_experiment": {
     "id": "v3-extra-servo-sweep",

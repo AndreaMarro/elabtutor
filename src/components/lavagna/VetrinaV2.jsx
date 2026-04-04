@@ -35,10 +35,10 @@ export default function VetrinaV2({ onLogin, onRegister }) {
             Nessuna conoscenza pregressa richiesta.
           </p>
           <div className={css.ctas}>
-            <button className={css.ctaPrimary} onClick={onLogin}>
+            <button className={css.ctaPrimary} onClick={onLogin} aria-label="Accedi a ELAB">
               Accedi
             </button>
-            <button className={css.ctaSecondary} onClick={onRegister}>
+            <button className={css.ctaSecondary} onClick={onRegister} aria-label="Prova ELAB gratis">
               Prova Gratis
             </button>
           </div>
@@ -77,7 +77,7 @@ export default function VetrinaV2({ onLogin, onRegister }) {
       {/* Footer CTA */}
       <section className={css.footerCta}>
         <h2 className={css.footerTitle}>Pronto per iniziare?</h2>
-        <button className={css.ctaPrimary} onClick={onLogin}>
+        <button className={css.ctaPrimary} onClick={onLogin} aria-label="Entra nella Lavagna ELAB">
           Entra nella Lavagna
         </button>
       </section>

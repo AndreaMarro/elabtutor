@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { sendChat } from '../../services/api';
+import REVIEW_CIRCUITS from '../../data/review-circuits';
 import SafeMarkdown from './shared/SafeMarkdown';
 import { StarResult } from './shared/StarRating';
 import ReflectionPrompt from './shared/ReflectionPrompt';
@@ -139,15 +140,20 @@ Rispondi in italiano, tono amichevole ma preciso.`;
           questions
         });
       } else {
-        setGenerated({
-          response: 'Non sono riuscito a generare il circuito. Riprova con una descrizione diversa.',
-          questions: []
-        });
+        // G53: Offline fallback — use pre-generated circuits
+        useOfflineFallback();
       }
-    } catch (err) {
+    } catch {
+      // G53: Offline fallback — use pre-generated circuits
+      useOfflineFallback();
+    }
+
+    function useOfflineFallback() {
+      const circuit = REVIEW_CIRCUITS[Math.floor(Math.random() * REVIEW_CIRCUITS.length)];
       setGenerated({
-        response: 'Errore di connessione. Controlla internet e riprova.',
-        questions: []
+        response: circuit.description + '\n\nComponenti: ' + circuit.components.join(', '),
+        questions: circuit.questions.map(q => q.text),
+        _offlineData: circuit, // Store for answer checking
       });
     }
 
@@ -328,7 +334,7 @@ Rispondi in italiano, tono amichevole ma preciso.`;
       {reviewComplete && (
         <CrossNavigation links={[
           { icon: '', label: 'Apri il Simulatore', action: () => onOpenSimulator?.() },
-          { icon: '', label: 'Chiedi a UNLIM', action: () => onSendToUNLIM?.(`Ho generato un circuito "${prompt}". Puoi controllare se è corretto?`) }
+          { icon: '', label: 'Chiedi a Galileo', action: () => onSendToUNLIM?.(`Ho generato un circuito "${prompt}". Puoi controllare se è corretto?`) }
         ]} />
       )}
     </div>

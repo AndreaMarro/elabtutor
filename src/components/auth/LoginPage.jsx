@@ -88,7 +88,7 @@ export default function LoginPage({ onNavigate }) {
             <div style={styles.card}>
                 <div style={{ ...styles.logo, color: '#1E4D8C', fontWeight: 800, fontFamily: 'Oswald, sans-serif', letterSpacing: '-1px' }}>ELAB</div>
                 <h1 style={styles.title}>Accedi</h1>
-                <p style={styles.subtitle}>Accedi al Tutor ELAB UNLIM</p>
+                <p style={styles.subtitle}>Accedi al tuo laboratorio</p>
 
                 <form onSubmit={handleSubmit} style={styles.form} ref={formRef} aria-label="Form di accesso">
                     <div style={styles.field}>

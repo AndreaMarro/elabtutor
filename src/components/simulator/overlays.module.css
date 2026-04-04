@@ -54,7 +54,7 @@
   background: none;
   cursor: pointer;
   font-size: var(--font-size-md, 16px);
-  color: var(--color-sim-text-muted, #999);
+  color: var(--color-sim-text-muted, #737373);
   padding: 6px 10px;
   border-radius: var(--radius-sm, 6px);
   min-width: var(--touch-min, 56px);
@@ -197,8 +197,8 @@
   background: none;
   cursor: pointer;
   font-size: var(--font-size-sm, 14px);
-  color: var(--color-sim-text-muted, #999);
-/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
+  color: var(--color-sim-text-muted, #737373);
+/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   padding: var(--space-1, 4px) var(--space-2, 8px);
   border-radius: var(--radius-sm, 6px);
   min-width: var(--touch-min, 56px);
@@ -257,7 +257,7 @@
   margin: 0;
   padding: 6px 10px 8px;
   font-size: var(--font-size-sm, 14px);
-  color: var(--color-text-tertiary, #888);
+  color: var(--color-text-tertiary, #737373);
   font-style: italic;
   border-top: 1px solid var(--color-divider-subtle, #F0EDE6);
 }

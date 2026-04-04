@@ -68,6 +68,10 @@ nanobot/sessions/tutor/
 # Serena tool cache
 .serena/cache/
 
+# Playwright
+test-results/
+playwright-report/
+
 # Logs
 *.log
 npm-debug.log*
@@ -77,4 +81,15 @@ npm-debug.log*
 *.temp
 .env*.local
 datasets/galileo-brain-20k.jsonl
-.claude/settings.local.json
+# Claude Code (personal per ogni developer)
+.claude/
+
+# Audit screenshots and reports (generated, not source)
+audit-*.png
+audit-*.json
+audit-*.mjs
+audit-*.js
+screenshot-*.png
+console-errors*.png
+homepage_*.png
+2026-*.png

@@ -8,6 +8,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { sendChat, analyzeImage, checkRateLimit } from '../../services/api';
 import { validateMessage, sanitizeOutput } from '../../utils/contentFilter';
+import { isLessonPrepCommand, getLessonSummary, prepareLesson } from '../../services/lessonPrepService';
 import logger from '../../utils/logger';
 
 // ── Welcome message ──
@@ -18,12 +19,8 @@ const WELCOME_MSG = {
 };
 
 // ── Quick actions (Socratic mode) ──
-const QUICK_ACTIONS = [
-  { text: 'Fammi una domanda guida', key: 'guide' },
-  { text: 'Aiutami passo passo', key: 'step' },
-  { text: 'Controlla il mio ragionamento', key: 'check' },
-  { text: 'Dammi un indizio', key: 'hint' },
-];
+// Quick actions rimossi — il docente usa il Percorso strutturato + domanda libera
+const QUICK_ACTIONS = [];
 
 const QUICK_ACTION_MESSAGES = {
   guide: 'Fammi una domanda guida su questo argomento. Usa parole semplici, una domanda alla volta, adatta a ragazzi 8-14 anni.',
@@ -191,6 +188,66 @@ async function executeIntentTags(rawResponse) {
   return executed;
 }
 
+// ── Implicit intent detection — fallback when AI doesn't emit [AZIONE:] tags ──
+// Scans user message + AI response for Italian patterns like "accendi", "evidenzia il LED", etc.
+function detectImplicitActions(userMessage, aiResponse) {
+  const api = typeof window !== 'undefined' && window.__ELAB_API;
+  if (!api) return [];
+
+  // Already has explicit tags? Skip fallback.
+  if (/\[azione:/i.test(aiResponse) || /\[INTENT:\{/.test(aiResponse)) return [];
+
+  const combined = (userMessage + ' ' + aiResponse).toLowerCase();
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+  const executed = [];
+
+  // Play / run simulation
+  if (/\b(accendi|avvia|fai partire|esegui|simula|prova|play)\b/.test(combined) &&
+      !/\b(non |senza |prima di )\b.*\b(accend|avvia|esegu)/.test(combined)) {
+    api.play?.();
+    executed.push('play');
+  }
+
+  // Pause / stop
+  if (/\b(ferma|pausa|stop|spegni tutto)\b/.test(combined) && !executed.includes('play')) {
+    api.pause?.();
+    executed.push('pause');
+  }
+
+  // Highlight components — match "evidenzia il LED", "mostra il resistore R1"
+  const highlightMatch = combined.match(/\b(?:evidenzia|mostra|indica|seleziona)\s+(?:il |la |lo |l'|i |le |gli )?(\w+)/);
+  if (highlightMatch && api.unlim?.highlightComponent) {
+    const target = highlightMatch[1];
+    // Map common Italian names to component type IDs
+    const componentMap = { led: 'led', resistore: 'resistor', resistenza: 'resistor', pulsante: 'push-button', buzzer: 'buzzer-piezo', potenziometro: 'potentiometer', batteria: 'battery9v', ldr: 'photo-resistor', fotoresistenza: 'photo-resistor' };
+    const type = componentMap[target];
+    if (type) {
+      // Find all components of that type in the circuit
+      const layout = api.getLayout?.();
+      if (layout?.components) {
+        const ids = layout.components.filter(c => c.type === type).map(c => c.id);
+        if (ids.length > 0) {
+          api.unlim.highlightComponent(ids);
+          setTimeout(() => api.unlim?.clearHighlights?.(), 4000);
+          executed.push('highlight:' + ids.join(','));
+        }
+      }
+    }
+  }
+
+  // Undo / Redo
+  if (/\b(annulla|undo)\b/.test(combined)) { api.undo?.(); executed.push('undo'); }
+  if (/\b(ripeti|redo)\b/.test(combined)) { api.redo?.(); executed.push('redo'); }
+
+  // Reset / clear
+  if (/\b(pulisci|cancella tutto|reset|ricomincia)\b/.test(combined)) {
+    api.clearAll?.();
+    executed.push('clearall');
+  }
+
+  return executed;
+}
+
 // ── Strip action/intent tags from display text ──
 function stripTagsForDisplay(text) {
   let stripped = text;
@@ -198,7 +255,6 @@ function stripTagsForDisplay(text) {
     stripped = stripped.replace(fullMatch, '');
   }
   return stripped
-// © Andrea Marro — 02/04/2026 — ELAB Tutor — Tutti i diritti riservati
     .replace(/\[azione:[^\]]+\]/gi, '')
     .replace(/\[AZIONE:[^\]]+\]/g, '')
     .replace(/\n{3,}/g, '\n\n')
@@ -233,6 +289,35 @@ function buildTutorContext() {
   try {
     const ctx = api.getSimulatorContext?.();
     if (ctx) parts.push(typeof ctx === 'string' ? ctx : JSON.stringify(ctx));
+  } catch { /* silent */ }
+
+  // Volume context — injected by LavagnaShell when PDF viewer is open
+  try {
+    const vol = api._volumeContext;
+    if (vol?.volumeNumber && vol?.page) {
+      const volNames = { 1: 'Le Basi', 2: 'Approfondiamo', 3: 'Arduino' };
+      parts.push(`[Volume aperto: Volume ${vol.volumeNumber} "${volNames[vol.volumeNumber] || ''}" — pagina ${vol.page}. Puoi fare riferimento al contenuto del manuale e suggerire al docente cosa mostrare ai ragazzi.]`);
+    }
+  } catch { /* silent */ }
+
+  // Concept context — progressive analogies for active experiment
+  try {
+    const { getNewConcepts, getPrerequisites } = require('../../data/concept-graph');
+    const exp = api.getActiveExperiment?.();
+    if (exp?.id) {
+      const newC = getNewConcepts(exp.id);
+      const prereqs = getPrerequisites(exp.id);
+      if (newC.length > 0 || prereqs.length > 0) {
+        const analogies = [];
+        if (prereqs.length > 0) {
+          analogies.push('Concetti gia noti: ' + prereqs.map(p => `${p.name} (${p.analogy})`).join('; '));
+        }
+        if (newC.length > 0) {
+          analogies.push('Concetti nuovi di oggi: ' + newC.map(c => `${c.name} — usa questa analogia: "${c.analogy}"`).join('; '));
+        }
+        parts.push(`[Contesto pedagogico — usa QUESTE analogie nelle risposte, non inventarne di nuove: ${analogies.join(' | ')}. La classe lavora INSIEME alla LIM col docente. Rispondi come se parlassi a tutta la classe.]`);
+      }
+    }
   } catch { /* silent */ }
 
   return parts.join('\n');
@@ -295,6 +380,79 @@ export default function useGalileoChat() {
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: userMessage }]);
     setIsLoading(true);
 
+    // ── Lesson preparation command (Principio Zero: Lavagna = interfaccia docente) ──
+    if (isLessonPrepCommand(userMessage)) {
+      try {
+        const api = typeof window !== 'undefined' && window.__ELAB_API;
+        const activeExp = api?.getActiveExperiment?.();
+        const expId = activeExp?.id || null;
+
+        if (!expId) {
+          setMessages(prev => [...prev, {
+            id: Date.now() + 1, role: 'assistant',
+            content: 'Scegli prima un esperimento, poi ti preparo la lezione! [AZIONE:loadexp:picker]',
+          }]);
+          setIsLoading(false);
+          return;
+        }
+
+        // Fast local summary first
+        const summary = getLessonSummary(expId);
+        if (summary) {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+          const introMsg = summary.isFirstTime
+            ? `Preparo la lezione "${summary.title}"! Prima volta con questo esperimento.`
+            : summary.needsReview
+              ? `Riprendiamo "${summary.title}" — e passato un po' dall'ultima volta, faccio un ripasso.`
+              : `Preparo "${summary.title}" — continuo da dove eravamo rimasti.`;
+          setMessages(prev => [...prev, {
+            id: Date.now() + 1, role: 'assistant',
+            content: introMsg + `\n\nObiettivo: ${summary.objective}\nDurata: ~${summary.duration} min | Difficolta: ${'★'.repeat(summary.difficulty)}${'☆'.repeat(3 - summary.difficulty)}`,
+            isLessonPrep: true,
+          }]);
+        }
+
+        // Then AI-enhanced preparation
+        const plan = await prepareLesson(expId, {
+          circuitState: circuitStateRef.current,
+          useAI: true,
+        });
+
+        if (plan.aiSuggestions) {
+          // Strip action tags from lesson prep (no simulator actions during preparation)
+          const cleanSuggestions = plan.aiSuggestions
+            .replace(/\[azione:[^\]]+\]/gi, '')
+            .replace(/\[AZIONE:[^\]]+\]/g, '')
+            .replace(/\[INTENT:\{[^}]+\}\]/g, '')
+            .trim();
+          setMessages(prev => [...prev, {
+            id: Date.now() + 2, role: 'assistant',
+            content: cleanSuggestions,
+            isLessonPrep: true,
+            source: 'lesson-prep',
+          }]);
+        }
+
+        // Show phases overview
+        if (plan.phases?.length > 0) {
+          const phasesText = plan.phases.map(p =>
+            `${p.icon || '•'} **${p.name}** (${p.duration_minutes} min) — ${p.teacher_message?.slice(0, 80)}`
+          ).join('\n');
+          setMessages(prev => [...prev, {
+            id: Date.now() + 3, role: 'assistant',
+            content: `Ecco le fasi della lezione:\n\n${phasesText}\n\nDici "inizia" quando sei pronto!`,
+            isLessonPrep: true,
+          }]);
+        }
+
+        setIsLoading(false);
+        return;
+      } catch (err) {
+        logger.warn('[useGalileoChat] Lesson prep failed:', err);
+        // Fall through to normal chat
+      }
+    }
+
     // Slow response indicator
     const slowMsgId = Date.now() + 999;
     const slowTimer = setTimeout(() => {
@@ -339,10 +497,13 @@ export default function useGalileoChat() {
         _executedActions: [],
       }]);
 
-      // Execute actions asynchronously
+      // Execute actions asynchronously — explicit tags first, then implicit fallback
       const actionResults = executeActionTags(aiResponse);
       const intentResults = await executeIntentTags(aiResponse);
-      const allActions = [...actionResults, ...intentResults];
+      const implicitResults = (actionResults.length === 0 && intentResults.length === 0)
+        ? detectImplicitActions(userMessage, aiResponse)
+        : [];
+      const allActions = [...actionResults, ...intentResults, ...implicitResults];
 
       if (allActions.length > 0) {
         setMessages(prev => prev.map(m =>
@@ -399,7 +560,6 @@ export default function useGalileoChat() {
           circuitState: circuitStateRef.current,
         });
 
-// © Andrea Marro — 02/04/2026 — ELAB Tutor — Tutti i diritti riservati
         if (result.success) {
           const cleaned = sanitizeOutput(typeof result.response === 'string' ? result.response : JSON.stringify(result.response));
           setMessages(prev => [...prev, {

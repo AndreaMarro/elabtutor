@@ -12,8 +12,8 @@
     "videos": "Videolecciones"
   },
   "chat": {
-    "placeholder": "Pregunta a UNLIM...",
-    "welcome": "**¡Hola! Soy UNLIM, tu tutor ELAB! **\n\nEstoy aquí para ayudarte a descubrir el mundo de la electrónica.\n¡Pregúntame cualquier cosa sobre circuitos, LEDs, resistencias, Arduino y mucho más!",
+    "placeholder": "Pregunta a Galileo...",
+    "welcome": "**¡Hola! Soy Galileo, tu tutor ELAB! **\n\nEstoy aquí para ayudarte a descubrir el mundo de la electrónica.\n¡Pregúntame cualquier cosa sobre circuitos, LEDs, resistencias, Arduino y mucho más!",
     "analyzing": "Analizando la imagen...",
     "error": "Error"
   },
@@ -52,7 +52,7 @@
       "uploadImage": "Subir imagen",
       "addToSlides": "Añadir a Diapositivas",
       "clear": "Borrar todo",
-      "sendToAI": "Enviar a UNLIM"
+      "sendToAI": "Enviar a Galileo"
     },
     "textHint": "Haz clic donde quieras insertar texto",
     "present": "Presentar"

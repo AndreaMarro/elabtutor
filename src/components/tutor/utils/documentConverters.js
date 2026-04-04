@@ -68,7 +68,7 @@ export const htmlToPages = async (html, fileName) => {
                 code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
                 pre { background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto; }
                 blockquote { border-left: 3px solid #4A7A25; margin: 12px 0; padding: 8px 16px; background: #f9fdf5; }
-                .page-header { font-size: 11px; color: #999; margin-bottom: 16px; }
+                .page-header { font-size: 11px; color: #737373; margin-bottom: 16px; }
             </style>
         </head><body>
             <div class="page-header">${fileName}</div>
@@ -197,8 +197,8 @@ export const pptxToPages = async (arrayBuffer) => {
         // Numero slide
         ctx.fillStyle = '#4A7A25';
         ctx.fillRect(0, 0, 1280, 4);
-        ctx.fillStyle = '#999';
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+        ctx.fillStyle = '#737373';
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         ctx.font = '14px sans-serif';
         ctx.fillText(`Slide ${si + 1} / ${slideFiles.length}`, 1140, 700);
 
@@ -266,7 +266,7 @@ export const pptxToPages = async (arrayBuffer) => {
         // Se slide vuota (nessun testo, nessuna immagine)
         if (texts.length === 0 && !slideImage) {
             ctx.font = 'italic 20px sans-serif';
-            ctx.fillStyle = '#aaa';
+            ctx.fillStyle = '#737373';
             ctx.textAlign = 'center';
             ctx.fillText(`Slide ${si + 1} (vuota)`, 640, 360);
             ctx.textAlign = 'left';
@@ -301,7 +301,7 @@ export const textToPages = async (text, fileName) => {
         ctx.fillStyle = isCode ? '#333' : '#f0f4f8';
         ctx.fillRect(0, 0, 800, 32);
         ctx.font = '11px monospace';
-        ctx.fillStyle = isCode ? '#888' : '#666';
+        ctx.fillStyle = isCode ? '#737373' : '#666';
         ctx.fillText(`${fileName} — Pagina ${p + 1}/${Math.ceil(lines.length / linesPerPage)}`, 12, 21);
 
         // Contenuto
@@ -399,7 +399,7 @@ export const processDocumentUpload = async (files) => {
         }
         // DOCX
         else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
             try {
                 const mammoth = (await import('mammoth')).default;
                 const arrayBuffer = await file.arrayBuffer();

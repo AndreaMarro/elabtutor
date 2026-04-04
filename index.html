@@ -6,10 +6,56 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ELAB TUTOR - Assistente Arduino</title>
-  <meta name="description" content="Assistente AI per imparare Arduino con i manuali ELAB" />
-  <meta name="author" content="Andrea Marro" />
-  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Security: Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://elab-galileo.onrender.com https://n8n.srv1022317.hstgr.cloud https://www.googleapis.com https://generativelanguage.googleapis.com https://cdnjs.cloudflare.com; media-src 'self' blob:; worker-src 'self' blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com;" />
+
+  <!-- SEO: Primary meta tags -->
+  <title>ELAB Tutor — Simulatore di Elettronica e Arduino per la Scuola</title>
+  <meta name="description" content="ELAB Tutor: simulatore di circuiti e Arduino con tutor AI per la scuola media. 67 esperimenti, kit fisici, GDPR compliant. Acquistabile su MePA con fondi PNRR." />
+  <meta name="author" content="Andrea Marro — Omaric Elettronica" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://elab-builder.vercel.app/" />
+
+  <!-- SEO: Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ELAB Tutor — Simulatore di Elettronica per la Scuola" />
+  <meta property="og:description" content="67 esperimenti di elettronica e Arduino con tutor AI. Funziona sulla LIM. GDPR compliant. Acquistabile su MePA." />
+  <meta property="og:image" content="https://elab-builder.vercel.app/elab-mascot.png" />
+  <meta property="og:url" content="https://elab-builder.vercel.app/" />
+  <meta property="og:locale" content="it_IT" />
+
+  <!-- SEO: Structured data — EducationalApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ELAB Tutor",
+    "description": "Simulatore di circuiti elettronici e Arduino con tutor AI per la scuola media italiana. 67 esperimenti guidati, kit fisici, GDPR compliant.",
+    "url": "https://elab-builder.vercel.app/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "75",
+      "priceCurrency": "EUR",
+      "description": "Kit fisico per studente + licenza scuola annuale"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Omaric Elettronica",
+      "address": { "@type": "PostalAddress", "addressLocality": "Strambino", "addressRegion": "TO", "addressCountry": "IT" }
+    },
+    "inLanguage": "it",
+    "educationalLevel": "Middle School",
+    "audience": { "@type": "EducationalAudience", "educationalRole": "teacher" }
+  }
+  </script>
+
+  <!-- Font preload — reduces FOUT on first load -->
+  <link rel="preload" href="/fonts/OpenSans-variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Oswald-variable.woff2" as="font" type="font/woff2" crossorigin />
+
   <style>
     /* Light content protection - allows printing and normal user interaction */
     img { -webkit-user-drag: none; user-drag: none; pointer-events: auto; }

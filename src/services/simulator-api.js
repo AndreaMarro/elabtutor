@@ -198,7 +198,7 @@ function createPublicAPI() {
     /**
      * Move a component to new coordinates
      * @param {string} componentId
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
      * @param {number} x - horizontal position
      * @param {number} y - vertical position
      */
@@ -212,6 +212,120 @@ function createPublicAPI() {
      */
     clearAll() {
       _simulatorRef?.clearAll?.();
+    },
+
+    // ─── UNLIM ONNIPOTENTE v2: Circuit manipulation for AI ───
+
+    /**
+     * Set a component property (value, color, etc.)
+     * @param {string} id - component ID (e.g. "r1", "led1")
+     * @param {string} field - property name: 'value' | 'color'
+     * @param {*} value - new value (number for resistors/capacitors, string for colors)
+     */
+    setComponentValue(id, field, value) {
+      _simulatorRef?.setComponentValue?.(id, field, value);
+    },
+
+    /**
+     * Connect two pins with a wire (semantic alias for addWire)
+     * @param {string} fromPin - format "componentId:pinId" (e.g. "bat1:positive")
+     * @param {string} toPin - format "componentId:pinId" (e.g. "bb1:bus-top-plus-1")
+     */
+    connectWire(fromPin, toPin) {
+      _simulatorRef?.addWire?.(fromPin, toPin);
+    },
+
+    /**
+     * Clear the entire circuit (components + wires)
+     * Semantic alias for clearAll — used by UNLIM voice/AI commands
+     */
+    clearCircuit() {
+      _simulatorRef?.clearAll?.();
+    },
+
+    /**
+     * Mount a complete experiment: reset current state, then load.
+     * Emits 'experimentChange' event on success.
+     * @param {string} experimentId - e.g. 'v1-cap6-primo-circuito'
+     * @returns {boolean} success
+     */
+    mountExperiment(experimentId) {
+      if (!_simulatorRef?.selectExperiment) return false;
+      const exp = findExperimentById(experimentId);
+      if (!exp) return false;
+      _simulatorRef.selectExperiment(exp);
+      return true;
+    },
+
+    /**
+     * Get a human-readable description of the current circuit.
+     * Used by UNLIM to answer "che componenti ci sono?", "il circuito è corretto?".
+     * @returns {string} Italian description of the circuit
+     */
+    getCircuitDescription() {
+      const state = _simulatorRef?.getCircuitState?.();
+      if (!state) return 'Nessun circuito caricato.';
+
+      const exp = state.experiment || {};
+      const comps = state.components || [];
+      const conns = state.connections || [];
+
+      const COMP_NAMES_IT = {
+        'resistor': 'resistore',
+        'led': 'LED',
+        'rgb-led': 'LED RGB',
+        'battery9v': 'batteria 9V',
+        'breadboard-half': 'breadboard',
+        'breadboard-full': 'breadboard grande',
+        'capacitor': 'condensatore',
+        'pushbutton': 'pulsante',
+        'potentiometer': 'potenziometro',
+        'buzzer': 'cicalino',
+        'photoresistor': 'fotoresistore',
+        'ldr': 'LDR',
+        'servo': 'servo',
+        'lcd16x2': 'display LCD',
+        'nano-r4': 'Arduino Nano',
+        'multimeter': 'multimetro',
+        'diode': 'diodo',
+        'motor-dc': 'motore DC',
+        'transistor': 'transistore',
+        'reed-switch': 'reed switch',
+        'mosfet-n': 'MOSFET',
+        'wire': 'filo',
+      };
+
+      if (comps.length === 0) return 'Il circuito è vuoto.';
+
+      const compList = comps
+        .filter(c => c.type !== 'breadboard-half' && c.type !== 'breadboard-full')
+        .map(c => {
+          const name = COMP_NAMES_IT[c.type] || c.type;
+          let detail = '';
+          if (c.type === 'resistor' && c.value) {
+            const v = c.value;
+            detail = v >= 1000 ? ` da ${v / 1000}kΩ` : ` da ${v}Ω`;
+          } else if (c.type === 'led' && c.color) {
+            const colors = { red: 'rosso', green: 'verde', yellow: 'giallo', blue: 'blu', white: 'bianco' };
+            detail = ` ${colors[c.color] || c.color}`;
+          } else if (c.type === 'capacitor' && c.value) {
+            detail = ` da ${c.value}µF`;
+          }
+          const on = c.state?.on;
+          const state = on === true ? ' [acceso]' : on === false ? ' [spento]' : '';
+          return `${name}${detail}${state} (${c.id})`;
+        });
+
+      const expName = exp.title ? `Esperimento: "${exp.title}". ` : '';
+      const simStatus = state.isSimulating ? 'Simulazione in corso. ' : '';
+      const compText = compList.length > 0
+        ? `Componenti: ${compList.join(', ')}.`
+        : 'Nessun componente attivo.';
+      const wireText = conns.length > 0
+        ? ` Fili: ${conns.length} collegamento${conns.length > 1 ? 'i' : 'o'}.`
+        : ' Nessun filo collegato.';
+
+      return `${expName}${simStatus}${compText}${wireText}`;
     },
 
     /**
@@ -285,6 +399,7 @@ function createPublicAPI() {
       // Try to capture screenshot
       const screenshot = await this.captureScreenshot();
       const images = screenshot
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         ? [{ base64: screenshot.split(',')[1], mimeType: 'image/png' }]
         : [];
 
@@ -399,7 +514,6 @@ function createPublicAPI() {
       const refs = Array.isArray(pinRefs) ? pinRefs : [pinRefs];
       _simulatorRef?.highlightPin?.(refs);
     },
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     /**
      * Write text to the serial monitor (AVR experiments)
@@ -415,6 +529,12 @@ function createPublicAPI() {
 
     /** @returns {string|false} Current build mode */
     getBuildMode() { return _simulatorRef?.getBuildMode?.() || false; },
+
+    /** Set tool mode: 'select' or 'wire' */
+    setToolMode(mode) { _simulatorRef?.setToolMode?.(mode); },
+
+    /** @returns {string} Current tool mode ('select' or 'wire') */
+    getToolMode() { return _simulatorRef?.getToolMode?.() || 'select'; },
 
     /** Advance to next build step (Passo Passo) */
     nextStep() { _simulatorRef?.nextStep?.(); },
@@ -480,6 +600,7 @@ function createPublicAPI() {
         // If build step index exceeds hardware steps count, we're in code phase
         buildPhase = 'hardware'; // default — could be refined with scratchSteps info
       }
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
       // Compact component list
       const components = (circuitState.components || []).map(c => ({
@@ -600,7 +721,6 @@ function createPublicAPI() {
      */
     on(event, callback) {
       if (!window.__ELAB_EVENTS) window.__ELAB_EVENTS = {};
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       if (!window.__ELAB_EVENTS[event]) window.__ELAB_EVENTS[event] = [];
       window.__ELAB_EVENTS[event].push(callback);
       return () => {

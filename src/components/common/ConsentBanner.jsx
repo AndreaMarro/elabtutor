@@ -26,7 +26,9 @@
 import React, { useState, useEffect } from 'react';
 import { getConsent, saveConsent, isCOPPAApplicable } from '../../services/gdprService';
 import gdprService from '../../services/gdprService';
+import studentTracker from '../../services/studentTracker';
 import { showToast } from './Toast';
+import useFocusTrap from '../../hooks/useFocusTrap';
 import styles from './ConsentBanner.module.css';
 
 const CONSENT_KEY = 'elab_consent_v2';
@@ -123,6 +125,8 @@ export default function ConsentBanner() {
     } catch {
       // ignore
     }
+    // GDPR Art.7: attivare tracking SOLO dopo consenso esplicito
+    studentTracker.initAfterConsent();
     setVisible(false);
   };
 
@@ -174,14 +178,9 @@ export default function ConsentBanner() {
       setPhase('sent');
       showToast('Email inviata al tuo genitore!', 'success');
     } catch {
-      // Anche se il webhook fallisce, salva lo stato locale
-      saveConsent({
-        status: 'parental_required',
-        age: userAge,
-        parentEmail: parentEmail.trim(),
-        timestamp: new Date().toISOString(),
-      });
-      setPhase('sent');
+      // Webhook fallito: NON fingere che l'email sia stata inviata (COPPA compliance)
+      setParentEmailError("Non siamo riusciti a inviare l'email. Riprova tra poco o chiedi al tuo insegnante.");
+      showToast("Invio email fallito — riprova", 'error');
     } finally {
       setSending(false);
     }
@@ -195,10 +194,12 @@ export default function ConsentBanner() {
     ? parentEmail.replace(/^(.{2})(.*)(@.*)$/, (_, a, b, c) => a + '*'.repeat(Math.min(b.length, 5)) + c)
     : '';
 
+  const trapRef = useFocusTrap(visible);
+
   if (!visible) return null;
 
   return (
-    <div className={styles.banner} role="dialog" aria-label="Consenso privacy">
+    <div ref={trapRef} className={styles.banner} role="dialog" aria-label="Consenso privacy" aria-modal="true">
       {/* ── FASE 1: Selezione eta ── */}
       {phase === 'age' && (
         <div className={styles.content}>

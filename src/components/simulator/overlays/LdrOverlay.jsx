@@ -49,7 +49,7 @@ const LdrOverlay = React.memo(function LdrOverlay({ value, onValueChange, onClos
         </div>
 
         <div className={ovStyles.valueRow}>
-          <span style={{ fontSize: 15, color: 'var(--color-text-gray-300, #888)', width: 36 }}>Buio</span>
+          <span style={{ fontSize: 15, color: 'var(--color-text-gray-300, #737373)', width: 36 }}>Buio</span>
           <input
             type="range"
             min="0"
@@ -58,7 +58,7 @@ const LdrOverlay = React.memo(function LdrOverlay({ value, onValueChange, onClos
             onChange={(e) => onValueChange(parseInt(e.target.value) / 1000)}
             style={{ flex: 1, accentColor: '#FFC107' }}
           />
-          <span style={{ fontSize: 15, color: 'var(--color-text-gray-300, #888)', width: 36, textAlign: 'right' }}>Luce</span>
+          <span style={{ fontSize: 15, color: 'var(--color-text-gray-300, #737373)', width: 36, textAlign: 'right' }}>Luce</span>
         </div>
         <div style={{ textAlign: 'center', fontSize: 15, color: 'var(--color-text-gray-400, #666)', padding: '0 0 6px' }}>
           ~{luxApprox} lux

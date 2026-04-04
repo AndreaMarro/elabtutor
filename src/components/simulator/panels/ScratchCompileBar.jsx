@@ -6,6 +6,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import logger from '../../../utils/logger';
+import { friendlyError } from '../utils/friendlyError';
 
 // ErrorBoundary for ScratchEditor — graceful fallback on Blockly crash
 // S161.4: retryKey forces full React remount on retry (cleans orphaned Blockly DOM)
@@ -21,7 +22,7 @@ export class ScratchErrorBoundary extends React.Component {
           height: '100%', gap: 12, padding: 24, background: 'var(--color-editor-active-bg)', color: 'var(--color-blockly-text)',
           fontFamily: "var(--font-sans)", textAlign: 'center',
         }}>
-          <span style={{ fontSize: 32 }}>⚠️</span>
+          <span style={{ fontSize: 32 }}>!</span>
           <p style={{ fontSize: 14, margin: 0 }}>Errore nell'editor blocchi.</p>
           <button
             onClick={() => this.setState(prev => ({ hasError: false, retryKey: prev.retryKey + 1 }))}
@@ -39,20 +40,35 @@ export class ScratchErrorBoundary extends React.Component {
 }
 
 /* ─── S93: Compile bar for Scratch mode (no code visible) ─── */
+const SCRATCH_COMPILE_MSGS = [
+  '\u231B Compilazione...',
+  '\u231B Controllo i blocchi...',
+  '\u231B Quasi fatto...',
+  '\u231B Traduco in Arduino...',
+];
+
 const ScratchCompileBar = React.memo(function ScratchCompileBar({
   onCompile, compilationStatus, compilationErrors, compilationWarnings, compilationSize,
 }) {
   const [showErrors, setShowErrors] = useState(false);
+  const [compileMsg, setCompileMsg] = useState(0);
   useEffect(() => { if (compilationErrors) setShowErrors(true); }, [compilationErrors]);
+  useEffect(() => {
+    if (compilationStatus !== 'compiling') { setCompileMsg(0); return; }
+    const interval = setInterval(() => setCompileMsg(i => (i + 1) % SCRATCH_COMPILE_MSGS.length), 3000);
+    return () => clearInterval(interval);
+  }, [compilationStatus]);
 
-  const statusColor = compilationStatus === 'success' ? 'var(--color-accent)'
+  const isSuccess = compilationStatus === 'success' || compilationStatus === 'success-local';
+  const statusColor = isSuccess ? 'var(--color-accent)'
     : compilationStatus === 'error' ? 'var(--color-vol3)'
     : compilationStatus === 'compiling' ? 'var(--color-status-compiling)' : 'var(--color-muted)';
 
-  const statusText = compilationStatus === 'success'
-    ? (compilationSize ? `\u2705 ${compilationSize.bytes}/${compilationSize.total} bytes (${compilationSize.percent}%)` : '\u2705 Compilazione OK')
+  const localIndicator = compilationStatus === 'success-local' ? ' \u26a1' : '';
+  const statusText = isSuccess
+    ? (compilationSize ? `\u2705${localIndicator} ${compilationSize.bytes}/${compilationSize.total} bytes (${compilationSize.percent}%)` : `\u2705 Compilazione OK${localIndicator}`)
     : compilationStatus === 'error' ? '\u274C Errore'
-    : compilationStatus === 'compiling' ? '\u231B Compilazione...'
+    : compilationStatus === 'compiling' ? SCRATCH_COMPILE_MSGS[compileMsg]
     : 'Pronto';
 
   return (
@@ -81,7 +97,7 @@ const ScratchCompileBar = React.memo(function ScratchCompileBar({
             >{'\u2715'}</button>
           </div>
           <pre style={{ margin: 'var(--space-1) 0 0', fontSize: 14, color: 'var(--color-vol3)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: "var(--font-mono)" }}>
-            {compilationErrors}
+            {friendlyError(compilationErrors)}
           </pre>
         </div>
       )}

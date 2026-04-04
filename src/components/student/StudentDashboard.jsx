@@ -6,16 +6,19 @@
 // Tutti i diritti riservati
 // ============================================
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import studentService from '../../services/studentService';
 import { joinClass } from '../../services/authService';
+import { startNudgeListener } from '../../services/nudgeService';
+import gamification from '../../services/gamificationService';
+import sd from './StudentDashboard.module.css';
 
 // ============================================
 // SVG ICON COMPONENTS (inline, 20px)
 // ============================================
 const StudentIcon = ({ children }) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={sd.iconSvg}>
         {children}
     </svg>
 );
@@ -24,34 +27,40 @@ const IcoClock = () => <StudentIcon><circle cx="12" cy="12" r="10" /><polyline p
 const IcoLightbulb = () => <StudentIcon><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z" /></StudentIcon>;
 const IcoWave = () => <StudentIcon><path d="M2 12c1.5-3 3.5-3 5 0s3.5 3 5 0 3.5-3 5 0 3.5 3 5 0" /></StudentIcon>;
 const IcoBook = () => <StudentIcon><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></StudentIcon>;
+const IcoStar = () => <StudentIcon><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9" fill="#FFD700" stroke="#E8941C" /></StudentIcon>;
+const IcoFire = () => <StudentIcon><path d="M12 2C12 2 7 8 7 13a5 5 0 0 0 10 0c0-5-5-11-5-11z" fill="#E8941C" stroke="#E54B3D" /><path d="M12 22a3 3 0 0 1-3-3c0-2 3-5 3-5s3 3 3 5a3 3 0 0 1-3 3z" fill="#FFD700" stroke="#E8941C" /></StudentIcon>;
 
 // Colori ELAB ufficiali
 const C = {
-    navy: '#1E4D8C',
-    navyDark: '#152a5c',
-    lime: '#4A7A25',
+    navy: 'var(--color-primary, #1E4D8C)',
+    navyDark: 'var(--color-primary-dark, #152a5c)',
+    lime: 'var(--color-accent, #4A7A25)',
     limeDark: '#7da93d',
     limeLight: '#BBD789',
     limeSoft: '#E8F4D9',
-    bg: '#F0F4F8',
+    bg: 'var(--color-bg, #F0F4F8)',
     red: '#E53935',
-    orange: '#F5A623',
+    orange: '#E8941C',
     cyan: '#00B4D8',
-    text: '#1a1a2e',
-    textMuted: '#64748B',
+    text: 'var(--color-text-body, #1a1a2e)',
+    textMuted: 'var(--color-text-muted, #64748B)',
     white: '#FFFFFF',
-    border: '#E2E8F0',
+    border: 'var(--color-border, #E2E8F0)',
 };
 
+const svgMoodProps = { xmlns: 'http://www.w3.org/2000/svg', fill: 'none', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const MoodSvg = ({ children, color, size = 20 }) => (
+    <svg {...svgMoodProps} width={size} height={size} viewBox="0 0 20 20" stroke={color} className={sd.iconSvg}>{children}</svg>
+);
 const MOOD_EMOJI = {
-    energico: 'E',
-    concentrato: 'C',
-    confuso: '~',
-    bloccato: 'X',
-    felice: ':)',
-    frustrato: '>:(',
-    curioso: '?',
-    creativo: '*',
+    energico: <MoodSvg color="#F5A623"><polygon points="10,1 12,8 19,8 13.5,12 15.5,19 10,14.5 4.5,19 6.5,12 1,8 8,8" fill="#F5A623" stroke="none" /></MoodSvg>,
+    concentrato: <MoodSvg color="#1E4D8C"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="#1E4D8C" stroke="none"/></MoodSvg>,
+    confuso: <MoodSvg color="#9333EA"><circle cx="10" cy="10" r="8"/><path d="M7 7.5 Q7 5 10 5 Q13 5 13 7.5 Q13 9 10 10 L10 12" fill="none"/><circle cx="10" cy="15" r="0.8" fill="#9333EA" stroke="none"/></MoodSvg>,
+    bloccato: <MoodSvg color="#E53935"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9 V6 Q7 3 10 3 Q13 3 13 6 V9" fill="none"/></MoodSvg>,
+    felice: <MoodSvg color="#4A7A25"><circle cx="10" cy="10" r="8"/><circle cx="7" cy="8" r="1" fill="#4A7A25" stroke="none"/><circle cx="13" cy="8" r="1" fill="#4A7A25" stroke="none"/><path d="M6 12 Q10 16 14 12" fill="none"/></MoodSvg>,
+    frustrato: <MoodSvg color="#EF4444"><circle cx="10" cy="10" r="8"/><circle cx="7" cy="8" r="1" fill="#EF4444" stroke="none"/><circle cx="13" cy="8" r="1" fill="#EF4444" stroke="none"/><path d="M6 15 Q10 11 14 15" fill="none"/></MoodSvg>,
+    curioso: <MoodSvg color="#00B4D8"><circle cx="10" cy="10" r="8"/><circle cx="7" cy="8" r="1" fill="#00B4D8" stroke="none"/><circle cx="13" cy="8" r="1" fill="#00B4D8" stroke="none"/><circle cx="10" cy="14" r="2" fill="none"/></MoodSvg>,
+    creativo: <MoodSvg color="#EC4899"><path d="M10 3 Q6 3 6 7 Q6 10 10 12 Q14 10 14 7 Q14 3 10 3z" fill="none"/><line x1="10" y1="12" x2="10" y2="16"/><line x1="8" y1="16" x2="12" y2="16"/></MoodSvg>,
 };
 
 const MOOD_COLORS = {
@@ -72,6 +81,22 @@ export default function StudentDashboard({ onNavigate }) {
     const [meravigliaInput, setMeravigliaInput] = useState('');
     const [diarioInput, setDiarioInput] = useState('');
 
+    // G43: Nudge overlay — teacher sends, student sees in dashboard too
+    const [pendingNudge, setPendingNudge] = useState(null);
+    useEffect(() => {
+        if (!user?.id) return;
+        return startNudgeListener(user.id, (nudges) => {
+            if (nudges.length > 0) setPendingNudge(nudges[nudges.length - 1]);
+        });
+    }, [user?.id]);
+    // Escape key dismisses nudge overlay (a11y: keyboard-only users)
+    useEffect(() => {
+        if (!pendingNudge) return;
+        const onKey = (e) => { if (e.key === 'Escape') setPendingNudge(null); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [pendingNudge]);
+
     const data = useMemo(() => {
         if (!user) return null;
         return studentService.getData(user.id);
@@ -79,20 +104,20 @@ export default function StudentDashboard({ onNavigate }) {
 
     if (!user || !data) {
         return (
-            <div style={{ padding: 40, textAlign: 'center', color: C.textMuted }}>
-                <p style={{ fontSize: 48, color: '#1E4D8C', fontWeight: 800, fontFamily: 'Oswald, sans-serif' }}>ELAB</p>
-                <h2 style={{ color: C.navy }}>Accedi per vedere la tua dashboard</h2>
+            <div className={sd.loginPrompt}>
+                <p className={sd.loginLogo}>ELAB</p>
+                <h2 className={sd.headingNavy}>Accedi per vedere la tua dashboard</h2>
             </div>
         );
     }
 
     const tabs = [
-        { id: 'panoramica', label: 'Panoramica', emoji: '*' },
-        { id: 'diario', label: 'Diario', emoji: 'D' },
-        { id: 'meraviglie', label: 'Meraviglie', emoji: '?' },
-        { id: 'esperimenti', label: 'Esperimenti', emoji: 'E' },
-        { id: 'costellazione', label: 'Mappa', emoji: 'M' },
-        { id: 'classe', label: 'La mia classe', emoji: 'C' },
+        { id: 'panoramica', label: 'Panoramica' },
+        { id: 'diario', label: 'Diario' },
+        { id: 'meraviglie', label: 'Meraviglie' },
+        { id: 'esperimenti', label: 'Esperimenti' },
+        { id: 'costellazione', label: 'Mappa' },
+        { id: 'classe', label: 'La mia classe' },
     ];
 
     // Handlers
@@ -130,7 +155,7 @@ export default function StudentDashboard({ onNavigate }) {
                 <div style={styles.headerLeft}>
                     <div style={styles.avatarLarge}>
                         {user.avatar ? (
-                            <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                            <img src={user.avatar} alt="" className={sd.avatarImg} />
                         ) : (
                             <span style={{ fontSize: 28 }}>{user.nome?.charAt(0).toUpperCase()}</span>
                         )}
@@ -203,6 +228,89 @@ export default function StudentDashboard({ onNavigate }) {
                     <ClasseTab user={user} />
                 )}
             </div>
+
+            {/* G43: Nudge overlay — teacher sends motivational messages */}
+            {pendingNudge && (
+                <div
+                    role="presentation"
+                    onClick={() => setPendingNudge(null)}
+                    className={sd.nudgeBackdrop}
+                />
+            )}
+            {pendingNudge && (
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="nudge-title-dash"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                        position: 'fixed', top: '50%', left: '50%',
+                        transform: 'translate(-50%, -50%)', zIndex: 1200,
+                        background: '#FFFFFF', border: `3px solid ${C.navy}`,
+                        borderRadius: 16, padding: '24px 32px', maxWidth: 360,
+                        boxShadow: '0 8px 32px rgba(30,77,140,0.25)', textAlign: 'center',
+                    }}
+                >
+                    <div className={sd.nudgeEmoji} aria-hidden="true">{'\uD83D\uDC8C'}</div>
+                    <p id="nudge-title-dash" className={sd.nudgeText} style={{ color: C.text }}>
+                        {pendingNudge.message}
+                    </p>
+                    <p className={sd.nudgeSubtext}>
+                        — Il tuo insegnante
+                    </p>
+                    <button
+                        type="button"
+                        autoFocus
+                        onClick={() => setPendingNudge(null)}
+                        aria-label="Chiudi messaggio insegnante"
+                        style={{
+                            background: C.navy, color: '#FFFFFF', border: 'none',
+                            borderRadius: 8, padding: '10px 24px', fontSize: 14,
+                            fontWeight: 600, cursor: 'pointer',
+                        }}
+                    >
+                        Ho capito!
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── BADGE GRID ──────────────────────────────────────
+const BADGE_ICONS = {
+    star: <StudentIcon><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9" /></StudentIcon>,
+    flask: <IcoFlask />,
+    medal: <StudentIcon><circle cx="12" cy="8" r="6" /><path d="M8 14l-2 8 6-3 6 3-2-8" /></StudentIcon>,
+    trophy: <StudentIcon><path d="M6 9a6 6 0 0 0 12 0V3H6v6z" /><path d="M6 3H3v3a3 3 0 0 0 3 3" /><path d="M18 3h3v3a3 3 0 0 1-3 3" /><path d="M12 15v3" /><path d="M8 21h8" /></StudentIcon>,
+    crown: <StudentIcon><path d="M2 20h20l-2-12-5 5-3-7-3 7-5-5z" /></StudentIcon>,
+    fire: <IcoFire />,
+    rocket: <StudentIcon><path d="M12 2c0 0-6 6-6 14h12c0-8-6-14-6-14z" /><circle cx="12" cy="12" r="2" /><path d="M6 16l-3 4h6" /><path d="M18 16l3 4h-6" /></StudentIcon>,
+    brain: <StudentIcon><path d="M12 2C8 2 5 5 5 9c0 3 2 5 4 6v4h6v-4c2-1 4-3 4-6 0-4-3-7-7-7z" /><path d="M9 22h6" /></StudentIcon>,
+};
+
+function BadgeGrid() {
+    const badges = gamification.getAllBadges();
+    return (
+        <div style={styles.section}>
+            <h3 style={styles.sectionTitle}>Traguardi</h3>
+            <div className={sd.badgeGrid}>
+                {badges.map(b => (
+                    <div key={b.id} className={sd.badgeCard} style={{
+                        background: b.unlocked ? '#F0F9E8' : '#F5F5F5',
+                        opacity: b.unlocked ? 1 : 0.4,
+                        border: b.unlocked ? '2px solid #4A7A25' : '2px solid #E2E8F0',
+                    }}>
+                        <div className={sd.flexCenter} style={{ color: b.unlocked ? C.navy : C.textMuted }}>
+                            {BADGE_ICONS[b.icon] || BADGE_ICONS.star}
+                        </div>
+                        <div className={sd.badgeName} style={{ color: b.unlocked ? C.navy : C.textMuted }}>
+                            {b.name}
+                        </div>
+                        <div className={sd.badgeDesc}>{b.desc}</div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
@@ -213,7 +321,22 @@ function PanoramicaTab({ data, formatTempo }) {
     const ultimoMood = data.moods[data.moods.length - 1];
     const meraviglie = data.meraviglie.filter(m => !m.risolta);
 
+    const streak = gamification.getStreak();
+    const totalPts = gamification.getTotalPoints();
+
     const cards = [
+        {
+            icon: <IcoStar />,
+            label: 'Punti',
+            value: totalPts,
+            color: '#E8941C',
+        },
+        {
+            icon: <IcoFire />,
+            label: 'Streak',
+            value: `${streak.current}d`,
+            color: streak.current >= 7 ? C.lime : streak.current >= 3 ? C.orange : C.navy,
+        },
         {
             icon: <IcoFlask />,
             label: 'Esperimenti',
@@ -225,18 +348,6 @@ function PanoramicaTab({ data, formatTempo }) {
             label: 'Tempo totale',
             value: formatTempo(data.tempoTotale),
             color: C.cyan,
-        },
-        {
-            icon: <IcoLightbulb />,
-            label: 'Meraviglie',
-            value: stats.meraviglieTotali,
-            color: C.orange,
-        },
-        {
-            icon: <IcoWave />,
-            label: 'Confusione media',
-            value: `${stats.mediaConfusione}/10`,
-            color: stats.mediaConfusione > 7 ? C.red : stats.mediaConfusione > 4 ? C.orange : C.lime,
         },
     ];
 
@@ -268,6 +379,9 @@ function PanoramicaTab({ data, formatTempo }) {
                     </span>
                 </div>
             )}
+
+            {/* Badge */}
+            <BadgeGrid />
 
             {/* Meraviglie aperte */}
             {meraviglie.length > 0 && (
@@ -366,7 +480,7 @@ function DiarioTab({ data, diarioInput, setDiarioInput, handleDiario, moodInput,
             <div style={styles.section}>
                 <h3 style={styles.sectionTitle}>Il tuo diario di bordo</h3>
                 {data.diario.length === 0 ? (
-                    <p style={{ color: C.textMuted, textAlign: 'center', padding: 20 }}>
+                    <p className={sd.emptyState}>
                         Il tuo diario è vuoto. Inizia a scrivere le tue scoperte!
                     </p>
                 ) : (
@@ -422,10 +536,10 @@ function MeraviglieTab({ data, meravigliaInput, setMeravigliaInput, handleMeravi
             {/* Input nuova meraviglia */}
             <div style={styles.section}>
                 <h3 style={styles.sectionTitle}>Cosa ti stai chiedendo?</h3>
-                <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 12 }}>
+                <p className={sd.infoNote}>
                     Non esiste domanda sbagliata. Ogni domanda è una porta verso la scoperta.
                 </p>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className={sd.flexRow}>
                     <input
                         type="text"
                         value={meravigliaInput}

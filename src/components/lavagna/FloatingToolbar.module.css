@@ -2,21 +2,21 @@
 
 .toolbar {
   position: absolute;
-  bottom: 16px;
+  bottom: 72px; /* Above UnlimBar (fixed ~56px + gap) */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 77, 140, 0.08);
+  border: 1px solid rgba(30, 77, 140, 0.1);
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  z-index: 60;
-  transition: opacity 200ms ease;
+  z-index: 950;
+  transition: opacity 200ms ease, bottom 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn {
@@ -29,7 +29,7 @@
   min-height: 48px;
   border: none;
   background: transparent;
-  color: #1E4D8C;
+  color: var(--color-primary, #1E4D8C);
   cursor: pointer;
   border-radius: 10px;
   transition: background 150ms ease, transform 100ms ease, box-shadow 150ms ease;
@@ -51,7 +51,7 @@
 
 .btnActive {
   background: rgba(74, 122, 37, 0.1);
-  color: #4A7A25;
+  color: var(--color-accent, #4A7A25);
   box-shadow: 0 0 0 2px rgba(74, 122, 37, 0.3);
 }
 
@@ -65,7 +65,7 @@
 
 /* Position above bottom panel when open */
 .abovePanel {
-  bottom: 220px;
+  bottom: 280px;
 }
 
 @media (pointer: coarse) {
@@ -75,8 +75,24 @@
   }
 }
 
+/* LIM: when left panel is closed, toolbar goes vertical on the left */
 @media (max-width: 1024px) {
   .toolbar {
-    bottom: 8px;
+    bottom: 64px;
+  }
+
+  .verticalOnLIM {
+    bottom: auto;
+    top: 60px;
+    left: 8px;
+    transform: none;
+    flex-direction: column;
+    padding: 6px;
+  }
+
+  .verticalOnLIM .divider {
+    width: 28px;
+    height: 1px;
+    margin: 2px 0;
   }
 }

@@ -97,9 +97,15 @@ export function translateCompilationErrors(errorText) {
       result.push(friendly);
     } else if (locMatch) {
       const msgPart = line.replace(/^.*?:\s*(error|warning|errore|avviso):\s*/i, '').trim();
-      result.push(`Riga ${locMatch[1]}: ${msgPart}`);
-    } else if (/error:|warning:|errore:|avviso:/i.test(line)) {
-      result.push(line.replace(/^.*?:\s*(error|warning|errore|avviso):\s*/i, '').trim());
+      const isWarning = /warning|avviso/i.test(locMatch[3]);
+      const prefix = isWarning ? 'Attenzione' : 'Errore';
+      result.push(`Riga ${locMatch[1]}: ${prefix} — controlla il codice a questa riga. (${msgPart})`);
+    } else if (/error:|errore:/i.test(line)) {
+      const msgPart = line.replace(/^.*?:\s*(error|errore):\s*/i, '').trim();
+      result.push(`Errore nel codice: ${msgPart}. Ricontrolla le parentesi, i punti e virgola e i nomi delle funzioni!`);
+    } else if (/warning:|avviso:/i.test(line)) {
+      const msgPart = line.replace(/^.*?:\s*(warning|avviso):\s*/i, '').trim();
+      result.push(`Attenzione: ${msgPart}`);
     }
   }
   return result.length > 0 ? result.join('\n') : errorText;

@@ -25,7 +25,7 @@ function getChapterGroups(experiments) {
   return Object.entries(groups);
 }
 
-export default function ExperimentPicker({ open, onClose, onSelect, completedIds = [] }) {
+export default function ExperimentPicker({ open, onClose, onSelect, completedIds = [], onAskUnlim }) {
   const [activeVol, setActiveVol] = useState(1);
   const [search, setSearch] = useState('');
   const backdropRef = useRef(null);
@@ -33,9 +33,9 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
 
   // Focus search on open
   useEffect(() => {
-    if (open && searchRef.current) {
-      setTimeout(() => searchRef.current?.focus(), 100);
-    }
+    if (!open) return;
+    const timer = setTimeout(() => searchRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
   }, [open]);
 
   // Escape to close
@@ -69,6 +69,32 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
     onSelect?.(exp);
     onClose();
   }, [onSelect, onClose]);
+
+  // Focus trap for modal (WCAG 2.4.3)
+  useEffect(() => {
+    if (!open) return;
+    const modal = backdropRef.current?.querySelector('[class*="modal"]');
+    if (!modal) return;
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    // Auto-focus first element
+    const timer = setTimeout(() => {
+      const first = modal.querySelector('button, input');
+      if (first) first.focus();
+    }, 100);
+    return () => { document.removeEventListener('keydown', handleKeyDown); clearTimeout(timer); };
+  }, [open, onClose]);
 
   if (!open) return null;
 
@@ -132,6 +158,23 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
 
         {/* Experiment list grouped by chapter */}
         <div className={css.body}>
+          {/* UNLIM suggestion banner */}
+          {onAskUnlim && chapters.length > 0 && (
+            <button
+              className={css.unlimSuggest}
+              onClick={() => { onAskUnlim('Quale esperimento mi consigli per iniziare?'); onClose(); }}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <rect x="3" y="5" width="14" height="10" rx="3" fill="#1E4D8C" />
+                <circle cx="8" cy="10" r="1.5" fill="#4A7A25" />
+                <circle cx="12" cy="10" r="1.5" fill="#4A7A25" />
+              </svg>
+              <span>Non sai da dove iniziare? <strong>Chiedi a UNLIM</strong></span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
           {chapters.length === 0 && (
             <p className={css.empty}>Nessun esperimento trovato.</p>
           )}
@@ -158,6 +201,29 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
                         )}
                       </div>
                       {exp.desc && <p className={css.cardDesc}>{exp.desc}</p>}
+                      {/* Metadata row: type badge, difficulty, time, components */}
+                      <div className={css.cardMeta}>
+                        {exp.simulationMode === 'avr' && (
+                          <span className={css.typeBadge} title="Richiede codice Arduino">
+                            Arduino
+                          </span>
+                        )}
+                        {exp.difficulty != null && (
+                          <span className={css.metaItem} title={`Difficoltà ${exp.difficulty}/3`}>
+                            {'★'.repeat(Math.min(exp.difficulty, 3))}{'☆'.repeat(3 - Math.min(exp.difficulty, 3))}
+                          </span>
+                        )}
+                        {exp.components?.length > 0 && (
+                          <span className={css.metaItem} title={`${exp.components.length} componenti`}>
+                            {exp.components.length} pz
+                          </span>
+                        )}
+                        {exp.steps?.length > 0 && (
+                          <span className={css.metaItem} title="Tempo stimato">
+                            ~{Math.max(3, exp.steps.length * 2)} min
+                          </span>
+                        )}
+                      </div>
                     </button>
                   );
                 })}

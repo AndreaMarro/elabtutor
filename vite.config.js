@@ -12,6 +12,7 @@ function obfuscateChunks(obfuscatorOptions = {}) {
         'html2canvas', 'react-pdf', 'DashboardGestionale',
         'ElabTutorV4',  // S47: RC4+CFG causes TDZ crash on this 3.5MB chunk — still minified by Vite
         'ScratchEditor', // S112: Blockly is already Closure-compiled — 2nd obfuscator breaks internal refs (removeElem$module$ ReferenceError)
+        'recharts', 'd3-vendor', 'supabase', 'experiments-vol', // Vendor/data chunks — no obfuscation needed
     ];
 
     return {
@@ -86,7 +87,7 @@ export default defineConfig(({ mode }) => ({
                 ],
             },
             workbox: {
-                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+                maximumFileSizeToCacheInBytes: 1600 * 1024, // 1.6MB max per file — excludes large vendor chunks (cached at runtime)
                 // G11: Only precache critical path — NOT all chunks
                 // Lazy chunks (react-pdf, mammoth, admin, games) cached at runtime
                 globPatterns: [
@@ -95,10 +96,12 @@ export default defineConfig(({ mode }) => ({
                     'assets/index-*.css',          // main CSS
                     'assets/ElabTutorV4-*.js',     // tutor core
                     'assets/ElabTutorV4-*.css',    // tutor CSS
-                    'assets/codemirror-*.js',       // code editor
+                    // CodeMirror excluded from precache — runtime cached on first use (saves ~460KB)
+                    // 'assets/codemirror-*.js',
                     'assets/avr-*.js',             // AVR emulation (if separate)
                     'registerSW.js',
                     'fonts/*.woff2',
+                    'hex/*.hex',               // G40: pre-compiled HEX for offline use
                 ],
                 // Exclude heavy chunks from precache
                 globIgnores: [
@@ -151,7 +154,8 @@ export default defineConfig(({ mode }) => ({
                         options: {
                             cacheName: 'galileo-api',
                             expiration: { maxEntries: 50, maxAgeSeconds: 86400 },
-                            networkTimeoutSeconds: 10,
+                            // G40: 30s for Render free tier cold-start (20-50s)
+                            networkTimeoutSeconds: 30,
                         },
                     },
                     {
@@ -219,22 +223,66 @@ export default defineConfig(({ mode }) => ({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: {
-                    'codemirror': [
-                        'codemirror',
-                        '@codemirror/view',
-                        '@codemirror/state',
-                        '@codemirror/commands',
-                        '@codemirror/lang-cpp',
-                        '@codemirror/autocomplete',
-                        '@codemirror/search',
-                        '@codemirror/language',
-                        '@codemirror/lint',
-                    ],
-                    'avr': ['avr8js'],
-                    'react-vendor': ['react', 'react-dom'],
-                    'html2canvas': ['html2canvas'],
-                    'mammoth': ['mammoth'],
+                manualChunks(id) {
+                    // --- Vendor libraries (explicit splits) ---
+
+                    // React core
+                    if (id.includes('node_modules/react-dom/') || id.includes('node_modules/react/')) {
+                        return 'react-vendor';
+                    }
+
+                    // CodeMirror
+                    if (id.includes('node_modules/codemirror/') || id.includes('node_modules/@codemirror/')) {
+                        return 'codemirror';
+                    }
+
+                    // AVR emulation
+                    if (id.includes('node_modules/avr8js/')) {
+                        return 'avr';
+                    }
+
+                    // react-pdf + pdfjs-dist (always loaded together, lazy-loaded via VolumeViewer)
+                    if (id.includes('node_modules/react-pdf/') || id.includes('node_modules/pdfjs-dist/') || id.includes('node_modules/@react-pdf/')) {
+                        return 'react-pdf';
+                    }
+
+                    // recharts (only used in TeacherDashboard/admin charts)
+                    if (id.includes('node_modules/recharts/')) {
+                        return 'recharts';
+                    }
+
+                    // d3 sub-packages (recharts dependency, split separately)
+                    if (id.includes('node_modules/d3-')) {
+                        return 'd3-vendor';
+                    }
+
+                    // Supabase client
+                    if (id.includes('node_modules/@supabase/')) {
+                        return 'supabase';
+                    }
+
+                    // html2canvas
+                    if (id.includes('node_modules/html2canvas/')) {
+                        return 'html2canvas';
+                    }
+
+                    // mammoth (docx)
+                    if (id.includes('node_modules/mammoth/')) {
+                        return 'mammoth';
+                    }
+
+                    // --- App data splits (experiment data is ~600KB total) ---
+
+                    // Split experiment data per volume
+                    if (id.includes('/data/experiments-vol1')) {
+                        return 'experiments-vol1';
+                    }
+                    if (id.includes('/data/experiments-vol2')) {
+                        return 'experiments-vol2';
+                    }
+                    if (id.includes('/data/experiments-vol3')) {
+                        return 'experiments-vol3';
+                    }
                 },
             },
         },

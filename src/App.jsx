@@ -25,7 +25,7 @@ const TeacherDashboard = lazy(() => import('./components/teacher/TeacherDashboar
 const LoginPage = lazy(() => import('./components/auth/LoginPage'));
 const RegisterPage = lazy(() => import('./components/auth/RegisterPage'));
 const DataDeletion = lazy(() => import('./components/auth/DataDeletion'));
-const VetrinaSimulatore = lazy(() => import('./components/VetrinaSimulatore'));
+const WelcomePage = lazy(() => import('./components/WelcomePage'));
 const ShowcasePage = lazy(() => import('./components/ShowcasePage'));
 const LandingPNRR = lazy(() => import('./components/LandingPNRR'));
 const Navbar = lazy(() => import('./components/social/Navbar'));
@@ -158,35 +158,12 @@ function AppRouter() {
         );
     }
 
-    // Showcase pubblica (senza login — landing page engagement)
-    if (currentPage === 'showcase') {
+    // Tutte le vetrine → WelcomePage unica
+    if (currentPage === 'showcase' || currentPage === 'vetrina2' || currentPage === 'vetrina') {
         return (
             <Suspense fallback={<LoadingFallback />}>
-                <ShowcasePage onNavigate={navigate} />
+                <WelcomePage onNavigate={navigate} />
             </Suspense>
-        );
-    }
-
-    // VetrinaV2 — nuova landing page (test)
-    if (currentPage === 'vetrina2') {
-        return (
-            <Suspense fallback={<LoadingFallback />}>
-                <VetrinaV2
-                    onLogin={() => navigate('login')}
-                    onRegister={() => navigate('register')}
-                />
-            </Suspense>
-        );
-    }
-
-    // Vetrina simulatore (utenti autenticati senza licenza)
-    if (currentPage === 'vetrina') {
-        return (
-            <RequireAuth onNavigate={navigate}>
-                <Suspense fallback={<LoadingFallback />}>
-                    <VetrinaSimulatore onNavigate={navigate} />
-                </Suspense>
-            </RequireAuth>
         );
     }
 
@@ -247,7 +224,6 @@ function AppRouter() {
                                             <span style={topBarStyles.mobileLink}>{user.name?.split(' ')[0] || user.username}</span>
                                             {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.mobileLink}>Dashboard</button>}
                                             {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.mobileLinkTeacher}>Area Docente</button>}
-                                            {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.mobileLinkAdmin}>Admin</button>}
                                         </>
                                     ) : (
                                         <>
@@ -265,7 +241,6 @@ function AppRouter() {
                                     <span style={topBarStyles.link}>{user.name?.split(' ')[0] || user.username}</span>
                                     {(isDocente || isAdmin) && <button onClick={() => navigate('dashboard')} style={topBarStyles.link}>Dashboard</button>}
                                     {(isDocente || isAdmin) && <button onClick={() => navigate('teacher')} style={topBarStyles.linkTeacher}>Area Docente</button>}
-                                    {isAdmin && <button onClick={() => navigate('admin')} style={topBarStyles.linkAdmin}>Admin</button>}
                                 </>
                             ) : (
                                 <>
@@ -306,7 +281,7 @@ function AppRouter() {
         <Suspense fallback={<LoadingFallback />}>
             <div style={{ height: '100%', overflowY: 'auto', background: '#F0F4F8' }}>
                 <Navbar currentPage={currentPage} onNavigate={navigate} />
-                {currentPage === 'admin' && (isAdmin ? <ErrorBoundary><AdminPage onNavigate={navigate} /></ErrorBoundary> : <AccessDeniedMessage onNavigate={navigate} />)}
+                {currentPage === 'admin' && <ErrorBoundary><AdminPage onNavigate={navigate} /></ErrorBoundary>}
                 {currentPage === 'dashboard' && <RequireAuth onNavigate={navigate}><ErrorBoundary><StudentDashboard onNavigate={navigate} /></ErrorBoundary></RequireAuth>}
                 {currentPage === 'teacher' && <RequireAuth onNavigate={navigate}>{isDocente || isAdmin ? <ErrorBoundary><TeacherDashboard onNavigate={navigate} /></ErrorBoundary> : <AccessDeniedMessage onNavigate={navigate} />}</RequireAuth>}
             </div>

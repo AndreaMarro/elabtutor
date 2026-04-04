@@ -74,10 +74,15 @@ const Hole = React.memo(({ cx, cy, active, onClick }) => {
       {isActive && (
         <circle cx={cx} cy={cy} r={HOLE_R + 1.5} fill={activeColor} opacity={0.3} />
       )}
+      {/* Outer rim with subtle depth (recessed contact) */}
       <circle cx={cx} cy={cy} r={HOLE_R} fill={outerColor} />
+      {/* Inner shadow ring for depth illusion */}
+      <circle cx={cx + 0.15} cy={cy + 0.2} r={HOLE_INNER_R + 0.15} fill="#1A1A1A" opacity={isActive ? 0 : 0.15} />
+      {/* Dark contact center */}
       <circle cx={cx} cy={cy} r={HOLE_INNER_R} fill={innerColor} />
+      {/* Top-left specular highlight (light catches the rim) */}
       {!isActive && (
-        <circle cx={cx - 0.35} cy={cy - 0.35} r={HOLE_INNER_R * 0.65} fill="#FFFFFF" opacity={0.18} />
+        <circle cx={cx - 0.35} cy={cy - 0.35} r={HOLE_INNER_R * 0.55} fill="#FFFFFF" opacity={0.2} />
       )}
       {/* Clickable hit area for iPad (slightly overlapping to remove deadzones) */}
       {onClick && (
@@ -158,6 +163,7 @@ const HoleSection = React.memo(({ xStart, colLabels, activeHoles = {}, onHoleCli
 
 const BreadboardFull = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, onHoleClick, id }) => {
   const activeHoles = state.activeHoles || {};
+  const uid = `bb-${id}`;
 
   const rowLabels = useMemo(() => {
     const labels = [];
@@ -189,16 +195,52 @@ const BreadboardFull = ({ x = 0, y = 0, state = {}, highlighted = false, onInter
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="breadboard-full" role="img"
        aria-label={`Breadboard Full ${id}`}>
-      {/* Board shadow */}
-      <rect x="1.5" y="2" width={BOARD_WIDTH} height={BOARD_HEIGHT} rx="3" fill="#00000012" />
 
-      {/* Board body — clean white */}
-      <rect x="0" y="0" width={BOARD_WIDTH} height={BOARD_HEIGHT} rx="3"
-        fill={BOARD_BG} stroke={BOARD_EDGE} strokeWidth="0.6" />
+      <defs>
+        {/* Board surface gradient (subtle top-lit) */}
+        <linearGradient id={`${uid}-surface`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FAFAFA" />
+          <stop offset="30%" stopColor={BOARD_BG} />
+          <stop offset="100%" stopColor="#E8E8E8" />
+        </linearGradient>
+        {/* Plastic texture pattern */}
+        <pattern id={`${uid}-texture`} width="3" height="3" patternUnits="userSpaceOnUse">
+          <rect width="3" height="3" fill={BOARD_BG} />
+          <circle cx="1.5" cy="1.5" r="0.15" fill="#DDDDDD" opacity="0.4" />
+          <circle cx="0" cy="0" r="0.1" fill="#E8E8E8" opacity="0.3" />
+        </pattern>
+        {/* Edge shadow filter */}
+        <filter id={`${uid}-shadow`} x="-3%" y="-3%" width="108%" height="112%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.8" result="blur" />
+          <feOffset dx="1.2" dy="2" result="offsetBlur" />
+          <feFlood floodColor="#000000" floodOpacity="0.12" result="color" />
+          <feComposite in="color" in2="offsetBlur" operator="in" result="shadow" />
+          <feMerge>
+            <feMergeNode in="shadow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
 
-      {/* Subtle inner highlight */}
+      {/* Board with drop shadow */}
+      <g filter={`url(#${uid}-shadow)`}>
+        {/* Board body — textured surface + gradient */}
+        <rect x="0" y="0" width={BOARD_WIDTH} height={BOARD_HEIGHT} rx="3"
+          fill={`url(#${uid}-texture)`} stroke={BOARD_EDGE} strokeWidth="0.6" />
+        {/* Gradient overlay */}
+        <rect x="0" y="0" width={BOARD_WIDTH} height={BOARD_HEIGHT} rx="3"
+          fill={`url(#${uid}-surface)`} opacity="0.4" />
+      </g>
+
+      {/* Top edge bevel highlight */}
+      <rect x="1" y="0.5" width={BOARD_WIDTH - 2} height="1.5" rx="1"
+        fill="#FFFFFF" opacity="0.35" />
+      {/* Bottom edge shadow */}
+      <rect x="1" y={BOARD_HEIGHT - 1.8} width={BOARD_WIDTH - 2} height="1.5" rx="1"
+        fill="#000000" opacity="0.06" />
+      {/* Inner border */}
       <rect x="0.7" y="0.7" width={BOARD_WIDTH - 1.4} height={BOARD_HEIGHT - 1.4} rx="2.4"
-        fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.55" />
+        fill="none" stroke="#FFFFFF" strokeWidth="0.4" opacity="0.45" />
 
       {/* === LEFT BUS COLUMNS (+/-) === */}
       <text x={BUS_PLUS_X} y={BOARD_PADDING + BUS_OFFSET - 6}
@@ -220,16 +262,34 @@ const BreadboardFull = ({ x = 0, y = 0, state = {}, highlighted = false, onInter
       <HoleSection xStart={SECTION_LEFT_X} colLabels={LEFT_LABELS}
         activeHoles={activeHoles} onHoleClick={onHoleClick} />
 
-      {/* === CENTRAL IC CHANNEL === */}
+      {/* === CENTRAL IC CHANNEL (recessed groove) === */}
+      {/* Channel shadow (top edge) */}
+      <rect x={GAP_X + 1} y={BOARD_PADDING + BUS_OFFSET - 2}
+        width={GAP - 2}
+        height="1.5"
+        rx="0.5" fill="#000000" opacity="0.06" />
+      {/* Channel body */}
       <rect x={GAP_X + 1} y={BOARD_PADDING + BUS_OFFSET - 2}
         width={GAP - 2}
         height={(ROWS - 1) * HOLE_SPACING + 4}
         rx="1" fill={CHANNEL_BG} />
+      {/* Channel bottom highlight */}
+      <rect x={GAP_X + 1.5} y={BOARD_PADDING + BUS_OFFSET + (ROWS - 1) * HOLE_SPACING + 0.5}
+        width={GAP - 3}
+        height="1"
+        rx="0.3" fill="#FFFFFF" opacity="0.15" />
+      {/* IC alignment notches with depth */}
       {[0, 15, 30, 45, 60].filter(r => r < ROWS).map(row => {
-        const cy = BOARD_PADDING + BUS_OFFSET + row * HOLE_SPACING;
+        const notchCy = BOARD_PADDING + BUS_OFFSET + row * HOLE_SPACING;
         return (
-          <circle key={`notch-${row}`} cx={GAP_X + GAP / 2} cy={cy} r="2"
-            fill={CHANNEL_NOTCH} />
+          <g key={`notch-${row}`}>
+            <circle cx={GAP_X + GAP / 2} cy={notchCy} r="2.2"
+              fill="#C0C0C0" opacity="0.3" />
+            <circle cx={GAP_X + GAP / 2} cy={notchCy} r="2"
+              fill={CHANNEL_NOTCH} />
+            <circle cx={GAP_X + GAP / 2 - 0.3} cy={notchCy - 0.3} r="0.8"
+              fill="#FFFFFF" opacity="0.1" />
+          </g>
         );
       })}
 

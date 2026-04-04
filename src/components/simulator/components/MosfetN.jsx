@@ -49,11 +49,11 @@ const MosfetN = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, id
       </text>
 
       {/* Pin labels (tiny, like real component) */}
-      <text x="-6" y="7" textAnchor="middle" fontSize="2.2" fill="#888"
+      <text x="-6" y="7" textAnchor="middle" fontSize="2.2" fill="#737373"
         fontFamily="Fira Code, monospace">G</text>
-      <text x="0" y="7" textAnchor="middle" fontSize="2.2" fill="#888"
+      <text x="0" y="7" textAnchor="middle" fontSize="2.2" fill="#737373"
         fontFamily="Fira Code, monospace">D</text>
-      <text x="6" y="7" textAnchor="middle" fontSize="2.2" fill="#888"
+      <text x="6" y="7" textAnchor="middle" fontSize="2.2" fill="#737373"
         fontFamily="Fira Code, monospace">S</text>
 
       {/* Marking dot (orientation indicator) */}

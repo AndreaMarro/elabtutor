@@ -8,7 +8,7 @@ import ExperimentPicker from '../../../src/components/lavagna/ExperimentPicker';
 import { deriveState, STATES } from '../../../src/components/lavagna/LavagnaStateManager';
 
 describe('Principio Zero', () => {
-  it('picker shows 62 experiments across 3 volumes', () => {
+  it('picker shows 92 experiments across 3 volumes', () => {
     render(<ExperimentPicker open={true} onClose={vi.fn()} onSelect={vi.fn()} />);
 
     // Vol1 default
@@ -17,11 +17,11 @@ describe('Principio Zero', () => {
 
     // Switch to Vol2
     fireEvent.click(screen.getByText('Volume 2'));
-    expect(screen.getByText('0/18 completati')).toBeTruthy();
+    expect(screen.getByText('0/27 completati')).toBeTruthy();
 
     // Switch to Vol3
     fireEvent.click(screen.getByText('Volume 3'));
-    expect(screen.getByText('0/6 completati')).toBeTruthy();
+    expect(screen.getByText('0/27 completati')).toBeTruthy();
   });
 
   it('experiment selection calls onSelect with experiment data', () => {

@@ -104,11 +104,16 @@ const DraggableChip = React.memo(function DraggableChip({ type, label, icon }) {
     <div
       className="elab-sandbox-chip"
       draggable="true"
+      role="button"
+      tabIndex={0}
       onDragStart={handleDragStart}
       onDragEnd={() => { window.__elabDragType = null; setDragging(false); }}
       onClick={handleTapSelect}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTapSelect(); } }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
       style={{
         ...styles.sandboxChip,
         opacity: dragging ? 0.35 : 1,
@@ -117,6 +122,7 @@ const DraggableChip = React.memo(function DraggableChip({ type, label, icon }) {
         transform: hovered && !dragging ? 'translateY(-1px)' : 'none',
         boxShadow: hovered && !dragging ? 'var(--shadow-sm)' : 'none',
       }}
+      aria-label={`Aggiungi ${label} al circuito`}
       title={`Trascina "${label}" sul canvas`}
     >
       {SvgComp && svgSize ? (
@@ -285,23 +291,23 @@ const ComponentDrawer = ({
         ? { ...styles.collapsedBadge, top: dragPos.y, left: dragPos.x, right: 'auto' }
         : styles.collapsedBadge;
       return (
-        <div style={badgeStyle} onClick={() => setCollapsed(false)}>
-          <span style={{ fontSize: 16 }}>{'\u{1F527}'}</span>
+        <button style={badgeStyle} onClick={() => setCollapsed(false)} aria-label={`Espandi guida passo passo — ${isIntro ? 'Inizia' : isComplete ? 'Fatto!' : `passo ${currentStep + 1} di ${allSteps.length}`}`}>
+          <span style={{ fontSize: 16 }} aria-hidden="true">{'\u{1F527}'}</span>
           <span style={styles.collapsedBadgeText}>
             {isIntro ? 'Inizia' : isComplete ? 'Fatto!' : `${currentStep + 1}/${allSteps.length}`}
           </span>
-          <span style={{ fontSize: 16, color: 'var(--color-text-gray-300, #888)' }}>{'\u{25BC}'}</span>
-        </div>
+          <span style={{ fontSize: 16, color: 'var(--color-text-gray-300, #737373)' }} aria-hidden="true">{'\u{25BC}'}</span>
+        </button>
       );
     }
     // Sandbox: bottom bar (unchanged)
     return (
-      <div style={styles.collapsedBar} onClick={() => setCollapsed(false)}>
-        <div style={styles.dragHandle} />
+      <button style={styles.collapsedBar} onClick={() => setCollapsed(false)} aria-label="Espandi pannello componenti">
+        <div style={styles.dragHandle} aria-hidden="true" />
         <span style={styles.collapsedTitle}>
           {'\u{1F9E9} Componenti'}
         </span>
-      </div>
+      </button>
     );
   }
 
@@ -314,15 +320,19 @@ const ComponentDrawer = ({
     : styles.drawer;
 
   return (
-    <div ref={panelRef} style={containerStyle}>
+    <div ref={panelRef} style={containerStyle} role="region" aria-label={mode === 'guided' ? 'Guida passo passo' : 'Pannello componenti'}>
       {/* Header — draggable in guided mode */}
       <div
         style={mode === 'guided' ? styles.floatingHeader : styles.header}
+        role="button"
+        tabIndex={0}
+        aria-label={mode === 'guided' ? 'Riduci guida passo passo' : 'Riduci pannello componenti'}
         onClick={() => {
           // S89: Suppress collapse if the user just finished dragging
           if (didDragRef.current) { didDragRef.current = false; return; }
           setCollapsed(true);
         }}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setCollapsed(true); } }}
         onPointerDown={mode === 'guided' ? handlePanelDragStart : undefined}
         onPointerMove={mode === 'guided' ? handlePanelDragMove : undefined}
         onPointerUp={mode === 'guided' ? handlePanelDragEnd : undefined}
@@ -331,7 +341,7 @@ const ComponentDrawer = ({
         {mode === 'guided' && <div style={styles.dragHandle} />}
         {mode !== 'guided' && <div style={styles.dragHandle} />}
         <span style={mode === 'guided' ? styles.floatingHeaderTitle : styles.headerTitle}>
-          {mode === 'guided' ? '\u{1F527} Passo Passo' : '\u{1F9E9} Libero'}
+          {mode === 'guided' ? '\u{1F527} Passo Passo' : '\u{1F9E9} Percorso'}
         </span>
         <button
           onClick={(e) => { e.stopPropagation(); setCollapsed(true); }}
@@ -352,7 +362,7 @@ const ComponentDrawer = ({
 
           <div style={styles.guidedBody}>
             {/* S86: Phase-aware step counter */}
-            <div style={styles.stepCounter}>
+            <div style={styles.stepCounter} aria-live="polite" aria-atomic="true">
               {isIntro
                 ? 'Pronti a montare!'
                 : isComplete
@@ -572,7 +582,7 @@ const styles = {
     background: 'none',
     cursor: 'pointer',
     fontSize: 18,
-    color: 'var(--color-text-gray-300, #888)',
+    color: 'var(--color-text-gray-300, #737373)',
     padding: '2px 6px',
     borderRadius: 'var(--radius-xs, 4px)',
     minWidth: 'var(--touch-min, 56px)',

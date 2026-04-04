@@ -7,6 +7,8 @@
 
 import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { getLessonPath } from '../data/lesson-paths';
+import { saveSession as syncSessionToSupabase } from '../services/supabaseSync';
+import gamification from '../services/gamificationService';
 
 const SESSIONS_KEY = 'elab_unlim_sessions';
 const MAX_SESSIONS = 20;
@@ -77,6 +79,12 @@ export function useSessionTracker() {
       window.__unlimMemory.trackExperimentCompletion(s.experimentId, 'success');
       window.__unlimMemory.saveSessionSummary(s.summary);
     }
+
+    // Gamification: award points + confetti + sound
+    try { gamification.onExperimentCompleted(s.experimentId); } catch { /* silent */ }
+
+    // Sync to Supabase (async, non-blocking — errors are queued by supabaseSync)
+    syncSessionToSupabase(s).catch(() => { /* queued silently by supabaseSync */ });
 
     sessionRef.current = null;
   }, []);
@@ -190,6 +198,7 @@ export function useSessionTracker() {
         const s = sessionRef.current;
         s.endTime = new Date().toISOString();
         s.summary = buildSessionSummary(s);
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         const sessions = loadSessions();
         // Replace or append
         const idx = sessions.findIndex(x => x.id === s.id);
@@ -198,7 +207,6 @@ export function useSessionTracker() {
         saveSessions(sessions);
         // Reset endTime so session continues if user returns
         s.endTime = null;
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
       }
     }
 

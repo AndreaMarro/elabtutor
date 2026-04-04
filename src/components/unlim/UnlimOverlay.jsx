@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import overlayCss from './unlim-overlay.module.css';
 
 const DEFAULT_DURATION = 6000;
 
@@ -165,21 +166,21 @@ function BubbleArrow({ side, color }) {
   const size = 10;
   if (side === 'left') {
     return (
-      <svg width={size} height={size * 2} style={{ position: 'absolute', left: -size + 1, top: '50%', transform: 'translateY(-50%)' }}>
+      <svg width={size} height={size * 2} className={overlayCss.arrowLeft} style={{ '--arrow-size': `${size}px` }}>
         <polygon points={`${size},0 0,${size} ${size},${size * 2}`} fill={color} />
       </svg>
     );
   }
   if (side === 'right') {
     return (
-      <svg width={size} height={size * 2} style={{ position: 'absolute', right: -size + 1, top: '50%', transform: 'translateY(-50%)' }}>
+      <svg width={size} height={size * 2} className={overlayCss.arrowRight} style={{ '--arrow-size': `${size}px` }}>
         <polygon points={`0,0 ${size},${size} 0,${size * 2}`} fill={color} />
       </svg>
     );
   }
   // bottom arrow — punta in basso verso il componente
   return (
-    <svg width={size * 2} height={size} style={{ position: 'absolute', bottom: -size + 1, left: '50%', transform: 'translateX(-50%)' }}>
+    <svg width={size * 2} height={size} className={overlayCss.arrowBottom} style={{ '--arrow-size': `${size}px` }}>
       <polygon points={`0,0 ${size},${size} ${size * 2},0`} fill={color} />
     </svg>
   );
@@ -250,10 +251,10 @@ function OverlayMessage({ message, onDismiss, containerRef }) {
 
   // WCAG AA: tutti i bg con testo bianco devono avere contrasto >= 4.5:1
   const typeColors = {
-    info: { bg: 'rgba(30, 77, 140, 0.95)', border: '#1E4D8C' },       // 7.1:1 ✅
-    success: { bg: 'rgba(15, 118, 54, 0.95)', border: '#0F7636' },     // 5.2:1 ✅ (era 3.76:1)
-    hint: { bg: 'rgba(74, 122, 37, 0.95)', border: '#4A7A25' },        // 5.1:1 ✅
-    question: { bg: 'rgba(180, 68, 8, 0.95)', border: '#B44408' },     // 4.8:1 ✅ (era 2.98:1)
+    info: { bg: 'rgba(30, 77, 140, 0.95)', border: '#1E4D8C' },       // 7.1:1 OK
+    success: { bg: 'rgba(15, 118, 54, 0.95)', border: '#0F7636' },     // 5.2:1 OK (era 3.76:1)
+    hint: { bg: 'rgba(74, 122, 37, 0.95)', border: '#4A7A25' },        // 5.1:1 OK
+    question: { bg: 'rgba(180, 68, 8, 0.95)', border: '#B44408' },     // 4.8:1 OK (era 2.98:1)
   };
 
   const colors = typeColors[message.type] || typeColors.info;
@@ -310,9 +311,24 @@ function OverlayMessage({ message, onDismiss, containerRef }) {
     >
       {showArrow && <BubbleArrow side={arrowSide} color={colors.bg} />}
       {message.icon && (
-        <span style={{ fontSize: '26px', flexShrink: 0, lineHeight: 1 }}>{message.icon}</span>
+        <span className={overlayCss.bubbleIcon}>{message.icon}</span>
       )}
-      <span>{renderMiniMarkdown(message.text)}</span>
+      <span style={{ flex: 1 }}>{renderMiniMarkdown(message.text)}</span>
+      <button
+        onClick={(e) => { e.stopPropagation(); setFading(true); clickTimerRef.current = setTimeout(safeDismiss, 300); }}
+        aria-label="Chiudi messaggio"
+        style={{
+          background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff',
+          width: 28, height: 28, borderRadius: '50%', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0, fontSize: 16, lineHeight: 1, padding: 0,
+          transition: 'background 0.15s',
+        }}
+        onPointerEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.35)'; }}
+        onPointerLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 3L11 11M3 11L11 3"/></svg>
+      </button>
     </div>
   );
 }
@@ -328,13 +344,8 @@ export default function UnlimOverlay({ messages, onDismiss }) {
   return (
     <div
       ref={containerRef}
-      aria-label="Messaggi UNLIM"
-      style={{
-        position: 'fixed', // BUG-07/16 fix: fixed so viewport coords match directly
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 998,
-      }}
+      aria-label="Messaggi Galileo"
+      className={overlayCss.container}
     >
       {messages.map(msg => (
         <OverlayMessage

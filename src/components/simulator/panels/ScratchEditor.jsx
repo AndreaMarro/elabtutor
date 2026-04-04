@@ -18,34 +18,37 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
     name: 'elab',
     base: Blockly.Themes.Classic,
     blockStyles: {
-        // Scratch 3.0-inspired saturated colors for maximum visual impact
-        logic_blocks:    { colourPrimary: '#5B80A5', colourSecondary: '#4A6D90', colourTertiary: '#3A5A7A' },
-        loop_blocks:     { colourPrimary: '#59C059', colourSecondary: '#46AD46', colourTertiary: '#389438' },
-        math_blocks:     { colourPrimary: '#59C0C0', colourSecondary: '#46ADAD', colourTertiary: '#389494' },
-        text_blocks:     { colourPrimary: '#5CB1D6', colourSecondary: '#4A9BBF', colourTertiary: '#3A85A8' },
-        colour_blocks:   { colourPrimary: '#CF63CF', colourSecondary: '#B84DB8', colourTertiary: '#A040A0' },
-        variable_blocks: { colourPrimary: '#FF8C1A', colourSecondary: '#E67A0E', colourTertiary: '#CC6800' },
-        list_blocks:     { colourPrimary: '#FF6680', colourSecondary: '#E64D66', colourTertiary: '#CC3450' },
-        // Arduino custom categories — vivid, distinct colors
-        arduino_io:      { colourPrimary: '#4C97FF', colourSecondary: '#3D87E8', colourTertiary: '#2E77D1' },
-        arduino_sound:   { colourPrimary: '#CF63CF', colourSecondary: '#B84DB8', colourTertiary: '#A040A0' },
-        arduino_servo:   { colourPrimary: '#0FBD8C', colourSecondary: '#0DA87B', colourTertiary: '#0B936A' },
-        arduino_time:    { colourPrimary: '#FFAB19', colourSecondary: '#E69A0E', colourTertiary: '#CC8800' },
-        arduino_serial:  { colourPrimary: '#5B67A5', colourSecondary: '#4A5690', colourTertiary: '#3A457A' },
-        arduino_lcd:     { colourPrimary: '#855CD6', colourSecondary: '#744DBF', colourTertiary: '#633EA8' },
+        // ELAB palette: Navy=control, Lime=digital I/O, Orange=analog, Red=comms
+        logic_blocks:    { colourPrimary: '#1E4D8C', colourSecondary: '#163B6E', colourTertiary: '#0F2A50' },
+        loop_blocks:     { colourPrimary: '#2E7D50', colourSecondary: '#246840', colourTertiary: '#1A5330' },
+        math_blocks:     { colourPrimary: '#3A8A9E', colourSecondary: '#2E7688', colourTertiary: '#226272' },
+        text_blocks:     { colourPrimary: '#5A8DBE', colourSecondary: '#4A7AA8', colourTertiary: '#3A6892' },
+        colour_blocks:   { colourPrimary: '#9E5AC0', colourSecondary: '#8848A8', colourTertiary: '#723890' },
+        variable_blocks: { colourPrimary: '#E8941C', colourSecondary: '#D08018', colourTertiary: '#B86C14' },
+        list_blocks:     { colourPrimary: '#E54B3D', colourSecondary: '#CC3A30', colourTertiary: '#B32A22' },
+        // Arduino ELAB categories — Lime for digital, Orange for analog, Red for comms
+        arduino_io:      { colourPrimary: '#4A7A25', colourSecondary: '#3D6820', colourTertiary: '#30561A' },
+        arduino_sound:   { colourPrimary: '#9E5AC0', colourSecondary: '#8848A8', colourTertiary: '#723890' },
+        arduino_servo:   { colourPrimary: '#0EA87B', colourSecondary: '#0C9068', colourTertiary: '#0A7855' },
+        arduino_time:    { colourPrimary: '#E8941C', colourSecondary: '#D08018', colourTertiary: '#B86C14' },
+        arduino_serial:  { colourPrimary: '#E54B3D', colourSecondary: '#CC3A30', colourTertiary: '#B32A22' },
+        arduino_lcd:     { colourPrimary: '#6E4CA8', colourSecondary: '#5E3E92', colourTertiary: '#4E307C' },
+        // ELAB high-level blocks
+        arduino_elab:    { colourPrimary: '#1E4D8C', colourSecondary: '#163B6E', colourTertiary: '#0F2A50' },
     },
     categoryStyles: {
-        logic_category:    { colour: '#5B80A5' },
-        loop_category:     { colour: '#59C059' },
-        math_category:     { colour: '#59C0C0' },
-        text_category:     { colour: '#5CB1D6' },
-        variable_category: { colour: '#FF8C1A' },
-        arduino_io_cat:    { colour: '#4C97FF' },
-        arduino_sound_cat: { colour: '#CF63CF' },
-        arduino_servo_cat: { colour: '#0FBD8C' },
-        arduino_time_cat:  { colour: '#FFAB19' },
-        arduino_serial_cat:{ colour: '#5B67A5' },
-        arduino_lcd_cat:   { colour: '#855CD6' },
+        logic_category:    { colour: '#1E4D8C' },
+        loop_category:     { colour: '#2E7D50' },
+        math_category:     { colour: '#3A8A9E' },
+        text_category:     { colour: '#5A8DBE' },
+        variable_category: { colour: '#E8941C' },
+        arduino_io_cat:    { colour: '#4A7A25' },
+        arduino_sound_cat: { colour: '#9E5AC0' },
+        arduino_servo_cat: { colour: '#0EA87B' },
+        arduino_time_cat:  { colour: '#E8941C' },
+        arduino_serial_cat:{ colour: '#E54B3D' },
+        arduino_lcd_cat:   { colour: '#6E4CA8' },
+        arduino_elab_cat:  { colour: '#1E4D8C' },
     },
     componentStyles: {
         workspaceBackgroundColour: '#1E2530',
@@ -71,14 +74,16 @@ const ELAB_THEME = Blockly.Theme.defineTheme('elab', {
 // ─── Toolbox XML (ELAB palette colours) ──────────────────────
 const TOOLBOX_XML = `
 <xml xmlns="https://developers.google.com/blockly/xml">
-  <category name="⚡ Logica" categorystyle="logic_category">
+  <category name="Decisioni" categorystyle="logic_category">
+    <label text="Se succede qualcosa, fai qualcos'altro" web-class="toolboxLabel"></label>
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
     <block type="logic_operation"></block>
     <block type="logic_negate"></block>
     <block type="logic_boolean"></block>
   </category>
-  <category name="🔁 Cicli" categorystyle="loop_category">
+  <category name="Ripeti" categorystyle="loop_category">
+    <label text="Ripeti le azioni piu volte" web-class="toolboxLabel"></label>
     <block type="controls_repeat_ext">
       <value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
     </block>
@@ -90,7 +95,8 @@ const TOOLBOX_XML = `
     </block>
     <block type="controls_flow_statements"></block>
   </category>
-  <category name="🔢 Matematica" categorystyle="math_category">
+  <category name="Numeri" categorystyle="math_category">
+    <label text="Calcoli e numeri" web-class="toolboxLabel"></label>
     <block type="math_number"><field name="NUM">0</field></block>
     <block type="math_arithmetic">
       <value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
@@ -116,58 +122,66 @@ const TOOLBOX_XML = `
       <value name="HIGH"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
     </block>
   </category>
-  <category name="📦 Variabili" categorystyle="variable_category">
+  <category name="Variabili" categorystyle="variable_category">
+    <label text="Salva e usa valori" web-class="toolboxLabel"></label>
     <block type="arduino_variable_set">
       <value name="VALUE"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
     </block>
     <block type="arduino_variable_get"></block>
   </category>
-  <category name="📝 Testo" categorystyle="text_category">
+  <category name="Testo" categorystyle="text_category">
     <block type="text"></block>
     <block type="text_join"></block>
   </category>
   <sep gap="16"></sep>
-  <category name="📡 Input / Output" categorystyle="arduino_io_cat">
+  <category name="Accendi e Spegni" categorystyle="arduino_io_cat">
+    <label text="Controlla i pin di Arduino" web-class="toolboxLabel"></label>
     <block type="arduino_pin_mode"></block>
     <block type="arduino_digital_write"></block>
     <block type="arduino_digital_read"></block>
     <block type="arduino_analog_write"></block>
     <block type="arduino_analog_read"></block>
   </category>
-  <category name="🔊 Suono" categorystyle="arduino_sound_cat">
+  <category name="Suoni" categorystyle="arduino_sound_cat">
+    <label text="Fai suonare il buzzer" web-class="toolboxLabel"></label>
     <block type="arduino_tone">
       <value name="FREQ"><shadow type="math_number"><field name="NUM">440</field></shadow></value>
     </block>
     <block type="arduino_no_tone"></block>
   </category>
-  <category name="🎯 Servo" categorystyle="arduino_servo_cat">
+  <category name="Motore Servo" categorystyle="arduino_servo_cat">
+    <label text="Controlla un motore servo" web-class="toolboxLabel"></label>
     <block type="arduino_servo_attach"></block>
     <block type="arduino_servo_write">
       <value name="ANGLE"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
     </block>
     <block type="arduino_servo_read"></block>
   </category>
-  <category name="📺 LCD Display" categorystyle="arduino_lcd_cat">
+  <category name="Schermo LCD" categorystyle="arduino_lcd_cat">
+    <label text="Scrivi messaggi sul display" web-class="toolboxLabel"></label>
     <block type="arduino_lcd_init"></block>
     <block type="arduino_lcd_print">
-      <value name="TEXT"><shadow type="text"><field name="TEXT">Hello!</field></shadow></value>
+      <value name="TEXT"><shadow type="text"><field name="TEXT">Ciao!</field></shadow></value>
     </block>
     <block type="arduino_lcd_set_cursor"></block>
     <block type="arduino_lcd_clear"></block>
   </category>
-  <category name="⏱ Tempo" categorystyle="arduino_time_cat">
+  <category name="Tempo" categorystyle="arduino_time_cat">
+    <label text="Aspetta e misura il tempo" web-class="toolboxLabel"></label>
     <block type="arduino_delay">
       <value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
     </block>
     <block type="arduino_millis"></block>
   </category>
-  <category name="💬 Seriale" categorystyle="arduino_serial_cat">
+  <category name="Comunicazione" categorystyle="arduino_serial_cat">
+    <label text="Parla con il computer" web-class="toolboxLabel"></label>
     <block type="arduino_serial_begin"></block>
     <block type="arduino_serial_print"></block>
     <block type="arduino_serial_available"></block>
     <block type="arduino_serial_read"></block>
   </category>
-  <category name="📡 Sensori" categorystyle="arduino_io_cat">
+  <category name="Sensori" categorystyle="arduino_io_cat">
+    <label text="Leggi sensori speciali" web-class="toolboxLabel"></label>
     <block type="arduino_pulse_in"></block>
   </category>
 </xml>`;
@@ -252,7 +266,7 @@ const ELAB_BLOCKLY_CSS = `
   border: 1px solid var(--color-accent, #4A7A25) !important;
   border-radius: 4px !important;
   padding: 4px 6px !important;
-  min-height: 32px !important;
+  min-height: 44px !important;
 }
 
 /* Dropdown arrow */

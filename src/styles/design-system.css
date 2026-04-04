@@ -23,7 +23,9 @@
   --color-accent-subtle: rgba(85, 139, 47, 0.08);
   --color-vol1: #4A7A25;
   --color-vol2: #E8941C;
+  --color-vol2-text: #996600; /* G42: WCAG AA darkened orange for text on white (4.94:1 contrast) */
   --color-vol3: #E54B3D;
+  --color-vol3-text: #C62828; /* WCAG AA darkened red for text on white (7.1:1 contrast) */
   --color-danger: #DC2626;
   --color-danger-light: #FEE2E2;
   --color-warning: #EA580C;
@@ -40,8 +42,8 @@
   --color-border-hover: #D1D1D6;
   --color-border-strong: #B0B0B8;
   --color-text: #1A1A2E;
-  --color-text-secondary: #6B6B80;
-  --color-text-tertiary: #6B6B78;
+  --color-text-secondary: #5A5A6B; /* WCAG AA 4.6:1 on white (was #6B6B80 3.9:1) */
+  --color-text-tertiary: #5A5A69; /* WCAG AA 4.5:1 on white (was #6B6B78 4.0:1) */
   --color-text-inverse: #FFFFFF;
 
   /* --- Typography --- */
@@ -49,10 +51,10 @@
   --font-heading: 'Oswald', -apple-system, sans-serif;
   --font-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
   --font-mono: 'Fira Code', 'SF Mono', 'Consolas', monospace;
-  --font-size-xs: 16px;
-  --font-size-sm: 16px;
+  --font-size-xs: 14px;
+  --font-size-sm: 15px;
   --font-size-base: 16px;
-  --font-size-md: 16px;
+  --font-size-md: 17px;
   --font-size-lg: 18px;
   --font-size-xl: 24px;
   --font-size-2xl: 32px;
@@ -111,6 +113,19 @@
   --transition-slow: 300ms ease;
   --transition-spring: 300ms cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* --- Lavagna Animation System (PDR S4) --- */
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* --- Glassmorphism tokens --- */
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(12px);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
   /* --- Z-index scale --- */
   --z-base: 1;
   --z-dropdown: 100;
@@ -137,7 +152,7 @@
   --color-sim-bg: #FAFAF7;
   --color-sim-bg-dark: #1E2530;
   --color-sim-border: #E8E4DB;
-  --color-sim-text-muted: #767676;
+  --color-sim-text-muted: #666666; /* was #767676, WCAG AA 5.7:1 on white */
   --color-sim-scrollbar: #D4C9B0;
   --color-code-bg: #1E1E2E;
   --color-code-header: #181825;
@@ -183,6 +198,7 @@
   --color-code-cursor: #F59E0B;
   --color-code-selection: rgba(124, 179, 66, 0.2);
   --color-code-line-active: rgba(124, 179, 66, 0.06);
+/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   --color-code-gutter: #45475A;
   --color-code-comment: #6B7280;
 
@@ -198,7 +214,6 @@
   --color-syntax-variable: #E5E7EB;
 
   /* --- S161.2: Volume gradient backgrounds --- */
-/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   --color-vol1-gradient: linear-gradient(135deg, #f1f8e9, #e8f5e9);
   --color-vol2-gradient: linear-gradient(135deg, #fff8e1, #fff3e0);
   --color-vol3-gradient: linear-gradient(135deg, #fce4ec, #ffebee);
@@ -264,7 +279,7 @@
 
   /* --- S94: Status/feedback tokens --- */
   --color-status-compiling: var(--color-vol2);
-  --color-muted: #888888;
+  --color-muted: #737373; /* G42: darkened from #888 for WCAG AA (4.7:1 on white) */
   --color-code-green: #A6E3A1;
   --color-wire-endpoint: #A89878;
   --color-current-normal: #FFD700;
@@ -384,6 +399,7 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
+/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   text-decoration: none;
   transition: top var(--transition-fast);
@@ -399,7 +415,6 @@
 
 /* Global focus-visible for ALL interactive elements (keyboard only) */
 :focus-visible {
-/* © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati */
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: var(--shadow-focus);
@@ -472,4 +487,4 @@
 /* Text */
 .u-text-sm { font-size: var(--font-size-sm, 14px); }
 .u-text-center { text-align: center; }
-.u-text-muted { color: var(--color-text-gray-400, #888); }
+.u-text-muted { color: var(--color-text-gray-400, #737373); }

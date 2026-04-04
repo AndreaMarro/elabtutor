@@ -12,8 +12,8 @@
     "videos": "Videolektionen"
   },
   "chat": {
-    "placeholder": "Frag UNLIM...",
-    "welcome": "**Hallo! Ich bin UNLIM, dein ELAB-Tutor! **\n\nIch bin hier, um dir die Welt der Elektronik zu zeigen.\nFrag mich alles über Schaltkreise, LEDs, Widerstände, Arduino und vieles mehr!",
+    "placeholder": "Frag Galileo...",
+    "welcome": "**Hallo! Ich bin Galileo, dein ELAB-Tutor! **\n\nIch bin hier, um dir die Welt der Elektronik zu zeigen.\nFrag mich alles über Schaltkreise, LEDs, Widerstände, Arduino und vieles mehr!",
     "analyzing": "Analysiere das Bild...",
     "error": "Fehler"
   },
@@ -52,7 +52,7 @@
       "uploadImage": "Bild hochladen",
       "addToSlides": "Zu Folien hinzufügen",
       "clear": "Alles löschen",
-      "sendToAI": "An UNLIM senden"
+      "sendToAI": "An Galileo senden"
     },
     "textHint": "Klicke, wo du Text einfügen möchtest",
     "present": "Präsentieren"

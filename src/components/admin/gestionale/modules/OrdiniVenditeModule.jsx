@@ -174,7 +174,7 @@ export default function OrdiniVenditeModule({ isMobile }) {
             <span style={{
               padding: '2px 8px', borderRadius: 12, fontSize: 14, fontWeight: active ? 600 : 400,
               background: active ? PIPELINE_COLORS[step] + '22' : '#f0f0f0',
-              color: active ? PIPELINE_COLORS[step] : '#aaa',
+              color: active ? PIPELINE_COLORS[step] : '#737373',
               border: `1px solid ${active ? PIPELINE_COLORS[step] : '#ddd'}`
             }}>{PIPELINE_LABELS[step]}</span>
           </React.Fragment>
@@ -328,7 +328,7 @@ export default function OrdiniVenditeModule({ isMobile }) {
         <span style={{ fontSize: 14, color: COLORS.textLight, marginRight: 4 }}>Pipeline:</span>
         {PIPELINE.map((step, i) => (
           <React.Fragment key={step}>
-            {i > 0 && <span style={{ color: '#ccc', fontSize: 14 }}>&#9654;</span>}
+            {i > 0 && <span style={{ color: '#737373', fontSize: 14 }} aria-hidden="true">&#9654;</span>}
             <span style={{ padding: '2px 10px', borderRadius: 12, fontSize: 14, fontWeight: 600, background: PIPELINE_COLORS[step] + '22', color: PIPELINE_COLORS[step], border: `1px solid ${PIPELINE_COLORS[step]}` }}>
               {PIPELINE_LABELS[step]}
             </span>

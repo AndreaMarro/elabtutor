@@ -4,7 +4,7 @@
 ELAB e' un tutor educativo per elettronica e Arduino per bambini 8-12 anni. Include:
 - **Simulatore di circuiti** proprietario (CircuitSolver + AVRBridge + avr8js)
 - **Chat AI "Galileo"** (tutor pedagogico via n8n + Anthropic)
-- **67 esperimenti** organizzati in 3 volumi (38 + 18 + 11)
+- **62 esperimenti** organizzati in 3 volumi (38 + 18 + 6)
 - **Giochi didattici** (Trova il Guasto, Prevedi e Spiega, Circuito Misterioso, Controlla Circuito)
 
 ## Stack tecnico
@@ -130,6 +130,15 @@ Navy: #1E4D8C / Lime: #4A7A25 / Vol1: #4A7A25 / Vol2: #E8941C / Vol3: #E54B3D
 - ✅ Current flow animation
 - ✅ Web Worker per CPU
 - ✅ Servo/LCD components
+
+## Collaborazione (multi-developer)
+- **Mai pushare su `main` direttamente** — sempre branch + PR
+- Branch naming: `feature/`, `fix/`, `style/`, `refactor/`, `docs/`
+- Commit format: `tipo(area): descrizione` (es. `feat(unlim): aggiungi nudge vocale`)
+- **Prima di ogni commit**: `npm run test:ci && npm run build`
+- **File protetti** (coordinamento obbligatorio prima di modificare): CircuitSolver.js, AVRBridge.js, SimulationManager.js, SimulatorCanvas.jsx, simulator-api.js, pinComponentMap.js, vite.config.js, package.json
+- **Mai aggiungere dipendenze npm** senza approvazione di Andrea
+- Leggi CONTRIBUTING.md per la guida completa
 
 ## Bug noti (residui)
 ### P2 NICE-TO-HAVE

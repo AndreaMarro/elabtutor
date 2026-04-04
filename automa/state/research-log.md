@@ -1908,3 +1908,14 @@ Gli studenti abituati ai blocchi visivi di Scratch possono trovare la sintassi t
 
 **Problema 2: Transizione al Codice Manuale**
 La mancanza di comandi predefiniti per l'hardware (come `digitalWrite()`) richiede di 
+
+## Cycle 2 - AI tutoring scaffolding real-time
+Kimi: Il tema "AI tutoring scaffolding real-time" si riferisce all'uso dell'intelligenza artificiale per supportare gli studenti in modo personalizzato e in tempo reale. Ecco 3 tendenze, 1 idea e 1 rischio in questo campo:
+
+1. Tendenza 1: Personalizzazione dell'apprendimento
+L'AI può analizzare i dati degli studenti per creare piani di studio personalizzati, adattando il materiale didattico alle loro es
+DeepSeek: **Problema 1:** Il sistema di scaffold (supporto) a passo singolo non è sufficiente per gli studenti che rimangono bloccati dopo il primo suggerimento, portando a frustrazione e disimpegno.
+
+**Problema 2:** L'AI può fraintendere lo stato di comprensione dello studente da input testuali brevi, offrendo aiuti non calibrati (troppo facili o troppo avanzati).
+
+**Soluzione:** Implementare un modello di

@@ -64,7 +64,7 @@ const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = 
             }}
             style={{
               ...S.select,
-              ...(baudMismatch ? { borderColor: 'var(--color-vol2)', color: 'var(--color-vol2)' } : {}),
+              ...(baudMismatch ? { borderColor: 'var(--color-vol2)', color: 'var(--color-vol2-text)' } : {}),
             }}
             title={baudMismatch ? 'Baud rate diverso dallo sketch!' : 'Baud rate'}
           >
@@ -139,7 +139,7 @@ const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = 
                 fontWeight: 700,
                 fontSize: 14,
               }}
-              title="Chiedi a UNLIM di spiegare l'output"
+              title="Chiedi a Galileo di spiegare l'output"
             >
               U
             </button>
@@ -150,7 +150,7 @@ const SerialMonitor = ({ serialOutput = '', onSerialInput, onClear, isRunning = 
       {/* Baud rate mismatch inline warning */}
       {baudMismatch && (
         <div style={S.baudWarning}>
-          <span style={{ fontSize: 14, lineHeight: 1, flexShrink: 0, fontWeight: 700, color: 'var(--color-vol2)' }}>{'\u26A0'}</span>
+          <span style={{ fontSize: 14, lineHeight: 1, flexShrink: 0, fontWeight: 700, color: 'var(--color-vol2-text)' }}>{'\u26A0'}</span>
           <span>Il baud rate selezionato non corrisponde a quello dello sketch. Cambia il baud rate per leggere i dati correttamente.</span>
         </div>
       )}
@@ -232,7 +232,7 @@ const S = {
     background: 'var(--color-code-header, #181825)',
     flexWrap: 'wrap',
     gap: 6,
-    minHeight: 56,
+    minHeight: 40,
   },
 
   headerLeft: {
@@ -272,7 +272,7 @@ const S = {
     padding: '5px 8px',
     outline: 'none',
     cursor: 'pointer',
-    minHeight: 56,
+    minHeight: 36,
   },
 
   iconBtn: {
@@ -284,10 +284,10 @@ const S = {
     padding: 0,
     cursor: 'pointer',
     lineHeight: 1,
-    width: 56,
-    height: 56,
-    minWidth: 56,
-    minHeight: 56,
+    width: 36,
+    height: 36,
+    minWidth: 36,
+    minHeight: 36,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -310,7 +310,7 @@ const S = {
     padding: '8px 14px',
     background: 'rgba(232, 148, 28, 0.12)',
     borderBottom: '1px solid rgba(232, 148, 28, 0.3)',
-    color: 'var(--color-vol2, #E8941C)',
+    color: 'var(--color-vol2-text, #996600)', /* G42: WCAG AA */
     fontSize: 14,
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
     lineHeight: 1.4,
@@ -333,11 +333,12 @@ const S = {
     margin: 0,
     fontSize: 15,
     lineHeight: 1.75,
-    color: 'var(--color-code-green, #A6E3A1)',
+    color: '#B8F0B8',
     fontFamily: 'var(--font-mono, "Fira Code", monospace)',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-all',
     letterSpacing: '0.02em',
+    textShadow: '0 0 1px rgba(184, 240, 184, 0.3)',
   },
 
   inputBar: {
@@ -358,7 +359,7 @@ const S = {
     fontSize: 14,
     fontFamily: 'var(--font-mono, "Fira Code", monospace)',
     outline: 'none',
-    minHeight: 56,
+    minHeight: 36,
     transition: 'border-color 200ms',
   },
 
@@ -367,12 +368,12 @@ const S = {
     border: 'none',
     borderRadius: 8,
     color: 'var(--color-text-inverse, white)',
-    padding: '8px 14px',
+    padding: '6px 14px',
     fontSize: 14,
     cursor: 'pointer',
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
     fontWeight: 600,
-    minHeight: 56,
+    minHeight: 36,
     display: 'flex',
     alignItems: 'center',
     transition: 'opacity 150ms',

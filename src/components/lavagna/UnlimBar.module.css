@@ -9,54 +9,27 @@
   align-items: center;
   gap: 8px;
   padding: 6px 8px 6px 6px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(30, 77, 140, 0.12);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(30, 77, 140, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
-  z-index: 800;
-  max-width: min(600px, calc(100vw - 32px));
+  border-radius: 18px;
+  box-shadow:
+    0 4px 24px rgba(30, 77, 140, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  z-index: 1050;
+  max-width: min(600px, calc(100vw - 40px));
   width: 100%;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
 }
 
 .bar:focus-within {
-  border-color: rgba(30, 77, 140, 0.3);
-  box-shadow: 0 4px 24px rgba(30, 77, 140, 0.18), 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-/* Mascot button */
-.mascotBtn {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  border: none;
-  background: linear-gradient(135deg, rgba(30, 77, 140, 0.08), rgba(74, 122, 37, 0.08));
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s, background 0.15s;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.mascotBtn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, rgba(30, 77, 140, 0.14), rgba(74, 122, 37, 0.14));
-}
-
-.mascotBtn:active {
-  transform: scale(0.95);
-}
-
-.mascotImg {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  object-fit: contain;
+  border-color: rgba(74, 122, 37, 0.4);
+  box-shadow:
+    0 4px 24px rgba(30, 77, 140, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.08),
+    0 0 0 2px rgba(74, 122, 37, 0.15);
 }
 
 /* Form + input */
@@ -75,21 +48,21 @@
   color: var(--color-text, #1A1A2E);
   padding: 8px 4px;
   outline: none;
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .input::placeholder {
   color: #9CA3AF;
 }
 
-/* Icon buttons */
+/* Icon buttons — 44px (padded to 48px touch target via padding) */
 .iconBtn {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   border: none;
   background: transparent;
-  color: #737373;
+  color: #595959;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -102,7 +75,7 @@
 
 .iconBtn:hover {
   background: rgba(30, 77, 140, 0.08);
-  color: #1E4D8C;
+  color: var(--color-primary, #1E4D8C);
 }
 
 .sendBtn {

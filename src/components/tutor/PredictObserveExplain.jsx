@@ -14,6 +14,7 @@ import ReflectionPrompt from './shared/ReflectionPrompt';
 import CrossNavigation from './shared/CrossNavigation';
 import useGameScore from '../../hooks/useGameScore';
 import './TutorTools.css';
+import css from './PredictObserveExplain.module.css';
 
 const STORAGE_KEY = 'elab_poe_completed';
 
@@ -126,7 +127,7 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
               Sfide completate: {completedIds.length}/{POE_CHALLENGES.length}
               {(() => {
                 const badge = calculateBadge(getAllScores());
-                return badge ? <span style={{ marginLeft: 8 }}><BadgeDisplay badge={badge} /></span> : null;
+                return badge ? <span className={css.badgeInline}><BadgeDisplay badge={badge} /></span> : null;
               })()}
             </div>
           )}
@@ -156,16 +157,16 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
                 <span className="elab-tool__list-item-icon">
                   {isCompleted ? '\u2713' : '\u25CF'}
                   {getScore(challenge.id) > 0 && (
-                    <span style={{ display: 'block', marginTop: 2 }}><StarDisplay stars={getScore(challenge.id)} size={12} /></span>
+                    <span className={css.starBlock}><StarDisplay stars={getScore(challenge.id)} size={12} /></span>
                   )}
                 </span>
                 <div className="elab-tool__list-item-body">
-                  <div style={{ display: 'flex', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
+                  <div className={css.badgeRow}>
                     <VolumeBadge volume={challenge.volume} chapter={challenge.chapter} />
                     <LayerBadge layer={challenge.layer} />
                   </div>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--elab-text)', margin: 0, fontWeight: 500 }}>{challenge.question}</p>
-                  <span className="elab-tool__badge elab-tool__badge--concept" style={{ marginTop: 4, display: 'inline-block' }}>{challenge.concept}</span>
+                  <p className={css.questionText}>{challenge.question}</p>
+                  <span className={`elab-tool__badge elab-tool__badge--concept ${css.conceptBadge}`}>{challenge.concept}</span>
                 </div>
                 <span className="elab-tool__list-item-arrow">→</span>
               </div>
@@ -193,20 +194,20 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
       </div>
 
       {/* Header */}
-      <div className="elab-tool__card" style={{ borderTop: `4px solid ${LAYER_COLORS[selectedChallenge.layer].text}` }}>
-        <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+      <div className={`elab-tool__card ${css.cardBorder}`} style={{ '--card-accent-color': LAYER_COLORS[selectedChallenge.layer].text }}>
+        <div className={css.cardHeaderRow}>
           <VolumeBadge volume={selectedChallenge.volume} chapter={selectedChallenge.chapter} />
           <LayerBadge layer={selectedChallenge.layer} />
         </div>
-        <h3 style={{ fontSize: '1.1rem', margin: 0 }}>{selectedChallenge.question}</h3>
+        <h3 className={css.cardTitle}>{selectedChallenge.question}</h3>
       </div>
 
       {/* FASE 1: PREDICT */}
       {phase === 'predict' && (
         <div className="elab-tool__card">
           <h3>Fase 1: Prevedi</h3>
-          <p style={{ color: 'var(--elab-muted)', fontSize: '0.875rem', marginBottom: 20 }}>Cosa pensi che succederà? Scegli la tua risposta:</p>
-          <div style={{ display: 'grid', gap: 10 }}>
+          <p className={css.phaseHint}>Cosa pensi che succederà? Scegli la tua risposta:</p>
+          <div className={css.optionsGrid}>
             {/* © Andrea Marro — 20/02/2026 */}
             {selectedChallenge.options.map((option, i) => (
               <button key={i} onClick={() => submitPrediction(i)} className="elab-tool__option">
@@ -228,16 +229,16 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
               <div className="elab-tool__compare-label">La tua previsione</div>
               <div className="elab-tool__compare-value">{selectedChallenge.options[prediction]}</div>
             </div>
-            <div className="elab-tool__compare-box" style={{
-              borderColor: isCorrect ? 'var(--elab-lime)' : '#ef4444',
-              background: isCorrect ? 'rgba(145,191,69,0.05)' : 'rgba(239,68,68,0.05)'
+            <div className={`elab-tool__compare-box ${css['compareBox--result']}`} style={{
+              '--compare-border': isCorrect ? 'var(--elab-lime)' : '#ef4444',
+              '--compare-bg': isCorrect ? 'rgba(145,191,69,0.05)' : 'rgba(239,68,68,0.05)'
             }}>
               <div className="elab-tool__compare-label">Cosa succede davvero</div>
               <div className="elab-tool__compare-value">{selectedChallenge.options[selectedChallenge.correctAnswer]}</div>
             </div>
           </div>
 
-          <div className={`elab-tool__result ${isCorrect ? 'elab-tool__result--correct' : 'elab-tool__result--incorrect'}`} style={{ marginBottom: 16 }}>
+          <div className={`elab-tool__result ${isCorrect ? 'elab-tool__result--correct' : 'elab-tool__result--incorrect'} ${css.resultMargin}`}>
             <span className="elab-tool__result-icon">{isCorrect ? '\u2713' : '?'}</span>
             <p className="elab-tool__result-text">
               {isCorrect ? 'Hai previsto correttamente!' : 'La realtà è diversa dalla tua previsione!'}
@@ -249,12 +250,11 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className={css.buttonRow}>
             {(selectedChallenge.experimentId || selectedChallenge.wokwiId) && (
               <button
                 onClick={() => onOpenSimulator?.(selectedChallenge.experimentId || selectedChallenge.wokwiId)}
-                className="elab-tool__btn elab-tool__btn--secondary"
-                style={{ flex: 1 }}
+                className={`elab-tool__btn elab-tool__btn--secondary ${css.flexOne}`}
               >
                 Provalo nel simulatore
               </button>
@@ -262,13 +262,12 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             {!isCorrect && onSendToUNLIM && (
               <button
                 onClick={() => onSendToUNLIM(`Nella sfida POE "${selectedChallenge.question}", ho previsto "${selectedChallenge.options[prediction]}" ma la risposta corretta è "${selectedChallenge.options[selectedChallenge.correctAnswer]}". Puoi spiegarmi perché?`)}
-                className="elab-tool__btn elab-tool__btn--secondary"
-                style={{ flex: 1 }}
+                className={`elab-tool__btn elab-tool__btn--secondary ${css.flexOne}`}
               >
                 Chiedi a UNLIM perché
               </button>
             )}
-            <button onClick={goToExplain} className="elab-tool__btn elab-tool__btn--navy" style={{ flex: 1 }}>
+            <button onClick={goToExplain} className={`elab-tool__btn elab-tool__btn--navy ${css.flexOne}`}>
               Continua → Spiega
             </button>
           </div>
@@ -279,7 +278,7 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
       {phase === 'explain' && (
         <div className="elab-tool__card">
           <h3>Fase 3: Spiega</h3>
-          <p style={{ color: 'var(--elab-muted)', fontSize: '0.875rem', marginBottom: 16 }}>
+          <p className={css.explainHint}>
             {isCorrect
               ? 'Bravo! Prova a spiegare PERCHÉ hai ragione. Come funziona?'
               : 'Perché pensi che la realtà sia diversa dalla tua previsione?'}
@@ -291,16 +290,15 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             className="elab-tool__textarea"
           />
           {explanation.trim().length > 0 && explanation.trim().length < 10 && (
-            <p style={{ color: '#ea580c', fontSize: '0.875rem', marginTop: 4 }}>
+            <p className={css.shortWarning}>
               Scrivi almeno qualche parola per riflettere...
             </p>
           )}
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+          <div className={css.explainActions}>
             {onSendToUNLIM && (
               <button
                 onClick={() => onSendToUNLIM(`Nella sfida POE "${selectedChallenge.question}", aiutami a capire: ${isCorrect ? 'perché la mia previsione era corretta?' : 'perché il risultato è diverso dalla mia previsione?'}`)}
-                className="elab-tool__btn elab-tool__btn--secondary"
-                style={{ flex: 1 }}
+                className={`elab-tool__btn elab-tool__btn--secondary ${css.flexOne}`}
               >
                 UNLIM, aiutami
               </button>
@@ -308,8 +306,7 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             <button
               onClick={submitExplanation}
               disabled={explanation.trim().length < 10}
-              className="elab-tool__btn elab-tool__btn--primary"
-              style={{ flex: 2 }}
+              className={`elab-tool__btn elab-tool__btn--primary ${css.flexTwo}`}
             >
               Completa
             </button>
@@ -320,19 +317,16 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
       {/* COMPLETO */}
       {phase === 'complete' && (
         <div className="elab-tool__card">
-          <div style={{ textAlign: 'center', marginBottom: 20 }}>
-            <h3 style={{ fontSize: '1.1rem', marginBottom: 4 }}>Ecco la spiegazione</h3>
+          <div className={css.completeCenter}>
+            <h3 className={css.completeTitle}>Ecco la spiegazione</h3>
           </div>
 
-          <div style={{ marginBottom: 12 }}>
+          <div className={css.starResultWrap}>
             <StarResult stars={earnedStars} message={POE_STAR_MESSAGES[earnedStars]} />
           </div>
 
-          <div style={{
-            padding: 16, borderRadius: 'var(--elab-radius)', marginBottom: 16,
-            background: 'rgba(31,61,133,0.04)', borderLeft: '4px solid var(--elab-navy)'
-          }}>
-            <p style={{ margin: 0 }}>{selectedChallenge.explanation}</p>
+          <div className={css.explanationBox}>
+            <p>{selectedChallenge.explanation}</p>
           </div>
 
           {selectedChallenge.funFact && (
@@ -342,11 +336,11 @@ export default function PredictObserveExplain({ onOpenSimulator, logSession, onS
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-            <button onClick={goBack} className="elab-tool__btn elab-tool__btn--secondary" style={{ flex: 1 }}>
+          <div className={css.completeActions}>
+            <button onClick={goBack} className={`elab-tool__btn elab-tool__btn--secondary ${css.flexOne}`}>
               ← Altra sfida
             </button>
-            <button onClick={() => onOpenSimulator?.(selectedChallenge.experimentId || selectedChallenge.wokwiId)} className="elab-tool__btn elab-tool__btn--navy" style={{ flex: 1 }}>
+            <button onClick={() => onOpenSimulator?.(selectedChallenge.experimentId || selectedChallenge.wokwiId)} className={`elab-tool__btn elab-tool__btn--navy ${css.flexOne}`}>
               Prova nel Simulatore
             </button>
           </div>

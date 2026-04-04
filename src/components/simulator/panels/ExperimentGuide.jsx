@@ -32,6 +32,7 @@ const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildM
         onClick={() => setExpanded(true)}
         style={S.collapsedBtn}
         title="Mostra guida esperimento"
+        data-elab-guide="true"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ color: 'var(--color-primary)' }}>
           <rect x="3" y="2" width="12" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
@@ -42,7 +43,7 @@ const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildM
   }
 
   return (
-    <div style={S.root}>
+    <div style={S.root} data-elab-guide="true">
       {/* Header */}
       <div style={S.header}>
         <span style={S.headerIcon}>{experiment.icon || '\u25CF'}</span>
@@ -100,7 +101,7 @@ const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildM
         </div>
       )}
 
-      {/* Chiedi a UNLIM */}
+      {/* Chiedi a Galileo */}
       {onSendToUNLIM && (
         <button
           onClick={() => onSendToUNLIM(`Spiegami l'esperimento "${experiment.title || ''}" — cosa devo osservare e perché funziona così?`)}
@@ -111,7 +112,7 @@ const ExperimentGuide = React.memo(function ExperimentGuide({ experiment, buildM
             <path d="M5.5 5.5C5.5 4.67 6.17 4 7 4C7.83 4 8.5 4.67 8.5 5.5C8.5 6.33 7 6.5 7 7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
             <circle cx="7" cy="9.5" r="0.5" fill="currentColor"/>
           </svg>
-          Chiedi a UNLIM
+          Chiedi a Galileo
         </button>
       )}
     </div>
@@ -152,6 +153,7 @@ const S = {
     fontSize: 14,
     color: 'var(--color-text-gray-700, #333)',
     overflow: 'auto',
+    resize: 'both',
     zIndex: 20,
     backdropFilter: 'blur(8px)',
   },
@@ -276,7 +278,7 @@ const S = {
     margin: 0,
     padding: '10px 14px',
     fontSize: 14,
-    color: 'var(--color-text-gray-300, #888)',
+    color: 'var(--color-text-gray-300, #737373)',
     fontStyle: 'italic',
     borderTop: '1px solid var(--color-divider-subtle, #F0EDE6)',
     display: 'flex',

@@ -18,6 +18,7 @@ import { showToast } from '../common/Toast';
 import { formatForContext as formatActivityContext, pushActivity } from '../../services/activityBuffer'; // Sprint 1 Context Mastery
 import { sessionMetrics } from '../../services/sessionMetrics'; // Sprint 1 Context Mastery: session metrics
 import { findVideo, getYouTubeSearchUrl } from '../../data/unlim-videos'; // UNLIM Onnipotente: curated YouTube DB
+import { getNewConcepts, getPrerequisites } from '../../data/concept-graph'; // PDR: concept graph for pedagogical context
 import { TabHint } from './ContextualHints';
 import NewElabSimulator from '../simulator/NewElabSimulator';
 const CircuitDetective = lazy(() => import('./CircuitDetective'));
@@ -32,12 +33,13 @@ import TutorLayout from './TutorLayout';
 import useIsMobile from '../../hooks/useIsMobile';
 import { useAuth } from '../../context/AuthContext';
 import { SessionRecorderProvider } from '../../context/SessionRecorderContext';
-import ManualTab from './ManualTab';
-import CanvasTab from './CanvasTab';
-import NotebooksTab from './NotebooksTab';
-import VideosTab from './VideosTab';
+const ManualTab = lazy(() => import('./ManualTab'));
+const CanvasTab = lazy(() => import('./CanvasTab'));
+const NotebooksTab = lazy(() => import('./NotebooksTab'));
+const VideosTab = lazy(() => import('./VideosTab'));
 
 import PresentationModal from './PresentationModal';
+import VolumeChooser from './VolumeChooser';
 import { loadPdfJs } from './utils/documentConverters';
 import logger from '../../utils/logger';
 import { captureWhiteboardScreenshot } from '../../utils/whiteboardScreenshot';
@@ -46,6 +48,49 @@ import {
     cancelRecording, sendVoiceChat, synthesizeSpeech, playAudio, playTracked, stopPlayback,
     unlockAudioPlayback,
 } from '../../services/voiceService';
+
+// ── localStorage notebook size cap ──────────────────
+const MAX_NOTEBOOKS = 20;
+const MAX_DATAURL_LENGTH = 500_000; // 500KB
+
+/**
+ * Generate a size-capped data URL from a canvas.
+ * If the result exceeds MAX_DATAURL_LENGTH, re-encode as JPEG at lower quality.
+ * Returns null if still too large after quality reduction.
+ */
+function cappedToDataURL(canvas, format = 'image/jpeg', quality = 0.6) {
+    if (!canvas) return null;
+    let dataUrl = canvas.toDataURL(format, quality);
+    if (dataUrl.length <= MAX_DATAURL_LENGTH) return dataUrl;
+    // Try lower quality JPEG
+    dataUrl = canvas.toDataURL('image/jpeg', 0.3);
+    if (dataUrl.length <= MAX_DATAURL_LENGTH) return dataUrl;
+    // Still too large — skip saving image
+    return null;
+}
+
+/**
+ * Cap notebooks array to MAX_NOTEBOOKS, keeping the most recent.
+ */
+function capNotebooks(notebooksArr) {
+    if (notebooksArr.length <= MAX_NOTEBOOKS) return notebooksArr;
+    return notebooksArr.slice(0, MAX_NOTEBOOKS);
+}
+
+/**
+ * Save notebooks to localStorage with size cap.
+ */
+function persistNotebooks(notebooksArr, toastFn) {
+    const capped = capNotebooks(notebooksArr);
+    try {
+        localStorage.setItem('elab-notebooks', JSON.stringify(capped));
+    } catch (e) {
+        if (e?.name === 'QuotaExceededError' || e?.code === 22) {
+            if (toastFn) toastFn('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
+        }
+    }
+    return capped;
+}
 
 /**
  * Extract [INTENT:{...}] tags from text using balanced-brace matching.
@@ -92,14 +137,37 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
     const { user, isDocente } = useAuth();
     const { confirm: confirmModal, ConfirmDialog } = useConfirmModal();
 
+    // ── VOLUME SECTIONS (G22): Primary volume state ──
+    // activeVolume: null = not chosen, 1/2/3 = volume, 'inventor' = free mode
+    // Persisted in localStorage for "Bentornati" return flow
+    const _savedVolume = useMemo(() => {
+        try {
+            const saved = localStorage.getItem('elab_active_volume');
+            if (saved === 'inventor') return 'inventor';
+            const num = Number(saved);
+            return (num >= 1 && num <= 3) ? num : null;
+        } catch { return null; }
+    }, []);
+    const [activeVolume, setActiveVolumeRaw] = useState(_savedVolume);
+    // showVolumeChooser: skip if returning user has a saved volume (Principio Zero — 0 clicks to start)
+    const [showVolumeChooser, setShowVolumeChooser] = useState(!_savedVolume);
+    const setActiveVolume = useCallback((vol) => {
+        setActiveVolumeRaw(vol);
+        setShowVolumeChooser(false);
+        try { localStorage.setItem('elab_active_volume', String(vol)); } catch { /* silent */ }
+    }, []);
+
     // Chat State — Principio Zero: welcome dinamico basato sulla storia classe
     const _classProfile = buildClassProfile();
     const _nextSuggestion = getNextLessonSuggestion();
-    const _welcomeText = _classProfile.isFirstTime
-        ? `**Ciao! Sono UNLIM** 🤖\n\nOggi accendiamo il primo LED insieme!\nPremi **▶ Inizia** per partire — ti guido io passo passo.`
-        : _nextSuggestion
-            ? `**Bentornati!** 🎉\n\nL'ultima volta avete fatto *"${_classProfile.lastExperimentTitle}"*.\nOggi: **${_nextSuggestion.title}** — premi **▶ Inizia** per partire!`
-            : `**Bentornati!** 🎉\n\nPronti a continuare? Scegliete un esperimento o chiedetemi qualcosa!`;
+    // Welcome message adapts: if volume already chosen, show context; if not, volume chooser overlay handles it
+    const _welcomeText = activeVolume
+        ? (activeVolume === 'inventor'
+            ? `**Modalità Inventore attiva!**\n\nHai tutti i componenti a disposizione. Costruisci quello che vuoi!`
+            : _nextSuggestion
+                ? `**Pronti!**\n\nVolume ${activeVolume} attivo. Oggi: **${_nextSuggestion.title}** — premi Inizia!`
+                : `**Pronti!**\n\nVolume ${activeVolume} attivo. Scegliete un esperimento o chiedetemi qualcosa!`)
+        : `**Ciao! Sono Galileo**\n\nScegliete il volume per iniziare!`;
     const [messages, setMessages] = useState([{
         id: 'welcome',
         role: 'assistant',
@@ -114,11 +182,12 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
 
     // Principio Zero: progressive disclosure basata sul volume
     // Vol1/Vol2 = LIVELLO 1 (solo breadboard, lesson path, UNLIM)
-    // Vol3 = LIVELLO 2 (+ editor codice, Scratch, Serial Monitor)
+    // Vol3/Inventore = LIVELLO 2 (+ editor codice, Scratch, Serial Monitor)
     const disclosureLevel = useMemo(() => {
-        if (!activeExperiment?.id) return 1;
-        return activeExperiment.id.startsWith('v3-') ? 2 : 1;
-    }, [activeExperiment?.id]);
+        if (activeVolume === 'inventor' || activeVolume === 3) return 2;
+        if (activeExperiment?.id?.startsWith('v3-')) return 2;
+        return 1;
+    }, [activeExperiment?.id, activeVolume]);
 
     // Voice State (UNLIM speaks — realtime via nanobot)
     const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -141,7 +210,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         checkVoiceCapabilities().then(caps => {
             const available = caps.stt && caps.tts && caps.microphone;
             setVoiceAvailable(available);
-            logger.debug(`[Voice] Capabilities: STT=${caps.stt} TTS=${caps.tts} Mic=${caps.microphone}`, available ? '✅ Ready' : '❌ Not available');
+            logger.debug(`[Voice] Capabilities: STT=${caps.stt} TTS=${caps.tts} Mic=${caps.microphone}`, available ? 'Ready' : 'Not available');
         }).catch(() => setVoiceAvailable(false));
     }, []);
 
@@ -194,7 +263,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                 setMessages(prev => [...prev, {
                     id: recordingMsgId,
                     role: 'user',
-                    content: '🎙️ *Messaggio vocale in elaborazione...*',
+                    content: 'Messaggio vocale in elaborazione...',
                     isVoice: true,
                 }]);
 
@@ -221,7 +290,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                     // Update user message with transcript
                     setMessages(prev => prev.map(m =>
                         m.id === recordingMsgId
-                            ? { ...m, content: result.userText || '🎙️ (audio)', isVoice: true }
+                            ? { ...m, content: result.userText || '(audio)', isVoice: true }
                             : m
                     ));
 
@@ -251,8 +320,8 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                             _executedActions: [],
                         }]);
 
-                        // Execute ALL action tags (same as text chat — skipRalphLoop to avoid latency)
-                        await processAiResponse(voiceAiResponse, result.userText || '', voiceMsgId, { skipRalphLoop: true });
+                        // Execute ALL action tags (same as text chat)
+                        await processAiResponse(voiceAiResponse, result.userText || '', voiceMsgId);
                     }
 
                     // Play audio response if available
@@ -268,7 +337,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                 } else {
                     setMessages(prev => prev.map(m =>
                         m.id === recordingMsgId
-                            ? { ...m, content: '❌ Non sono riuscito a capire. Riprova!' }
+                            ? { ...m, content: 'Non sono riuscito a capire. Riprova!' }
                             : m
                     ));
                 }
@@ -277,7 +346,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                 setMessages(prev => [...prev, {
                     id: 'voice-err-' + Date.now(),
                     role: 'assistant',
-                    content: 'Scusa, c\'è stato un problema con la voce. Prova a scrivere oppure riprova! 🔄',
+                    content: 'Scusa, c\'è stato un problema con la voce. Prova a scrivere oppure riprova!',
                 }]);
             } finally {
                 setIsLoading(false);
@@ -293,7 +362,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                 setMessages(prev => [...prev, {
                     id: 'mic-err-' + Date.now(),
                     role: 'assistant',
-                    content: 'Per usare la voce, devi permettere l\'accesso al microfono nelle impostazioni del browser. 🎙️',
+                    content: 'Per usare la voce, devi permettere l\'accesso al microfono nelle impostazioni del browser.',
                 }]);
             }
         }
@@ -479,7 +548,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             setMessages(prev => [...prev, {
                 id: Date.now(),
                 role: 'assistant',
-                content: `🎬 Ho trovato un video perfetto su **${curated.topic}**: "${curated.title}" di ${curated.channel}`,
+                content: `Ho trovato un video perfetto su **${curated.topic}**: "${curated.title}" di ${curated.channel}`,
                 proactive: true,
                 youtubeSearch: { url: curated.url, query: curated.title, curated: true },
             }]);
@@ -502,7 +571,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         if (!state) {
             setMessages(prev => [...prev, {
                 id: Date.now(), role: 'assistant',
-                content: '🔍 Non c\'è un circuito attivo da analizzare. Apri un esperimento nel simulatore e costruisci qualcosa!',
+                content: 'Non c\'è un circuito attivo da analizzare. Apri un esperimento nel simulatore e costruisci qualcosa!',
                 proactive: true,
             }]);
             setShowChat(true);
@@ -518,7 +587,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             if (result?.success) {
                 setMessages(prev => [...prev, {
                     id: Date.now(), role: 'assistant',
-                    content: `🔍 **Diagnosi Circuito**\n\n${result.diagnosis}`,
+                    content: `**Diagnosi Circuito**\n\n${result.diagnosis}`,
                     proactive: true,
                 }]);
             } else {
@@ -542,7 +611,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         if (!activeExperiment?.id) {
             setMessages(prev => [...prev, {
                 id: Date.now(), role: 'assistant',
-                content: '💡 Seleziona un esperimento nel simulatore per ricevere suggerimenti mirati!',
+                content: 'Seleziona un esperimento nel simulatore per ricevere suggerimenti mirati!',
                 proactive: true,
             }]);
             setShowChat(true);
@@ -555,7 +624,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             if (result?.success) {
                 setMessages(prev => [...prev, {
                     id: Date.now(), role: 'assistant',
-                    content: `💡 **Suggerimenti per "${activeExperiment.title || activeExperiment.id}"**\n\n${result.hints}`,
+                    content: `**Suggerimenti per "${activeExperiment.title || activeExperiment.id}"**\n\n${result.hints}`,
                     proactive: true,
                 }]);
             } else {
@@ -606,7 +675,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         if (meetLink.trim()) window.open(meetLink, '_blank', 'noopener');
     }, [meetLink]);
     const copyMeetLink = useCallback(() => {
-        navigator.clipboard.writeText(meetLink).then(() => {
+        navigator.clipboard?.writeText(meetLink).then(() => {
             setMeetCopied(true);
             setTimeout(() => setMeetCopied(false), 2000);
         }).catch(() => { });
@@ -668,13 +737,18 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
     useEffect(() => {
         const saved = localStorage.getItem('elab_tutor_slides');
         if (saved) {
-            try { setSlides(JSON.parse(saved)); } catch (e) { }
+            try { setSlides(JSON.parse(saved)); } catch (e) { logger.warn('Corrupt elab_tutor_slides in localStorage', e); }
         }
     }, []);
 
     useEffect(() => {
         if (slides.length > 0) {
-            localStorage.setItem('elab_tutor_slides', JSON.stringify(slides));
+            const capped = slides.length > 50 ? slides.slice(-50) : slides;
+            try {
+                localStorage.setItem('elab_tutor_slides', JSON.stringify(capped));
+            } catch (e) {
+                logger.warn('Failed to persist slides to localStorage', e);
+            }
         }
     }, [slides]);
 
@@ -733,7 +807,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
                 return [...prev, {
                     id: Date.now(),
                     role: 'assistant',
-                    content: `💡 Tutto bene? Stai lavorando su **${activeExperiment?.title || 'questo esperimento'}**. Se hai bisogno di aiuto, chiedimi pure! Posso spiegarti il circuito, avviare la simulazione, o darti un suggerimento.`,
+                    content: `Tutto bene? Stai lavorando su **${activeExperiment?.title || 'questo esperimento'}**. Se hai bisogno di aiuto, chiedimi pure! Posso spiegarti il circuito, avviare la simulazione, o darti un suggerimento.`,
                     proactive: true,
                 }];
             });
@@ -862,7 +936,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             canvas.height = viewport.height;
             const ctx = canvas.getContext('2d');
             await page.render({ canvasContext: ctx, viewport }).promise;
-            return canvas.toDataURL('image/jpeg', 0.85); // S112: JPEG = ~5x smaller than PNG
+            return cappedToDataURL(canvas, 'image/jpeg', 0.85); // S112: JPEG = ~5x smaller than PNG, size-capped
         } catch (err) {
             logger.error(`Errore render pagina ${pageIndex}:`, err);
             return null;
@@ -1100,7 +1174,8 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
 
     const addCanvasToSlides = () => {
         if (!canvasRef.current) return;
-        const dataUrl = canvasRef.current.toDataURL('image/png');
+        const dataUrl = cappedToDataURL(canvasRef.current, 'image/jpeg', 0.6);
+        if (!dataUrl) return; // too large, skip
         setSlides(prev => [...prev, { id: Date.now(), type: 'image', content: dataUrl }]);
     };
 
@@ -1142,21 +1217,14 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         const title = initialTitle || notebookTitle.trim() || `Lezione ${new Date().toLocaleDateString()}`;
         let firstPage = null;
         if (initialImage) {
-            firstPage = initialImage;
+            firstPage = initialImage.length > MAX_DATAURL_LENGTH ? null : initialImage;
         } else if (canvasRef.current) {
-            firstPage = canvasRef.current.toDataURL('image/jpeg', 0.6);
+            firstPage = cappedToDataURL(canvasRef.current, 'image/jpeg', 0.6);
         }
 
         const newNote = { id: Date.now(), title, date: new Date().toLocaleString(), pages: [firstPage] };
-        const updated = [newNote, ...notebooks];
+        const updated = persistNotebooks([newNote, ...notebooks], showToast);
         setNotebooks(updated);
-        try {
-            localStorage.setItem('elab-notebooks', JSON.stringify(updated));
-        } catch (e) {
-            if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
-            }
-        }
         setNotebookTitle('');
         setActiveNotebookId(newNote.id);
         setActivePageIndex(0);
@@ -1168,7 +1236,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
 
     const savePage = () => {
         if (!canvasRef.current || !activeNotebookId) return;
-        const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.6);
+        const dataUrl = cappedToDataURL(canvasRef.current, 'image/jpeg', 0.6);
         const updated = notebooks.map(n => {
             if (n.id === activeNotebookId) {
                 const newPages = [...(n.pages || [])];
@@ -1183,13 +1251,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             return n;
         });
         setNotebooks(updated);
-        try {
-            localStorage.setItem('elab-notebooks', JSON.stringify(updated));
-        } catch (e) {
-            if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
-            }
-        }
+        persistNotebooks(updated, showToast);
     };
 
     const addPage = () => {
@@ -1202,13 +1264,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             return n;
         });
         setNotebooks(updated);
-        try {
-            localStorage.setItem('elab-notebooks', JSON.stringify(updated));
-        } catch (e) {
-            if (e?.name === 'QuotaExceededError' || e?.code === 22) {
-                showToast('Spazio di archiviazione pieno! Elimina alcuni taccuini vecchi.', 'warning');
-            }
-        }
+        persistNotebooks(updated, showToast);
         setActivePageIndex(prev => prev + 1);
     };
 
@@ -1234,7 +1290,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
         if (!await confirmModal('Eliminare questo taccuino?')) return;
         const updated = notebooks.filter(n => n.id !== id);
         setNotebooks(updated);
-        localStorage.setItem('elab-notebooks', JSON.stringify(updated));
+        persistNotebooks(updated, showToast);
         if (activeNotebookId === id) closeNotebook();
     };
 
@@ -1261,6 +1317,7 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
     const buildTutorContext = useCallback(() => {
         const parts = [];
         parts.push(`tab=${activeTab}`);
+        if (activeVolume) parts.push(`volume_attivo=${activeVolume === 'inventor' ? 'Inventore' : `Vol${activeVolume}`}`);
         if (activeExperiment) parts.push(`esp=${activeExperiment.id} "${activeExperiment.title || ''}"`);
         parts.push(`disclosure=${disclosureLevel}`);
         if (selectedVolume) parts.push(`manuale=Vol${selectedVolume} p.${currentDocPage + 1}`);
@@ -1397,11 +1454,33 @@ export default function ElabTutorV4({ provaMode = false, onNavigate, initialExpe
             }
         } catch { /* silent */ }
 
+        // PDR: Inject concept graph pedagogical context
+        let conceptContext = '';
+        try {
+            if (activeExperiment?.id) {
+                const newConcepts = getNewConcepts(activeExperiment.id);
+                const prereqs = getPrerequisites(activeExperiment.id);
+                if (newConcepts.length > 0) {
+                    conceptContext = `\nCONCETTI DA INSEGNARE: ${newConcepts.map(c => `${c.name} (analogia: "${c.analogy}")`).join('; ')}`;
+                }
+                if (prereqs.length > 0) {
+                    conceptContext += `\nPREREQUISITI: ${prereqs.map(c => c.name).join(', ')}`;
+                }
+            }
+        } catch { /* silent */ }
+
         // S58: Streamlined context — clear, structured, no redundancy with nanobot.yml system prompt
         return `[CONTESTO DI SISTEMA — UNLIM v3.0]
 
 STATO ATTUALE INTERFACCIA:
-${parts.join('\n')}
+${parts.join('\n')}${conceptContext}
+
+AZIONI DISPONIBILI (usa [AZIONE:comando:args] alla fine della risposta):
+CIRCUITO: play | pause | reset | addcomponent:tipo[:x:y] | removecomponent:id | addwire:comp1:pin1:comp2:pin2 | removewire:indice | clearall | interact:id:azione[:valore] | movecomponent:id:x:y | setvalue:id:parametro:valore | measure:id | diagnose | listcomponents
+CODICE: compile | openeditor | closeeditor | switcheditor:scratch|arduino | loadblocks:xml
+NAVIGAZIONE: loadexp:id | opentab:simulatore|manuale|video|lavagna | openvolume:1|2|3[:pagina] | setbuildmode:montato|passopasso|libero | nextstep | prevstep
+VISTA: highlight:id1,id2 | highlightpin:comp:pin | showbom | showserial | quiz[:espId] | youtube:query | undo | redo
+TIPI COMPONENTE: led | resistor | pushbutton | capacitor | buzzer | potentiometer | battery
 
 REGOLE CRITICHE PER QUESTA RISPOSTA:
 1. ONESTA': Se l'utente chiede "cosa vedi?" → descrivi SOLO i dati qui sopra (componenti, connessioni, LED, posizioni). Non inventare.
@@ -1410,9 +1489,11 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
 4. DOMANDE OFF-TOPIC: Rispondi brevemente (max 1 frase) e ridireziona all'elettronica. Non fare lezioni step-by-step su matematica o altro.
 5. TAG FORMATO: [AZIONE:comando:args] — AZIONE sempre MAIUSCOLO, tag alla FINE della risposta, dopo la spiegazione.
 6. PER RIMUOVERE TUTTI I FILI: Se fili=N, emetti N tag [AZIONE:removewire:i] per i da N-1 a 0 (partendo dall'ultimo).
-7. LINGUAGGIO 10-14 ANNI: Max 30 parole per risposta. Mai termini come "dispositivo a semiconduttore", "diodo a emissione di luce", "componente elettronico passivo". Usa analogie: LED="lampadina minuscola", resistore="tubo stretto per l'acqua", corrente="acqua che scorre", tensione="pressione dell'acqua".
-8. ANALOGIA OBBLIGATORIA: Per ogni domanda "cos'e' X?" inizia SEMPRE con "E' come..." prima di qualsiasi spiegazione tecnica. Sii entusiasta e concreto.${memoryContext ? `\n\n${memoryContext}` : ''}`;
-    }, [activeTab, activeExperiment, selectedVolume, currentDocPage,
+7. LINGUAGGIO 10-14 ANNI: Max 60 parole per risposta (3 frasi + 1 analogia). Mai termini come "dispositivo a semiconduttore", "diodo a emissione di luce", "componente elettronico passivo". Usa analogie: LED="lampadina minuscola", resistore="tubo stretto per l'acqua", corrente="acqua che scorre", tensione="pressione dell'acqua".
+8. ANALOGIA OBBLIGATORIA: Per ogni domanda "cos'e' X?" inizia SEMPRE con "E' come..." prima di qualsiasi spiegazione tecnica. Sii entusiasta e concreto.
+9. MONTA CIRCUITO: Se l'utente dice "monta il semaforo" o simile → usa [AZIONE:loadexp:v3-cap6-semaforo]. ID formato: v{vol}-cap{cap}-esp{num} o v3-cap6-semaforo, v3-extra-lcd-hello, v3-extra-servo-sweep, v3-extra-simon.
+10. PREPARA LEZIONE: Se il docente chiede di preparare la lezione → usa il contesto attuale + memoria sessioni per suggerire l'esperimento giusto e caricarlo.${memoryContext ? `\n\n${memoryContext}` : ''}`;
+    }, [activeTab, activeExperiment, activeVolume, selectedVolume, currentDocPage,
         currentVideoId, meetActive, disclosureLevel,
         activeNotebookId, notebooks, activePageIndex, isSocraticMode, messages.length]);
 
@@ -1520,12 +1601,11 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
      * Process AI response: strip action/intent tags from display text, parse + execute actions.
      * Used by BOTH handleSend (text chat) and handleVoiceRecord (voice chat).
      * @param {string} aiResponse - raw AI response (may contain [AZIONE:...] and [INTENT:...] tags)
-     * @param {string} userMessage - the user's original message (for Ralph Loop repair + quiz fallback)
+     * @param {string} userMessage - the user's original message (for quiz fallback)
      * @param {number|string} msgId - message ID to update with _executedActions
-     * @param {Object} opts - { skipRalphLoop: boolean } — voice skips Ralph Loop to avoid double API call
      * @returns {Promise<string>} displayText (tags stripped)
      */
-    const processAiResponse = async (aiResponse, userMessage, msgId, opts = {}) => {
+    const processAiResponse = async (aiResponse, userMessage, msgId) => {
         const aiLower = aiResponse.toLowerCase();
         const userLower = userMessage.toLowerCase();
 
@@ -1559,45 +1639,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         const api = typeof window !== 'undefined' && window.__ELAB_API;
         const executedActions = [];
         const actionFailures = [];
-        const actionIntentRegex = /\b(carica|apri|vai|metti|aggiungi|costruisci|collega|rimuovi|togli|evidenzia|mostra|mostrami|sposta|premi|gira|avvia|ferma|reset|compila|imposta|setta|cancella|pulisci|interagisci|annulla|ripeti|indietro|avanti|prossimo|precedente|scrivi|elenca|stato|misura|diagnostica|programma|codice|codifica|ripristina)\b/i;
-
-        // ── Ralph Loop repair (silent second-pass) — skip for voice to avoid extra latency ──
-        if (!opts.skipRalphLoop && actionTags.length === 0 && actionIntentRegex.test(userMessage)) {
-            try {
-                const repairPrompt = [
-                    '[RIPARAZIONE TAG AZIONE]',
-                    "L'utente ha chiesto un'azione ma la risposta precedente non contiene tag [AZIONE:...].",
-                    'Genera SOLO i tag [AZIONE:...] necessari (uno per riga), senza testo aggiuntivo.',
-                    '',
-                    `[MESSAGGIO UTENTE]\\n${userMessage}`,
-                    '',
-                    `[RISPOSTA PRECEDENTE]\\n${aiResponse}`,
-                ].join('\\n');
-
-                const experimentContext = activeExperiment
-                    ? `[Esp: "${activeExperiment.title || activeExperiment.id || ''}"]`
-                    : '';
-
-                const repairResult = await sendChat(repairPrompt, [], {
-                    socraticMode: false,
-                    experimentContext,
-                    circuitState: circuitStateRef.current?.structured
-                        ? { structured: circuitStateRef.current.structured, text: circuitStateRef.current.text }
-                        : (circuitStateRef.current ? { raw: circuitStateRef.current } : null),
-                    experimentId: activeExperiment?.id || null,
-                });
-
-                if (repairResult?.success && repairResult?.response) {
-                    const repaired = sanitizeOutput(String(repairResult.response));
-                    const recovered = repaired.match(/\[azione:([^\]]+)\]/gi) || [];
-                    if (recovered.length > 0) {
-                        actionTags = recovered;
-                    }
-                }
-            } catch {
-                // Silent: keep original response even if repair step fails.
-            }
-        }
+        // G25: Ralph Loop removed — doubled latency for action-intent messages.
+        // Action tag generation is now handled by improved nanobot prompts.
 
         const parseIntOr = (value, fallback) => {
             const parsed = Number.parseInt(value, 10);
@@ -1712,16 +1755,25 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         if (placementResult.success) {
                             peActions.push(...placementResult.actions);
                             for (const action of placementResult.actions) {
-                                if (action.pinAssignments) Object.assign(snapshot.pinAssignments, action.pinAssignments);
+                                if (action.pinAssignments) {
+                                    for (const key of Object.keys(action.pinAssignments)) {
+                                        if (key !== '__proto__' && key !== 'constructor' && key !== 'prototype') {
+                                            snapshot.pinAssignments[key] = action.pinAssignments[key];
+                                        }
+                                    }
+                                }
                             }
                         }
                         if (placementResult.errors.length > 0) logger.warn('[PlacementEngine]', placementResult.errors);
                     } catch (parseErr) {
-                        logger.warn('[PlacementEngine] Invalid INTENT JSON:', parseErr.message);
+                        logger.warn('[G25] Dropped malformed INTENT tag:', tag.fullMatch.substring(0, 80), '—', parseErr.message);
+                        recordActionFailure(tag.fullMatch.substring(0, 40), `parse error: ${parseErr.message}`);
                     }
                 }
                 logger.debug('[UNLIM-DEBUG] peActions:', peActions.length, peActions.map(a => `${a.type}:${a.tag}`));
                 if (peActions.length > 0) {
+                    // G25: Sequential placement — components first, then wires.
+                    // Each addComponent is sync but we yield between them to let state settle.
                     const peIdMap = {};
                     for (const action of peActions) {
                         if (action.type !== 'addcomponent') continue;
@@ -1739,7 +1791,13 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 if (realId && action.componentId) peIdMap[action.componentId] = realId;
                                 executedActions.push(`addcomponent:${realId || type}`);
                             }
+                            // G25: Yield to let React state settle between component additions
+                            await new Promise(r => setTimeout(r, 0));
                         } catch (err) { logger.error('[UNLIM-DEBUG] addComponent error:', err); recordActionFailure(action.tag, err.message); }
+                    }
+                    // G25: Small delay before wiring — ensures all components are registered
+                    if (peActions.some(a => a.type === 'addwire')) {
+                        await new Promise(r => setTimeout(r, 50));
                     }
                     for (const action of peActions) {
                         if (action.type !== 'addwire') continue;
@@ -1798,7 +1856,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         text: displayText,
                         targetComponentId: resolvedTargets[0],
                         type: 'hint',
-                        icon: '🔍',
+                        icon: null,
                         duration: 5000,
                       },
                     }));
@@ -1927,7 +1985,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     executedActions.push('diagnose');
                 } else if (cmd === 'openeditor') {
                     if (disclosureLevel < 2) {
-                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `L'editor del codice Arduino si usa nel **Volume 3**! Per adesso concentriamoci sul circuito 🔧`, proactive: true }]);
+                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `L'editor del codice Arduino si usa nel **Volume 3**! Per adesso concentriamoci sul circuito.`, proactive: true }]);
                         executedActions.push('openeditor:blocked-disclosure');
                     } else {
                         if (!api?.showEditor) throw new Error('showEditor non disponibile');
@@ -1938,7 +1996,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     api.hideEditor(); executedActions.push('closeeditor');
                 } else if (cmd === 'switcheditor') {
                     if (disclosureLevel < 2) {
-                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `I blocchi e il codice Arduino si usano nel **Volume 3**! Per adesso concentriamoci sul circuito 🔧`, proactive: true }]);
+                        setMessages(prev => [...prev, { id: Date.now() + 2, role: 'assistant', content: `I blocchi e il codice Arduino si usano nel **Volume 3**! Per adesso concentriamoci sul circuito.`, proactive: true }]);
                         executedActions.push('switcheditor:blocked-disclosure');
                     } else {
                         if (!api?.setEditorMode) throw new Error('setEditorMode non disponibile');
@@ -2060,7 +2118,20 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const uniqueFailures = [...new Set(actionFailures)];
             errorHistoryRef.current.push(...uniqueFailures.map(f => `action_fail:${f}`));
             if (errorHistoryRef.current.length > 10) errorHistoryRef.current = errorHistoryRef.current.slice(-10);
-            logger.warn('[UNLIM] Action failures:', uniqueFailures);
+            // G25: Console warn for EVERY dropped action (no silent drops)
+            for (const failure of uniqueFailures) {
+                logger.warn('[G25] Action dropped:', failure);
+            }
+            // G25: User-facing message if majority of actions failed
+            const totalActions = actionTags.length + intentTags.length;
+            if (totalActions > 0 && actionFailures.length > totalActions * 0.5) {
+                setMessages(prev => [...prev, {
+                    id: Date.now() + 3,
+                    role: 'assistant',
+                    content: 'Galileo non ha capito bene come eseguire questa azione. Riprova con parole diverse!',
+                    proactive: true,
+                }]);
+            }
         }
 
         // ── Quiz fallback ──
@@ -2123,7 +2194,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         if (!rateCheck.allowed) {
             setMessages(prev => [...prev,
             { id: Date.now(), role: 'user', content: userMessage },
-            { id: Date.now() + 1, role: 'assistant', content: rateCheck.message }
+            { id: Date.now() + 1, role: 'assistant', content: rateCheck.message, isRateLimit: true }
             ]);
             if (!messageOverride) setInput('');
             return;
@@ -2150,6 +2221,18 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         }
 
         setIsLoading(true);
+
+        // G25: Show "slow response" message after 5s — Prof.ssa Rossi never sees a blank screen
+        const slowMsgId = Date.now() + 999;
+        const slowTimer = setTimeout(() => {
+            setMessages(prev => [...prev, {
+                id: slowMsgId,
+                role: 'assistant',
+                content: 'Galileo sta cercando la risposta migliore...',
+                isSlowIndicator: true,
+            }]);
+        }, 5000);
+
         const volNum = activeExperiment?.id?.match(/^v(\d+)-/)?.[1] || '?';
         // UNLIM CENTRO DI COMANDO: always include tutor context + circuit state
         const tutorContext = buildTutorContext();
@@ -2238,11 +2321,24 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             for (const { fullMatch } of extractIntentTags(aiResponse)) {
                 strippedForDisplay = strippedForDisplay.replace(fullMatch, '');
             }
-            const displayText = strippedForDisplay
+            let displayText = strippedForDisplay
                 .replace(/\[azione:[^\]]+\]/gi, '')
                 .replace(/\[AZIONE:[^\]]+\]/g, '')
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
+
+            // G25: Client-side word count enforcement — truncate at 80 words (sentence boundary)
+            // The AI prompt says 60 words but LLMs often exceed it. Hard cap at 80.
+            const UNLIM_MAX_WORDS = 80;
+            const words = displayText.split(/\s+/).filter(Boolean);
+            if (words.length > UNLIM_MAX_WORDS) {
+                const truncated = words.slice(0, UNLIM_MAX_WORDS).join(' ');
+                // Find last sentence boundary (. ! ?)
+                const lastSentence = truncated.search(/[.!?][^.!?]*$/);
+                displayText = lastSentence > 20
+                    ? truncated.substring(0, lastSentence + 1)
+                    : truncated + '…';
+            }
 
             // Step 2: Add message FIRST (so action execution can reference/update it)
             setMessages(prev => [...prev, {
@@ -2259,7 +2355,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
             const errorMsg = result.error || 'Errore sconosciuto';
             let friendlyError = errorMsg;
             if (errorMsg.includes('Timeout') || errorMsg.includes('timeout')) {
-                friendlyError = 'UNLIM ci sta mettendo un po\'. Riprova tra qualche secondo.';
+                friendlyError = 'Galileo ci sta mettendo un po\'. Riprova tra qualche secondo.';
             } else if (errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError')) {
                 friendlyError = 'Controlla la connessione internet e riprova.';
             } else if (errorMsg.includes('500') || errorMsg.includes('502') || errorMsg.includes('503')) {
@@ -2273,6 +2369,9 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                 retryMessage: userMessage
             }]);
         }
+        // G25: Clear slow-response indicator and loading state
+        clearTimeout(slowTimer);
+        setMessages(prev => prev.filter(m => m.id !== slowMsgId));
         setIsLoading(false);
     };
 
@@ -2297,8 +2396,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
     const defaultQuickActions = [
         { text: 'Esperimento', action: () => setActiveTab('simulator') },
         { text: 'Manuale', action: () => setActiveTab('manual') },
-        { text: '🔍 Diagnosi Circuito', action: handleDiagnoseCircuit },
-        { text: '💡 Suggerimenti', action: handleGetHints },
+        { text: 'Diagnosi Circuito', action: handleDiagnoseCircuit },
+        { text: 'Suggerimenti', action: handleGetHints },
         {
             text: 'Fammi una domanda guida',
             action: () => handleSend('Fammi una domanda guida su questo argomento. Usa parole semplici, una domanda alla volta, adatta a ragazzi 8-14 anni.')
@@ -2373,6 +2472,26 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         )}
                     </div>
                 )}
+
+                {/* ── G22: Volume Chooser Overlay ── */}
+                {/* Shows every session start: "Bentornati" (returning) or "Ciao" (first time) */}
+                {!provaMode && showVolumeChooser && (
+                    <VolumeChooser
+                        onSelectVolume={(vol) => {
+                            setActiveVolume(vol);
+                            // Update welcome message after volume selection
+                            const volLabel = vol === 'inventor' ? 'Inventore' : `Volume ${vol}`;
+                            const welcomeMsg = vol === 'inventor'
+                                ? `**Modalità Inventore attiva!**\n\nHai tutti i componenti a disposizione. Costruisci quello che vuoi!`
+                                : `**${volLabel} selezionato!**\n\nScegliete un esperimento o chiedetemi qualcosa!`;
+                            setMessages([{ id: 'welcome', role: 'assistant', content: welcomeMsg }]);
+                        }}
+                        lastVolume={_savedVolume}
+                        lastExperimentTitle={_classProfile.lastExperimentTitle}
+                        isFirstTime={_classProfile.isFirstTime}
+                    />
+                )}
+
                 <TutorLayout
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
@@ -2391,6 +2510,8 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                     sessionLogLength={sessionLog.length}
                     onExportSession={exportSession}
                     selectedVolume={selectedVolume}
+                    activeVolume={activeVolume}
+                    onChangeVolume={() => setShowVolumeChooser(true)}
                     isMobile={isMobile}
                     socraticMode={isSocraticMode}
                     onToggleSocraticMode={null}
@@ -2467,6 +2588,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         <TabHint tabId={activeTab} onDismiss={() => { }} />
 
                         {activeTab === 'manual' && (
+                            <Suspense fallback={<div style={{ padding: 24, textAlign: 'center', color: '#1E4D8C' }}>Caricamento...</div>}>
                             <ManualTab
                                 selectedVolume={selectedVolume}
                                 volumePages={volumePages}
@@ -2490,6 +2612,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 isFullscreen={isFullscreen}
                                 docViewerRef={docViewerRef}
                             />
+                            </Suspense>
                         )}
 
                         <div style={{ display: activeTab === 'simulator' ? 'block' : 'none', height: activeTab === 'simulator' ? '100%' : 0 }}>
@@ -2500,6 +2623,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 initialExperimentId={pendingExperimentId}
                                 onInitialExperimentConsumed={() => setPendingExperimentId(null)}
                                 userKits={provaMode ? ['Volume 1'] : (isDocente || user?.ruolo === 'admin' ? null : (user?.kits || []))}
+                                activeVolume={activeVolume}
                                 onDiagnoseCircuit={handleDiagnoseCircuit}
                                 onGetHints={handleGetHints}
                                 onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
@@ -2554,6 +2678,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                         )}
 
                         {activeTab === 'canvas' && (
+                            <Suspense fallback={<div style={{ padding: 24, textAlign: 'center', color: '#1E4D8C' }}>Caricamento...</div>}>
                             <CanvasTab
                                 canvasRef={canvasRef}
                                 ctxRef={ctxRef}
@@ -2569,9 +2694,11 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                                 onSendImageToUNLIM={handleSendImageToUNLIM}
                             />
+                            </Suspense>
                         )}
 
                         {activeTab === 'notebooks' && (
+                            <Suspense fallback={<div style={{ padding: 24, textAlign: 'center', color: '#1E4D8C' }}>Caricamento...</div>}>
                             <NotebooksTab
                                 notebooks={notebooks}
                                 activeNotebookId={activeNotebookId}
@@ -2586,9 +2713,11 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onAddPage={addPage}
                                 onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                             />
+                            </Suspense>
                         )}
 
                         {activeTab === 'videos' && (
+                            <Suspense fallback={<div style={{ padding: 24, textAlign: 'center', color: '#1E4D8C' }}>Caricamento...</div>}>
                             <VideosTab
                                 youtubeUrl={youtubeUrl}
                                 currentVideoId={currentVideoId}
@@ -2606,6 +2735,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
                                 onStopMeet={stopMeet}
                                 onSendToUNLIM={(msg) => { setShowChat(true); handleSend(msg); }}
                             />
+                            </Suspense>
                         )}
 
                         {/* © Andrea Marro — 27/02/2026 — ELAB Tutor — Tutti i diritti riservati */}

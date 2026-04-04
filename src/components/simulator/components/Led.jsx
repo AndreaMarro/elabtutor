@@ -35,26 +35,59 @@ const Led = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, color 
       {/* S115: Hit area — 44px minimum on both dimensions for WCAG touch target */}
       <rect x="-22" y="-22" width="44" height="50" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
-       {/* Radial glow halo when LED is ON — dramatic Tinkercad-style bloom */}
+       {/* SVG defs — glow filter + dome gradient */}
+       <defs>
+         <filter id={`${uid}-glow`} x="-200%" y="-200%" width="500%" height="500%">
+           <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+           <feComposite in="blur" in2="SourceGraphic" operator="over" />
+         </filter>
+         {/* Radial gradient for glass dome effect */}
+         <radialGradient id={`${uid}-dome`} cx="35%" cy="30%" r="65%">
+           <stop offset="0%" stopColor={isOn ? '#FFFFFF' : c.tint} stopOpacity={isOn ? 0.6 : 0.3} />
+           <stop offset="40%" stopColor={isOn ? c.tint : c.body} />
+           <stop offset="100%" stopColor={c.dark} />
+         </radialGradient>
+         {/* Wire lead gradient for metallic effect */}
+         <linearGradient id={`${uid}-wire`} x1="0" y1="0" x2="1" y2="0">
+           <stop offset="0%" stopColor="#B0B0B0" />
+           <stop offset="50%" stopColor="#9E9E9E" />
+           <stop offset="100%" stopColor="#808080" />
+         </linearGradient>
+       </defs>
+
+       {/* Radial glow halo when LED is ON — dramatic bloom with soft filter */}
        {isOn && (
-         <>
-           <circle cx="0" cy="-5" r="30" fill={c.tint} opacity={glowOpacity * 0.18} />
-           <circle cx="0" cy="-5" r="22" fill={c.tint} opacity={glowOpacity * 0.30} />
-           <circle cx="0" cy="-5" r="14" fill={c.tint} opacity={glowOpacity * 0.48} />
-           <circle cx="0" cy="-5" r="8" fill="#FFFFFF" opacity={glowOpacity * 0.35} />
-         </>
+         <g filter={`url(#${uid}-glow)`}>
+           <circle cx="0" cy="-5" r="32" fill={c.tint} opacity={glowOpacity * 0.08}>
+             <animate attributeName="r" values="30;35;30" dur="2.5s" repeatCount="indefinite" />
+             <animate attributeName="opacity" values={`${glowOpacity * 0.08};${glowOpacity * 0.14};${glowOpacity * 0.08}`} dur="2.5s" repeatCount="indefinite" />
+           </circle>
+           <circle cx="0" cy="-5" r="24" fill={c.tint} opacity={glowOpacity * 0.20} />
+           <circle cx="0" cy="-5" r="16" fill={c.tint} opacity={glowOpacity * 0.35} />
+           <circle cx="0" cy="-5" r="10" fill={c.tint} opacity={glowOpacity * 0.52} />
+           <circle cx="0" cy="-5" r="5" fill="#FFFFFF" opacity={glowOpacity * 0.40} />
+         </g>
        )}
 
-       {/* Wire leads — long, thin, slightly diverging (Tinkercad style) */}
+       {/* Wire leads — metallic gradient, slightly diverging */}
        <line x1="-2.4" y1="0" x2="-3.75" y2="22.5"
-         stroke="#9E9E9E" strokeWidth="1.25" strokeLinecap="round" />
+         stroke={`url(#${uid}-wire)`} strokeWidth="1.25" strokeLinecap="round" />
        <line x1="2.4" y1="0" x2="3.75" y2="22.5"
-         stroke="#9E9E9E" strokeWidth="1.25" strokeLinecap="round" />
+         stroke={`url(#${uid}-wire)`} strokeWidth="1.25" strokeLinecap="round" />
+       {/* Anode marker — longer lead (left) has subtle thickening at base */}
+       <circle cx="-3.75" cy="22.5" r="1.0" fill="#888" opacity="0.3" />
+       <circle cx="3.75" cy="22.5" r="1.0" fill="#888" opacity="0.3" />
 
-       {/* LED dome — D-shape flat bottom + curved arc top (Tinkercad style) */}
+       {/* LED dome shadow */}
+       <path
+         d="M -5.4 0.6 L -5.4 -1.2 A 5.4 8.8 0 0 1 5.4 -1.2 L 5.4 0.6 Z"
+         fill="#000000" opacity="0.08"
+       />
+
+       {/* LED dome — D-shape with radial gradient for glass look */}
        <path
          d="M -5.8 0 L -5.8 -1.8 A 5.8 9.4 0 0 1 5.8 -1.8 L 5.8 0 Z"
-         fill={isOn ? c.tint : c.body}
+         fill={`url(#${uid}-dome)`}
          stroke={c.dark} strokeWidth="0.5"
        />
 
@@ -66,10 +99,10 @@ const Led = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, color 
          />
        )}
 
-       {/* Subtle left highlight (flat overlay, no gradients) */}
+       {/* Glass specular highlight (top-left) */}
        <path
-         d="M -5 0 L -5 -1.6 A 5 8.4 0 0 1 -1.4 -9.6 L -1.4 0 Z"
-         fill="#FFFFFF" opacity={isOn ? 0.22 : 0.14}
+         d="M -4.2 -2 A 4 7 0 0 1 -0.5 -9.2 L -1.8 -8 A 3.2 5.5 0 0 0 -4.2 -2.5 Z"
+         fill="#FFFFFF" opacity={isOn ? 0.28 : 0.18}
        />
 
        {/* Small flat base line to show LED sitting on breadboard */}

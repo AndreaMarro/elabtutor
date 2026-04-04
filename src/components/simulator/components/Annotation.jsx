@@ -26,6 +26,7 @@ const Annotation = ({
   // Drag state (local dx/dy offset while dragging)
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ dx: 0, dy: 0 });
+  const dragOffsetRef = useRef({ dx: 0, dy: 0 }); // G42: ref to avoid listener churn
   const dragStartRef = useRef(null); // { mouseX, mouseY, startX, startY }
 
   const handleDoubleClick = useCallback((e) => {
@@ -68,6 +69,8 @@ const Annotation = ({
   }, [id, onSelect, isEditing, x, y]);
 
   // Window-level mousemove/mouseup for drag (attached only while dragging)
+  // G42: Removed dragOffset.dx/dy from deps to prevent listener churn (~60Hz re-attach).
+  // handleMouseUp reads from dragOffsetRef instead of closure.
   useEffect(() => {
     if (!isDragging) return;
 
@@ -82,19 +85,21 @@ const Annotation = ({
 
       const dx = svgPt.x - dragStartRef.current.mouseX;
       const dy = svgPt.y - dragStartRef.current.mouseY;
+      dragOffsetRef.current = { dx, dy };
       setDragOffset({ dx, dy });
     };
 
     const handleMouseUp = () => {
+      const off = dragOffsetRef.current;
       if (dragStartRef.current && onPositionChange) {
-        const newX = dragStartRef.current.startX + dragOffset.dx;
-        const newY = dragStartRef.current.startY + dragOffset.dy;
-        // Only notify parent if position actually changed
-        if (dragOffset.dx !== 0 || dragOffset.dy !== 0) {
+        const newX = dragStartRef.current.startX + off.dx;
+        const newY = dragStartRef.current.startY + off.dy;
+        if (off.dx !== 0 || off.dy !== 0) {
           onPositionChange(id, newX, newY);
         }
       }
       dragStartRef.current = null;
+      dragOffsetRef.current = { dx: 0, dy: 0 };
       setIsDragging(false);
       setDragOffset({ dx: 0, dy: 0 });
     };
@@ -105,7 +110,7 @@ const Annotation = ({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, id, onPositionChange, dragOffset.dx, dragOffset.dy]);
+  }, [isDragging, id, onPositionChange]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') {

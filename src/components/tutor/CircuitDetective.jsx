@@ -14,6 +14,7 @@ import CrossNavigation from './shared/CrossNavigation';
 import { StarDisplay, StarResult, BadgeDisplay, calculateBadge } from './shared/StarRating';
 import useGameScore from '../../hooks/useGameScore';
 import './TutorTools.css';
+import css from './CircuitDetective.module.css';
 
 const STORAGE_KEY = 'elab_detective_solved';
 
@@ -149,7 +150,7 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
               Circuiti risolti: {solvedCount}/{BROKEN_CIRCUITS.length}
               {(() => {
                 const badge = calculateBadge(getAllScores());
-                return badge ? <span style={{ marginLeft: 8 }}><BadgeDisplay badge={badge} /></span> : null;
+                return badge ? <span className={css.badgeInline}><BadgeDisplay badge={badge} /></span> : null;
               })()}
             </div>
           )}
@@ -179,12 +180,12 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
                 <span className="elab-tool__list-item-icon">
                   {isSolved ? '\u2713' : circuit.icon}
                   {getScore(circuit.id) > 0 && (
-                    <span style={{ display: 'block', marginTop: 2 }}><StarDisplay stars={getScore(circuit.id)} size={12} /></span>
+                    <span className={css.starBlock}><StarDisplay stars={getScore(circuit.id)} size={12} /></span>
                   )}
                 </span>
                 <div className="elab-tool__list-item-body">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                    <h3 className="elab-tool__list-item-title" style={{ margin: 0 }}>{circuit.title}</h3>
+                  <div className={css.listBadgeRow}>
+                    <h3 className={`elab-tool__list-item-title ${css.titleRow}`}>{circuit.title}</h3>
                     <LayerBadge layer={circuit.layer} />
                   </div>
                   <p className="elab-tool__list-item-desc">{circuit.description}</p>
@@ -210,12 +211,12 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
       {/* © Andrea Marro — 20/02/2026 */}
       <button onClick={goBack} className="elab-tool__back">← Torna alla lista</button>
 
-      <div className={`elab-tool__card`} style={{ borderTop: `4px solid ${LAYER_COLORS[selectedCircuit.layer].text}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-          <span style={{ fontSize: '2rem' }}>{selectedCircuit.icon}</span>
+      <div className={`elab-tool__card ${css.cardBorder}`} style={{ '--card-accent-color': LAYER_COLORS[selectedCircuit.layer].text }}>
+        <div className={css.headerRow}>
+          <span className={css.headerIcon}>{selectedCircuit.icon}</span>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{selectedCircuit.title}</h3>
-            <div style={{ display: 'flex', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
+            <h3 className={css.headerTitle}>{selectedCircuit.title}</h3>
+            <div className={css.headerMeta}>
               <LayerBadge layer={selectedCircuit.layer} />
               <DifficultyBadge level={selectedCircuit.difficulty} />
             </div>
@@ -235,7 +236,7 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
         <h3>La tua indagine</h3>
 
         {currentHintIndex >= 0 && (
-          <div style={{ marginBottom: 16 }}>
+          <div className={css.hintsWrap}>
             {selectedCircuit.hints.slice(0, currentHintIndex + 1).map((hint, i) => (
               <div key={i} className="elab-tool__hint">
                 <strong>Suggerimento {i + 1}:</strong> {hint}
@@ -256,8 +257,8 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
         </div>
 
         {!showSolution && (
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontWeight: 600, color: 'var(--elab-text)', fontSize: '0.88rem', marginBottom: 8 }}>
+          <div className={css.guessSection}>
+            <label className={css.guessLabel}>
               Qual è la tua ipotesi?
             </label>
             <div className="elab-tool__input-row">
@@ -275,15 +276,11 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
                   Invia
                 </button>
               ) : (
-                <span style={{ padding: 10, color: 'var(--elab-lime)', fontWeight: 700 }}>✓</span>
+                <span className={css.guessCheck}>✓</span>
               )}
             </div>
             {!guessSubmitted && (
-              <button onClick={handleConfusedGuess} style={{
-                background: 'none', border: 'none', color: 'var(--elab-muted)',
-                fontSize: '0.875rem', cursor: 'pointer', padding: '4px 0',
-                fontFamily: 'inherit', textDecoration: 'underline'
-              }}>
+              <button onClick={handleConfusedGuess} className={css.confusedBtn}>
                 Non lo so — e va bene!
               </button>
             )}
@@ -291,7 +288,7 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
         )}
 
         {guessSubmitted && studentGuess === 'Non lo so' && !showSolution && (
-          <div className="elab-tool__result elab-tool__result--correct" style={{ marginBottom: 12 }}>
+          <div className={`elab-tool__result elab-tool__result--correct ${css.resultMargin}`}>
             <span className="elab-tool__result-icon">?</span>
             <p className="elab-tool__result-text">Perfetto!</p>
             <p className="elab-tool__result-sub">La confusione è il primo passo della scoperta. Prova a usare i suggerimenti!</p>
@@ -305,16 +302,16 @@ export default function CircuitDetective({ onSendToUNLIM, onOpenSimulator, logSe
         )}
 
         {showSolution && (
-          <div className="elab-tool__card elab-tool__card--success" style={{ animation: 'elab-slideUp 0.4s ease' }}>
-            <h3 style={{ color: '#16a34a' }}>Soluzione</h3>
-            <p style={{ marginBottom: 12 }}>{selectedCircuit.solution}</p>
-            <div style={{ marginBottom: 12 }}>
+          <div className={`elab-tool__card elab-tool__card--success ${css.successCard}`}>
+            <h3 className={css.successTitle}>Soluzione</h3>
+            <p className={css.solutionText}>{selectedCircuit.solution}</p>
+            <div className={css.starWrap}>
               <StarResult stars={earnedStars} message={STAR_MESSAGES[earnedStars]} />
             </div>
             <div className="elab-tool__learn">
               <strong>Hai imparato:</strong> {selectedCircuit.whatYouLearn}
             </div>
-            <div className="elab-tool__learn" style={{ marginTop: 8 }}>
+            <div className={`elab-tool__learn ${css.learnConcept}`}>
               <strong>Concetto:</strong> {selectedCircuit.concept}
             </div>
           </div>

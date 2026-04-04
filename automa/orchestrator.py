@@ -75,9 +75,29 @@ def _skill_section_for_mode(mode, cycle):
     skills = SKILL_DISPATCH.get(mode, [])
     if not skills:
         return ""
-    idx = cycle % len(skills)
-    primary = skills[idx]
-    others = [s for i, s in enumerate(skills) if i != idx]
+    # G25: Priority-based dispatch instead of blind rotation.
+    # If there are P0 tasks in queue, always pick the skill most relevant to them.
+    pending_dir = AUTOMA_ROOT / "queue" / "pending"
+    p0_tags = set()
+    if pending_dir.exists():
+        for f in pending_dir.glob("P0-*.yaml"):
+            content = f.read_text()
+            for line in content.splitlines():
+                if line.startswith("tags:"):
+                    p0_tags.update(t.strip() for t in line.split(":", 1)[1].split(","))
+    # Match skills to P0 tags
+    scored_skills = []
+    for i, (name, desc) in enumerate(skills):
+        score = sum(1 for tag in p0_tags if tag.lower() in name.lower() or tag.lower() in desc.lower())
+        scored_skills.append((score, i, name, desc))
+    scored_skills.sort(key=lambda x: (-x[0], x[1]))
+    # If no P0 match, fall back to rotation
+    if scored_skills[0][0] > 0:
+        primary = (scored_skills[0][2], scored_skills[0][3])
+    else:
+        idx = cycle % len(skills)
+        primary = skills[idx]
+    others = [s for s in skills if s[0] != primary[0]]
     lines = [
         "\n### Skill Specializzata per questo Ciclo",
         f"Focus primario: **{primary[0]}** - {primary[1]}",

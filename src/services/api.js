@@ -43,13 +43,28 @@ const SOCRATIC_INSTRUCTION = [
     'Fai 1 domanda guida breve, poi dai la spiegazione. Usa analogie (corrente=acqua, resistore=strettoia).',
     '',
     'RAGIONAMENTO (interno, non scriverlo): 1. CAPISCO cosa vuole? 2. POSSO farlo? 3. AGISCO o CHIEDO chiarimenti.',
+    'Se ricevi [MEMORIA STUDENTE], adatta le risposte: rinforza le aree deboli, evita ripetizioni di esperimenti già fatti, incoraggia sui punti forti.',
     '',
     'Se il messaggio è ambiguo: proponi 2-3 opzioni concrete basate sul contesto, NON dire "non ho capito".',
     'Es: "Vuoi che io: (1) avvii la simulazione, (2) evidenzi un componente, o (3) ti spieghi il circuito?"',
     '',
-    'PUOI: avviare/fermare/resettare simulazione, evidenziare componenti, caricare 69 esperimenti,',
-    'aprire pannelli, navigare manuale, premere pulsanti, ruotare potenziometri, compilare codice, diagnosticare circuiti,',
-    'aprire/chiudere editor codice, passare tra modalità Blocchi e Arduino C++.',
+    '[AZIONI DISPONIBILI — Formato: [AZIONE:comando:argomenti]]',
+    '',
+    '▸ SIMULAZIONE: play, pause, reset',
+    '▸ CIRCUITO: highlight:id1,id2 | addcomponent:TIPO:X:Y | removecomponent:ID | movecomponent:ID:X:Y | clearall',
+    '▸ FILI: addwire:FROM_ID:PIN:TO_ID:PIN | removewire:INDEX',
+    '▸ COMPONENTI: interact:ID:ACTION:VALUE | setvalue:ID:PARAM:VAL | measure:ID | diagnose',
+    '  interact azioni: press, release, setPosition (pot 0.0-1.0), setLightLevel (ldr 0-100)',
+    '  setvalue params: resistance, position, lightlevel, angle',
+    '▸ CODICE: openeditor | closeeditor | switcheditor:scratch/arduino | compile',
+    '  setcode:CODICE | appendcode:CODICE | getcode | resetcode',
+    '  loadblocks:XML | fullscreenscratch | exitscratchfullscreen',
+    '▸ NAVIGAZIONE: loadexp:ID | opentab:simulatore/manuale/video/lavagna/taccuini/detective/poe/reverse/review',
+    '  openvolume:VOL:PAG | openchat | closechat',
+    '▸ COSTRUZIONE: setbuildmode:montato/passopasso/libero | nextstep | prevstep | showbom',
+    '▸ INFO: listcomponents | getstate | showserial | serialwrite:TESTO',
+    '▸ EDIT: undo | redo | highlightpin:PIN1,PIN2',
+    '▸ ALTRO: quiz:EXP_ID | youtube:QUERY | createnotebook:TITOLO',
     '',
     '[INTERPRETAZIONE LINGUAGGIO NATURALE]',
     '"fallo partire"/"vai"/"go" → [AZIONE:play] | "stop"/"basta"/"ferma" → [AZIONE:pause]',
@@ -60,6 +75,12 @@ const SOCRATIC_INSTRUCTION = [
     '"apri i blocchi"/"programma a blocchi" → [AZIONE:openeditor] [AZIONE:switcheditor:scratch]',
     '"mostrami il codice"/"vedi il codice Arduino" → [AZIONE:openeditor] [AZIONE:switcheditor:arduino]',
     '"chiudi l\'editor" → [AZIONE:closeeditor]',
+    '"aggiungi un LED" → [AZIONE:addcomponent:led] | "togli la resistenza" → [AZIONE:removecomponent:r1]',
+    '"collega LED al pin 13" → [AZIONE:addwire:led1:anode:nano:D13]',
+    '"annulla" → [AZIONE:undo] | "ripristina" → [AZIONE:redo]',
+    '"che componenti ci sono?" → [AZIONE:listcomponents] | "stato del circuito" → [AZIONE:getstate]',
+    '"passo passo" → [AZIONE:setbuildmode:passopasso] | "prossimo passo" → [AZIONE:nextstep]',
+    '"cerca video su LED" → [AZIONE:youtube:LED come funziona]',
     'Se l\'utente nomina un componente senza dire cosa fare → EVIDENZIALO.',
     '',
     '[ANALISI CIRCUITO — Quando ricevi [STATO CIRCUITO]]',
@@ -67,13 +88,9 @@ const SOCRATIC_INSTRUCTION = [
     '• DIAGNOSTICA: LED spento→polarità/filo, bruciato→corrente alta, aperto→componente scollegato',
     '• SPIEGA con parole semplici + SUGGERISCI correzione',
     '',
-    '[TAG AZIONE — Formato: [AZIONE:comando:argomenti]]',
-    'Comandi: play, pause, reset, highlight:id1,id2, loadexp:ID, opentab:NOME, openvolume:VOL:PAG, interact:ID:ACTION:VALUE, compile, setvalue:ID:PARAM:VAL, measure:ID, diagnose, openeditor, closeeditor, switcheditor:scratch/arduino',
-    'REGOLE: Se l\'utente chiede un\'azione → USA SEMPRE il tag. Prima spiega (1-2 frasi), poi tag alla fine.',
+    'REGOLE TAG: Se l\'utente chiede un\'azione → USA SEMPRE il tag. Prima spiega (1-2 frasi), poi tag alla fine.',
     'Puoi combinare più tag. Se non conosci l\'ID ma lo puoi dedurre dal contesto → deducilo.',
     'Es: "Ecco, avvio la simulazione! [AZIONE:play]" | "Evidenzio il LED rosso [AZIONE:highlight:led1]"',
-    'Misure: [AZIONE:measure:led1] → mostra V/I reali. Diagnosi: [AZIONE:diagnose] → analisi completa.',
-    'Setvalue: [AZIONE:setvalue:r1:resistance:470] → imposta parametro componente.',
 ].join('\n');
 
 const API = {
@@ -133,8 +150,11 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
         const controller = new AbortController();
         const timeout = images.length > 0 ? 120000 : 60000;
         const timer = setTimeout(() => controller.abort(), timeout);
+
+        // G42: Named handler so we can remove the listener on cleanup
+        const onExternalAbort = () => controller.abort();
         if (externalSignal) {
-            externalSignal.addEventListener('abort', () => controller.abort());
+            externalSignal.addEventListener('abort', onExternalAbort);
         }
 
         const body = {
@@ -146,22 +166,28 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
             images: images.map(img => img.base64 || img),
         };
 
-        const resp = await fetch(`${LOCAL_SERVER}/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-            signal: controller.signal,
-        });
+        try {
+            const resp = await fetch(`${LOCAL_SERVER}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: controller.signal,
+            });
 
-        clearTimeout(timer);
+            if (!resp.ok) return null;
 
-        if (!resp.ok) return null;
-
-        const data = await resp.json();
-        if (data.response) {
-            return data.response;
+            const data = await resp.json();
+            if (data.response) {
+                return data.response;
+            }
+            return null;
+        } finally {
+            // G42: Always clean up timer and external signal listener
+            clearTimeout(timer);
+            if (externalSignal) {
+                externalSignal.removeEventListener('abort', onExternalAbort);
+            }
         }
-        return null;
     } catch (err) {
         if (err.name !== 'AbortError') {
             _localServerAvailable = false;
@@ -172,6 +198,7 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
 
 /**
  * Try nanobot server first (lower latency, circuit-aware MCP).
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Returns null if unavailable — caller falls through to backend webhook.
  * Uses /tutor-chat endpoint with experiment context and persistent session.
  */
@@ -198,7 +225,6 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
             sessionId: getTutorSessionId(),
             circuitState: circuitState || null,
             experimentId: experimentId || null,
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
             simulatorContext: simulatorContext || null,
         };
         if (images.length > 0) {
@@ -373,6 +399,7 @@ function friendlyError(error) {
 
     if (error?.name === 'AbortError' || msg.includes('timeout')) {
         return 'UNLIM ci sta mettendo un po\' troppo. Riprova tra qualche secondo.';
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
         return 'Sembra che la connessione internet non funzioni. Controlla e riprova.';
@@ -399,7 +426,6 @@ function friendlyError(error) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 function buildChatMessage(message, socraticMode, experimentContext) {
     const parts = [];
@@ -528,6 +554,26 @@ export async function sendChat(message, images = [], options = {}) {
         return MODERATION_RESPONSE;
     }
 
+    // ── G25: Master AbortController — hard timeout for entire sendChat() ──
+    // 30s for text, 45s for images. Render cold-start can take 15-30s.
+    const MASTER_TIMEOUT_TEXT = 30000;
+    const MASTER_TIMEOUT_IMAGE = 45000;
+    const masterTimeout = images.length > 0 ? MASTER_TIMEOUT_IMAGE : MASTER_TIMEOUT_TEXT;
+    const masterController = new AbortController();
+    const masterTimer = setTimeout(() => masterController.abort(), masterTimeout);
+    // Combine master + external signals
+    const combinedSignal = masterController.signal;
+    if (externalSignal) {
+        externalSignal.addEventListener('abort', () => masterController.abort(), { once: true });
+    }
+    // If external signal already aborted, abort immediately
+    if (externalSignal?.aborted) {
+        clearTimeout(masterTimer);
+        masterController.abort();
+    }
+
+    try {
+
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
     const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
@@ -537,12 +583,12 @@ export async function sendChat(message, images = [], options = {}) {
     const webhookMessage = buildChatMessage(message, socraticMode, experimentContext);
 
     // 0. Try local server first (Ollama, 100% offline, zero config)
-    const localResult = await tryLocalServer(nanobotMessage, circuitState, externalSignal, experimentId, images, simulatorContext);
+    const localResult = await tryLocalServer(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext);
     if (localResult) return localResult;
 
     // 1. Try nanobot cloud (text + vision via Gemini, circuit-aware, parallel racing)
     if (NANOBOT_URL) {
-        const nanobotResult = await tryNanobot(nanobotMessage, circuitState, externalSignal, experimentId, images, simulatorContext);
+        const nanobotResult = await tryNanobot(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext);
         if (nanobotResult) return nanobotResult;
     }
 
@@ -554,6 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
 
         // Se ci sono immagini, invia al backend con l'immagine in base64
         if (images.length > 0) {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
             // Image analysis via backend Vision
 
             // Security: sessionStorage instead of localStorage — session IDs must not
@@ -570,7 +617,7 @@ export async function sendChat(message, images = [], options = {}) {
                         base64: img.base64,
                         mimeType: img.mimeType || 'image/png'
                     }))
-                }, externalSignal);
+                }, combinedSignal);
 
 
                 const responseText = await analyzeResponse.text();
@@ -600,7 +647,6 @@ export async function sendChat(message, images = [], options = {}) {
                     content = analyzeData[0].output || analyzeData[0].text || analyzeData[0].response || JSON.stringify(analyzeData[0]);
                 } else {
                     content = analyzeData.output || analyzeData.response || analyzeData.text || JSON.stringify(analyzeData);
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
                 }
 
                 const { filtered: safeContent } = filterAIResponse(content);
@@ -629,7 +675,7 @@ export async function sendChat(message, images = [], options = {}) {
         const sessionId = sessionStorage.getItem('unlim_session') || `s_${crypto.randomUUID()}`;
         sessionStorage.setItem('unlim_session', sessionId);
 
-        const response = await postChatWithRetry({ message: webhookMessage, sessionId }, externalSignal);
+        const response = await postChatWithRetry({ message: webhookMessage, sessionId }, combinedSignal);
 
         const responseText = await response.text();
 
@@ -738,6 +784,10 @@ export async function sendChat(message, images = [], options = {}) {
             source: 'error'
         };
     }
+
+    } finally {
+        clearTimeout(masterTimer);
+    }
 }
 
 
@@ -751,6 +801,7 @@ function extractActions(text, userMessage = '') {
     if (!text) return { commands: [], buttons: [], route: null };
 
     const actions = {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         commands: [],  // Azioni eseguite automaticamente
         buttons: [],   // Pulsanti mostrati all'utente (solo se utili!)
         route: null    // Routing suggerito: 'simulator' | 'canvas' | 'manual' | 'page' | null
@@ -801,7 +852,6 @@ function extractActions(text, userMessage = '') {
     const codeMarkerMatch = text.match(/:::(?:WOKWI|CODE):::([\s\S]*?):::END:::/);
     if (codeMarkerMatch) {
         const code = codeMarkerMatch[1].trim();
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
         actions.commands.push({ type: 'loadSimulator', code, auto: true });
         actions.route = 'simulator';
         actions.buttons.push({
@@ -952,6 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     // 2. Fallback: backend webhook
     if (COMPILE_WEBHOOK) {
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         const result = await tryCompile(COMPILE_WEBHOOK, 'Backend webhook');
         if (result) return result;
     }

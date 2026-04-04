@@ -393,16 +393,60 @@ export default function WhiteboardOverlay({
     if (!experimentId || !canvasRef.current) return;
     const key = `elab_wb_${experimentId}`;
     try {
+      // Evict oldest whiteboard entries if over cap (max 10)
+      const MAX_WB_ENTRIES = 10;
+      const MAX_WB_ENTRY_SIZE = 500_000; // 500KB
+      const wbKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('elab_wb_')) {
+          try {
+            const val = localStorage.getItem(k);
+            const parsed = val ? JSON.parse(val) : null;
+            wbKeys.push({ key: k, timestamp: parsed?.timestamp || 0 });
+          } catch { wbKeys.push({ key: k, timestamp: 0 }); }
+        }
+      }
+      // If at cap (excluding current key), remove oldest
+      const otherKeys = wbKeys.filter(e => e.key !== key);
+      if (otherKeys.length >= MAX_WB_ENTRIES) {
+        otherKeys.sort((a, b) => a.timestamp - b.timestamp);
+        const toRemove = otherKeys.length - MAX_WB_ENTRIES + 1; // make room for 1
+        for (let i = 0; i < toRemove; i++) {
+          localStorage.removeItem(otherKeys[i].key);
+        }
+      }
+
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvasRef.current.width;
       tempCanvas.height = canvasRef.current.height;
       const tempCtx = tempCanvas.getContext('2d');
       if (rasterLayer.current) tempCtx.putImageData(rasterLayer.current, 0, 0);
-      localStorage.setItem(key, JSON.stringify({
+
+      // Size-cap: try JPEG 0.5, then 0.3, then skip raster
+      let rasterData = tempCanvas.toDataURL('image/jpeg', 0.5);
+      if (rasterData.length > MAX_WB_ENTRY_SIZE) {
+        rasterData = tempCanvas.toDataURL('image/jpeg', 0.3);
+      }
+
+      const entry = {
         version: 3,
-        raster: tempCanvas.toDataURL(),
+        raster: rasterData.length <= MAX_WB_ENTRY_SIZE ? rasterData : null,
         elements: elements.current,
-      }));
+        timestamp: Date.now(),
+      };
+      const jsonStr = JSON.stringify(entry);
+      // Final size check: if JSON > 500KB even without raster, save elements only
+      if (jsonStr.length > MAX_WB_ENTRY_SIZE) {
+        localStorage.setItem(key, JSON.stringify({
+          version: 3,
+          raster: null,
+          elements: elements.current,
+          timestamp: Date.now(),
+        }));
+      } else {
+        localStorage.setItem(key, jsonStr);
+      }
     } catch { /* quota exceeded */ }
   }, [experimentId]);
 
@@ -830,7 +874,7 @@ export default function WhiteboardOverlay({
         <ToolBtn label={showGrid ? 'Nascondi griglia' : 'Mostra griglia'} active={showGrid} onClick={() => setShowGrid(g => !g)}><IconGrid /></ToolBtn>
         <Sep />
         <ToolBtn label="Salva PNG" onClick={exportPng}><IconDownload /></ToolBtn>
-        {onSendToUNLIM && <ToolBtn label="Invia a UNLIM" onClick={sendToUNLIM}><IconUNLIM /></ToolBtn>}
+        {onSendToUNLIM && <ToolBtn label="Invia a Galileo" onClick={sendToUNLIM}><IconUNLIM /></ToolBtn>}
         <ToolBtn label="Cancella tutto" onClick={clearAll} danger><IconTrash /></ToolBtn>
         <ToolBtn label="Chiudi lavagna" onClick={onClose}><IconClose /></ToolBtn>
       </div>

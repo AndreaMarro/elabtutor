@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import studentService from '../../../services/studentService';
+import css from './ReflectionPrompt.module.css';
 
 /**
  * Componente di riflessione che appare dopo ogni attivita completata.
@@ -40,8 +41,8 @@ export default function ReflectionPrompt({ toolName, activityId, onSave, onDismi
 
   if (saved) {
     return (
-      <div className="elab-tool__card" style={{ textAlign: 'center', background: 'rgba(145,191,69,0.05)' }}>
-        <p style={{ color: '#16a34a', fontWeight: 600, fontSize: '0.92rem', margin: 0 }}>
+      <div className={`elab-tool__card ${css.cardSaved}`}>
+        <p className={css.savedMessage}>
           {mode === 'confused' ? 'La confusione è il primo passo della scoperta!' : 'Riflessione salvata nel tuo diario!'}
         </p>
       </div>
@@ -72,26 +73,14 @@ export default function ReflectionPrompt({ toolName, activityId, onSave, onDismi
   const current = prompts[mode];
 
   return (
-    <div className="elab-tool__card" style={{
-      background: 'linear-gradient(135deg, rgba(145,191,69,0.05), rgba(31,61,133,0.03))',
-      border: '1px dashed var(--elab-lime)'
-    }}>
+    <div className={`elab-tool__card ${css.card}`}>
       {/* Mode selector */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+      <div className={css.modeSelector}>
         {Object.entries(prompts).map(([key, val]) => (
           <button
             key={key}
             onClick={() => setMode(key)}
-            style={{
-              padding: '4px 12px',
-              borderRadius: 16,
-              border: mode === key ? '2px solid var(--elab-navy)' : '1px solid var(--elab-border)',
-              background: mode === key ? 'rgba(31,61,133,0.08)' : 'white',
-              fontWeight: mode === key ? 700 : 400,
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              fontFamily: 'inherit'
-            }}
+            className={`${css.modeBtn} ${mode === key ? css.modeBtnActive : ''}`}
           >
             {val.title}
           </button>
@@ -99,12 +88,7 @@ export default function ReflectionPrompt({ toolName, activityId, onSave, onDismi
       </div>
 
       {/* Prompt */}
-      <h4 style={{
-        fontFamily: "'Oswald', sans-serif",
-        color: 'var(--elab-navy)',
-        fontSize: '0.95rem',
-        margin: '0 0 8px'
-      }}>
+      <h4 className={css.promptTitle}>
         {current.title}
       </h4>
 
@@ -112,33 +96,27 @@ export default function ReflectionPrompt({ toolName, activityId, onSave, onDismi
         value={text}
         onChange={e => setText(e.target.value)}
         placeholder={current.placeholder}
-        className="elab-tool__textarea"
-        style={{ minHeight: 70 }}
+        className={`elab-tool__textarea ${css.textarea}`}
       />
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+      <div className={css.actions}>
         <button
           onClick={handleSave}
           disabled={!text.trim()}
-          className="elab-tool__btn elab-tool__btn--primary"
-          style={{ flex: 1, fontSize: '0.875rem' }}
+          className={`elab-tool__btn elab-tool__btn--primary ${css.saveBtn}`}
         >
           {current.buttonText}
         </button>
         <button
           onClick={onDismiss}
-          className="elab-tool__btn elab-tool__btn--secondary"
-          style={{ fontSize: '0.875rem', padding: '6px 14px' }}
+          className={`elab-tool__btn elab-tool__btn--secondary ${css.skipBtn}`}
         >
           Salta
         </button>
       </div>
 
       {mode === 'confused' && (
-        <p style={{
-          marginTop: 8, fontSize: '0.875rem', color: 'var(--elab-muted)',
-          fontStyle: 'italic', textAlign: 'center'
-        }}>
+        <p className={css.socratesQuote}>
           "So di non sapere" — Socrate. Le domande migliori non hanno risposta facile.
         </p>
       )}

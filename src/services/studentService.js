@@ -8,12 +8,17 @@
 
 import logger from '../utils/logger';
 import cryptoService from '../utils/crypto';
+import { syncSession, syncMood, syncGameResult } from './supabaseSync';
+import { isSupabaseConfigured } from './supabaseClient';
 
 const STUDENT_DB_KEY = 'elab_student_data';
 const STUDENT_DB_KEY_ENCRYPTED = 'elab_student_data_enc';
 const SYNC_DEBOUNCE_MS = 5000; // Sync al server ogni 5 secondi max
+const MAX_AGE_DAYS = 730; // G42: Prune entries older than 2 years
+const MAX_SIZE_BYTES = 3 * 1024 * 1024; // G42: Max 3MB localStorage for student data
 let _syncTimer = null;
 let _lastSyncedUserId = null;
+let _pruneCounter = 0; // G42: Only prune every N saves
 
 // ─── API URL per sync server ────────────────────────────
 // Priorità: VITE_DATA_SERVER_URL (nuovo backend EU) → VITE_AUTH_URL (legacy n8n)
@@ -26,6 +31,8 @@ let _lastSyncSource = 'unknown'; // 'server' | 'local' | 'offline' | 'unknown'
 
 // ─── Encryption master key cache (per session) ──────────
 let _masterKeyCache = null;
+// ─── In-memory cache: used when plaintext localStorage is removed after encryption ──────────
+let _inMemoryStudentData = null;
 
 function _getToken() {
     try { return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
@@ -58,19 +65,62 @@ function getSyncStatus() {
 
 function getStudentData(userId) {
     try {
-        const all = JSON.parse(localStorage.getItem(STUDENT_DB_KEY) || '{}');
+        const raw = localStorage.getItem(STUDENT_DB_KEY);
+        const all = raw ? JSON.parse(raw) : (_inMemoryStudentData || {});
         return all[userId] || createDefaultData(userId);
     } catch { return createDefaultData(userId); }
 }
 
+/**
+ * G42: Prune stale entries (>730 days) and enforce 3MB cap.
+ * Runs every 20 saves to avoid performance hit on every write.
+ */
+function _pruneIfNeeded(all) {
+    _pruneCounter++;
+    if (_pruneCounter < 20) return all;
+    _pruneCounter = 0;
+
+    const now = Date.now();
+    const maxAge = MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
+    const entries = Object.entries(all);
+
+    // Phase 1: Remove entries older than MAX_AGE_DAYS
+    const pruned = {};
+    for (const [uid, data] of entries) {
+        const saved = data?.ultimoSalvataggio ? new Date(data.ultimoSalvataggio).getTime() : 0;
+        if (now - saved < maxAge) {
+            pruned[uid] = data;
+        }
+    }
+
+    // Phase 2: If still over MAX_SIZE_BYTES, remove oldest entries
+    let json = JSON.stringify(pruned);
+    if (json.length > MAX_SIZE_BYTES) {
+        const sorted = Object.entries(pruned).sort((a, b) => {
+            const ta = new Date(a[1]?.ultimoSalvataggio || 0).getTime();
+            const tb = new Date(b[1]?.ultimoSalvataggio || 0).getTime();
+            return ta - tb; // oldest first
+        });
+        while (json.length > MAX_SIZE_BYTES && sorted.length > 1) {
+            const [removedId] = sorted.shift();
+            delete pruned[removedId];
+            json = JSON.stringify(pruned);
+        }
+        logger.info(`[StudentService] Pruned localStorage to ${sorted.length} entries, ${(json.length / 1024).toFixed(0)}KB`);
+    }
+
+    return pruned;
+}
+
 function saveStudentData(userId, data) {
     try {
-        const all = JSON.parse(localStorage.getItem(STUDENT_DB_KEY) || '{}');
+        const raw = localStorage.getItem(STUDENT_DB_KEY);
+        let all = raw ? JSON.parse(raw) : (_inMemoryStudentData || {});
         all[userId] = { ...data, ultimoSalvataggio: new Date().toISOString() };
+        all = _pruneIfNeeded(all);
+        _inMemoryStudentData = all;
         localStorage.setItem(STUDENT_DB_KEY, JSON.stringify(all));
-        // Debounced sync al server (fire-and-forget)
         _scheduleSyncToServer(userId, all[userId]);
-        // Encrypt to secondary storage (async, fire-and-forget)
         _encryptAndSave(all).catch(() => {});
     } catch (e) { logger.error('Errore salvataggio dati studente:', e); }
 }
@@ -85,6 +135,9 @@ async function _encryptAndSave(allData) {
     if (!masterKey) return; // Not logged in — skip encryption
     try {
         await cryptoService.setEncryptedItem(STUDENT_DB_KEY_ENCRYPTED, allData, masterKey);
+        _inMemoryStudentData = allData;
+        // GDPR: remove plaintext copy after successful encryption
+        try { localStorage.removeItem(STUDENT_DB_KEY); } catch { /* ok */ }
     } catch (e) {
         logger.error('[Crypto] Errore cifratura student data:', e);
     }
@@ -145,6 +198,7 @@ async function _syncToServer(userId, studentData) {
         try {
             const resp = await fetch(url, {
                 method: 'POST',
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -198,7 +252,6 @@ async function fetchStudentsFromServer(classId) {
             ? `${AUTH_URL}/student-data-sync?classId=${classId}`
             : `${AUTH_URL}/student-data-sync`);
     }
-// © Andrea Marro — 30/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     for (const url of urls) {
         try {
@@ -220,8 +273,9 @@ async function fetchStudentsFromServer(classId) {
 
 function getAllStudentData() {
     try {
-        return JSON.parse(localStorage.getItem(STUDENT_DB_KEY) || '{}');
-    } catch { return {}; }
+        const raw = localStorage.getItem(STUDENT_DB_KEY);
+        return raw ? JSON.parse(raw) : (_inMemoryStudentData || {});
+    } catch { return _inMemoryStudentData || {}; }
 }
 
 function createDefaultData(userId) {
@@ -316,6 +370,20 @@ const studentService = {
         });
         data.stats.esperimentiTotali = data.esperimenti.filter(e => e.completato).length;
         saveStudentData(userId, data);
+
+        // G49: Sync to Supabase (async, non-blocking)
+        if (isSupabaseConfigured()) {
+            syncSession({
+                student_id: userId,
+                experiment_id: experimentId,
+                session_type: 'experiment',
+                started_at: new Date().toISOString(),
+                duration_seconds: Math.round((durata || 0) / 1000),
+                completed: completato !== false,
+                score: note ? { note } : null,
+            }).catch(() => {});
+        }
+
         return data;
     },
 
@@ -331,6 +399,7 @@ const studentService = {
         };
         data.sessioni.push(sessione);
         saveStudentData(userId, data);
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return sessione.id;
     },
 
@@ -399,7 +468,6 @@ const studentService = {
         data.diario.push({
             id: Date.now().toString(36),
             tipo, // 'riflessione', 'prima', 'dopo', 'mood', 'meraviglia', 'difficolta'
-// © Andrea Marro — 30/03/2026 — ELAB Tutor — Tutti i diritti riservati
             contenuto,
             screenshot: screenshot || null,
             esperimentoId: esperimentoId || null,
@@ -482,11 +550,21 @@ const studentService = {
     logMood(userId, { mood, nota }) {
         const data = getStudentData(userId);
         data.moods.push({
-            mood, // 'energico', 'concentrato', 'confuso', 'bloccato', 'felice', 'frustrato'
+            mood,
             nota: nota || '',
             timestamp: new Date().toISOString(),
         });
         saveStudentData(userId, data);
+
+        // G49: Sync mood to Supabase
+        if (isSupabaseConfigured()) {
+            syncMood({
+                student_id: userId,
+                mood: mood,
+                context: nota || null,
+            }).catch(() => {});
+        }
+
         return data;
     },
 
@@ -522,6 +600,7 @@ const studentService = {
 
         // Concetti con più confusione
         const concettiConfusione = {};
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         studenti.forEach(s => {
             s.confusione.forEach(c => {
                 if (c.concettoId) {
@@ -600,7 +679,6 @@ const studentService = {
      * Clear master key cache (call on logout)
      */
     clearEncryptionCache: _clearMasterKeyCache,
-// © Andrea Marro — 30/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
     // ─── SERVER SYNC ─────────────────────────────────────
     /**

@@ -30,8 +30,19 @@ export async function checkVoiceCapabilities() {
         result.microphone = false;
     }
 
-    // Check nanobot voice endpoints
-    if (NANOBOT_URL) {
+    // Check Edge TTS (VPS) first
+    try {
+        const edgeResp = await fetch(`${EDGE_TTS_URL}/health`, {
+            signal: AbortSignal.timeout(3000),
+        });
+        if (edgeResp.ok) {
+            result.tts = true;
+            result.stt = result.microphone; // STT uses browser SpeechRecognition
+        }
+    } catch { /* Edge TTS not available */ }
+
+    // Fallback: check nanobot voice endpoints
+    if (!result.tts && NANOBOT_URL) {
         try {
             const resp = await fetch(`${NANOBOT_URL}/voice-status`, {
                 signal: AbortSignal.timeout(5000),
@@ -42,10 +53,13 @@ export async function checkVoiceCapabilities() {
                 result.tts = data.tts;
             }
         } catch (e) {
-            result.error = 'Nanobot non raggiungibile';
+            result.error = 'TTS non raggiungibile';
         }
-    } else {
-        result.error = 'Nanobot URL non configurato';
+    }
+
+    // Final fallback: browser TTS is always available
+    if (!result.tts && typeof speechSynthesis !== 'undefined') {
+        result.tts = true;
     }
 
     return result;
@@ -184,6 +198,7 @@ export function cancelRecording() {
  * @param {AbortSignal} signal - abort signal
  * @returns {Promise<Object>}
  */
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
 export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
     if (!NANOBOT_URL) {
         throw new Error('Nanobot URL non configurato');
@@ -198,7 +213,6 @@ export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
 
     if (options.circuitState) {
         formData.append('circuitState', JSON.stringify(options.circuitState));
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     if (options.simulatorContext) {
         formData.append('simulatorContext', JSON.stringify(options.simulatorContext));
@@ -231,29 +245,44 @@ export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
     }
 }
 
+// Edge TTS endpoint (VPS — zero GPU, voce IsabellaNeural)
+const EDGE_TTS_URL = 'http://72.60.129.50:8880';
+
 /**
- * Send text to nanobot /tts for speech synthesis only.
+ * Send text to Edge TTS (primary) or nanobot /tts (fallback).
  * @param {string} text - text to synthesize
  * @returns {Promise<ArrayBuffer>} audio data (MP3)
  */
 export async function synthesizeSpeech(text) {
-    if (!NANOBOT_URL) throw new Error('Nanobot URL non configurato');
+    // Try Edge TTS first (VPS, high quality, free)
+    try {
+        const encoded = encodeURIComponent(text.slice(0, 500));
+        const resp = await fetch(`${EDGE_TTS_URL}/tts?text=${encoded}`, {
+            signal: AbortSignal.timeout(10000),
+        });
+        if (resp.ok) {
+            logger.debug('[Voice] Edge TTS success');
+            return await resp.arrayBuffer();
+        }
+    } catch (e) {
+        logger.debug('[Voice] Edge TTS fallback:', e.message);
+    }
 
-    const formData = new FormData();
-    formData.append('text', text);
-
-    const resp = await fetch(`${NANOBOT_URL}/tts`, {
-        method: 'POST',
-        body: formData,
-        signal: AbortSignal.timeout(15000),
-    });
-
-    if (!resp.ok) {
+    // Fallback to nanobot TTS
+    if (NANOBOT_URL) {
+        const formData = new FormData();
+        formData.append('text', text);
+        const resp = await fetch(`${NANOBOT_URL}/tts`, {
+            method: 'POST',
+            body: formData,
+            signal: AbortSignal.timeout(15000),
+        });
+        if (resp.ok) return await resp.arrayBuffer();
         const err = await resp.json().catch(() => ({}));
         throw new Error(err.detail || `TTS error: ${resp.status}`);
     }
 
-    return await resp.arrayBuffer();
+    throw new Error('Nessun servizio TTS disponibile');
 }
 
 /**

@@ -38,7 +38,7 @@ import '../components/LCD16x2';
 const DEFAULT_VIEWBOX = { x: 10, y: -15, width: 570, height: 290 };
 const MIN_ZOOM = 0.3;  // S116: raised from 0.2 — prevents canvas becoming too small on iPad
 const MAX_ZOOM = 3.0;  // S116: lowered from 4 — prevents excessive pixelation on pinch-zoom
-const PIN_HIT_TOLERANCE = 6; // Unified pin hit-test base tolerance (px in SVG-space)
+const PIN_HIT_TOLERANCE = 16; // LIM-friendly pin hit-test tolerance (px in SVG-space)
 
 // ─── Component approximate bounding boxes (width x height from center) ───
 // Used for auto-fit viewbox calculation
@@ -346,8 +346,9 @@ function calcAutoFitViewbox(experiment, containerEl) {
     }
   }
 
-  let finalW = Math.max(w, 300);
-  let finalH = Math.max(h, 200);
+  // Ensure minimum viewbox fills the screen nicely — prevents tiny circuits on large displays
+  let finalW = Math.max(w, 500);
+  let finalH = Math.max(h, 350);
   const currentAspect = finalW / finalH;
   if (currentAspect < aspectTarget) {
     finalW = finalH * aspectTarget;
@@ -393,7 +394,7 @@ function isBreadboardPin(pinRef, components) {
   return comp && (comp.type === 'breadboard-half' || comp.type === 'breadboard-full');
 }
 
-function hitTestPin(svgX, svgY, components, layout, tolerance = 6) {
+function hitTestPin(svgX, svgY, components, layout, tolerance = PIN_HIT_TOLERANCE) {
   let best = null;
   let bestDist = tolerance;
 
@@ -563,6 +564,8 @@ const SimulatorCanvas = ({
   const probeDragRef = useRef(null); // { mmId, probeId }
   // CoVe Fix #5: Traccia listener per cleanup su unmount
   const probeListenersRef = useRef({ drag: null, up: null });
+  // G42: Traccia pending pointerup release handler per cleanup su unmount
+  const pendingReleaseRef = useRef(null);
 
   // --- V1: Notify parent when probe connections change ---
   useEffect(() => {
@@ -990,7 +993,7 @@ const SimulatorCanvas = ({
     }
   }, [experiment, zoom]);
 
-  // CoVe Fix #5: Cleanup listener su unmount
+  // CoVe Fix #5 + G42: Cleanup listener su unmount
   useEffect(() => {
     return () => {
       if (probeListenersRef.current.drag) {
@@ -999,6 +1002,13 @@ const SimulatorCanvas = ({
       if (probeListenersRef.current.up) {
         window.removeEventListener('pointerup', probeListenersRef.current.up);
       }
+      // G42: Cleanup pending release handler
+      if (pendingReleaseRef.current) {
+        window.removeEventListener('pointerup', pendingReleaseRef.current);
+      }
+      // G42: Cleanup pending timers (longPress, pinTooltip)
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+      if (pinTooltipTimerRef.current) clearTimeout(pinTooltipTimerRef.current);
     };
   }, []);
 
@@ -1173,7 +1183,7 @@ const SimulatorCanvas = ({
       e.preventDefault();
       // Task 5: Pin tooltip on tap (touch/pen) — check before pan
       if (experiment?.components && !compClickedRef.current) {
-        const pinTolerance = Math.max(12, 20 / zoom);
+        const pinTolerance = Math.max(PIN_HIT_TOLERANCE, 20 / zoom);
         const pinRef = hitTestPin(svgPt.x, svgPt.y, experiment.components, experiment.layout, pinTolerance);
         if (pinRef) {
           const info = getPinInfo(pinRef, experiment.components, componentStates);
@@ -1417,7 +1427,7 @@ const SimulatorCanvas = ({
       if (now - hoverThrottleRef.current > 80) {
         hoverThrottleRef.current = now;
         const svgPt = clientToSVG(svgRef.current, e.clientX, e.clientY);
-        const pinTolerance = Math.max(6, 10 / zoom);
+        const pinTolerance = Math.max(PIN_HIT_TOLERANCE, 20 / zoom);
         const pinRef = hitTestPin(svgPt.x, svgPt.y, experiment.components, experiment.layout, pinTolerance);
         if (pinRef) {
           const info = getPinInfo(pinRef, experiment.components, componentStates);
@@ -1763,7 +1773,7 @@ const SimulatorCanvas = ({
     // blocks the same check in the SVG background handler
     if ((e.pointerType === 'touch' || e.pointerType === 'pen') && experiment?.components) {
       const svgPt = clientToSVG(svgRef.current, e.clientX, e.clientY);
-      const pinTolerance = Math.max(12, 20 / zoom);
+      const pinTolerance = Math.max(PIN_HIT_TOLERANCE, 20 / zoom);
       const pinRef = hitTestPin(svgPt.x, svgPt.y, experiment.components, experiment.layout, pinTolerance);
       if (pinRef) {
         const info = getPinInfo(pinRef, experiment.components, componentStates);
@@ -1879,12 +1889,18 @@ const SimulatorCanvas = ({
       }
 
       // Release handler: only fire release if NOT dragged (click vs drag)
+      // G42: Clean up any stale pending release before adding new one
+      if (pendingReleaseRef.current) {
+        window.removeEventListener('pointerup', pendingReleaseRef.current);
+      }
       const handleRelease = () => {
         if (!dragMovedRef.current) {
           if (onComponentClick) onComponentClick(componentId, 'release');
         }
         window.removeEventListener('pointerup', handleRelease);
+        pendingReleaseRef.current = null;
       };
+      pendingReleaseRef.current = handleRelease;
       window.addEventListener('pointerup', handleRelease);
       return;
     }
@@ -2183,9 +2199,9 @@ const SimulatorCanvas = ({
       if (!registered) {
         return (
           <g key={comp.id} transform={`translate(${pos.x}, ${pos.y})${rotation ? ` rotate(${rotation})` : ''}`}>
-            <rect x="-15" y="-10" width="30" height="20" rx="3"
+            <rect x="-25" y="-12" width="50" height="24" rx="3"
               fill="#FFF3CD" stroke="#FFC107" strokeWidth="1" strokeDasharray="3 2" />
-            <text x="0" y="4" textAnchor="middle" fontSize="7" fill="#856404"
+            <text x="0" y="5" textAnchor="middle" fontSize="14" fill="#856404"
               fontFamily="Open Sans, sans-serif">
               {comp.type}
             </text>
@@ -2329,7 +2345,7 @@ const SimulatorCanvas = ({
                     {/* Invisible hit area for 44px touch target */}
                     <circle r="16" fill="transparent" stroke="none" />
                     <circle r="8" fill="var(--color-primary, #1E4D8C)" stroke="#fff" strokeWidth="1.2" opacity="0.9" />
-                    <text x="0" y="4" textAnchor="middle" fontSize="10" fill="#fff" fontFamily="sans-serif">↻</text>
+                    <text x="0" y="5" textAnchor="middle" fontSize="14" fill="#fff" fontFamily="sans-serif">↻</text>
                   </g>
                 )}
               </g>
@@ -2367,7 +2383,7 @@ const SimulatorCanvas = ({
                 x={pos.x}
                 y={labelY}
                 textAnchor="middle"
-                fontSize="9"
+                fontSize="14"
                 fill="#666"
                 fontFamily="Open Sans, sans-serif"
                 fontWeight="600"
@@ -2463,7 +2479,7 @@ const SimulatorCanvas = ({
   if (!experiment) {
     return (
       <div className={`elab-simulator-canvas ${className}`} style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: 'var(--color-text-gray-300, #888)', fontFamily: "var(--font-sans, 'Open Sans', sans-serif)" }}>
+        <p style={{ color: 'var(--color-text-gray-300, #737373)', fontFamily: "var(--font-sans, 'Open Sans', sans-serif)" }}>
           Seleziona un esperimento per iniziare
         </p>
       </div>
@@ -2500,21 +2516,14 @@ const SimulatorCanvas = ({
         onPointerCancel={handlePointerUp}
         onClick={handleBackgroundClick}
       >
-        {/* Griglia di fondo — dot grid professionale */}
+        {/* Griglia di fondo — dot grid professionale stile Figma/Tinkercad */}
         <defs>
-          <pattern id="elab-grid-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="10" cy="10" r="0.5" fill="#D0D0D0" />
-          </pattern>
-          <pattern id="elab-grid-major" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-            <rect width="100" height="100" fill="url(#elab-grid-dots)" />
-            <circle cx="0" cy="0" r="1" fill="#B0B0B0" />
-            <circle cx="100" cy="0" r="1" fill="#B0B0B0" />
-            <circle cx="0" cy="100" r="1" fill="#B0B0B0" />
-            <circle cx="100" cy="100" r="1" fill="#B0B0B0" />
+          <pattern id="dotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="0.8" fill="rgba(30,77,140,0.08)" />
           </pattern>
         </defs>
         <rect x="-5000" y="-5000" width="10000" height="10000" fill="#FAFAFA" />
-        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#elab-grid-dots)" />
+        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#dotGrid)" style={{ pointerEvents: 'none' }} />
 
         {/* Layer 1: Base Boards (Breadboard, Arduino) */}
         {baseComponents}
@@ -2610,10 +2619,10 @@ const SimulatorCanvas = ({
           }
           return (
             <g transform={`translate(${dragPreview.x}, ${dragPreview.y})`} opacity="0.45" pointerEvents="none">
-              <rect x="-20" y="-14" width="40" height="28" rx="6"
+              <rect x="-40" y="-14" width="80" height="42" rx="6"
                 fill="var(--color-accent, #4A7A25)" stroke="var(--color-accent, #4A7A25)" strokeWidth="1.5" strokeDasharray="4 2" fillOpacity="0.15" />
               <text x="0" y="1" textAnchor="middle" fontSize="16" fill="var(--color-accent, #4A7A25)" fontWeight="bold">+</text>
-              <text x="0" y="22" textAnchor="middle" fontSize="7" fill="var(--color-accent, #4A7A25)"
+              <text x="0" y="22" textAnchor="middle" fontSize="14" fill="var(--color-accent, #4A7A25)"
                 fontFamily="Open Sans, sans-serif">rilascia qui</text>
             </g>
           );

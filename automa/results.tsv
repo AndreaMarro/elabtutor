@@ -26,3 +26,4 @@ pending	0.9430	IMPROVE	keep	C8: GDPR-COMPLIANCE.md — gap analysis 6 gap (2 blo
 08ef503	0.9415	IMPROVE	keep	Landing PNRR: 2 errori fattuali corretti (D.M. 218/2022, 750M non 1.1B), pivot t
 350f8d2	0.9460	IMPROVE	keep	Rimuovere 39 console.log/warn/error dal codice produzione — 9 file, sostituzione
 350f8d2	0.9438	IMPROVE	keep	Rimuovere 3+ componenti React non usati
+f034c6c	0.9513	IMPROVE	keep	G26: Increase pin/component hit tolerance to 16px for LIM touch

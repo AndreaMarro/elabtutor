@@ -6,7 +6,8 @@
  * Extracted from NewElabSimulator.jsx — Andrea Marro
  */
 import { useCallback, useEffect, useRef } from 'react';
-import { compileCode as apiCompileCode, preloadExperiment } from '../../../services/api';
+import { preloadExperiment } from '../../../services/api';
+import { compileArduinoCode } from '../../../services/compiler';
 import { emitSimulatorEvent } from '../../../services/simulator-api';
 import { pushActivity } from '../../../services/activityBuffer';
 import { sessionMetrics } from '../../../services/sessionMetrics';
@@ -197,8 +198,8 @@ export default function useExperimentLoader({
     sessionMetrics.trackExperimentLoad(experiment.id);
     recordEvent('experiment_loaded', { experimentId: experiment.id, experimentName: experiment.name || experiment.id });
     if (onExperimentChangeRef.current) onExperimentChangeRef.current(experiment);
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setIsRunning(false);
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     setSimulationTime(0);
     setSerialOutput('');
     setAvrReady(false);
@@ -271,13 +272,17 @@ export default function useExperimentLoader({
         if (experiment.hexFile) {
           const hexUrl = experiment.hexFile.startsWith('/') ? experiment.hexFile : `/hex/${experiment.hexFile}`;
           loaded = await bridge.loadHex(hexUrl);
+          if (loaded) {
+            setCompilationStatus('success-local');
+            trackedTimeout(() => setCompilationStatus(null), 3000);
+          }
         } else if (experiment.code) {
           setCompilationStatus('compiling');
           try {
-            const result = await apiCompileCode(experiment.code);
+            const result = await compileArduinoCode(experiment.code, { experimentId: experiment.id });
             if (result.success && result.hex) {
               loaded = await bridge.loadHexFromString(result.hex);
-              setCompilationStatus('success');
+              setCompilationStatus(result.source === 'precompiled' ? 'success-local' : 'success');
               trackedTimeout(() => setCompilationStatus(null), 3000);
             } else {
               setCompilationStatus('error');
@@ -394,12 +399,12 @@ export default function useExperimentLoader({
 
       // TX/RX LED pulse
       const currentSerial = avrRef.current.serialBuffer;
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
       if (currentSerial.length > (avrTxLenRef.current || 0)) {
         newStates._txActive = true;
         avrTxLenRef.current = currentSerial.length;
         if (avrTxTimerRef.current) clearTimeout(avrTxTimerRef.current);
         avrTxTimerRef.current = setTimeout(() => {
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
           setComponentStates(prev => ({ ...prev, _txActive: false }));
         }, 80);
       }
@@ -415,7 +420,7 @@ export default function useExperimentLoader({
         newStates._pins = nextPins;
         const merged = { ...prev, ...newStates };
 
-        // 🚨 PUSH TO MNA SOLVER 🚨
+        // PUSH TO MNA SOLVER
         if (solverRef.current) {
           let targetNano = null;
           solverRef.current.components.forEach((c) => {

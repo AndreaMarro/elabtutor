@@ -137,7 +137,7 @@ export default function TutorSidebar({
                                         padding: '8px 12px',
                                         fontSize: '14px',
                                         fontWeight: 600,
-                                        color: '#888',
+                                        color: '#737373',
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.5px'
                                     }}

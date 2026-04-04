@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-04",
+    "source": "PDR auto-generated from experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap6-esp2",
+  "volume": 3,
+  "chapter": 6,
+  "title": "Cambia pin del LED",
+  "chapter_title": "I pin digitali",
+  "difficulty": 1,
+  "duration_minutes": 40,
+  "target_age": "10-14 anni",
+  "objective": "Collegare un LED esterno a un pin digitale diverso dal 13 e modificare il codice per controllarlo. Capire che ogni pin digitale puo diventare OUTPUT.",
+  "components_needed": [
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
+    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
+    { "name": "Fili di collegamento", "quantity": 4, "icon": "🔌" }
+  ],
+  "vocabulary": {
+    "allowed": ["Arduino", "pin", "digitale", "OUTPUT", "HIGH", "LOW", "LED", "resistore", "breadboard", "anodo", "catodo", "pinMode", "digitalWrite", "GND"],
+    "forbidden": ["PWM", "analogWrite", "registro", "PORTD", "PORTB", "interrupt"],
+    "note": "Focus sul collegamento fisico pin-LED e sulla corrispondenza tra numero nel codice e pin sulla scheda"
+  },
+  "prerequisites": ["v3-cap5-esp1", "v3-cap6-esp1"],
+  "next_experiment": {
+    "id": "v3-cap6-esp3",
+    "title": "2 LED alternati",
+    "preview": "Nella prossima lezione controlleremo due LED contemporaneamente, alternandoli come le luci di un passaggio a livello."
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 5,
+      "teacher_message": "Finora abbiamo usato il LED integrato al pin 13. Ma Arduino ha tanti pin digitali. Oggi colleghiamo un LED esterno a un pin diverso e cambiamo il codice.",
+      "teacher_tip": "Mostrare sulla scheda dove sono i pin digitali numerati. Far contare alla classe quanti ce ne sono.",
+      "class_hook": "Arduino ha 14 pin digitali. Se ognuno controlla un LED, quanti LED possiamo accendere insieme?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Carichiamo il circuito: un LED rosso collegato al pin 7 con un resistore da 470 ohm. Nel codice, al posto di LED_BUILTIN scriviamo 7. Tutto il resto resta uguale.",
+      "teacher_tip": "Sottolineare la corrispondenza: il numero nel codice DEVE corrispondere al pin fisico dove e collegato il filo. Se sbagli numero, il LED non si accende.",
+      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp2]"],
+      "auto_action": "load_experiment"
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "Il LED e collegato al pin 7, ma nel codice scrivo pin 9. Cosa succede? Il LED si accende lo stesso o resta spento?",
+      "teacher_tip": "Lasciare che provino nel simulatore. L'errore intenzionale e il miglior insegnante. Collegamento fisico e codice devono corrispondere.",
+      "provocative_question": "Se collego il filo al pin 7 ma scrivo nel codice il pin 9, Arduino sa che ho sbagliato? O fa quello che gli ho scritto?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 10,
+      "teacher_message": "Premiamo Play e osserviamo il LED esterno lampeggiare. Notate la differenza con il LED integrato: e piu luminoso perche e un vero LED con il suo resistore.",
+      "teacher_tip": "Se il tempo lo permette, far provare a spostare il filo su un altro pin e modificare il codice. Rafforza il concetto pin fisico = numero nel codice.",
+      "action_tags": ["[AZIONE:play]"],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "Il LED esterno lampeggia come quello integrato? Provate a cambiare pin e numero nel codice."
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "Ogni pin digitale di Arduino puo controllare un componente esterno. Il numero nel codice deve corrispondere al pin fisico. Se sbagli numero, Arduino accende il pin sbagliato.",
+      "teacher_tip": "Rafforzare il concetto: Arduino non 'capisce' cosa c'e collegato. Esegue gli ordini alla lettera. La responsabilita e del programmatore.",
+      "summary_for_class": "I pin digitali di Arduino sono uscite controllabili via codice. Il numero nel programma deve corrispondere al pin dove e collegato il LED.",
+      "concepts_learned": ["pin digitali numerati", "collegamento LED esterno", "corrispondenza codice-pin fisico", "resistore di protezione LED", "anodo e catodo"],
+      "next_preview": "Nella prossima lezione controlleremo due LED alternati: quando uno e acceso l'altro e spento, come un passaggio a livello."
+    }
+  ],
+  "session_save": {
+    "concepts_covered": ["pin digitali", "LED esterno", "corrispondenza pin-codice", "resistore protezione"],
+    "next_suggested": "v3-cap6-esp3",
+    "resume_message": "L'ultima volta avete collegato un LED esterno a un pin digitale. Oggi ne controlliamo due alternati."
+  }
+}

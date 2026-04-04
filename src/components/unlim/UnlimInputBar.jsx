@@ -1,36 +1,78 @@
 /**
  * UnlimInputBar — Barra input unificata (testo + mic + invio)
  * Sostituisce la chat in UNLIM Mode.
- * Design minimale: una sola riga, sempre visibile in basso.
- * © Andrea Marro — 27/03/2026
+ * Design minimale: progressive disclosure — mic, TTS, report hidden
+ * behind overflow menu until first use (localStorage).
+ * © Andrea Marro — 31/03/2026
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import css from './unlim-input-bar.module.css';
+import { MicrophoneIcon, StopIcon, SpeakerOnIcon, SpeakerOffIcon, ReportIcon, SendIcon, LoadingIcon } from '../common/ElabIcons';
 
-/**
- * Barra input UNLIM — testo + microfono + invio
- * @param {function} onSend - callback(text) quando l'utente invia
- * @param {function} onMicClick - callback per attivare il microfono
- * @param {boolean} isListening - se il mic è attivo
- * @param {boolean} isLoading - se UNLIM sta pensando
- * @param {string} placeholder - testo placeholder
- */
+const TOOLS_KEY = 'elab-unlim-tools-revealed';
+
+function useRevealedTools() {
+  const [revealed, setRevealed] = useState(() => {
+    try {
+      const stored = localStorage.getItem(TOOLS_KEY);
+      return stored ? JSON.parse(stored) : {};
+    } catch { return {}; }
+  });
+
+  const reveal = useCallback((tool) => {
+    setRevealed(prev => {
+      const next = { ...prev, [tool]: true };
+      try { localStorage.setItem(TOOLS_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  return { revealed, reveal };
+}
+
+// Overflow menu icon (3 dots)
+function MoreIcon({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" role="img" aria-hidden="true">
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="12" cy="19" r="2" />
+    </svg>
+  );
+}
+
 export default function UnlimInputBar({
   onSend,
   onMicClick,
   onReport,
+  isMuted = true,
+  onToggleMute,
   isListening = false,
   isLoading = false,
   placeholder = 'Chiedi qualcosa a UNLIM...',
 }) {
   const [text, setText] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef(null);
+  const menuRef = useRef(null);
+  const { revealed, reveal } = useRevealedTools();
 
-  // M1 fix: auto-focus input al mount — skip su touch devices (LIM) per evitare tastiera virtuale
+  // Auto-focus input — skip on touch devices
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (!isTouch) inputRef.current?.focus();
   }, []);
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', handler);
+    return () => document.removeEventListener('pointerdown', handler);
+  }, [menuOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,50 +90,42 @@ export default function UnlimInputBar({
     }
   };
 
+  // Which tools are shown directly vs. in menu
+  const showMicDirect = revealed.mic || isListening;
+  const showTtsDirect = revealed.tts || !isMuted;
+  const showReportDirect = revealed.report;
+
+  // Are there hidden tools?
+  const hasHiddenTools = onMicClick && !showMicDirect
+    || onToggleMute && !showTtsDirect
+    || onReport && !showReportDirect;
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '12px 16px',
-        background: 'var(--color-bg, #FFFFFF)',
-        borderTop: '1px solid var(--color-border, #E5E5EA)',
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
-        zIndex: 1001,
-      }}
-    >
-      {/* Mic button */}
-      {onMicClick && (
+    <form onSubmit={handleSubmit} className={css.form}>
+      {/* Mic — direct if revealed */}
+      {onMicClick && showMicDirect && (
         <button
           type="button"
-          onClick={onMicClick}
-          aria-label={isListening ? 'Ferma registrazione' : 'Parla con UNLIM'}
+          onClick={() => { reveal('mic'); onMicClick(); }}
+          aria-label={isListening ? 'Ferma registrazione' : 'Parla con Galileo'}
           title={isListening ? 'Ferma' : 'Parla'}
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            border: 'none',
-            background: isListening
-              ? 'var(--color-danger, #DC2626)'
-              : 'var(--color-bg-tertiary, #ECECF1)',
-            color: isListening ? '#fff' : 'var(--color-text-secondary, #6B6B80)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px',
-            flexShrink: 0,
-            transition: 'all 0.2s ease',
-          }}
+          className={isListening ? css.micBtnActive : css.micBtn}
         >
-          {isListening ? '⏹' : '🎤'}
+          {isListening ? <StopIcon size={20} /> : <MicrophoneIcon size={20} />}
+        </button>
+      )}
+
+      {/* TTS — direct if revealed */}
+      {onToggleMute && showTtsDirect && (
+        <button
+          type="button"
+          onClick={() => { reveal('tts'); onToggleMute(); }}
+          aria-label={isMuted ? 'Attiva lettura risposte' : 'Disattiva lettura risposte'}
+          aria-pressed={!isMuted}
+          title={isMuted ? 'Leggi risposte: OFF' : 'Leggi risposte: ON'}
+          className={isMuted ? css.ttsBtn : css.ttsBtnActive}
+        >
+          {isMuted ? <SpeakerOffIcon size={20} /> : <SpeakerOnIcon size={20} />}
         </button>
       )}
 
@@ -103,51 +137,74 @@ export default function UnlimInputBar({
         onChange={e => setText(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
+        aria-label="Messaggio per Galileo"
         disabled={isLoading}
         autoComplete="off"
-        style={{
-          flex: 1,
-          height: '44px',
-          padding: '0 16px',
-          border: '2px solid var(--color-border, #E5E5EA)',
-          borderRadius: 'var(--radius-full, 9999px)',
-          fontSize: 'var(--font-size-lg, 18px)',
-          fontFamily: 'var(--font-sans)',
-          color: 'var(--color-text, #1A1A2E)',
-          background: 'var(--color-bg-secondary, #F7F7F8)',
-          outline: 'none',
-          transition: 'border-color 0.2s ease',
-        }}
-        className="elab-input"
+        className={css.textInput}
       />
 
-      {/* Report button */}
-      {onReport && (
+      {/* Report — direct if revealed */}
+      {onReport && showReportDirect && (
         <button
           type="button"
           onClick={onReport}
           disabled={isLoading}
           aria-label="Crea report della sessione"
           title="Crea Report"
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            border: 'none',
-            background: 'var(--color-bg-tertiary, #ECECF1)',
-            color: 'var(--color-text-secondary, #6B6B80)',
-            cursor: isLoading ? 'default' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px',
-            flexShrink: 0,
-            transition: 'all 0.2s ease',
-            opacity: isLoading ? 0.5 : 1,
-          }}
+          className={css.reportBtn}
         >
-          {'\uD83D\uDCC4'}
+          <ReportIcon size={20} />
         </button>
+      )}
+
+      {/* Overflow menu — shows hidden tools */}
+      {hasHiddenTools && (
+        <div ref={menuRef} className={css.menuWrap}>
+          <button
+            type="button"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Altre opzioni"
+            aria-expanded={menuOpen}
+            title="Altre opzioni"
+            className={css.circleBtn}
+          >
+            <MoreIcon size={20} />
+          </button>
+          {menuOpen && (
+            <div className={css.overflowMenu} role="menu">
+              {onMicClick && !showMicDirect && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { reveal('mic'); onMicClick(); setMenuOpen(false); }}
+                  className={css.menuItem}
+                >
+                  <MicrophoneIcon size={18} /> Parla
+                </button>
+              )}
+              {onToggleMute && !showTtsDirect && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { reveal('tts'); onToggleMute(); setMenuOpen(false); }}
+                  className={css.menuItem}
+                >
+                  <SpeakerOnIcon size={18} /> Leggi risposte
+                </button>
+              )}
+              {onReport && !showReportDirect && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { reveal('report'); onReport(); setMenuOpen(false); }}
+                  className={css.menuItem}
+                >
+                  <ReportIcon size={18} /> Crea Report
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Send button */}
@@ -156,28 +213,15 @@ export default function UnlimInputBar({
         disabled={!text.trim() || isLoading}
         aria-label="Invia messaggio"
         title="Invia"
-        style={{
-          width: '44px',
-          height: '44px',
-          borderRadius: '50%',
-          border: 'none',
-          background: text.trim() && !isLoading
-            ? 'var(--color-primary, #1E4D8C)'
-            : 'var(--color-bg-tertiary, #ECECF1)',
-          color: text.trim() && !isLoading
-            ? '#fff'
-            : 'var(--color-text-tertiary, #6B6B78)',
-          cursor: text.trim() && !isLoading ? 'pointer' : 'default',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
-          flexShrink: 0,
-          transition: 'all 0.2s ease',
-        }}
+        className={text.trim() && !isLoading ? css.sendBtnActive : css.sendBtn}
       >
-        {isLoading ? '⏳' : '➤'}
+        {isLoading ? <LoadingIcon size={20} /> : <SendIcon size={20} />}
       </button>
+
+      {/* A11y: loading state announcement */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {isLoading ? 'Galileo sta elaborando la risposta...' : ''}
+      </span>
     </form>
   );
 }

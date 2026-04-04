@@ -177,7 +177,7 @@ export default function PrivacyPolicy({ onClose }) {
                 <td style={styles.td}>Art. 6(1)(b) — Esecuzione contratto</td>
               </tr>
               <tr>
-                <td style={styles.td}>Chat AI (UNLIM/Galileo)</td>
+                <td style={styles.td}>Chat AI (Galileo)</td>
                 <td style={styles.td}>Testo dei messaggi, immagini allegate (base64), ID esperimento corrente, stato del circuito, contesto simulatore</td>
                 <td style={styles.td}>Art. 6(1)(a) — Consenso</td>
               </tr>
@@ -355,7 +355,7 @@ export default function PrivacyPolicy({ onClose }) {
               </tr>
               <tr>
                 <td style={styles.td}>Erogazione servizio</td>
-                <td style={styles.td}>Simulatore, esperimenti, tutor AI UNLIM</td>
+                <td style={styles.td}>Simulatore, esperimenti, tutor AI Galileo</td>
               </tr>
               <tr>
                 <td style={styles.td}>Personalizzazione</td>
@@ -1143,14 +1143,14 @@ const styles = {
   meta: {
     margin: '8px 0 0 0',
     fontSize: '14px',
-    color: '#999',
+    color: '#737373',
     fontFamily: "'Open Sans', sans-serif",
   },
   closeBtn: {
     background: 'none',
     border: 'none',
     fontSize: '32px',
-    color: '#999',
+    color: '#737373',
     cursor: 'pointer',
     padding: '0 8px',
     lineHeight: 1,

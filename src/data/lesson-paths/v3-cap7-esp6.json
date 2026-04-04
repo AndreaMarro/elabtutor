@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-04",
+    "source": "PDR auto-generated from experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap7-esp6",
+  "volume": 3,
+  "chapter": 7,
+  "title": "2 LED con pulsante (toggle)",
+  "chapter_title": "I pin di input",
+  "difficulty": 3,
+  "duration_minutes": 40,
+  "target_age": "10-14 anni",
+  "objective": "Costruire un circuito toggle: ogni pressione del pulsante alterna quale dei due LED e acceso. Introduciamo le variabili di stato booleane e il concetto di debounce per evitare i rimbalzi meccanici del pulsante.",
+  "components_needed": [
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
+    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
+    { "name": "LED verde", "quantity": 1, "icon": "led" },
+    { "name": "LED rosso", "quantity": 1, "icon": "led" },
+    { "name": "Resistore 470ohm", "quantity": 2, "icon": "resistor" },
+    { "name": "Fili di collegamento", "quantity": 8, "icon": "wire" }
+  ],
+  "vocabulary": {
+    "allowed": ["Arduino", "pin", "INPUT_PULLUP", "pulsante", "digitalRead", "toggle", "debounce", "variabile", "stato", "LED", "resistore", "breadboard", "codice", "programma", "GND", "booleano"],
+    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico"],
+    "note": "Cap 7 Vol 3 — toggle, variabili booleane, debounce con delay."
+  },
+  "prerequisites": ["v3-cap7-esp3"],
+  "next_experiment": {
+    "id": "v3-cap7-esp7",
+    "title": "Contatore con LED binario",
+    "preview": "Nel prossimo esperimento contiamo le pressioni del pulsante e mostriamo il numero in binario con i LED! Impariamo a contare come un computer."
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 5,
+      "teacher_message": "Nell'esperimento con il pulsante, il LED si spegneva solo mentre tenevamo premuto. Oggi facciamo un salto: ogni pressione CAMBIA lo stato per sempre. Come il tasto Caps Lock: premi una volta e resta attivo fino alla prossima pressione.",
+      "teacher_tip": "Parti dall'esperienza quotidiana: Caps Lock, tasto Mute, Play/Pausa. Tutti sono toggle. La sfida tecnica e che il loop gira migliaia di volte al secondo: come fa Arduino a capire che e UNA pressione e non mille? Servono due ingredienti: variabile di stato e debounce.",
+      "class_hook": "Conoscete il tasto Caps Lock? Quando lo premete una volta, le lettere diventano maiuscole. Quando lo ripremete, tornano minuscole. Non serve tenerlo premuto! Oggi costruiamo lo stesso meccanismo con due LED.",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito ha tre parti: il pulsante su INPUT_PULLUP, il LED verde e il LED rosso su due pin OUTPUT. Il codice usa una variabile booleana per ricordare quale LED e acceso. A ogni pressione la variabile si inverte: da true diventa false e viceversa.",
+      "teacher_tip": "Spiega la variabile booleana con un esempio fisico: e come un post-it dove scrivi 'verde' o 'rosso'. Ogni volta che premi il pulsante, cancelli e scrivi l'altro colore. Senza il post-it, Arduino non saprebbe quale LED era acceso al ciclo precedente.",
+      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp6]"],
+      "auto_action": "load_experiment"
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "Il codice ha un delay(50) dopo aver letto la pressione del pulsante. A cosa serve? Provate a pensare: cosa succede fisicamente quando premete un pulsante? Il contatto e perfetto o rimbalza un po'?",
+      "teacher_tip": "Il debounce e fondamentale. Un pulsante meccanico rimbalza per 5-20 millisecondi dopo ogni pressione, generando tanti contatti rapidi. Senza delay, Arduino potrebbe leggere 5-10 pressioni invece di una sola. Il delay(50) aspetta che il rimbalzo finisca. Analogia: una moneta che cade sul tavolo rimbalza prima di fermarsi.",
+      "provocative_question": "Se togliamo il delay(50) dal codice, il toggle funzionera ancora correttamente? O succede qualcosa di strano?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 10,
+      "teacher_message": "Premi Play! Il LED verde si accende. Cliccate sul pulsante: il verde si spegne e il rosso si accende. Cliccate ancora: si scambiano di nuovo! Ogni pressione alterna lo stato per sempre.",
+      "teacher_tip": "Fai notare che e una vera ALTERNANZA di stato: ogni pressione cambia. Non e come tenere premuto un pulsante normale. Questo meccanismo e ovunque nell'elettronica: interruttori della luce, tasto Mute, tasto Play/Pausa. La variabile booleana e la chiave.",
+      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:btn1]", "[AZIONE:highlight:led1]", "[AZIONE:highlight:led2]"],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "Verde acceso, rosso spento. Premi il pulsante: si scambiano! Premi ancora: si scambiano di nuovo. La variabile di stato ricorda quale LED e acceso tra una pressione e l'altra."
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "Avete costruito un vero toggle! Tre concetti fondamentali: la variabile booleana per ricordare lo stato, il debounce per evitare rimbalzi, e INPUT_PULLUP per il pulsante. Con questi strumenti potete costruire qualsiasi interfaccia interattiva.",
+      "teacher_tip": "Recap: variabile booleana = memoria tra un ciclo e l'altro. Debounce con delay(50) = ignora i rimbalzi meccanici. Toggle = ogni pressione inverte lo stato. Sfida: e se volessimo 3 stati invece di 2? Servirebbe un int invece di un bool.",
+      "summary_for_class": "Il toggle usa tre ingredienti: INPUT_PULLUP per il pulsante, variabile booleana per ricordare lo stato corrente, e debounce con delay per ignorare i rimbalzi meccanici. Il risultato e un pulsante che ogni pressione cambia stato permanentemente, come il Caps Lock!",
+      "concepts_learned": [
+        "variabili booleane di stato",
+        "toggle: alternanza permanente di stato",
+        "debounce con delay",
+        "combinazione INPUT + OUTPUT"
+      ],
+      "next_preview": "Nel prossimo esperimento contiamo le pressioni del pulsante e le mostriamo in binario con i LED. Impariamo a contare come un computer: con 0 e 1!"
+    }
+  ],
+  "session_save": {
+    "concepts_covered": ["toggle", "variabile_booleana", "debounce", "INPUT_PULLUP_con_LED"],
+    "next_suggested": "v3-cap7-esp7",
+    "resume_message": "Avete costruito un toggle con pulsante e due LED! Prossimo: contatore binario con LED."
+  }
+}

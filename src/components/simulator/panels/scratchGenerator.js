@@ -8,6 +8,7 @@ export const arduinoGenerator = new Blockly.Generator('Arduino');
 arduinoGenerator.PRECEDENCE = 0;
 arduinoGenerator.ORDER_ATOMIC = 0;            // literals, identifiers
 arduinoGenerator.ORDER_UNARY_POSTFIX = 1;     // () [] -> . ++ --
+arduinoGenerator.ORDER_FUNCTION_CALL = 1;     // func() — same as postfix
 arduinoGenerator.ORDER_UNARY_PREFIX = 2;      // - + ! ~ ++ -- (type)* & sizeof
 arduinoGenerator.ORDER_MULTIPLICATION = 3;    // * / %
 arduinoGenerator.ORDER_ADDITION = 4;          // + -
@@ -197,8 +198,8 @@ ${branchCode}}`;
 arduinoGenerator.forBlock['logic_compare'] = function (block) {
     const OPERATORS = {
         'EQ': '==',
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         'NEQ': '!=',
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
         'LT': '<',
         'LTE': '<=',
         'GT': '>',
@@ -264,7 +265,10 @@ arduinoGenerator.forBlock['controls_for'] = function (block) {
     const to = arduinoGenerator.valueToCode(block, 'TO', arduinoGenerator.ORDER_ASSIGNMENT) || '0';
     const by = arduinoGenerator.valueToCode(block, 'BY', arduinoGenerator.ORDER_ASSIGNMENT) || '1';
     const branch = arduinoGenerator.statementToCode(block, 'DO') || '';
-    return `  for (int ${varName} = ${from}; ${varName} <= ${to}; ${varName} += ${by}) {\n${branch}  }\n`;
+    // G54: Guard against negative step creating infinite loop
+    const stepNum = parseFloat(by);
+    const comparison = (stepNum < 0) ? '>=' : '<=';
+    return `  for (int ${varName} = ${from}; ${varName} ${comparison} ${to}; ${varName} += ${by}) {\n${branch}  }\n`;
 };
 
 arduinoGenerator.forBlock['logic_negate'] = function (block) {
@@ -395,11 +399,11 @@ arduinoGenerator.forBlock['variables_set'] = function (block) {
     if (!arduinoGenerator._declaredVars.has(varName)) {
         arduinoGenerator._declaredVars.add(varName);
         arduinoGenerator._globalVarDecls?.set(varName, 'int');
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     // Always emit plain assignment — declaration is global in header
     return `  ${varName} = ${value};\n`;
 };
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 
 arduinoGenerator.forBlock['variables_get'] = function (block) {
     const varField = block.getField('VAR');

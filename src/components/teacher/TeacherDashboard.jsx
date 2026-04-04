@@ -6,7 +6,7 @@
 // Tutti i diritti riservati
 // ============================================
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import studentService from '../../services/studentService';
 import { adminService, usersLookup } from '../../services/userService';
@@ -14,23 +14,27 @@ import { createClass, listClasses, removeStudent, updateClassGames } from '../..
 import { useConfirmModal } from '../common/ConfirmModal';
 import { showToast } from '../common/Toast';
 import LESSON_PATHS from '../../data/lesson-paths/index';
+import { sendNudge } from '../../services/nudgeService';
+import { isSupabaseConfigured } from '../../services/supabaseClient';
+import { fetchTeacherClasses, fetchClassStudents, fetchClassSessions, fetchClassMoods, transformToLegacyFormat } from '../../services/teacherDataService';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import css from './TeacherDashboard.module.css';
 // Colori ELAB ufficiali
 const C = {
-    navy: '#1E4D8C',
-    navyDark: '#152a5c',
-    lime: '#4A7A25',
+    navy: 'var(--color-primary, #1E4D8C)',
+    navyDark: 'var(--color-primary-dark, #152a5c)',
+    lime: 'var(--color-accent, #4A7A25)',
     limeDark: '#7da93d',
     limeLight: '#BBD789',
     limeSoft: '#E8F4D9',
-    bg: '#F0F4F8',
+    bg: 'var(--color-bg, #F0F4F8)',
     red: '#E53935',
-    orange: '#F5A623',
+    orange: '#E8941C',
     cyan: '#00B4D8',
-    text: '#1a1a2e',
-    textMuted: '#64748B',
+    text: 'var(--color-text-body, #1a1a2e)',
+    textMuted: 'var(--color-text-muted, #64748B)',
     white: '#FFFFFF',
-    border: '#E2E8F0',
+    border: 'var(--color-border, #E2E8F0)',
 };
 
 // ─── INLINE SVG ICONS ─────────────────────────────────
@@ -38,7 +42,7 @@ const svgProps = { xmlns: 'http://www.w3.org/2000/svg', fill: 'none', stroke: 'c
 
 // Weather icons
 const IconSun = ({ size = 18, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || 'currentColor' }}>
         <circle cx="10" cy="10" r="4" />
         <line x1="10" y1="1" x2="10" y2="3.5" /><line x1="10" y1="16.5" x2="10" y2="19" />
         <line x1="1" y1="10" x2="3.5" y2="10" /><line x1="16.5" y1="10" x2="19" y2="10" />
@@ -47,24 +51,24 @@ const IconSun = ({ size = 18, color }) => (
     </svg>
 );
 const IconStorm = ({ size = 18, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || 'currentColor' }}>
         <path d="M4 10a5 5 0 0 1 9.9-1H15a3 3 0 0 1 0 6H4.5a3.5 3.5 0 0 1-.5-7z" />
         <polyline points="10 13 8 17 12 17 10 20" strokeWidth="2" />
     </svg>
 );
 const IconRain = ({ size = 18, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || 'currentColor' }}>
         <path d="M4 9a5 5 0 0 1 9.9-1H15a3 3 0 0 1 0 6H4.5a3.5 3.5 0 0 1-.5-7z" />
         <line x1="7" y1="16" x2="6" y2="19" /><line x1="11" y1="16" x2="10" y2="19" /><line x1="15" y1="16" x2="14" y2="19" />
     </svg>
 );
 const IconCloud = ({ size = 18, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || 'currentColor' }}>
         <path d="M4 11a5 5 0 0 1 9.9-1H15a3 3 0 0 1 0 6H4.5a3.5 3.5 0 0 1-.5-7z" />
     </svg>
 );
 const IconPartlyCloudy = ({ size = 18, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || 'currentColor' }}>
         <circle cx="7" cy="7" r="3" />
         <line x1="7" y1="1" x2="7" y2="2.5" /><line x1="2" y1="7" x2="3.5" y2="7" />
         <line x1="3.5" y1="3.5" x2="4.6" y2="4.6" /><line x1="10.5" y1="3.5" x2="9.4" y2="4.6" />
@@ -74,13 +78,13 @@ const IconPartlyCloudy = ({ size = 18, color }) => (
 
 // Plant/growth stage icons
 const IconSeedDormant = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#8D6E63', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#8D6E63' }}>
         <ellipse cx="10" cy="13" rx="4" ry="3" fill="#D7CCC8" stroke="#8D6E63" />
         <line x1="4" y1="17" x2="16" y2="17" stroke="#8D6E63" />
     </svg>
 );
 const IconSeed = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <ellipse cx="10" cy="14" rx="4" ry="3" fill="#D7CCC8" stroke="#8D6E63" />
         <path d="M10 14 Q10 11 10 9" stroke="#4A7A25" />
         <path d="M10 10 Q12 8 13 9" stroke="#4A7A25" />
@@ -88,7 +92,7 @@ const IconSeed = ({ size = 18 }) => (
     </svg>
 );
 const IconSprout = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <line x1="10" y1="17" x2="10" y2="8" stroke="#4A7A25" />
         <path d="M10 10 Q7 7 5 8" stroke="#4A7A25" fill="none" />
         <path d="M10 8 Q13 5 15 6" stroke="#4A7A25" fill="none" />
@@ -96,7 +100,7 @@ const IconSprout = ({ size = 18 }) => (
     </svg>
 );
 const IconBush = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <line x1="10" y1="17" x2="10" y2="10" stroke="#6D4C41" />
         <circle cx="10" cy="7" r="5" fill="#A5D6A7" stroke="#4A7A25" />
         <circle cx="7" cy="9" r="3" fill="#81C784" stroke="#4A7A25" />
@@ -105,14 +109,14 @@ const IconBush = ({ size = 18 }) => (
     </svg>
 );
 const IconPine = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <rect x="9" y="15" width="2" height="3" fill="#6D4C41" stroke="#6D4C41" />
         <polygon points="10,2 4,10 7,10 3,15 17,15 13,10 16,10" fill="#66BB6A" stroke="#43A047" />
         <line x1="4" y1="18" x2="16" y2="18" stroke="#8D6E63" />
     </svg>
 );
 const IconOak = ({ size = 18 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <rect x="9" y="14" width="2" height="4" fill="#5D4037" stroke="#5D4037" />
         <circle cx="10" cy="8" r="6" fill="#66BB6A" stroke="#43A047" />
         <circle cx="6" cy="10" r="3.5" fill="#81C784" stroke="#43A047" />
@@ -124,32 +128,32 @@ const IconOak = ({ size = 18 }) => (
 
 // Mood icons
 const IconEnergico = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#F5A623', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#F5A623' }}>
         <polygon points="10,1 12,8 19,8 13.5,12 15.5,19 10,14.5 4.5,19 6.5,12 1,8 8,8" fill="#F5A623" stroke="none" />
     </svg>
 );
 const IconConcentrato = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#1E4D8C', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#1E4D8C' }}>
         <circle cx="10" cy="10" r="8" stroke="#1E4D8C" />
         <circle cx="10" cy="10" r="4" stroke="#1E4D8C" />
         <circle cx="10" cy="10" r="1" fill="#1E4D8C" stroke="none" />
     </svg>
 );
 const IconConfuso = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#9333EA', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#9333EA' }}>
         <circle cx="10" cy="10" r="8" stroke="#9333EA" />
         <path d="M7 7.5 Q7 5 10 5 Q13 5 13 7.5 Q13 9 10 10 L10 12" stroke="#9333EA" fill="none" />
         <circle cx="10" cy="15" r="0.8" fill="#9333EA" stroke="none" />
     </svg>
 );
 const IconBloccato = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#E53935', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#E53935' }}>
         <rect x="4" y="9" width="12" height="8" rx="2" stroke="#E53935" />
         <path d="M7 9 V6 Q7 3 10 3 Q13 3 13 6 V9" stroke="#E53935" fill="none" />
     </svg>
 );
 const IconFelice = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#4A7A25' }}>
         <circle cx="10" cy="10" r="8" stroke="#4A7A25" />
         <circle cx="7" cy="8" r="1" fill="#4A7A25" stroke="none" />
         <circle cx="13" cy="8" r="1" fill="#4A7A25" stroke="none" />
@@ -157,7 +161,7 @@ const IconFelice = ({ size = 16 }) => (
     </svg>
 );
 const IconFrustrato = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#EF4444', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#EF4444' }}>
         <circle cx="10" cy="10" r="8" stroke="#EF4444" />
         <circle cx="7" cy="8" r="1" fill="#EF4444" stroke="none" />
         <circle cx="13" cy="8" r="1" fill="#EF4444" stroke="none" />
@@ -165,7 +169,7 @@ const IconFrustrato = ({ size = 16 }) => (
     </svg>
 );
 const IconCurioso = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#00B4D8', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#00B4D8' }}>
         <circle cx="10" cy="10" r="8" stroke="#00B4D8" />
         <circle cx="7" cy="8" r="1" fill="#00B4D8" stroke="none" />
         <circle cx="13" cy="8" r="1" fill="#00B4D8" stroke="none" />
@@ -173,7 +177,7 @@ const IconCurioso = ({ size = 16 }) => (
     </svg>
 );
 const IconCreativo = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#EC4899', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#EC4899' }}>
         <path d="M10 3 Q6 3 6 7 Q6 10 10 12 Q14 10 14 7 Q14 3 10 3z" stroke="#EC4899" fill="none" />
         <line x1="10" y1="12" x2="10" y2="16" stroke="#EC4899" />
         <line x1="8" y1="16" x2="12" y2="16" stroke="#EC4899" />
@@ -184,26 +188,26 @@ const IconCreativo = ({ size = 16 }) => (
 
 // Game icons
 const IconDetective = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg}>
         <circle cx="8" cy="8" r="5" />
         <line x1="12" y1="12" x2="18" y2="18" strokeWidth="2" />
     </svg>
 );
 const IconPredict = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg}>
         <circle cx="10" cy="10" r="8" />
         <path d="M10 4 L10 10 L14 14" />
     </svg>
 );
 const IconReverse = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg}>
         <polyline points="3 10 7 6 7 14 3 10" fill="currentColor" stroke="none" />
         <polyline points="17 10 13 6 13 14 17 10" fill="currentColor" stroke="none" />
         <line x1="7" y1="10" x2="13" y2="10" />
     </svg>
 );
 const IconReview = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: 'currentColor', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg}>
         <rect x="3" y="2" width="14" height="16" rx="2" />
         <line x1="7" y1="7" x2="13" y2="7" /><line x1="7" y1="10" x2="13" y2="10" /><line x1="7" y1="13" x2="11" y2="13" />
     </svg>
@@ -211,20 +215,20 @@ const IconReview = ({ size = 16 }) => (
 
 // Status icons
 const IconCheck = ({ size = 14, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || '#4A7A25', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || '#4A7A25' }}>
         <circle cx="10" cy="10" r="8" stroke="currentColor" />
         <polyline points="6 10 9 13 14 7" stroke="currentColor" />
     </svg>
 );
 const IconQuestion = ({ size = 14, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || '#F5A623', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || '#F5A623' }}>
         <circle cx="10" cy="10" r="8" stroke="currentColor" />
         <path d="M7 7.5 Q7 5 10 5 Q13 5 13 7.5 Q13 9 10 10 L10 12" stroke="currentColor" fill="none" />
         <circle cx="10" cy="15" r="0.8" fill="currentColor" stroke="none" />
     </svg>
 );
 const IconAlert = ({ size = 14, color }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: color || '#E53935', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: color || '#E53935' }}>
         <polygon points="10,2 19,18 1,18" stroke="currentColor" fill="none" />
         <line x1="10" y1="8" x2="10" y2="13" stroke="currentColor" />
         <circle cx="10" cy="15.5" r="0.8" fill="currentColor" stroke="none" />
@@ -233,7 +237,7 @@ const IconAlert = ({ size = 14, color }) => (
 
 // Nudge envelope icon
 const IconNudge = ({ size = 16 }) => (
-    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" style={{ color: '#1E4D8C', display: 'inline-block', verticalAlign: 'middle' }}>
+    <svg {...svgProps} width={size} height={size} viewBox="0 0 20 20" className={css.iconSvg} style={{ color: '#1E4D8C' }}>
         <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" />
         <polyline points="2 4 10 11 18 4" stroke="currentColor" />
     </svg>
@@ -371,10 +375,70 @@ function exportStudentsCSV(users, allData, classReport, formatTempo) {
     showToast(`CSV esportato: ${users.length} studenti`, 'success');
 }
 
+// Build class report from transformed Supabase/legacy data (not from localStorage studentService)
+function _buildReportFromLegacyData(legacyData) {
+    const studenti = Object.values(legacyData).filter(Boolean);
+    if (studenti.length === 0) return null;
+
+    const concettiConfusione = {};
+    studenti.forEach(s => {
+        (s.confusione || []).forEach(c => {
+            if (c.concettoId) {
+                if (!concettiConfusione[c.concettoId]) concettiConfusione[c.concettoId] = { totale: 0, conteggio: 0 };
+                concettiConfusione[c.concettoId].totale += c.livello;
+                concettiConfusione[c.concettoId].conteggio++;
+            }
+        });
+    });
+
+    const esperimentiCount = {};
+    studenti.forEach(s => {
+        (s.esperimenti || []).filter(e => e.completato).forEach(e => {
+            esperimentiCount[e.experimentId] = (esperimentiCount[e.experimentId] || 0) + 1;
+        });
+    });
+
+    const settimanafa = new Date(Date.now() - 7 * 86400000);
+    const attivitaRecente = studenti.map(s => ({
+        userId: s.userId,
+        sessioni: (s.sessioni || []).filter(sess => new Date(sess.inizio) > settimanafa).length,
+        tempoSettimana: (s.sessioni || [])
+            .filter(sess => new Date(sess.inizio) > settimanafa && sess.durata)
+            .reduce((sum, sess) => sum + sess.durata, 0),
+        esperimentiSettimana: (s.esperimenti || [])
+            .filter(e => new Date(e.timestamp) > settimanafa).length,
+    }));
+
+    const inattivi = studenti.filter(s => {
+        const ultima = (s.sessioni || [])[(s.sessioni || []).length - 1];
+        return !ultima || new Date(ultima.inizio) < settimanafa;
+    }).map(s => s.userId);
+
+    const moodCount = {};
+    studenti.forEach(s => {
+        const ultimoMood = (s.moods || [])[(s.moods || []).length - 1];
+        if (ultimoMood) moodCount[ultimoMood.mood] = (moodCount[ultimoMood.mood] || 0) + 1;
+    });
+
+    return {
+        totaleStudenti: studenti.length,
+        concettiConfusione,
+        esperimentiCount,
+        attivitaRecente,
+        inattivi,
+        moodCount,
+        tempoMedioTotale: Math.round(studenti.reduce((sum, s) => sum + (s.tempoTotale || 0), 0) / studenti.length),
+        mediaEsperimenti: Math.round(studenti.reduce((sum, s) => sum + (s.stats?.esperimentiTotali || 0), 0) / studenti.length * 10) / 10,
+    };
+}
+
 export default function TeacherDashboard({ onNavigate }) {
     const { user, isDocente, isAdmin } = useAuth();
     const { confirm: confirmModal, ConfirmDialog } = useConfirmModal();
-    const [activeTab, setActiveTab] = useState('progressi');
+    const [activeTab, setActiveTab] = useState('classe');
+    const [classeView, setClasseView] = useState('progressi'); // 'progressi' | 'giardino'
+    const [reportSub, setReportSub] = useState('meteo'); // 'meteo' | 'report' | 'attivita'
+    const [impostazioniSub, setImpostazioniSub] = useState('classi'); // 'classi' | 'documenti' | 'pnrr' | 'audit'
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [nudgeText, setNudgeText] = useState('');
     const [nudgesSent, setNudgesSent] = useState([]);
@@ -411,13 +475,41 @@ export default function TeacherDashboard({ onNavigate }) {
         });
     }, [realUsers, allStudentData, isEmptyState, isLoadingData]);
 
-    // Fetch dati studenti dal server (asincrono)
+    // Fetch dati studenti: Supabase → legacy server → localStorage
     useEffect(() => {
         let cancelled = false;
         async function loadData() {
             setIsLoadingData(true);
             try {
-                // Prima prova dal server
+                // G50: Supabase path — dati reali cross-device
+                if (isSupabaseConfigured()) {
+                    try {
+                        const classes = await fetchTeacherClasses();
+                        if (!cancelled && classes.length > 0) {
+                            const cls = classes[0]; // Use first class
+                            const [students, sessions, moods] = await Promise.all([
+                                fetchClassStudents(cls.id),
+                                fetchClassSessions(cls.id, 30),
+                                fetchClassMoods(cls.id),
+                            ]);
+                            const legacyData = {};
+                            const transformed = transformToLegacyFormat(students, sessions, moods);
+                            transformed.forEach(s => { legacyData[s.userId] = s; });
+                            if (Object.keys(legacyData).length > 0) {
+                                setAllStudentData(legacyData);
+                                setDataSource('cloud');
+                                // Build report from transformed Supabase data
+                                setClassReport(_buildReportFromLegacyData(legacyData));
+                                setIsLoadingData(false);
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        // Supabase failed, continue to legacy
+                    }
+                }
+
+                // Legacy: server → localStorage
                 const serverData = await studentService.fetchStudentsFromServer();
                 if (!cancelled && Object.keys(serverData).length > 0) {
                     setAllStudentData(serverData);
@@ -480,8 +572,8 @@ export default function TeacherDashboard({ onNavigate }) {
 
     if (!user || (!isDocente && !isAdmin)) {
         return (
-            <div style={{ padding: 40, textAlign: 'center', color: C.textMuted }}>
-                <h2 style={{ color: C.navy }}>Area riservata ai docenti</h2>
+            <div className={css.centeredPadding}>
+                <h2 className={css.headingNavy}>Area riservata ai docenti</h2>
                 <p>Accedi con un account docente per monitorare i tuoi studenti.</p>
             </div>
         );
@@ -489,36 +581,32 @@ export default function TeacherDashboard({ onNavigate }) {
 
     if (isLoadingData) {
         return (
-            <div style={{ padding: 60, textAlign: 'center', color: C.textMuted }}>
-                <h2 style={{ color: C.navy }}>Caricamento dati studenti...</h2>
+            <div className={css.centeredPaddingLg}>
+                <h2 className={css.headingNavy}>Caricamento dati studenti...</h2>
                 <p>Sincronizzazione con il server in corso.</p>
             </div>
         );
     }
 
     const tabs = [
-        { id: 'progressi', label: 'Progressi', title: 'Griglia esperimenti per studente' },
-        { id: 'giardino', label: 'Il Giardino', title: 'Visualizzazione a piantine degli studenti' },
-        { id: 'meteo', label: 'Meteo Classe', title: 'Stato emotivo e difficoltà della classe' },
-        { id: 'attivita', label: 'Attività', title: 'Attività recenti degli studenti' },
-        { id: 'report', label: 'Report', title: 'Statistiche aggregate e export CSV' },
-        { id: 'studente', label: 'Dettaglio Studente', title: 'Scheda individuale dello studente' },
-        { id: 'nudge', label: 'Nudge', title: 'Invia messaggi motivazionali' },
-        { id: 'documenti', label: 'Documentazione', title: 'Guide e materiali didattici' },
-        { id: 'pnrr', label: 'Progresso PNRR', title: 'Monitoraggio obiettivi PNRR' },
-        { id: 'classi', label: 'Le mie classi', title: 'Gestione classi e studenti' },
-        ...(user?.ruolo === 'admin' ? [{ id: 'audit', label: 'Audit GDPR', title: 'Log accessi e operazioni (solo admin)' }] : []),
+        { id: 'classe', label: 'Classe', title: 'Progressi e visualizzazione studenti' },
+        { id: 'studenti', label: 'Studenti', title: 'Scheda individuale e messaggi' },
+        { id: 'report', label: 'Report', title: 'Meteo, statistiche e attività' },
+        { id: 'impostazioni', label: 'Impostazioni', title: 'Classi, documentazione e PNRR' },
     ];
 
     const handleSendNudge = () => {
         if (!nudgeText.trim() || !selectedStudent) return;
+        const studentUser = allUsers.find(u => u.id === selectedStudent);
+        const nudge = sendNudge(selectedStudent, studentUser?.nome || 'Studente', nudgeText);
         setNudgesSent(prev => [...prev, {
-            id: Date.now().toString(36),
+            id: nudge.id,
             studentId: selectedStudent,
             testo: nudgeText,
-            timestamp: new Date().toISOString(),
+            timestamp: nudge.timestamp,
         }]);
         setNudgeText('');
+        showToast(`Messaggio inviato a ${studentUser?.nome || 'studente'}`, 'success');
     };
 
     const formatTempo = (secondi) => {
@@ -529,14 +617,13 @@ export default function TeacherDashboard({ onNavigate }) {
     };
 
     return (
-        <div style={styles.container}>
+        <div className={css.container}>
             {/* Header */}
-            <div style={styles.header}>
-                <div style={styles.headerLeft}>
-                    <span style={{ fontSize: 20, fontWeight: 700, color: C.limeLight }}></span>
+            <div className={css.header}>
+                <div className={css.headerLeft}>
                     <div>
-                        <h1 style={styles.headerTitle}>La Serra del Prof. {user.nome?.split(' ')[0]}</h1>
-                        <p style={styles.headerSubtitle}>
+                        <h1 className={css.headerTitle}>La Serra del Prof. {user.nome?.split(' ')[0]}</h1>
+                        <p className={css.headerSubtitle}>
                             {allUsers.length} studenti nel giardino
                             {isEmptyState && <span style={{ color: '#94A3B8', fontWeight: 600 }}> (in attesa di dati)</span>}
                         </p>
@@ -556,7 +643,7 @@ export default function TeacherDashboard({ onNavigate }) {
                     fontSize: 14,
                     color: '#1E4D8C',
                 }}>
-                    <span style={{ fontSize: 24 }}>📊</span>
+                    <span style={{ fontSize: 24 }}>Info</span>
                     <div>
                         <strong>Nessun dato studente disponibile</strong>
                         <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: 14 }}>
@@ -564,6 +651,23 @@ export default function TeacherDashboard({ onNavigate }) {
                             Ogni esperimento aperto, compilazione e interazione viene tracciata in tempo reale.
                         </p>
                     </div>
+                </div>
+            )}
+            {dataSource === 'cloud' && (
+                <div style={{
+                    background: 'linear-gradient(90deg, #1E4D8C22 0%, #4A7A2511 100%)',
+                    border: '1px solid #1E4D8C44',
+                    borderRadius: 8,
+                    padding: '8px 16px',
+                    margin: '0 20px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: 14,
+                    color: '#1E4D8C',
+                }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E4D8C', display: 'inline-block', flexShrink: 0 }} />
+                    <span><strong>Dati dal cloud</strong> — Sincronizzazione attiva. I dati sono salvati e accessibili da qualsiasi dispositivo.</span>
                 </div>
             )}
             {dataSource === 'server' && (
@@ -597,12 +701,15 @@ export default function TeacherDashboard({ onNavigate }) {
                     color: '#E65100',
                 }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#F5A623', display: 'inline-block', flexShrink: 0 }} />
-                    <span><strong>Dati locali (offline)</strong> — Il server non è raggiungibile. I dati sono salvati sul tuo dispositivo.</span>
+                    <span>
+                        <strong>Dati locali</strong> — I progressi sono salvati su questo dispositivo.
+                        {!isSupabaseConfigured() && ' Attiva il cloud per sincronizzare i dati tra dispositivi e non perdere i progressi.'}
+                    </span>
                 </div>
             )}
 
             {/* Tabs */}
-            <div style={styles.tabBar} role="tablist">
+            <div className={css.tabBar} role="tablist">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
@@ -611,11 +718,7 @@ export default function TeacherDashboard({ onNavigate }) {
                         aria-controls={`tabpanel-${tab.id}`}
                         title={tab.title}
                         onClick={() => setActiveTab(tab.id)}
-                        style={{
-                            ...styles.tab,
-                            background: activeTab === tab.id ? C.navy : 'transparent',
-                            color: activeTab === tab.id ? C.white : C.navy,
-                        }}
+                        className={activeTab === tab.id ? css.tabActive : css.tab}
                     >
                         {tab.label}
                     </button>
@@ -623,88 +726,125 @@ export default function TeacherDashboard({ onNavigate }) {
             </div>
 
             {/* Content */}
-            <div style={styles.content} role="tabpanel" id={`tabpanel-${activeTab}`}>
-                {activeTab === 'progressi' && (
-                    <ProgressiTab
-                        users={filteredUsers}
-                        allData={allStudentData}
-                        onSelectStudent={(id) => { setSelectedStudent(id); setActiveTab('studente'); }}
-                        formatTempo={formatTempo}
-                    />
+            <div className={css.content} role="tabpanel" id={`tabpanel-${activeTab}`}>
+                {/* ── TAB: Classe (Progressi + Giardino) ── */}
+                {activeTab === 'classe' && (
+                    <>
+                        <div className={css.subTabBar}>
+                            {[{ id: 'progressi', label: 'Griglia Progressi' }, { id: 'giardino', label: 'Il Giardino' }].map(v => (
+                                <button key={v.id} onClick={() => setClasseView(v.id)} className={classeView === v.id ? css.subTabActive : css.subTab}>{v.label}</button>
+                            ))}
+                        </div>
+                        {classeView === 'progressi' ? (
+                            <ProgressiTab
+                                users={filteredUsers}
+                                allData={allStudentData}
+                                onSelectStudent={(id) => { setSelectedStudent(id); setActiveTab('studenti'); }}
+                                formatTempo={formatTempo}
+                            />
+                        ) : (
+                            <GiardinoTab
+                                users={filteredUsers}
+                                allData={allStudentData}
+                                onSelectStudent={(id) => { setSelectedStudent(id); setActiveTab('studenti'); }}
+                                filterSearch={filterSearch}
+                                setFilterSearch={setFilterSearch}
+                                volumeFilter={volumeFilter}
+                                setVolumeFilter={setVolumeFilter}
+                            />
+                        )}
+                    </>
                 )}
-                {activeTab === 'giardino' && (
-                    <GiardinoTab
-                        users={filteredUsers}
-                        allData={allStudentData}
-                        onSelectStudent={(id) => { setSelectedStudent(id); setActiveTab('studente'); }}
-                        filterSearch={filterSearch}
-                        setFilterSearch={setFilterSearch}
-                        volumeFilter={volumeFilter}
-                        setVolumeFilter={setVolumeFilter}
-                    />
+
+                {/* ── TAB: Studenti (Dettaglio + Messaggi) ── */}
+                {activeTab === 'studenti' && (
+                    <>
+                        <StudenteDetailTab
+                            users={allUsers}
+                            allData={allStudentData}
+                            selectedId={selectedStudent}
+                            onSelectStudent={setSelectedStudent}
+                            formatTempo={formatTempo}
+                        />
+                        {selectedStudent && (
+                            <div className={css.section} style={{ marginTop: 20, background: '#F8FAFC' }}>
+                                <h2 className={css.sectionTitle}>Invia messaggio</h2>
+                                <NudgeTab
+                                    users={allUsers}
+                                    selectedStudent={selectedStudent}
+                                    setSelectedStudent={setSelectedStudent}
+                                    nudgeText={nudgeText}
+                                    setNudgeText={setNudgeText}
+                                    handleSendNudge={handleSendNudge}
+                                    nudgesSent={nudgesSent}
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
-                {activeTab === 'meteo' && (
-                    <MeteoTab allData={allStudentData} classReport={classReport} />
-                )}
-                {activeTab === 'attivita' && (
-                    <AttivitaTab
-                        users={filteredUsers}
-                        allUsers={allUsers}
-                        allData={allStudentData}
-                        classReport={classReport}
-                        formatTempo={formatTempo}
-                        volumeFilter={volumeFilter}
-                        setVolumeFilter={setVolumeFilter}
-                    />
-                )}
+
+                {/* ── TAB: Report (Meteo + Report + Attivita) ── */}
                 {activeTab === 'report' && (
-                    <ReportTab
-                        users={filteredUsers}
-                        allData={allStudentData}
-                        classReport={classReport}
-                        formatTempo={formatTempo}
-                    />
+                    <>
+                        <div className={css.subTabBar}>
+                            {[{ id: 'meteo', label: 'Meteo Classe' }, { id: 'report', label: 'Statistiche' }, { id: 'attivita', label: 'Attivita' }].map(v => (
+                                <button key={v.id} onClick={() => setReportSub(v.id)} className={reportSub === v.id ? css.subTabActive : css.subTab}>{v.label}</button>
+                            ))}
+                        </div>
+                        {reportSub === 'meteo' && <MeteoTab allData={allStudentData} classReport={classReport} />}
+                        {reportSub === 'report' && (
+                            <ReportTab
+                                users={filteredUsers}
+                                allData={allStudentData}
+                                classReport={classReport}
+                                formatTempo={formatTempo}
+                            />
+                        )}
+                        {reportSub === 'attivita' && (
+                            <AttivitaTab
+                                users={filteredUsers}
+                                allUsers={allUsers}
+                                allData={allStudentData}
+                                classReport={classReport}
+                                formatTempo={formatTempo}
+                                volumeFilter={volumeFilter}
+                                setVolumeFilter={setVolumeFilter}
+                            />
+                        )}
+                    </>
                 )}
-                {activeTab === 'studente' && (
-                    <StudenteDetailTab
-                        users={allUsers}
-                        allData={allStudentData}
-                        selectedId={selectedStudent}
-                        onSelectStudent={setSelectedStudent}
-                        formatTempo={formatTempo}
-                    />
-                )}
-                {activeTab === 'nudge' && (
-                    <NudgeTab
-                        users={allUsers}
-                        selectedStudent={selectedStudent}
-                        setSelectedStudent={setSelectedStudent}
-                        nudgeText={nudgeText}
-                        setNudgeText={setNudgeText}
-                        handleSendNudge={handleSendNudge}
-                        nudgesSent={nudgesSent}
-                    />
-                )}
-                {activeTab === 'documenti' && (
-                    <DocumentiTab
-                        users={allUsers}
-                        allData={allStudentData}
-                        classReport={classReport}
-                        formatTempo={formatTempo}
-                    />
-                )}
-                {activeTab === 'pnrr' && (
-                    <ProgressoPNRRTab
-                        users={filteredUsers}
-                        allData={allStudentData}
-                        formatTempo={formatTempo}
-                    />
-                )}
-                {activeTab === 'classi' && (
-                    <ClassiTab />
-                )}
-                {activeTab === 'audit' && (
-                    <AuditTab />
+
+                {/* ── TAB: Impostazioni (Classi + Docs + PNRR + Audit) ── */}
+                {activeTab === 'impostazioni' && (
+                    <>
+                        <div className={css.subTabBar}>
+                            {[
+                                { id: 'classi', label: 'Le mie classi' },
+                                { id: 'documenti', label: 'Documentazione' },
+                                { id: 'pnrr', label: 'Progresso PNRR' },
+                                ...(user?.ruolo === 'admin' ? [{ id: 'audit', label: 'Audit GDPR' }] : []),
+                            ].map(v => (
+                                <button key={v.id} onClick={() => setImpostazioniSub(v.id)} className={impostazioniSub === v.id ? css.subTabActive : css.subTab}>{v.label}</button>
+                            ))}
+                        </div>
+                        {impostazioniSub === 'classi' && <ClassiTab />}
+                        {impostazioniSub === 'documenti' && (
+                            <DocumentiTab
+                                users={allUsers}
+                                allData={allStudentData}
+                                classReport={classReport}
+                                formatTempo={formatTempo}
+                            />
+                        )}
+                        {impostazioniSub === 'pnrr' && (
+                            <ProgressoPNRRTab
+                                users={filteredUsers}
+                                allData={allStudentData}
+                                formatTempo={formatTempo}
+                            />
+                        )}
+                        {impostazioniSub === 'audit' && <AuditTab />}
+                    </>
                 )}
             </div>
         </div>
@@ -712,11 +852,65 @@ export default function TeacherDashboard({ onNavigate }) {
 }
 
 // ─── IL GIARDINO ───────────────────────────────────────
+// ─── PAGINATION ──────────────────────────────────────────
+const STUDENTS_PER_PAGE = 10;
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+    if (totalPages <= 1) return null;
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginTop: 16 }}>
+            <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                aria-label="Pagina precedente"
+                style={{
+                    ...styles.primaryBtn,
+                    padding: '8px 16px', fontSize: 14, minHeight: 44,
+                    opacity: currentPage === 0 ? 0.4 : 1,
+                    cursor: currentPage === 0 ? 'default' : 'pointer',
+                }}
+            >
+                ← Prec
+            </button>
+            <span aria-live="polite" aria-atomic="true" style={{ fontSize: 14, color: C.textMuted, fontWeight: 600 }}>
+                {currentPage + 1} / {totalPages}
+            </span>
+            <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages - 1}
+                aria-label="Pagina successiva"
+                style={{
+                    ...styles.primaryBtn,
+                    padding: '8px 16px', fontSize: 14, minHeight: 44,
+                    opacity: currentPage >= totalPages - 1 ? 0.4 : 1,
+                    cursor: currentPage >= totalPages - 1 ? 'default' : 'pointer',
+                }}
+            >
+                Succ →
+            </button>
+        </div>
+    );
+}
+
+function usePagination(items, perPage = STUDENTS_PER_PAGE) {
+    const [page, setPage] = useState(0);
+    const totalPages = Math.max(1, Math.ceil(items.length / perPage));
+    // Clamp page without setState during render (avoids infinite loop)
+    const safePage = Math.min(page, totalPages - 1);
+    useEffect(() => {
+        if (page > totalPages - 1) setPage(Math.max(0, totalPages - 1));
+    }, [page, totalPages]);
+    const paged = items.slice(safePage * perPage, (safePage + 1) * perPage);
+    return { paged, page: safePage, setPage, totalPages, total: items.length };
+}
+
 function GiardinoTab({ users, allData, onSelectStudent, filterSearch, setFilterSearch, volumeFilter, setVolumeFilter }) {
+    const { paged, page, setPage, totalPages, total } = usePagination(users);
+
     return (
         <div>
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Il Giardino — Ogni studente è una pianta</h3>
+                <h2 style={styles.sectionTitle}>Il Giardino — Ogni studente è una pianta</h2>
                 <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>
                     La dimensione riflette l'impegno. La forma riflette il tipo di esplorazione.
                     Nessuna pianta è migliore di un'altra — un pino alto e una quercia ampia sono ugualmente sani.
@@ -742,9 +936,15 @@ function GiardinoTab({ users, allData, onSelectStudent, filterSearch, setFilterS
                     </select>
                 </div>
 
+                {total > STUDENTS_PER_PAGE && (
+                    <p style={{ fontSize: 14, color: C.textMuted, marginBottom: 8 }}>
+                        Pagina {page + 1} di {totalPages} ({total} studenti)
+                    </p>
+                )}
+
                 {/* Giardino visuale */}
                 <div style={styles.gardenGrid}>
-                    {users.map(u => {
+                    {paged.map(u => {
                         const sd = allData[u.id];
                         const plant = getPlantStyle(sd);
                         const ultimoMood = sd?.moods?.[sd.moods.length - 1];
@@ -782,6 +982,8 @@ function GiardinoTab({ users, allData, onSelectStudent, filterSearch, setFilterS
                     })}
                 </div>
 
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
                 {users.length === 0 && (
                     <p style={{ textAlign: 'center', color: C.textMuted, padding: 30 }}>
                         Nessuno studente trovato.
@@ -816,7 +1018,7 @@ function MeteoTab({ allData, classReport }) {
         <div>
             {/* Meteo generale */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Il Meteo della Classe</h3>
+                <h2 style={styles.sectionTitle}>Il Meteo della Classe</h2>
                 <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>
                     La "nebbia" indica zone di confusione diffusa. Non è un problema — è un segnale
                     per decidere se intervenire o lasciar fare.
@@ -842,10 +1044,12 @@ function MeteoTab({ allData, classReport }) {
 
             {/* Zone di confusione */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Zone di Nebbia (Concetti con Alta Confusione)</h3>
+                <h2 style={styles.sectionTitle}>Zone di Nebbia (Concetti con Alta Confusione)</h2>
                 {concettiConConfusione.length === 0 ? (
                     <p style={{ color: C.textMuted, textAlign: 'center', padding: 20 }}>
-                        Cielo sereno! Nessuna zona di confusione significativa rilevata.
+                        {Object.keys(allData).length === 0
+                            ? 'Nessun dato studente disponibile. I dati appariranno quando gli studenti useranno il tutor.'
+                            : 'Cielo sereno! Nessuna zona di confusione significativa rilevata.'}
                     </p>
                 ) : (
                     concettiConConfusione.map(c => (
@@ -872,9 +1076,9 @@ function MeteoTab({ allData, classReport }) {
             {/* Studenti inattivi */}
             {classReport?.inattivi?.length > 0 && (
                 <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Studenti Inattivi (7+ giorni)</h3>
+                    <h2 style={styles.sectionTitle}>Studenti Inattivi (7+ giorni)</h2>
                     <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 12 }}>
-                        Non un allarme — solo un'informazione. Puoi scegliere di inviare un nudge.
+                        Non un allarme — solo un'informazione. Puoi scegliere di inviare un messaggio.
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                         {classReport.inattivi.map(id => {
@@ -894,6 +1098,13 @@ function MeteoTab({ allData, classReport }) {
 
 // ─── ATTIVITÀ ──────────────────────────────────────────
 function AttivitaTab({ users, allUsers, allData, classReport, formatTempo, volumeFilter, setVolumeFilter }) {
+    const sortedActivity = useMemo(() => {
+        return (classReport?.attivitaRecente || [])
+            .filter(att => users.some(u => u.id === att.userId))
+            .sort((a, b) => b.tempoSettimana - a.tempoSettimana);
+    }, [classReport, users]);
+    const { paged: pagedActivity, page, setPage, totalPages } = usePagination(sortedActivity);
+
     return (
         <div>
             {/* Header con filtro e export */}
@@ -945,7 +1156,7 @@ function AttivitaTab({ users, allUsers, allData, classReport, formatTempo, volum
 
             {/* Classifica attività settimanale */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Attività Settimanale</h3>
+                <h2 style={styles.sectionTitle}>Attività Settimanale</h2>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={styles.table}>
                         <thead>
@@ -958,9 +1169,9 @@ function AttivitaTab({ users, allUsers, allData, classReport, formatTempo, volum
                             </tr>
                         </thead>
                         <tbody>
-                            {classReport?.attivitaRecente?.filter(att => users.some(u => u.id === att.userId)).sort((a, b) => b.tempoSettimana - a.tempoSettimana).map((att, i) => {
+                            {pagedActivity.map((att, i) => {
                                 const u = users.find(u => u.id === att.userId);
-                                const isInattivo = classReport.inattivi.includes(att.userId);
+                                const isInattivo = classReport?.inattivi?.includes(att.userId) ?? false;
                                 return (
                                     <tr key={att.userId} style={i % 2 === 0 ? styles.trEven : {}}>
                                         <td style={styles.td}>{u?.nome || u?.email?.split('@')[0] || `Studente ${att.userId.slice(0, 6)}`}</td>
@@ -982,12 +1193,13 @@ function AttivitaTab({ users, allUsers, allData, classReport, formatTempo, volum
                         </tbody>
                     </table>
                 </div>
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
             </div>
 
             {/* Esperimenti più popolari */}
             {classReport?.esperimentiCount && Object.keys(classReport.esperimentiCount).length > 0 && (
                 <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Esperimenti Più Popolari</h3>
+                    <h2 style={styles.sectionTitle}>Esperimenti Più Popolari</h2>
                     {Object.entries(classReport.esperimentiCount)
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 10)
@@ -1022,7 +1234,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
         <div>
             {/* Selettore studente */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Seleziona Studente</h3>
+                <h2 style={styles.sectionTitle}>Seleziona Studente</h2>
                 <select
                     value={selectedId || ''}
                     onChange={e => onSelectStudent(e.target.value || null)}
@@ -1081,7 +1293,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
 
                             {/* Session detail panel - G28 */}
                             <div style={styles.section}>
-                                <h3 style={styles.sectionTitle}>Riepilogo Attività</h3>
+                                <h2 style={styles.sectionTitle}>Riepilogo Attività</h2>
                                 <div className={css.activityGrid}>
                                     <div className={css.activityCardNavy}>
                                         <div className={css.activityCardLabel}>Ultimo accesso</div>
@@ -1136,7 +1348,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
                             {/* Ultimo mood */}
                             {studentData.moods?.length > 0 && (
                                 <div style={styles.section}>
-                                    <h3 style={styles.sectionTitle}>Mood recenti</h3>
+                                    <h2 style={styles.sectionTitle}>Mood recenti</h2>
                                     <div className={css.moodChips}>
                                         {studentData.moods.slice(-10).map((m, i) => (
                                             <span key={i} style={{
@@ -1153,7 +1365,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
                             {/* Meraviglie dello studente */}
                             {studentData.meraviglie?.length > 0 && (
                                 <div style={styles.section}>
-                                    <h3 style={styles.sectionTitle}>Le sue meraviglie</h3>
+                                    <h2 style={styles.sectionTitle}>Le sue meraviglie</h2>
                                     {studentData.meraviglie.slice(-10).reverse().map(m => (
                                         <div key={m.id} className={css.detailRow}>
                                             <span style={{ color: m.risolta ? C.lime : C.orange, marginRight: 8 }}>
@@ -1168,7 +1380,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
                             {/* Diario (lettura silenziosa) */}
                             {studentData.diario?.length > 0 && (
                                 <div style={styles.section}>
-                                    <h3 style={styles.sectionTitle}>Dal suo diario (osservazione silenziosa)</h3>
+                                    <h2 style={styles.sectionTitle}>Dal suo diario (osservazione silenziosa)</h2>
                                     <p className={css.diaryNote}>
                                         Leggere senza commentare, a meno che non sia invitato. — Montessori
                                     </p>
@@ -1188,7 +1400,7 @@ function StudenteDetailTab({ users, allData, selectedId, onSelectStudent, format
                             {/* Difficoltà */}
                             {studentData.difficolta?.length > 0 && (
                                 <div style={styles.section}>
-                                    <h3 style={styles.sectionTitle}>Difficoltà segnalate</h3>
+                                    <h2 style={styles.sectionTitle}>Difficoltà segnalate</h2>
                                     {studentData.difficolta.slice(-5).reverse().map(d => (
                                         <div key={d.id} className={css.detailRow}>
                                             <span style={{ color: d.risolta ? C.lime : C.red, marginRight: 8 }}>
@@ -1216,15 +1428,16 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
     return (
         <div>
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Invia un Nudge</h3>
+                <h2 style={styles.sectionTitle}>Invia un messaggio</h2>
                 <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>
-                    Un nudge è un suggerimento gentile, come un bigliettino piegato.
+                    Un messaggio è un suggerimento gentile, come un bigliettino piegato.
                     Lo studente può accettarlo o ignorarlo. Non è un compito — è un invito.
                 </p>
 
                 <select
                     value={selectedStudent || ''}
                     onChange={e => setSelectedStudent(e.target.value || null)}
+                    aria-label="Seleziona studente per messaggio"
                     style={{ ...styles.select, marginBottom: 12 }}
                 >
                     <option value="">-- Scegli uno studente --</option>
@@ -1236,6 +1449,7 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
                 <textarea
                     value={nudgeText}
                     onChange={e => setNudgeText(e.target.value)}
+                    aria-label="Messaggio per lo studente"
                     placeholder="Hai provato a collegare il tuo buzzer a un sensore di luce? Potrebbe piacerti quello che succede..."
                     style={styles.textarea}
                     rows={3}
@@ -1249,14 +1463,14 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
                         opacity: (nudgeText.trim() && selectedStudent) ? 1 : 0.5,
                     }}
                 >
-                    Invia Nudge
+                    Invia messaggio
                 </button>
             </div>
 
             {/* Nudge inviati */}
             {nudgesSent.length > 0 && (
                 <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Nudge Inviati ({nudgesSent.length})</h3>
+                    <h2 style={styles.sectionTitle}>Messaggi inviati ({nudgesSent.length})</h2>
                     {[...nudgesSent].reverse().map(n => {
                         const u = users.find(u => u.id === n.studentId);
                         return (
@@ -1279,7 +1493,7 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
 
             {/* Nudge suggeriti */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Idee per Nudge</h3>
+                <h2 style={styles.sectionTitle}>Idee per messaggi</h2>
                 {[
                     'Hai provato a collegare il tuo buzzer a un sensore di luce? Potrebbe piacerti quello che succede.',
                     'Sai che puoi far lampeggiare un LED senza usare delay()? Prova con millis()!',
@@ -1287,13 +1501,14 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
                     'Il tuo circuito potrebbe diventare ancora più interessante con un sensore di temperatura.',
                     'Hai mai provato a far "cantare" il tuo circuito? Prova con un buzzer e tone()!',
                 ].map((idea, i) => (
-                    <div
+                    <button
+                        type="button"
                         key={i}
                         onClick={() => setNudgeText(idea)}
                         style={styles.nudgeSuggestion}
                     >
                         {idea}
-                    </div>
+                    </button>
                 ))}
             </div>
         </div>
@@ -1304,8 +1519,28 @@ function NudgeTab({ users, selectedStudent, setSelectedStudent, nudgeText, setNu
 function DocumentiTab({ users, allData, classReport, formatTempo }) {
     return (
         <div>
+            {/* Guida rapida — le cose che servono SUBITO */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Pannelli di Documentazione</h3>
+                <h2 style={styles.sectionTitle}>Guida Rapida per il Docente</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+                    {[
+                        { q: 'Come inizio una lezione?', a: 'Apri il simulatore, scegli un esperimento dal menu. Lo studente vede tutto sulla LIM.' },
+                        { q: 'Come invio un messaggio a uno studente?', a: 'Vai alla tab "Studenti", seleziona lo studente e scrivi un messaggio nella sezione in basso.' },
+                        { q: 'Come vedo i progressi della classe?', a: 'La tab "Classe" mostra una griglia con tutti gli esperimenti completati per studente.' },
+                        { q: 'Come uso Galileo (il tutor AI)?', a: 'Clicca la mascotte robot in basso a destra. Lo studente puo fare domande a voce o scrivere.' },
+                        { q: 'Come creo una classe?', a: 'Vai alla tab "Le mie classi", inserisci il nome e clicca "Crea". Poi aggiungi gli studenti.' },
+                        { q: 'Che differenza c\'e tra i 3 volumi?', a: 'Vol.1: circuiti base (LED, resistori). Vol.2: sensori e attuatori. Vol.3: Arduino e programmazione.' },
+                    ].map((faq, i) => (
+                        <div key={i} style={{ padding: 14, borderRadius: 10, background: 'var(--color-bg, #fff)', border: '1px solid var(--color-border, #E5E5EA)' }}>
+                            <p style={{ fontWeight: 700, fontSize: 14, color: C.navy, margin: '0 0 6px' }}>{faq.q}</p>
+                            <p style={{ fontSize: 14, color: C.text, margin: 0, lineHeight: 1.5 }}>{faq.a}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div style={styles.section}>
+                <h2 style={styles.sectionTitle}>Pannelli di Documentazione</h2>
                 <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>
                     Ispirati a Reggio Emilia: narrazioni del percorso, non valutazioni.
                     Documenti visuali condivisibili con la classe e le famiglie.
@@ -1351,7 +1586,7 @@ function DocumentiTab({ users, allData, classReport, formatTempo }) {
 
             {/* Nessun voto — Filosofia */}
             <div style={{ ...styles.section, background: C.limeSoft, border: `2px solid ${C.lime}` }}>
-                <h3 style={{ ...styles.sectionTitle, color: C.limeDark }}>Filosofia della Serra</h3>
+                <h2 style={{ ...styles.sectionTitle, color: C.limeDark }}>Filosofia della Serra</h2>
                 <p style={{ fontSize: 14, lineHeight: 1.8, color: C.text }}>
                     Questa dashboard non genera pagelle. Non classifica i ragazzi. Non calcola medie.
                     Mostra percorsi individuali, pattern di gruppo, e la salute dell'ecosistema.
@@ -1368,6 +1603,7 @@ function DocumentiTab({ users, allData, classReport, formatTempo }) {
 
 // ─── LE MIE CLASSI (Sprint 1 Session 30) ──────────────
 function ClassiTab() {
+    const { confirm: confirmModal, ConfirmDialog } = useConfirmModal();
     const [classes, setClasses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newClassName, setNewClassName] = useState('');
@@ -1419,7 +1655,7 @@ function ClassiTab() {
         <div>
             {/* Crea nuova classe */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Crea una nuova classe</h3>
+                <h2 style={styles.sectionTitle}>Crea una nuova classe</h2>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <input
                         type="text"
@@ -1451,7 +1687,7 @@ function ClassiTab() {
 
             {/* Elenco classi */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Le tue classi</h3>
+                <h2 style={styles.sectionTitle}>Le tue classi</h2>
                 {loading ? (
                     <p style={{ color: C.textMuted, fontSize: 14 }}>Caricamento...</p>
                 ) : classes.length === 0 ? (
@@ -1461,12 +1697,12 @@ function ClassiTab() {
                         borderRadius: 16,
                         border: `2px dashed ${C.lime}`,
                     }}>
-                        <h3 style={{
+                        <h2 style={{
                             color: C.navy, fontSize: 20, fontWeight: 700, margin: '0 0 8px',
                             fontFamily: 'Oswald, sans-serif',
                         }}>
                             Benvenuto nella tua Area Docente!
-                        </h3>
+                        </h2>
                         <p style={{ color: C.textMuted, fontSize: 15, margin: '0 0 20px', lineHeight: 1.6 }}>
                             Configura la tua classe in 3 semplici passi. Non serve nessuna esperienza tecnica!
                         </p>
@@ -1514,6 +1750,7 @@ function ClassiTab() {
                     </div>
                 )}
             </div>
+            <ConfirmDialog />
         </div>
     );
 }
@@ -1574,7 +1811,7 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
                         <span key={v} style={{
                             fontSize: 14, padding: '2px 8px', borderRadius: 6,
                             background: v === 'Volume 1' ? '#4A7A2522' : v === 'Volume 2' ? '#E8941C22' : '#E54B3D22',
-                            color: v === 'Volume 1' ? '#4A7A25' : v === 'Volume 2' ? '#E8941C' : '#E54B3D',
+                            color: v === 'Volume 1' ? '#4A7A25' : v === 'Volume 2' ? '#996600' : '#C62828',
                             fontWeight: 600,
                         }}>
                             {v}
@@ -1644,7 +1881,7 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
                         cursor: 'pointer', fontSize: 14, padding: '8px 0 0', fontWeight: 500,
                     }}
                 >
-                    {expanded ? '▼ Nascondi studenti' : '▶ Mostra studenti'}
+                    {expanded ? 'Nascondi studenti' : 'Mostra studenti'}
                 </button>
             )}
 
@@ -1657,8 +1894,6 @@ function ClassCard({ cls, onRemoveStudent, onUpdateGames }) {
                     </p>
                 </div>
             )}
-            {/* S99: Custom confirmation modal */}
-            <ConfirmDialog />
         </div>
     );
 }
@@ -1702,7 +1937,7 @@ function getProgressStats(studentData, completedSet) {
 function getPaceLabel(pct) {
     if (pct >= 60) return { label: 'Avanti', color: '#4A7A25', bg: 'rgba(85,139,47,0.1)' };
     if (pct >= 25) return { label: 'In pari', color: '#1E4D8C', bg: 'rgba(30,77,140,0.1)' };
-    if (pct > 0) return { label: 'Indietro', color: '#E8941C', bg: 'rgba(232,148,28,0.1)' };
+    if (pct > 0) return { label: 'Indietro', color: '#996600', bg: 'rgba(232,148,28,0.1)' };
     return { label: 'Non iniziato', color: '#94A3B8', bg: 'rgba(148,163,184,0.1)' };
 }
 
@@ -1818,9 +2053,9 @@ function ProgressoPNRRTab({ users, allData, formatTempo }) {
             <div style={{ ...styles.section, background: `linear-gradient(135deg, ${C.navy}, ${C.navyDark})`, color: C.white, border: 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                     <div>
-                        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, fontFamily: 'Oswald, sans-serif', color: C.white }}>
+                        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, fontFamily: 'Oswald, sans-serif', color: C.white }}>
                             Report Progresso — PNRR Scuola 4.0
-                        </h3>
+                        </h2>
                         <p style={{ margin: '4px 0 0', fontSize: 14, color: C.limeLight }}>
                             {users.length} studenti • {CURRICULUM.length} esperimenti nel curriculum • Media classe: {classAvg}%
                         </p>
@@ -1863,14 +2098,14 @@ function ProgressoPNRRTab({ users, allData, formatTempo }) {
                     <div style={styles.statLabel}>In pari (25-59%)</div>
                 </div>
                 <div style={styles.statCard}>
-                    <div style={{ ...styles.statValue, color: '#E8941C' }}>{paceGroups.indietro}</div>
+                    <div style={{ ...styles.statValue, color: '#996600' }}>{paceGroups.indietro}</div>
                     <div style={styles.statLabel}>Indietro (&lt;25%)</div>
                 </div>
             </div>
 
             {/* Progress per student */}
             <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Progresso Individuale</h3>
+                <h2 style={styles.sectionTitle}>Progresso Individuale</h2>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={styles.table}>
                         <thead>
@@ -1933,7 +2168,7 @@ function ProgressoPNRRTab({ users, allData, formatTempo }) {
             {/* Matrice completamento */}
             <div style={styles.section}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
-                    <h3 style={{ ...styles.sectionTitle, margin: 0 }}>Matrice Completamento Esperimenti</h3>
+                    <h2 style={{ ...styles.sectionTitle, margin: 0 }}>Matrice Completamento Esperimenti</h2>
                     <div style={{ display: 'flex', gap: 8 }}>
                         <select
                             value={selectedVol}
@@ -2027,13 +2262,13 @@ function ProgressoPNRRTab({ users, allData, formatTempo }) {
                 <h4 style={{ margin: '0 0 8px', fontSize: 14, color: C.navy, fontFamily: 'Oswald, sans-serif' }}>Legenda</h4>
                 <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 14 }}>
                     <span><strong style={{ color: '#4A7A25' }}>■</strong> Volume 1 — Cominciamo ({CURRICULUM_BY_VOL[1].length} esp.)</span>
-                    <span><strong style={{ color: '#E8941C' }}>■</strong> Volume 2 — Approfondiamo ({CURRICULUM_BY_VOL[2].length} esp.)</span>
-                    <span><strong style={{ color: '#E54B3D' }}>■</strong> Volume 3 — Arduino ({CURRICULUM_BY_VOL[3].length} esp.)</span>
+                    <span><strong style={{ color: '#996600' }}>■</strong> Volume 2 — Approfondiamo ({CURRICULUM_BY_VOL[2].length} esp.)</span>
+                    <span><strong style={{ color: '#C62828' }}>■</strong> Volume 3 — Arduino ({CURRICULUM_BY_VOL[3].length} esp.)</span>
                 </div>
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14, marginTop: 8 }}>
                     <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(85,139,47,0.1)', color: '#4A7A25', fontWeight: 600 }}>Avanti: ≥60%</span>
                     <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(30,77,140,0.1)', color: '#1E4D8C', fontWeight: 600 }}>In pari: 25-59%</span>
-                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(232,148,28,0.1)', color: '#E8941C', fontWeight: 600 }}>Indietro: &lt;25%</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(232,148,28,0.1)', color: '#996600', fontWeight: 600 }}>Indietro: &lt;25%</span>
                     <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(148,163,184,0.1)', color: '#94A3B8', fontWeight: 600 }}>Non iniziato</span>
                 </div>
             </div>
@@ -2075,6 +2310,7 @@ const STATUS_BG = {
 
 function ProgressiTab({ users, allData, onSelectStudent, formatTempo }) {
     const [selectedVol, setSelectedVol] = useState('tutti');
+    const { paged: pagedUsers, page, setPage, totalPages, total } = usePagination(users);
 
     const visibleExps = selectedVol === 'tutti' ? CURRICULUM : CURRICULUM_BY_VOL[parseInt(selectedVol)] || [];
 
@@ -2117,7 +2353,7 @@ function ProgressiTab({ users, allData, onSelectStudent, formatTempo }) {
             <div style={styles.section}>
                 <div className={css.progressiHeader}>
                     <div>
-                        <h3 style={{ ...styles.sectionTitle, margin: 0 }}>Progressi della Classe</h3>
+                        <h2 style={{ ...styles.sectionTitle, margin: 0 }}>Progressi della Classe</h2>
                         <p className={css.progressiSubtitle}>
                             Ogni riga è uno studente, ogni colonna un esperimento. Verde = completato, giallo = parziale, grigio = non fatto.
                         </p>
@@ -2194,7 +2430,7 @@ function ProgressiTab({ users, allData, onSelectStudent, formatTempo }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((u, i) => {
+                                {pagedUsers.map((u, i) => {
                                     const sd = allData[u.id];
                                     return (
                                         <tr key={u.id} className={i % 2 === 0 ? css.trEven : undefined}>
@@ -2234,12 +2470,175 @@ function ProgressiTab({ users, allData, onSelectStudent, formatTempo }) {
                     </div>
                 )}
 
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
                 {/* Legend */}
                 <div className={css.legend}>
                     <span><span className={css.legendDot} style={{ background: STATUS_COLORS.completed }} /> Completato</span>
                     <span><span className={css.legendDot} style={{ background: STATUS_COLORS.partial }} /> Parziale</span>
                     <span><span className={css.legendDot} style={{ background: STATUS_COLORS.none }} /> Non fatto</span>
                 </div>
+            </div>
+
+            {/* Bar chart: esperimenti completati per studente */}
+            {users.length > 0 && (
+                <div style={styles.section}>
+                    <h2 style={styles.sectionTitle}>Esperimenti Completati per Studente</h2>
+                    <StudentProgressChart users={users} allData={allData} visibleExps={visibleExps} />
+                </div>
+            )}
+
+            {/* Confusione heatmap */}
+            {users.length > 0 && (
+                <div style={styles.section}>
+                    <h2 style={styles.sectionTitle}>Mappa Confusione per Esperimento</h2>
+                    <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 12 }}>
+                        Colore rosso = molti errori, verde = pochi errori, grigio = nessun dato.
+                    </p>
+                    <ConfusioneHeatmap users={users} allData={allData} visibleExps={visibleExps} />
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── BAR CHART: esperimenti completati per studente ─────
+function StudentProgressChart({ users, allData, visibleExps }) {
+    const chartData = useMemo(() => {
+        return users.slice(0, 20).map(u => { // Cap at 20 for readability
+            const sd = allData[u.id];
+            let completed = 0;
+            let partial = 0;
+            visibleExps.forEach(exp => {
+                const status = getExperimentStatus(sd, exp.id);
+                if (status === 'completed') completed++;
+                else if (status === 'partial') partial++;
+            });
+            return {
+                name: u.nome?.split(' ')[0] || 'N/A',
+                completati: completed,
+                parziali: partial,
+                totale: visibleExps.length,
+            };
+        });
+    }, [users, allData, visibleExps]);
+
+    if (chartData.length === 0) return null;
+
+    return (
+        <ResponsiveContainer width="100%" height={Math.max(200, chartData.length * 28 + 40)}>
+            <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+                <XAxis type="number" domain={[0, 'dataMax']} tick={{ fontSize: 14, fill: C.textMuted }} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 14, fill: C.text }} width={75} />
+                <Tooltip
+                    formatter={(value, name) => [value, name === 'completati' ? 'Completati' : 'Parziali']}
+                    contentStyle={{ fontSize: 14, borderRadius: 6, border: `1px solid ${C.border}` }}
+                />
+                <Bar dataKey="completati" fill={C.lime} stackId="a" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="parziali" fill="#E8941C" stackId="a" radius={[0, 4, 4, 0]} />
+            </BarChart>
+        </ResponsiveContainer>
+    );
+}
+
+// ─── CONFUSIONE HEATMAP ─────────────────────────────────
+function ConfusioneHeatmap({ users, allData, visibleExps }) {
+    // Compute error counts per experiment across all students
+    const heatData = useMemo(() => {
+        const errorMap = {}; // experimentId -> error count
+        Object.values(allData).forEach(sd => {
+            (sd.sessioni || []).forEach(sess => {
+                (sess.attivita || []).forEach(att => {
+                    if (att.tipo === 'compilazione' && att.dettaglio?.startsWith('Errore:')) {
+                        // Try to associate with experiment
+                        const expId = sess.esperimentoId || null;
+                        if (expId) errorMap[expId] = (errorMap[expId] || 0) + 1;
+                    }
+                });
+            });
+            // Also count confusion logs
+            (sd.confusione || []).forEach(c => {
+                if (c.concettoId) {
+                    errorMap[c.concettoId] = (errorMap[c.concettoId] || 0) + c.livello;
+                }
+            });
+            // Count errors from experiments
+            (sd.esperimenti || []).forEach(exp => {
+                if (exp.note && typeof exp.note === 'string' && exp.note.toLowerCase().includes('errore')) {
+                    errorMap[exp.experimentId] = (errorMap[exp.experimentId] || 0) + 1;
+                }
+            });
+        });
+        return errorMap;
+    }, [allData]);
+
+    // Find max for color scaling
+    const maxErrors = Math.max(1, ...Object.values(heatData));
+
+    // Group by chapter
+    const chapters = useMemo(() => {
+        const chaps = [];
+        let current = null;
+        visibleExps.forEach(exp => {
+            const key = `v${exp.volume}-cap${exp.chapter}`;
+            if (!current || current.key !== key) {
+                current = { key, volume: exp.volume, chapter: exp.chapter, exps: [] };
+                chaps.push(current);
+            }
+            current.exps.push(exp);
+        });
+        return chaps;
+    }, [visibleExps]);
+
+    function getHeatColor(count) {
+        if (!count || count === 0) return '#F0F4F8'; // grigio chiaro
+        const intensity = Math.min(count / maxErrors, 1);
+        if (intensity > 0.7) return '#E53935'; // rosso
+        if (intensity > 0.4) return '#F5A623'; // arancione
+        if (intensity > 0.15) return '#FDD835'; // giallo
+        return '#C8E6C9'; // verde chiaro
+    }
+
+    return (
+        <div style={{ overflowX: 'auto' }}>
+            {chapters.map(ch => (
+                <div key={ch.key} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: VOL_COLORS[ch.volume], marginBottom: 4 }}>
+                        Capitolo {ch.chapter} (Volume {ch.volume})
+                    </div>
+                    <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                        {ch.exps.map(exp => {
+                            const count = heatData[exp.id] || 0;
+                            const espNum = exp.id.match(/esp(\d+)/)?.[1] || '?';
+                            return (
+                                <div
+                                    key={exp.id}
+                                    title={`${exp.title}: ${count} errori/confusione`}
+                                    style={{
+                                        width: 36, height: 36,
+                                        background: getHeatColor(count),
+                                        borderRadius: 4,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: 14, fontWeight: 600,
+                                        color: count > maxErrors * 0.5 ? '#FFF' : C.text,
+                                        cursor: 'default',
+                                        border: `1px solid ${C.border}`,
+                                    }}
+                                >
+                                    {espNum}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
+            {/* Legend */}
+            <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 14, color: C.textMuted }}>
+                <span><span style={{ display: 'inline-block', width: 12, height: 12, background: '#C8E6C9', borderRadius: 2, verticalAlign: 'middle', marginRight: 4 }} />Pochi</span>
+                <span><span style={{ display: 'inline-block', width: 12, height: 12, background: '#FDD835', borderRadius: 2, verticalAlign: 'middle', marginRight: 4 }} />Medio</span>
+                <span><span style={{ display: 'inline-block', width: 12, height: 12, background: '#F5A623', borderRadius: 2, verticalAlign: 'middle', marginRight: 4 }} />Alto</span>
+                <span><span style={{ display: 'inline-block', width: 12, height: 12, background: '#E53935', borderRadius: 2, verticalAlign: 'middle', marginRight: 4 }} />Critico</span>
+                <span><span style={{ display: 'inline-block', width: 12, height: 12, background: '#F0F4F8', borderRadius: 2, border: '1px solid #E2E8F0', verticalAlign: 'middle', marginRight: 4 }} />Nessun dato</span>
             </div>
         </div>
     );
@@ -2376,7 +2775,44 @@ function exportReportCSV(users, allData, formatTempo) {
 }
 
 function ReportTab({ users, allData, classReport, formatTempo }) {
-    // Top 5 most completed experiments
+    const reportRef = React.useRef(null);
+
+    // ── KPI aggregation ──
+    const kpi = useMemo(() => {
+        const studentiAttivi = users.filter(u => {
+            const sd = allData[u.id];
+            return sd && (sd.stats?.esperimentiTotali > 0 || sd.tempoTotale > 0);
+        }).length;
+        let espCompletati = 0;
+        let tempoTotale = 0;
+        let sessioniTotali = 0;
+        Object.values(allData).forEach(sd => {
+            espCompletati += (sd.esperimenti || []).filter(e => e.completato).length;
+            tempoTotale += sd.tempoTotale || 0;
+            sessioniTotali += (sd.sessioni || []).length;
+        });
+        const tempoMedio = sessioniTotali > 0 ? Math.round(tempoTotale / sessioniTotali) : 0;
+        return { studentiAttivi, espCompletati, tempoMedio, sessioniTotali };
+    }, [users, allData]);
+
+    // ── Trend completamento nel tempo (line chart) ──
+    const trendData = useMemo(() => {
+        const byDate = {};
+        Object.values(allData).forEach(sd => {
+            (sd.esperimenti || []).filter(e => e.completato && e.timestamp).forEach(e => {
+                const day = new Date(e.timestamp).toISOString().slice(0, 10);
+                byDate[day] = (byDate[day] || 0) + 1;
+            });
+        });
+        const sorted = Object.entries(byDate).sort((a, b) => a[0].localeCompare(b[0]));
+        let cumulative = 0;
+        return sorted.map(([date, count]) => {
+            cumulative += count;
+            return { date: date.slice(5), completati: cumulative };
+        });
+    }, [allData]);
+
+    // ── Top 10 esperimenti più completati (bar chart) ──
     const topCompleted = useMemo(() => {
         const counts = {};
         Object.values(allData).forEach(sd => {
@@ -2386,23 +2822,38 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
         });
         return Object.entries(counts)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
+            .slice(0, 10)
             .map(([id, count]) => {
                 const exp = CURRICULUM.find(e => e.id === id);
-                return { id, title: exp?.title || id, count };
+                const short = (exp?.title || id).length > 25
+                    ? (exp?.title || id).slice(0, 22) + '...'
+                    : (exp?.title || id);
+                return { id, name: short, completamenti: count };
             });
     }, [allData]);
 
-    // Top 5 skipped experiments
+    // ── Mood distribution (pie chart) ──
+    const moodData = useMemo(() => {
+        const counts = {};
+        Object.values(allData).forEach(sd => {
+            (sd.moods || []).forEach(m => {
+                counts[m.mood] = (counts[m.mood] || 0) + 1;
+            });
+        });
+        return Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([mood, value]) => ({
+                name: mood.charAt(0).toUpperCase() + mood.slice(1),
+                value,
+                fill: MOOD_COLORS[mood] || C.navy,
+            }));
+    }, [allData]);
+
+    // ── Existing helpers ──
     const topSkipped = useMemo(() => getSkippedExperiments(allData, users), [allData, users]);
-
-    // Top compilation errors
     const topErrors = useMemo(() => getCompilationErrors(allData), [allData]);
-
-    // Avg time per experiment
     const expDurations = useMemo(() => getExperimentDurations(allData), [allData]);
 
-    // Class weather
     const classPct = useMemo(() => {
         if (users.length === 0) return 0;
         let total = 0;
@@ -2415,12 +2866,22 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
     }, [users, allData]);
     const weather = getClassWeatherIcon(classPct);
 
-    const maxCompleted = topCompleted.length > 0 ? topCompleted[0].count : 1;
-
     const isEmpty = users.length === 0 || Object.keys(allData).length === 0;
 
+    const handlePrintReport = useCallback(() => {
+        window.print();
+    }, []);
+
+    // Recharts lazy import — already in bundle
+    const [charts, setCharts] = useState(null);
+    useEffect(() => {
+        import('recharts').then(mod => setCharts(mod));
+    }, []);
+
+    const CHART_COLORS = [C.navy, C.lime, '#E8941C', '#E54B3D', C.cyan, '#9333EA', '#EC4899', '#6D4C41'];
+
     return (
-        <div>
+        <div ref={reportRef} data-print-report>
             {isEmpty ? (
                 <div style={styles.section} className={css.reportEmptySection}>
                     <p className={css.reportEmptyTitle}>
@@ -2432,20 +2893,17 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
                 </div>
             ) : (
                 <>
-                    {/* Meteo Classe */}
+                    {/* ── Header con azioni ── */}
                     <div style={styles.section} className={css.meteoRow}>
                         <span style={{ fontSize: 48 }}>{WEATHER_ICONS[weather.icon] ? WEATHER_ICONS[weather.icon](48) : weather.icon}</span>
                         <div>
-                            <h3 style={{ ...styles.sectionTitle, margin: '0 0 4px' }}>Meteo Classe</h3>
+                            <h2 style={{ ...styles.sectionTitle, margin: '0 0 4px' }}>Report Classe</h2>
                             <p className={css.meteoLabel}>{weather.label}</p>
                             <p className={css.meteoValue}>
                                 {classPct}% completamento medio
                             </p>
-                            <p style={{ fontSize: 12, color: '#94A3B8', margin: '4px 0 0' }}>
-                                Sole = classe concentrata · Nuvola = qualche difficoltà · Tempesta = molti blocchi
-                            </p>
                         </div>
-                        <div className={css.exportBtnWrap}>
+                        <div className={css.exportBtnWrap} style={{ display: 'flex', gap: 8 }}>
                             <button
                                 onClick={() => exportReportCSV(users, allData, formatTempo)}
                                 style={{
@@ -2456,33 +2914,137 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
                             >
                                 Esporta CSV
                             </button>
+                            <button
+                                onClick={handlePrintReport}
+                                style={{
+                                    ...styles.primaryBtn, marginTop: 0,
+                                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                                    background: C.lime,
+                                }}
+                            >
+                                <IconPrint size={16} /> Stampa Report
+                            </button>
                         </div>
                     </div>
 
-                    {/* Top 5 completed */}
-                    <div style={styles.section}>
-                        <h3 style={styles.sectionTitle}>Top 5 Esperimenti Più Completati</h3>
-                        {topCompleted.length === 0 ? (
-                            <p className={css.textMuted}>Nessun esperimento completato ancora.</p>
-                        ) : topCompleted.map(exp => (
-                            <div key={exp.id} className={css.expRow}>
-                                <div className={css.expInfo}>
-                                    <div className={css.expTitle}>{exp.title}</div>
-                                    <div className={css.expId}>{exp.id}</div>
-                                </div>
-                                <div className={css.miniBarTrack}>
-                                    <div className={css.miniBarFillGreen} style={{ width: `${Math.round(exp.count / maxCompleted * 100)}%` }} />
-                                </div>
-                                <span className={css.expCount} style={{ color: C.lime }}>
-                                    {exp.count}
-                                </span>
-                            </div>
-                        ))}
+                    {/* ── KPI Cards ── */}
+                    <div className={css.kpiGrid}>
+                        <div className={css.kpiCardNavy}>
+                            <div className={css.kpiValue}>{kpi.studentiAttivi}</div>
+                            <div className={css.kpiLabel}>Studenti attivi</div>
+                        </div>
+                        <div className={css.kpiCardLime}>
+                            <div className={css.kpiValue}>{kpi.espCompletati}</div>
+                            <div className={css.kpiLabel}>Esperimenti completati</div>
+                        </div>
+                        <div className={css.kpiCardOrange}>
+                            <div className={css.kpiValue}>{formatTempo(kpi.tempoMedio)}</div>
+                            <div className={css.kpiLabel}>Tempo medio sessione</div>
+                        </div>
+                        <div className={css.kpiCardRed}>
+                            <div className={css.kpiValue}>{kpi.sessioniTotali}</div>
+                            <div className={css.kpiLabel}>Sessioni totali</div>
+                        </div>
                     </div>
 
-                    {/* Top 5 skipped */}
+                    {/* ── Line Chart: trend completamento ── */}
+                    {charts && trendData.length > 1 && (
+                        <div style={styles.section}>
+                            <h2 style={styles.sectionTitle}>Trend Completamento Esperimenti</h2>
+                            <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 12 }}>
+                                Numero cumulativo di esperimenti completati nel tempo
+                            </p>
+                            <div style={{ width: '100%', height: 260 }}>
+                                <charts.ResponsiveContainer width="100%" height="100%">
+                                    <charts.LineChart data={trendData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                                        <charts.CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+                                        <charts.XAxis dataKey="date" tick={{ fontSize: 14, fill: C.textMuted }} />
+                                        <charts.YAxis tick={{ fontSize: 14, fill: C.textMuted }} allowDecimals={false} />
+                                        <charts.Tooltip
+                                            contentStyle={{ borderRadius: 8, border: `1px solid ${C.border}`, fontSize: 14 }}
+                                            formatter={(v) => [v, 'Completati']}
+                                        />
+                                        <charts.Line
+                                            type="monotone"
+                                            dataKey="completati"
+                                            stroke={C.lime}
+                                            strokeWidth={2.5}
+                                            dot={{ r: 3, fill: C.lime }}
+                                            activeDot={{ r: 5 }}
+                                        />
+                                    </charts.LineChart>
+                                </charts.ResponsiveContainer>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Bar Chart: top esperimenti ── */}
+                    {charts && topCompleted.length > 0 && (
+                        <div style={styles.section}>
+                            <h2 style={styles.sectionTitle}>Top Esperimenti Più Completati</h2>
+                            <div style={{ width: '100%', height: Math.max(200, topCompleted.length * 36) }}>
+                                <charts.ResponsiveContainer width="100%" height="100%">
+                                    <charts.BarChart data={topCompleted} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                                        <charts.CartesianGrid strokeDasharray="3 3" stroke={C.border} horizontal={false} />
+                                        <charts.XAxis type="number" tick={{ fontSize: 14, fill: C.textMuted }} allowDecimals={false} />
+                                        <charts.YAxis dataKey="name" type="category" width={180} tick={{ fontSize: 14, fill: C.text }} />
+                                        <charts.Tooltip
+                                            contentStyle={{ borderRadius: 8, border: `1px solid ${C.border}`, fontSize: 14 }}
+                                            formatter={(v) => [v, 'Completamenti']}
+                                        />
+                                        <charts.Bar dataKey="completamenti" radius={[0, 4, 4, 0]} fill={C.navy}>
+                                            {topCompleted.map((_, i) => (
+                                                <charts.Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                            ))}
+                                        </charts.Bar>
+                                    </charts.BarChart>
+                                </charts.ResponsiveContainer>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Pie Chart: mood studenti ── */}
+                    {charts && moodData.length > 0 && (
+                        <div style={styles.section}>
+                            <h2 style={styles.sectionTitle}>Distribuzione Mood Studenti</h2>
+                            <div style={{ width: '100%', height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <charts.ResponsiveContainer width="100%" height="100%">
+                                    <charts.PieChart>
+                                        <charts.Pie
+                                            data={moodData}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={50}
+                                            outerRadius={90}
+                                            paddingAngle={3}
+                                            dataKey="value"
+                                            label={({ name, percent }) => `${name} ${Math.round(percent * 100)}%`}
+                                        >
+                                            {moodData.map((entry, i) => (
+                                                <charts.Cell key={i} fill={entry.fill} />
+                                            ))}
+                                        </charts.Pie>
+                                        <charts.Tooltip
+                                            contentStyle={{ borderRadius: 8, border: `1px solid ${C.border}`, fontSize: 14 }}
+                                            formatter={(v, name) => [v, name]}
+                                        />
+                                    </charts.PieChart>
+                                </charts.ResponsiveContainer>
+                            </div>
+                            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 8 }}>
+                                {moodData.map(m => (
+                                    <span key={m.name} style={{ fontSize: 14, color: C.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                        <span style={{ width: 10, height: 10, borderRadius: 2, background: m.fill, display: 'inline-block' }} />
+                                        {m.name} ({m.value})
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Top skipped ── */}
                     <div style={styles.section}>
-                        <h3 style={{ ...styles.sectionTitle, color: C.red }}>Top 5 Esperimenti Più Saltati</h3>
+                        <h2 style={{ ...styles.sectionTitle, color: C.red }}>Top 5 Esperimenti Più Saltati</h2>
                         {topSkipped.length === 0 ? (
                             <p className={css.textMuted}>Tutti gli esperimenti sono stati provati!</p>
                         ) : topSkipped.map(exp => (
@@ -2501,9 +3063,9 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
                         ))}
                     </div>
 
-                    {/* Top compilation errors */}
+                    {/* ── Compilation errors ── */}
                     <div style={styles.section}>
-                        <h3 style={styles.sectionTitle}>Errori di Compilazione Comuni</h3>
+                        <h2 style={styles.sectionTitle}>Errori di Compilazione Comuni</h2>
                         {topErrors.length === 0 ? (
                             <p className={css.textMuted}>Nessun errore di compilazione registrato.</p>
                         ) : topErrors.map(([msg, count], i) => (
@@ -2518,9 +3080,9 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
                         ))}
                     </div>
 
-                    {/* Avg time per experiment */}
+                    {/* ── Avg time per experiment ── */}
                     <div style={styles.section}>
-                        <h3 style={styles.sectionTitle}>Tempo Medio per Esperimento</h3>
+                        <h2 style={styles.sectionTitle}>Tempo Medio per Esperimento</h2>
                         {expDurations.length === 0 ? (
                             <p className={css.textMuted}>Nessun dato disponibile.</p>
                         ) : (
@@ -2551,6 +3113,11 @@ function ReportTab({ users, allData, classReport, formatTempo }) {
                                 </table>
                             </div>
                         )}
+                    </div>
+
+                    {/* ── Print footer (visible only in print) ── */}
+                    <div className={css.printFooter}>
+                        ELAB Tutor — Report Classe — Generato il {new Date().toLocaleDateString('it-IT')}
                     </div>
                 </>
             )}
@@ -2604,62 +3171,61 @@ function AuditTab() {
 
     return (
         <div>
-            <div style={{ background: C.white, borderRadius: 12, padding: 20, border: `1px solid ${C.border}`, marginBottom: 16 }}>
-                <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700, color: C.navy, fontFamily: 'Oswald, sans-serif' }}>
+            <div className={css.securityCard}>
+                <h2 className={css.sectionTitle}>
                     Audit Log GDPR
-                </h3>
-                <p style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>
+                </h2>
+                <p className={css.infoNote}>
                     Registro accessi e operazioni per conformità GDPR Art.30. Cerca per userId.
                 </p>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                <div className={css.filterRow} style={{ gap: 8 }}>
                     <input
                         type="text"
                         value={userId}
                         onChange={e => setUserId(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && fetchAuditLog()}
                         placeholder="Inserisci userId..."
-                        style={{ flex: 1, padding: '10px 14px', border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 14, outline: 'none' }}
+                        className={css.searchInput} style={{ marginBottom: 0, flex: 1, minWidth: 200 }}
                     />
                     <button
                         onClick={fetchAuditLog}
                         disabled={loading || !userId.trim()}
-                        style={{ padding: '10px 20px', background: C.navy, color: C.white, border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
+                        className={css.primaryBtn} style={{ marginTop: 0, background: C.navy, opacity: loading ? 0.6 : 1 }}
                     >
                         {loading ? 'Caricamento...' : 'Cerca'}
                     </button>
                 </div>
                 {error && (
-                    <div style={{ padding: '8px 12px', background: '#FFF3F3', border: '1px solid #E53935', borderRadius: 8, color: '#C62828', fontSize: 14, marginBottom: 12 }}>
+                    <div className={css.errorBox}>
                         {error}
                     </div>
                 )}
                 {logs.length > 0 && (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <div className={css.auditTableWrap}>
+                        <table className={css.auditTable}>
                             <thead>
-                                <tr style={{ background: '#F0F4F8', textAlign: 'left' }}>
-                                    <th style={{ padding: '8px 10px', borderBottom: `2px solid ${C.border}`, fontWeight: 600 }}>Timestamp</th>
-                                    <th style={{ padding: '8px 10px', borderBottom: `2px solid ${C.border}`, fontWeight: 600 }}>Azione</th>
-                                    <th style={{ padding: '8px 10px', borderBottom: `2px solid ${C.border}`, fontWeight: 600 }}>Endpoint</th>
-                                    <th style={{ padding: '8px 10px', borderBottom: `2px solid ${C.border}`, fontWeight: 600 }}>IP</th>
-                                    <th style={{ padding: '8px 10px', borderBottom: `2px solid ${C.border}`, fontWeight: 600 }}>Status</th>
+                                <tr>
+                                    <th className={css.auditTh}>Timestamp</th>
+                                    <th className={css.auditTh}>Azione</th>
+                                    <th className={css.auditTh}>Endpoint</th>
+                                    <th className={css.auditTh}>IP</th>
+                                    <th className={css.auditTh}>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {logs.map((log, i) => (
-                                    <tr key={log.id || i} style={{ borderBottom: `1px solid ${C.border}` }}>
-                                        <td style={{ padding: '6px 10px', whiteSpace: 'nowrap' }}>{log.timestamp ? new Date(log.timestamp + 'Z').toLocaleString('it-IT') : '-'}</td>
-                                        <td style={{ padding: '6px 10px' }}>
-                                            <span style={{
-                                                display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600,
+                                    <tr key={log.id || i} className={i % 2 === 0 ? css.trEven : undefined}>
+                                        <td className={css.auditTd} style={{ whiteSpace: 'nowrap' }}>{log.timestamp ? new Date(log.timestamp + 'Z').toLocaleString('it-IT') : '-'}</td>
+                                        <td className={css.auditTd}>
+                                            <span className={css.actionBadge} style={{
                                                 background: log.action?.includes('delete') ? '#FFEBEE' : log.action?.includes('gdpr') ? '#FFF3E0' : '#E8F5E9',
                                                 color: log.action?.includes('delete') ? '#C62828' : log.action?.includes('gdpr') ? '#E65100' : '#2E7D32',
                                             }}>
                                                 {log.action}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '6px 10px', fontFamily: 'monospace', fontSize: 12 }}>{log.endpoint}</td>
-                                        <td style={{ padding: '6px 10px', fontFamily: 'monospace', fontSize: 12 }}>{log.ip || '-'}</td>
+                                        <td className={css.auditTdMono}>{log.endpoint}</td>
+                                        <td className={css.auditTdMono}>{log.ip || '-'}</td>
                                         <td style={{ padding: '6px 10px', textAlign: 'center' }}>
                                             <span style={{
                                                 display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
@@ -2670,7 +3236,7 @@ function AuditTab() {
                                 ))}
                             </tbody>
                         </table>
-                        <p style={{ color: C.textMuted, fontSize: 12, marginTop: 8 }}>
+                        <p style={{ color: C.textMuted, fontSize: 14, marginTop: 8 }}>
                             Mostrati {logs.length} record (ultimi 100 per utente).
                         </p>
                     </div>
@@ -2681,30 +3247,34 @@ function AuditTab() {
                     </p>
                 )}
             </div>
-            <div style={{ background: C.white, borderRadius: 12, padding: 20, border: `1px solid ${C.border}` }}>
-                <h3 style={{ margin: '0 0 12px', fontSize: 16, fontWeight: 700, color: C.navy, fontFamily: 'Oswald, sans-serif' }}>
+            <div className={css.securityCard} style={{ marginBottom: 0 }}>
+                <h2 className={css.sectionTitle} style={{ marginBottom: 12 }}>
                     Stato Sicurezza
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-                    <div style={{ padding: 12, borderRadius: 8, background: '#E8F5E9', border: '1px solid #C8E6C9' }}>
-                        <strong style={{ color: '#2E7D32', fontSize: 13 }}>Cifratura localStorage</strong>
-                        <p style={{ margin: '4px 0 0', fontSize: 13, color: '#1B5E20' }}>
+                </h2>
+                <div className={css.securityGrid}>
+                    <div className={css.securityItemGreen}>
+                        <strong className={css.securityItemLabel} style={{ color: '#2E7D32' }}>Cifratura localStorage</strong>
+                        <p className={css.securityItemDesc} style={{ color: '#1B5E20' }}>
                             {studentService.isEncryptionActive() ? 'Attiva (AES-256-GCM)' : 'Non attiva'}
                         </p>
                     </div>
-                    <div style={{ padding: 12, borderRadius: 8, background: DATA_SERVER ? '#E8F5E9' : '#FFF3E0', border: `1px solid ${DATA_SERVER ? '#C8E6C9' : '#FFE0B2'}` }}>
-                        <strong style={{ color: DATA_SERVER ? '#2E7D32' : '#E65100', fontSize: 13 }}>Server Dati EU</strong>
-                        <p style={{ margin: '4px 0 0', fontSize: 13, color: DATA_SERVER ? '#1B5E20' : '#BF360C' }}>
+                    <div className={DATA_SERVER ? css.securityItemGreen : css.securityItemWarn}>
+                        <strong className={css.securityItemLabel} style={{ color: DATA_SERVER ? '#2E7D32' : '#E65100' }}>Server Dati EU</strong>
+                        <p className={css.securityItemDesc} style={{ color: DATA_SERVER ? '#1B5E20' : '#BF360C' }}>
                             {DATA_SERVER ? 'Configurato' : 'Non configurato'}
                         </p>
                     </div>
-                    <div style={{ padding: 12, borderRadius: 8, background: '#E8F5E9', border: '1px solid #C8E6C9' }}>
-                        <strong style={{ color: '#2E7D32', fontSize: 13 }}>Audit Logging</strong>
-                        <p style={{ margin: '4px 0 0', fontSize: 13, color: '#1B5E20' }}>Attivo (ogni richiesta API)</p>
+                    <div className={DATA_SERVER ? css.securityItemGreen : css.securityItemWarn}>
+                        <strong className={css.securityItemLabel} style={{ color: DATA_SERVER ? '#2E7D32' : '#E65100' }}>Audit Logging</strong>
+                        <p className={css.securityItemDesc} style={{ color: DATA_SERVER ? '#1B5E20' : '#BF360C' }}>
+                            {DATA_SERVER ? 'Attivo (ogni richiesta API)' : 'Solo locale — server non configurato'}
+                        </p>
                     </div>
-                    <div style={{ padding: 12, borderRadius: 8, background: '#E8F5E9', border: '1px solid #C8E6C9' }}>
-                        <strong style={{ color: '#2E7D32', fontSize: 13 }}>Data Retention</strong>
-                        <p style={{ margin: '4px 0 0', fontSize: 13, color: '#1B5E20' }}>730 giorni (auto-cleanup)</p>
+                    <div className={DATA_SERVER ? css.securityItemGreen : css.securityItemWarn}>
+                        <strong className={css.securityItemLabel} style={{ color: DATA_SERVER ? '#2E7D32' : '#E65100' }}>Data Retention</strong>
+                        <p className={css.securityItemDesc} style={{ color: DATA_SERVER ? '#1B5E20' : '#BF360C' }}>
+                            {DATA_SERVER ? '730 giorni (server + locale)' : '730 giorni (solo questo browser)'}
+                        </p>
                     </div>
                 </div>
             </div>

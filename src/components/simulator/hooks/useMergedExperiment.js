@@ -193,12 +193,12 @@ export default function useMergedExperiment({
       const wireColor = conn.color || 'gray';
       const colorMap = {
         red: '#E53935', black: '#333', blue: '#1E88E5', green: '#43A047',
-        yellow: '#FDD835', orange: '#FB8C00', white: '#CCC', gray: '#888',
+        yellow: '#FDD835', orange: '#FB8C00', white: '#CCC', gray: '#737373',
         purple: '#8E24AA', brown: '#6D4C41',
       };
       const holeColor = colorMap[wireColor] || wireColor;
 
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
       for (const pinRef of [conn.from, conn.to]) {
         const [compId, pinId] = pinRef.split(':');
         if (bbIds.has(compId) && pinId) {

@@ -1,0 +1,91 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-04",
+    "source": "PDR auto-generated from experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap6-esp1",
+  "volume": 3,
+  "chapter": 6,
+  "title": "Circuito AND/OR con pulsanti",
+  "chapter_title": "I pin digitali",
+  "difficulty": 1,
+  "duration_minutes": 40,
+  "target_age": "10-14 anni",
+  "objective": "Costruire un circuito logico con due pulsanti e un LED senza usare Arduino. Scoprire la differenza tra collegamento in serie (AND: entrambi premuti) e parallelo (OR: basta uno).",
+  "components_needed": [
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
+    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
+    { "name": "Pulsante", "quantity": 2, "icon": "🔘" },
+    { "name": "Fili di collegamento", "quantity": 6, "icon": "🔌" }
+  ],
+  "vocabulary": {
+    "allowed": ["circuito", "pulsante", "LED", "serie", "parallelo", "AND", "OR", "acceso", "spento", "corrente", "breadboard", "collegamento"],
+    "forbidden": ["logica booleana", "gate", "truth table", "tabella di verita", "transistor", "MOSFET"],
+    "note": "Circuito passivo senza codice. Introdurre AND/OR come concetti intuitivi, non formali"
+  },
+  "prerequisites": ["v3-cap5-esp2"],
+  "next_experiment": {
+    "id": "v3-cap6-esp2",
+    "title": "Cambia pin del LED",
+    "preview": "Nella prossima lezione colleghiamo un LED esterno e lo controlliamo da Arduino con il codice."
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 5,
+      "teacher_message": "Oggi facciamo un esperimento speciale: niente codice. Usiamo solo fili, pulsanti e un LED. La corrente passa solo se il circuito e chiuso. I pulsanti decidono quando.",
+      "teacher_tip": "Questo esperimento e fondamentale per capire serie e parallelo prima di usare i pin digitali. Non avere fretta.",
+      "class_hook": "Se ci sono due interruttori in fila, devono essere accesi entrambi o basta uno per accendere la luce?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Carichiamo il circuito nel simulatore. I due pulsanti sono in serie: la corrente deve passare attraverso entrambi. Provate a premerne solo uno. Succede qualcosa?",
+      "teacher_tip": "Mostrare prima la configurazione AND (serie). Poi chiedere alla classe come farebbero per accendere il LED premendo un solo pulsante.",
+      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp1]"],
+      "auto_action": "load_experiment"
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "In serie servono entrambi i pulsanti premuti. E se li mettiamo in parallelo? La corrente ha due strade possibili: basta che una sia aperta.",
+      "teacher_tip": "Usare l'analogia delle porte: serie = due porte in corridoio (devono essere aperte entrambe), parallelo = due corridoi (basta uno aperto).",
+      "provocative_question": "In casa vostra, gli interruttori delle scale funzionano in serie o in parallelo? Potete accendere la luce da sopra e da sotto?",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 10,
+      "teacher_message": "Provate tutte le combinazioni: nessun pulsante, solo il primo, solo il secondo, entrambi. Scrivete sul quaderno quando il LED si accende.",
+      "teacher_tip": "Far compilare una tabella 2x2 (pulsante A premuto/non premuto, pulsante B premuto/non premuto). E una tabella di verita senza dirlo.",
+      "action_tags": ["[AZIONE:play]"],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "In quante combinazioni si accende il LED in serie? E in parallelo? Segnatele."
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "In serie servono entrambi i pulsanti: e come dire 'questo E questo'. In parallelo basta uno: 'questo O questo'. AND e OR, le basi della logica.",
+      "teacher_tip": "Non insistere sulla terminologia formale. L'importante e che abbiano capito il comportamento fisico. La formalizzazione verra dopo.",
+      "summary_for_class": "Due pulsanti in serie funzionano come AND: servono entrambi. In parallelo funzionano come OR: basta uno dei due.",
+      "concepts_learned": ["circuito in serie e AND", "circuito in parallelo e OR", "combinazioni pulsanti", "circuito passivo senza codice"],
+      "next_preview": "Nella prossima lezione colleghiamo un LED esterno a un pin digitale di Arduino e lo controlliamo con il codice."
+    }
+  ],
+  "session_save": {
+    "concepts_covered": ["serie AND", "parallelo OR", "combinazioni pulsanti", "circuiti passivi"],
+    "next_suggested": "v3-cap6-esp2",
+    "resume_message": "L'ultima volta avete scoperto AND e OR con i pulsanti. Oggi colleghiamo un LED esterno e lo controlliamo con Arduino."
+  }
+}

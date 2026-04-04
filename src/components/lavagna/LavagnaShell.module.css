@@ -6,7 +6,7 @@
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #F0F4F8;
+  background: var(--color-bg-cool, #F0F4F8);
 }
 
 .body {
@@ -20,10 +20,13 @@
   flex: 1;
   position: relative;
   overflow: hidden;
-  /* Dot pattern — subtle workspace feel (like Excalidraw/Figma) */
+  /* Dot pattern — visible workspace feel (like Excalidraw/Figma) */
   background-color: #F8FAFB;
-  background-image: radial-gradient(circle, #d4d8dc 0.8px, transparent 0.8px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle, #d0d4d8 0.8px, transparent 0.8px);
+  background-size: 20px 20px;
+  /* Smooth push transition when panels open/close */
+  transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              margin-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .loading {
@@ -32,7 +35,7 @@
   justify-content: center;
   height: 100%;
   font-family: 'Oswald', sans-serif;
-  color: #1E4D8C;
+  color: var(--color-primary, #1E4D8C);
   font-size: 18px;
 }
 
@@ -48,7 +51,7 @@
   font-family: 'Oswald', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #1E4D8C;
+  color: var(--color-primary, #1E4D8C);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0 4px 8px;
@@ -69,24 +72,31 @@
   width: 100%;
   min-height: 48px;
   padding: 8px 12px;
+  overflow: hidden;
   border: 1px solid rgba(30, 77, 140, 0.12);
-  border-radius: 8px;
+  border-radius: 10px;
   background: #fff;
   cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, transform 100ms ease;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.4, 0, 0.2, 1)),
+              border-color var(--duration-fast, 150ms),
+              transform var(--duration-fast, 150ms),
+              box-shadow var(--duration-fast, 150ms);
   font-family: 'Open Sans', sans-serif;
-  font-size: 13px;
-  color: #1E4D8C;
+  font-size: 14px;
+  color: var(--color-primary, #1E4D8C);
   text-align: left;
 }
 
 .componentBtn:hover {
-  background: rgba(30, 77, 140, 0.06);
+  background: rgba(30, 77, 140, 0.04);
   border-color: rgba(30, 77, 140, 0.25);
+  box-shadow: 0 2px 8px rgba(30, 77, 140, 0.08);
+  transform: translateY(-1px);
 }
 
 .componentBtn:active {
-  transform: scale(0.97);
+  transform: scale(0.97) translateY(0);
+  box-shadow: none;
 }
 
 .componentBtn:focus-visible {
@@ -96,15 +106,28 @@
 
 .componentLabel {
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-/* ── Hide simulator's internal welcome/placeholder when in Lavagna (Principio Zero) ── */
-.canvas :global(.elab-simulator__placeholder) {
-  display: none !important;
-}
-.canvas :global(.sim-welcome) {
-  display: none !important;
-}
+/* ── Hide ALL simulator internal UI in Lavagna (Principio Zero) ── */
+/* Welcome screen */
+.canvas :global(.elab-simulator__placeholder) { display: none !important; }
+.canvas :global(.sim-welcome) { display: none !important; }
+/* ControlBar — experiment name + build mode buttons (redundant: Lavagna header) */
+.canvas :global([class*="controlBarRow"]) { display: none !important; }
+/* ExperimentGuide — "Cosa fare" panel (redundant: UNLIM handles) */
+.canvas :global([data-elab-guide]) { display: none !important; }
+/* LessonPathPanel — lesson phases (redundant: UNLIM handles) */
+.canvas :global([data-elab-lesson-path]) { display: none !important; }
+/* Simulator internal zoom bar (redundant: Lavagna toolbar) */
+.canvas :global([class*="zoomControls"]) { display: none !important; }
+/* Simulator internal sidebar — experiments + palette (redundant: Lavagna sidebar) */
+.canvas :global(.elab-simulator__sidebar) { display: none !important; }
+/* Simulator internal ComponentPalette floating */
+.canvas :global([data-elab-palette]) { display: none !important; }
 
 /* ── Dashboard view ── */
 .dashboardView {
@@ -125,24 +148,34 @@
   justify-content: center;
   height: 100%;
   font-family: 'Open Sans', sans-serif;
-  font-size: 13px;
-  color: #737373;
+  font-size: 14px;
+  color: var(--color-muted, #737373);
 }
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .componentBtn {
-    min-height: 44px;
+    min-height: 48px;
     padding: 6px 10px;
-    font-size: 12px;
+    font-size: 14px; /* WCAG: min 14px on LIM */
   }
   .panelTitle {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
 @media (pointer: coarse) {
   .componentBtn {
     min-height: 48px;
+  }
+}
+
+/* iPad portrait (768x1024) — hide left panel entirely to give max space to circuit */
+@media (max-width: 768px) and (orientation: portrait) {
+  .quickComponents {
+    display: none;
+  }
+  .hideOnPortrait {
+    display: none !important;
   }
 }

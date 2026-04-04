@@ -14,7 +14,8 @@
  *
  * © Andrea Marro — 09/03/2026 — ELAB Tutor — Tutti i diritti riservati
  */
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 const overlayStyle = {
   position: 'fixed',
@@ -102,16 +103,25 @@ function injectStyles() {
  * Controlled confirmation modal component.
  */
 export function ConfirmModal({ open, title = 'Conferma', message, onConfirm, onCancel, confirmLabel = 'Elimina', cancelLabel = 'Annulla' }) {
+  const trapRef = useFocusTrap(open);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleEsc(e) { if (e.key === 'Escape') onCancel(); }
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [open, onCancel]);
+
   if (!open) return null;
   injectStyles();
 
   return (
     <div style={overlayStyle} onClick={onCancel} role="dialog" aria-modal="true" aria-label={title}>
-      <div style={modalStyle} onClick={e => e.stopPropagation()}>
+      <div ref={trapRef} style={modalStyle} onClick={e => e.stopPropagation()}>
         <h3 style={titleStyle}>{title}</h3>
         <p style={messageStyle}>{message}</p>
         <div style={btnRow}>
-          <button style={cancelBtnStyle} onClick={onCancel} autoFocus>{cancelLabel}</button>
+          <button style={cancelBtnStyle} onClick={onCancel}>{cancelLabel}</button>
           <button style={confirmBtnStyle} onClick={onConfirm}>{confirmLabel}</button>
         </div>
       </div>

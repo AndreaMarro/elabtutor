@@ -22,6 +22,11 @@
 .left.closed {
   transform: translateX(-100%);
   box-shadow: none;
+  pointer-events: none;
+}
+/* Keep toggle clickable when panel is closed */
+.left.closed .toggle {
+  pointer-events: auto;
 }
 
 /* Direction: right */
@@ -148,7 +153,7 @@
   border: 1px solid rgba(30, 77, 140, 0.12);
   border-radius: 0 8px 8px 0;
   cursor: pointer;
-  color: #1E4D8C;
+  color: var(--color-primary, #1E4D8C);
   z-index: 51;
   transition: background 150ms ease;
   padding: 0;
@@ -181,11 +186,11 @@
 
 .toggleBottom {
   left: 50%;
-  top: -28px;
+  top: -44px;
   transform: translateX(-50%);
   width: 48px;
-  height: 28px;
-  min-height: 28px;
+  height: 44px;
+  min-height: 44px;
   border-radius: 8px 8px 0 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
 }
@@ -193,20 +198,20 @@
 /* Touch device: larger handles */
 @media (pointer: coarse) {
   .handleRight,
+/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   .handleLeft {
     width: 16px;
   }
   .handleTop {
     height: 16px;
-/* © Andrea Marro — 02/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   }
   .toggle {
-    width: 36px;
+    width: 44px;
     height: 56px;
   }
   .toggleBottom {
     width: 56px;
-    height: 36px;
+    height: 44px;
   }
 }
 

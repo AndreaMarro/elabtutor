@@ -69,7 +69,7 @@ export default function ManualTab({
 
                     <input type="file" ref={docInputRef} onChange={handleDocumentUpload} accept="image/*,.pdf,.docx,.pptx,.txt,.md,.csv,.json,.xml,.ino,.c,.cpp,.py,.js,.css,.html" multiple style={{ display: 'none' }} />
                     <button className="v4-toolbar-btn" onClick={() => docInputRef.current?.click()} title="Carica file">Carica</button>
-                    <button className="v4-toolbar-btn primary" onClick={onSendDocScreenshot} title="Invia questa pagina a UNLIM per fartela spiegare">Spiega questa pagina</button>
+                    <button className="v4-toolbar-btn primary" onClick={onSendDocScreenshot} title="Invia questa pagina a Galileo per fartela spiegare">Spiega questa pagina</button>
 
                     <div className="v4-toolbar-spacer" />
 
@@ -137,7 +137,7 @@ export default function ManualTab({
                                     /* S112: Lazy page placeholder — page renders on navigation */
                                     <div className="v4-loading" style={{ minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                                         <div className="v4-spinner"></div>
-                                        <p style={{ marginTop: 12, color: '#888' }}>Rendering pagina {currentDocPage + 1}...</p>
+                                        <p style={{ marginTop: 12, color: '#737373' }}>Rendering pagina {currentDocPage + 1}...</p>
                                     </div>
                                 )}
                             </div>

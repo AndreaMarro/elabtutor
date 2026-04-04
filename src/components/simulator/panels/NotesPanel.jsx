@@ -230,7 +230,7 @@ const styles = {
 
   paperWrap: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: 'auto',
     background: `repeating-linear-gradient(
       transparent,
       transparent 27px,
@@ -243,7 +243,6 @@ const styles = {
   textarea: {
     width: '100%',
     minHeight: 200,
-    maxHeight: 'calc(60vh - 160px)',
     resize: 'vertical',
     border: 'none',
     outline: 'none',

@@ -67,10 +67,11 @@ export default function FloatingToolbar({
   activeTool = 'select',
   onToolChange,
   abovePanel = false,
+  leftPanelOpen = false,
 }) {
   return (
     <div
-      className={`${css.toolbar} ${abovePanel ? css.abovePanel : ''}`}
+      className={`${css.toolbar} ${abovePanel ? css.abovePanel : ''} ${!leftPanelOpen ? css.verticalOnLIM : ''}`}
       role="toolbar"
       aria-label="Strumenti lavagna"
     >

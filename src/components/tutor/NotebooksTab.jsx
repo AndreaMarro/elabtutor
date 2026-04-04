@@ -31,7 +31,7 @@ export default function NotebooksTab({
                             <button
                                 className="v4-toolbar-btn"
                                 onClick={() => onSendToUNLIM(`Ho un taccuino aperto intitolato "${notebooks.find(n => n.id === activeNotebookId)?.title || 'senza titolo'}". Puoi aiutarmi a riassumere o approfondire gli argomenti?`)}
-                                title="Chiedi a UNLIM"
+                                title="Chiedi a Galileo"
                             >
                                 Chiedi a UNLIM
                             </button>
@@ -39,7 +39,7 @@ export default function NotebooksTab({
                     </div>
                     <div className="v4-pages-grid">
                         {(notebooks.find(n => n.id === activeNotebookId)?.pages || []).map((p, i) => (
-                            <div key={i} className={`v4-page-thumb ${i === activePageIndex ? 'active' : ''}`} onClick={() => onChangePage(i)}>
+                            <div key={i} className={`v4-page-thumb ${i === activePageIndex ? 'active' : ''}`} role="button" tabIndex={0} onClick={() => onChangePage(i)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChangePage(i); } }}>
                                 {p ? <img src={p} alt={`Pag ${i + 1}`} /> : <div className="v4-page-empty" />}
                                 <span>Pag {i + 1}</span>
                             </div>
@@ -63,7 +63,7 @@ export default function NotebooksTab({
                         {notebooks.length === 0 && <p className="notes-empty">Nessuna lezione salvata.</p>}
                         {notebooks.map(note => (
                             <div key={note.id} className="v4-note-card">
-                                <div className="note-thumb-wrapper" onClick={() => onOpenNotebook(note)}>
+                                <div className="note-thumb-wrapper" role="button" tabIndex={0} onClick={() => onOpenNotebook(note)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenNotebook(note); } }}>
                                     <img src={(note.pages && note.pages[0]) || note.data} alt={note.title} className="note-thumb" />
                                 </div>
                                 <div className="note-info">

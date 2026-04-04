@@ -67,7 +67,7 @@ export default function GestionalePage() {
     }, [setupDone, refreshNotifications]);
 
     const moduleFallback = (
-        <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+        <div style={{ padding: '40px', textAlign: 'center', color: '#737373' }}>
             <div style={{ fontSize: '24px', marginBottom: '8px' }}></div>
             <div style={{ fontSize: '14px' }}>Caricamento modulo...</div>
         </div>

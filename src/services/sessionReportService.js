@@ -4,6 +4,7 @@
  * Copyright (c) Andrea Marro
  */
 import { sendChat } from './api';
+import logger from '../utils/logger';
 import { captureCanvasBase64 } from '../components/simulator/utils/exportPng';
 
 const NANOBOT_TIMEOUT = 8000;
@@ -105,8 +106,8 @@ export async function fetchAISummary(sessionData) {
         concettiToccati: [],
       };
     }
-  } catch {
-    // Nanobot timeout or error — fallback to local
+  } catch (err) {
+    logger.warn('[SessionReport] AI summary failed, using local fallback:', err?.message || err);
   }
 
   return generateLocalSummary(sessionData);
@@ -118,7 +119,7 @@ function buildSummaryPrompt(data) {
     ? `${data.quizResults.score}/${data.quizResults.total} (${data.quizResults.score === data.quizResults.total ? 'Tutto giusto!' : data.quizResults.score > 0 ? 'Parziale' : 'Da rivedere'})`
     : 'Non fatto';
 
-  return `[SISTEMA] Sei UNLIM. Genera un riassunto per un report PDF della sessione.
+  return `[SISTEMA] Sei Galileo. Genera un riassunto per un report PDF della sessione.
 
 REGOLE TASSATIVE:
 - Racconta SOLO quello che e' successo. NON inventare.

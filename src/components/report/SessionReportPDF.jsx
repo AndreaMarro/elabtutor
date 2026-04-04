@@ -96,15 +96,15 @@ function formatElapsed(ms) {
 }
 
 const EVENT_LABELS = {
-  experiment_loaded: { icon: '📋', label: 'Esperimento caricato' },
-  simulation_started: { icon: '▶', label: 'Simulazione avviata' },
-  simulation_stopped: { icon: '⏸', label: 'Simulazione fermata' },
-  code_compiled: { icon: '⚙', label: 'Codice compilato' },
-  report_generated: { icon: '📄', label: 'Report generato' },
-  component_placed: { icon: '🔧', label: 'Componente piazzato' },
-  wire_connected: { icon: '🔌', label: 'Filo collegato' },
-  quiz_answered: { icon: '❓', label: 'Quiz risposto' },
-  error_occurred: { icon: '⚠', label: 'Errore' },
+  experiment_loaded: { icon: null, label: 'Esperimento caricato' },
+  simulation_started: { icon: null, label: 'Simulazione avviata' },
+  simulation_stopped: { icon: null, label: 'Simulazione fermata' },
+  code_compiled: { icon: null, label: 'Codice compilato' },
+  report_generated: { icon: null, label: 'Report generato' },
+  component_placed: { icon: null, label: 'Componente piazzato' },
+  wire_connected: { icon: null, label: 'Filo collegato' },
+  quiz_answered: { icon: null, label: 'Quiz risposto' },
+  error_occurred: { icon: null, label: 'Errore' },
 };
 
 function getEventDisplay(event) {
@@ -128,7 +128,7 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     page: { fontFamily: 'OpenSans', fontSize: 10, color: '#333333', paddingTop: 40, paddingBottom: 60, paddingHorizontal: 40 },
     headerBar: { position: 'absolute', top: 0, left: 0, right: 0, height: 8, backgroundColor: '#1E4D8C' },
     footer: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 40, borderTopWidth: 3, borderTopColor: vol },
-    footerText: { fontSize: 8, color: '#999999', fontFamily: 'OpenSans' },
+    footerText: { fontSize: 8, color: '#737373', fontFamily: 'OpenSans' },
     coverTitle: { fontFamily: 'Oswald', fontSize: 28, fontWeight: 700, color: '#1E4D8C', marginTop: 100, textAlign: 'center' },
     coverSubtitle: { fontFamily: 'Oswald', fontSize: 16, fontWeight: 400, color: vol, textAlign: 'center', marginTop: 8 },
     coverDate: { fontSize: 11, color: '#666666', textAlign: 'center', marginTop: 16 },
@@ -141,7 +141,7 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     circuitImage: { width: '100%', maxHeight: 340, objectFit: 'contain', marginVertical: 10, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 4 },
     codeBlock: { backgroundColor: '#F5F5F5', padding: 10, borderRadius: 4, marginVertical: 8 },
     codeText: { fontFamily: 'FiraCode', fontSize: 8, color: '#333333', lineHeight: 1.5 },
-    chatUNLIM: { backgroundColor: '#E8EDF4', padding: 8, borderRadius: 6, marginBottom: 6, marginRight: 40 },
+    chatGalileo: { backgroundColor: '#E8EDF4', padding: 8, borderRadius: 6, marginBottom: 6, marginRight: 40 },
     chatStudent: { backgroundColor: '#F5F5F5', padding: 8, borderRadius: 6, marginBottom: 6, marginLeft: 40 },
     chatRole: { fontFamily: 'Oswald', fontSize: 8, fontWeight: 700, color: '#1E4D8C', marginBottom: 2 },
     chatRoleStudent: { fontFamily: 'Oswald', fontSize: 8, fontWeight: 700, color: '#666666', marginBottom: 2, textAlign: 'right' },
@@ -157,7 +157,7 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     summaryBullet: { fontSize: 10, lineHeight: 1.6, color: '#333333', marginBottom: 6, paddingLeft: 12 },
     // Phase 6: Timeline & Measurements styles
     timelineRow: { flexDirection: 'row', marginBottom: 4, paddingVertical: 2, borderBottomWidth: 0.5, borderBottomColor: '#EEEEEE' },
-    timelineTime: { width: 60, fontSize: 8, color: '#999999', fontFamily: 'FiraCode' },
+    timelineTime: { width: 60, fontSize: 8, color: '#737373', fontFamily: 'FiraCode' },
     timelineIcon: { width: 18, fontSize: 10, textAlign: 'center' },
     timelineText: { flex: 1, fontSize: 9, color: '#333333' },
     measureTable: { marginVertical: 8 },
@@ -373,19 +373,19 @@ export async function generateSessionReportPDF(sessionData, circuitScreenshot, a
     const keyMsgs = selectKeyMessages(sessionData.chatMessages);
     pages.push(
       <PageWrap key="chat">
-        <R.Text style={st.sectionTitle}>La Tua Conversazione con UNLIM</R.Text>
+        <R.Text style={st.sectionTitle}>La Tua Conversazione con Galileo</R.Text>
         <R.Text style={st.narrative}>
           {sessionData.messageCount < 3
             ? 'Hai preferito esplorare da solo — segno di sicurezza!'
-            : `Durante la sessione hai scambiato ${sessionData.messageCount} messaggi con UNLIM. Ecco i momenti chiave:`}
+            : `Durante la sessione hai scambiato ${sessionData.messageCount} messaggi con Galileo. Ecco i momenti chiave:`}
         </R.Text>
         {keyMsgs.map((msg, i) => {
           const isG = msg.role === 'assistant';
           const text = stripHtml(msg.content).slice(0, 200);
           if (!text) return null;
           return (
-            <R.View key={i} style={isG ? st.chatUNLIM : st.chatStudent}>
-              <R.Text style={isG ? st.chatRole : st.chatRoleStudent}>{isG ? 'UNLIM' : 'Tu'}</R.Text>
+            <R.View key={i} style={isG ? st.chatGalileo : st.chatStudent}>
+              <R.Text style={isG ? st.chatRole : st.chatRoleStudent}>{isG ? 'Galileo' : 'Tu'}</R.Text>
               <R.Text style={st.chatText}>{text}{stripHtml(msg.content).length > 200 ? '...' : ''}</R.Text>
             </R.View>
           );

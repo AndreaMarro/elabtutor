@@ -45,6 +45,7 @@ const Resistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, v
   const bands = calculateBands(value);
   const current = state.current || 0;
   const hasFlow = current > 0.0001;
+  const uid = `res-${id}`;
 
   return (
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="resistor" role="img"
@@ -52,33 +53,67 @@ const Resistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, v
       {/* S115: Hit area — 44px minimum height for WCAG touch target */}
       <rect x="-30" y="-22" width="60" height="44" fill="transparent" pointerEvents="all" onClick={onInteract} />
 
-      {/* Wire leads — thin neutral gray (Tinkercad style) */}
+      <defs>
+        {/* Cylindrical body gradient (top-lit) */}
+        <linearGradient id={`${uid}-body`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#F0E0A8" />
+          <stop offset="25%" stopColor="#E8D49A" />
+          <stop offset="50%" stopColor="#D9C58A" />
+          <stop offset="75%" stopColor="#C8B47A" />
+          <stop offset="100%" stopColor="#B8A06A" />
+        </linearGradient>
+        {/* Metallic end cap gradient */}
+        <linearGradient id={`${uid}-cap`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#D8D8D8" />
+          <stop offset="40%" stopColor="#B7B7B7" />
+          <stop offset="100%" stopColor="#8A8A8A" />
+        </linearGradient>
+        {/* Wire lead gradient */}
+        <linearGradient id={`${uid}-wire`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#B0B0B0" />
+          <stop offset="50%" stopColor="#9E9E9E" />
+          <stop offset="100%" stopColor="#888888" />
+        </linearGradient>
+      </defs>
+
+      {/* Wire leads — metallic gradient */}
       <line x1="-26.25" y1="0" x2="-14.2" y2="0"
-        stroke="#9E9E9E" strokeWidth="1.25" strokeLinecap="round" />
+        stroke={`url(#${uid}-wire)`} strokeWidth="1.25" strokeLinecap="round" />
       <line x1="14.2" y1="0" x2="26.25" y2="0"
-        stroke="#9E9E9E" strokeWidth="1.25" strokeLinecap="round" />
+        stroke={`url(#${uid}-wire)`} strokeWidth="1.25" strokeLinecap="round" />
 
-      {/* End caps — small metallic rings at body-wire junction */}
-      <ellipse cx="-13" cy="0" rx="1.55" ry="5.6" fill="#B7B7B7" stroke="#8A8A8A" strokeWidth="0.35" />
-      <ellipse cx="13"  cy="0" rx="1.55" ry="5.6" fill="#B7B7B7" stroke="#8A8A8A" strokeWidth="0.35" />
+      {/* Body shadow for depth */}
+      <rect x="-12.5" y="-4.8" width="26" height="11.2" rx="5.2"
+        fill="#000000" opacity="0.06" transform="translate(0.4, 0.6)" />
 
-      {/* Body — light beige with subtle highlight (no gradients) */}
+      {/* End caps — metallic rings with gradient */}
+      <ellipse cx="-13" cy="0" rx="1.55" ry="5.6" fill={`url(#${uid}-cap)`} stroke="#8A8A8A" strokeWidth="0.35" />
+      <ellipse cx="13"  cy="0" rx="1.55" ry="5.6" fill={`url(#${uid}-cap)`} stroke="#8A8A8A" strokeWidth="0.35" />
+      {/* Cap highlights */}
+      <ellipse cx="-13.2" cy="-2" rx="0.8" ry="2.5" fill="#FFFFFF" opacity="0.12" />
+      <ellipse cx="12.8" cy="-2" rx="0.8" ry="2.5" fill="#FFFFFF" opacity="0.12" />
+
+      {/* Body — cylindrical gradient for 3D effect */}
       <rect x="-13" y="-5.6" width="26" height="11.2" rx="5.2"
-        fill="#D9C58A" stroke="#9C874E" strokeWidth="0.4" />
-      <rect x="-12.4" y="-5.0" width="24.8" height="4.8" rx="3.2"
-        fill="#FFFFFF" opacity="0.16" />
-      <rect x="-12.6" y="0.2" width="25.2" height="5.1" rx="3.2"
-        fill="#000000" opacity="0.05" />
+        fill={`url(#${uid}-body)`} stroke="#9C874E" strokeWidth="0.4" />
+      {/* Top specular highlight */}
+      <rect x="-11" y="-5.2" width="22" height="3.8" rx="2.5"
+        fill="#FFFFFF" opacity="0.14" />
 
-      {/* Color bands — flat fills only */}
+      {/* Color bands — with subtle curvature shadow */}
       {[
         { bx: -9.1, w: 3.1, fill: bands[0] },
         { bx: -4.2, w: 3.1, fill: bands[1] },
         { bx:  0.8, w: 3.1, fill: bands[2] },
         { bx:  8.1, w: 2.7, fill: bands[3] },
       ].map(({ bx, w, fill }, i) => (
-        <rect key={i} x={bx} y="-5.45" width={w} height="10.9" rx="0.6"
-          fill={fill} opacity={0.92} />
+        <g key={i}>
+          <rect x={bx} y="-5.45" width={w} height="10.9" rx="0.6"
+            fill={fill} opacity={0.92} />
+          {/* Band highlight (top) */}
+          <rect x={bx + 0.3} y="-5.2" width={w - 0.6} height="2.5" rx="0.4"
+            fill="#FFFFFF" opacity="0.08" />
+        </g>
       ))}
 
       {/* Current flow indicator */}

@@ -40,21 +40,36 @@ const PushButton = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
         stroke="#9E9E9E" strokeWidth="1.6" strokeLinecap="round" />
       <circle cx="7.5" cy="7.5" r="1.15" fill="#7A7A7A" />
 
+      {/* Housing shadow for depth */}
+      <rect x="-6.2" y="-6" width="13" height="13" rx="1.8"
+        fill="#000000" opacity="0.1" />
+
       {/* Base housing — compact 6mm tactile switch */}
       <rect x="-6.5" y="-6.5" width="13" height="13" rx="1.8"
         fill="#2B2B2B" stroke="#0E0E0E" strokeWidth="0.7" />
+      {/* Top edge highlight */}
+      <rect x="-5.8" y="-6.3" width="11.6" height="1.5" rx="0.8"
+        fill="#FFFFFF" opacity="0.06" />
+      {/* Inner edge */}
       <rect x="-6" y="-6" width="12" height="12" rx="1.4"
         fill="none" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.06" />
 
-      {/* Cap — flat round button, depresses 1.2px when pressed */}
+      {/* Cap — round button with gradient, depresses 1.2px when pressed */}
       <g transform={isPressed ? 'translate(0, 1.2)' : ''}>
-        {/* Cap face — flat metallic circle */}
+        {/* Cap shadow */}
+        {!isPressed && (
+          <circle cx="0.3" cy="0.4" r="4" fill="#000000" opacity="0.12" />
+        )}
+        {/* Cap face — metallic gradient circle */}
         <circle cx="0" cy="0" r="4"
           fill={isPressed ? '#9A9A9A' : '#CFCFCF'}
           stroke="#666" strokeWidth="0.5" />
-        {/* Subtle highlight (flat overlay) */}
-        <ellipse cx="-1" cy="-1.4" rx="1.8" ry="1.3"
-          fill="white" opacity={isPressed ? 0.08 : 0.18} />
+        {/* Cap gradient overlay for 3D dome */}
+        <circle cx="0" cy="0" r="3.8"
+          fill="none" stroke={isPressed ? '#888' : '#E8E8E8'} strokeWidth="0.8" opacity="0.3" />
+        {/* Specular highlight — moves when pressed */}
+        <ellipse cx={isPressed ? -0.5 : -1} cy={isPressed ? -0.8 : -1.4} rx="1.8" ry="1.3"
+          fill="white" opacity={isPressed ? 0.08 : 0.22} />
         {/* Center cross mark */}
         <line x1="-1.5" y1="0" x2="1.5" y2="0"
           stroke={isPressed ? '#555' : '#666'} strokeWidth="0.4" opacity="0.35" />

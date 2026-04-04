@@ -107,7 +107,7 @@ const Multimeter = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       <circle cx="7.5" cy="20" r="1.5" fill="#EF4444" />
 
       {/* Port labels */}
-      <text x="-7.5" y="16" textAnchor="middle" fontSize="2.5" fill="#888"
+      <text x="-7.5" y="16" textAnchor="middle" fontSize="2.5" fill="#737373"
         fontFamily="Fira Code, monospace">COM</text>
       <text x="7.5" y="16" textAnchor="middle" fontSize="2.5" fill="#C62828"
         fontFamily="Fira Code, monospace">V/Ω</text>

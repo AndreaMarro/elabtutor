@@ -94,7 +94,7 @@ const ReedSwitch = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract,
       )}
 
       {/* State label */}
-      <text x="0" y="-8" textAnchor="middle" fontSize="3" fill={isClosed ? '#2E7D32' : '#999'}
+      <text x="0" y="-8" textAnchor="middle" fontSize="3" fill={isClosed ? '#2E7D32' : '#737373'}
         fontFamily="Oswald, sans-serif" fontWeight="600" letterSpacing="0.3">
         {isClosed ? 'CHIUSO' : 'APERTO'}
       </text>

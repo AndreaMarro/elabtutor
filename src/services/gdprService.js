@@ -7,32 +7,64 @@
 import logger from '../utils/logger';
 
 const GDPR_WEBHOOK_URL = import.meta.env.VITE_N8N_GDPR_URL || '';
+const DATA_SERVER_URL = (import.meta.env.VITE_DATA_SERVER_URL || '').replace(/\/$/, '');
+const TOKEN_KEY = 'elab_auth_token';
+
+function _getAuthToken() {
+    try { return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
 
 /**
  * Chiamata generica al webhook GDPR backend
- * Single endpoint con routing tramite campo `action` nel body
+ * Priorità: data server (autenticato) → n8n webhook (legacy) → locale
  * @param {string} action - Azione da eseguire
  * @param {Object} data - Dati da inviare
  * @returns {Promise<Object>}
  */
 async function callGdprWebhook(action, data) {
-    if (!GDPR_WEBHOOK_URL) {
-        logger.warn('[GDPR] VITE_N8N_GDPR_URL non configurato — operazione locale');
-        return { success: true, action, local: true, message: 'Operazione registrata localmente' };
+    const token = _getAuthToken();
+
+    // Try data server first (authenticated, GDPR-compliant)
+    if (DATA_SERVER_URL && token && action === 'delete') {
+        try {
+            const userId = data.userId;
+            const response = await fetch(`${DATA_SERVER_URL}/api/student/${encodeURIComponent(userId)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                return await response.json();
+            }
+        } catch {
+            logger.warn('[GDPR] Data server non raggiungibile, fallback n8n');
+        }
     }
 
-    const response = await fetch(GDPR_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, ...data }),
-    });
+    // Fallback: n8n webhook (legacy, unauthenticated)
+    if (GDPR_WEBHOOK_URL) {
+        const response = await fetch(GDPR_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({ action, ...data }),
+        });
 
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(errText || `Errore GDPR (${response.status})`);
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(errText || `Errore GDPR (${response.status})`);
+        }
+
+        return await response.json();
     }
 
-    return await response.json();
+    // No server configured — local only
+    logger.warn('[GDPR] Nessun server GDPR configurato — operazione locale');
+    return { success: true, action, local: true, message: 'Operazione registrata localmente' };
 }
 
 // ============================================
@@ -166,6 +198,7 @@ async function requestDataCorrection(userId, corrections) {
 }
 
 /**
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Revoca consenso (Art. 7)
  * @param {string} userId
  * @returns {Promise<Object>}
@@ -198,7 +231,6 @@ function clearLocalData() {
     const keysToRemove = [];
     
     // Raccoglie tutte le chiavi elab_
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('elab_')) {
@@ -367,6 +399,7 @@ function getCOPPARequirements(age) {
 /**
  * Minimizza dati raccolti
  * @param {Object} data - Dati originali
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * @param {Array} allowedFields - Campi consentiti
  * @returns {Object}
  */
@@ -399,7 +432,6 @@ async function pseudonymizeUserId(userId) {
  * @param {string} date - Data ISO
  * @param {number} maxDays - Giorni massimi
  * @returns {boolean}
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function isDataExpired(date, maxDays = 730) { // 2 anni default
     const dataDate = new Date(date);

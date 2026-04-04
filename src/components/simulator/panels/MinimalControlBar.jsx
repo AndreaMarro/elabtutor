@@ -243,7 +243,7 @@ const MinimalControlBar = (props) => {
         {/* Compile — only if Arduino, small */}
         {onCompile && (
           <button
-            className={`minimal-toolbar__btn minimal-toolbar__btn--compile ${compileStatus === 'compiling' ? 'minimal-toolbar__btn--loading' : ''} ${compileStatus === 'success' ? 'minimal-toolbar__btn--compile-ok' : ''} ${compileStatus === 'error' ? 'minimal-toolbar__btn--compile-err' : ''}`}
+            className={`minimal-toolbar__btn minimal-toolbar__btn--compile ${compileStatus === 'compiling' ? 'minimal-toolbar__btn--loading' : ''} ${compileStatus === 'success' || compileStatus === 'success-local' ? 'minimal-toolbar__btn--compile-ok' : ''} ${compileStatus === 'error' ? 'minimal-toolbar__btn--compile-err' : ''}`}
             onClick={onCompile}
             disabled={compileStatus === 'compiling'}
             title="Compila (Ctrl+B)"
@@ -286,8 +286,8 @@ const MinimalControlBar = (props) => {
           className={`minimal-toolbar__btn minimal-toolbar__btn--unlim ${isAskingUNLIM ? 'minimal-toolbar__btn--loading' : ''}`}
           onClick={onAskUNLIM}
           disabled={isAskingUNLIM}
-          title="Chiedi a UNLIM"
-          aria-label="Chiedi a UNLIM"
+          title="Chiedi a Galileo"
+          aria-label="Chiedi a Galileo"
         >
           {isAskingUNLIM ? <SpinnerIcon /> : <UNLIMIcon />}
           <span className="minimal-toolbar__unlim-label">UNLIM</span>
@@ -312,6 +312,7 @@ function buildOverflowItems(props) {
     onExportPng,
     onGenerateReport, isGeneratingReport,
     onToggleWhiteboard, showWhiteboard,
+    onToggleDrawingOverlay, showDrawingOverlay,
 
     onAskUNLIM, isAskingUNLIM,
     onDiagnoseCircuit,
@@ -331,10 +332,10 @@ function buildOverflowItems(props) {
   // ── Attività (tab switching) ──
   if (onTabChange) {
     items.push({ type: 'separator', label: 'Attività' });
-    items.push({ label: '📖 Manuale', action: () => onTabChange('manual') });
-    items.push({ label: '🎮 Giochi', action: () => onTabChange('detective') });
-    items.push({ label: '✏️ Lavagna', action: () => onTabChange('canvas') });
-    items.push({ label: '📓 Taccuini', action: () => onTabChange('notebooks') });
+    items.push({ label: 'Manuale', action: () => onTabChange('manual') });
+    items.push({ label: 'Giochi', action: () => onTabChange('detective') });
+    items.push({ label: 'Lavagna', action: () => onTabChange('canvas') });
+    items.push({ label: 'Taccuini', action: () => onTabChange('notebooks') });
   }
 
   // ── Circuito ──
@@ -364,6 +365,7 @@ function buildOverflowItems(props) {
   if (onExportPng) items.push({ label: 'Cattura Immagine', action: onExportPng });
   if (onGenerateReport) items.push({ label: isGeneratingReport ? 'Generazione...' : 'Report PDF', action: onGenerateReport, disabled: isGeneratingReport });
   if (onToggleWhiteboard) items.push({ label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard });
+  if (onToggleDrawingOverlay) items.push({ label: 'Penna Circuito', checked: showDrawingOverlay, action: onToggleDrawingOverlay });
 
   if (onDiagnoseCircuit) items.push({ label: 'Controlla Circuito', action: onDiagnoseCircuit });
   if (onGetHints) items.push({ label: 'Suggerimenti', action: onGetHints });

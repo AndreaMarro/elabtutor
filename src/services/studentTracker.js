@@ -7,7 +7,9 @@
 // ============================================
 
 import studentService from './studentService';
+import gdprService from './gdprService';
 import logger from '../utils/logger';
+import gamification from './gamificationService';
 
 const DEVICE_ID_KEY = 'elab_device_id';
 const STUDENT_NAME_KEY = 'elab_student_name';
@@ -44,6 +46,12 @@ function getDeviceUserId() {
 function init() {
     if (_initialized) return;
 
+    // GDPR Art.7: NON iniziare tracking senza consenso valido
+    if (!gdprService.hasValidConsent()) {
+        logger.info('[StudentTracker] Consent not given — tracking deferred');
+        return;
+    }
+
     _userId = getDeviceUserId();
     _sessionId = studentService.startSession(_userId);
     _initialized = true;
@@ -74,7 +82,7 @@ function init() {
     window.addEventListener('beforeunload', handleUnload);
     _unsubscribers.push(() => window.removeEventListener('beforeunload', handleUnload));
 
-    logger.info('[StudentTracker] Initialized', { userId: _userId, sessionId: _sessionId });
+    logger.info(`[StudentTracker] Initialized userId=${_userId} sessionId=${_sessionId}`);
 }
 
 /**
@@ -112,8 +120,9 @@ function _subscribeToEvents() {
 function _onExperimentChange(data) {
     if (!_userId || !_sessionId) return;
 
-    // End previous experiment tracking
+    // End previous experiment tracking and flush immediately
     _endCurrentExperiment();
+    studentService.flushSync();
 
     // Start tracking new experiment
     const expId = data?.experimentId || data?.id;
@@ -189,6 +198,7 @@ function _endCurrentExperiment() {
 
 /**
  * Log a chat interaction with Galileo AI.
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function logChatInteraction(question, responseQuality) {
     if (!_userId || !_sessionId) return;
@@ -198,7 +208,6 @@ function logChatInteraction(question, responseQuality) {
     });
 }
 
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
 /**
  * Log a compilation result.
  */
@@ -237,6 +246,10 @@ function logGameResult(gameId, score, maxScore, timeSpent) {
         completato: score >= maxScore * 0.5,
         note: `score:${score}/${maxScore}`,
     });
+    // Gamification: sound + points on game win
+    if (score >= maxScore * 0.5) {
+        try { gamification.onGameWon(gameId); } catch { /* silent */ }
+    }
 }
 
 /**
@@ -277,8 +290,18 @@ function destroy() {
     logger.info('[StudentTracker] Destroyed');
 }
 
+/**
+ * Re-initialize tracker after consent is granted.
+ * Called by ConsentBanner on accept.
+ */
+function initAfterConsent() {
+    _initialized = false;
+    init();
+}
+
 const studentTracker = {
     init,
+    initAfterConsent,
     destroy,
     getUserId,
     getStudentName,

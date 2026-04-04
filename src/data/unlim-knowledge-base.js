@@ -198,7 +198,7 @@ const KNOWLEDGE_BASE = [
     question: 'Cosa posso costruire con Arduino?',
     answer: 'Con Arduino e i componenti di ELAB puoi costruire tantissime cose:\n\n **Semaforo** — LED rosso, giallo, verde con temporizzazione\n **Stazione meteo** — Sensore di temperatura + display\n **Piano elettronico** — Pulsanti + buzzer per suonare note\n **Robot evita-ostacoli** — Sensore ultrasuoni + motori\n **Lampada smart** — Fotoresistenza per accensione automatica\n **Gioco di reazione** — LED casuale + pulsante + timer\n **Irrigazione automatica** — Sensore umidità + pompa\n\nInzia dai progetti del libro ELAB e poi modifica e combina le idee. La creatività è il tuo superpotere!',
   },
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   {
     keywords: ['aiuto', 'help', 'come', 'iniziare', 'principiante', 'base'],
     question: 'Come inizio con ELAB?',
@@ -253,9 +253,9 @@ const KNOWLEDGE_BASE = [
     answer: 'La lavagna ti permette di disegnare schemi e annotazioni sopra il simulatore:\n\n**Strumenti:**\n-  **Matita** — Disegno libero\n-  **Gomma** — Cancella parti del disegno\n- **T** **Testo** — Aggiungi etichette e note\n-  **Rettangolo, cerchio, freccia, linea** — Forme geometriche\n\n**Funzioni:**\n- **Annulla/Ripeti** (Ctrl+Z / Ctrl+Y)\n- **6 colori** + spessore regolabile\n- **Salva PNG** — Esporta il disegno come immagine\n- **Salvataggio automatico** — Il disegno si salva per ogni esperimento\n\nUsa la lavagna per annotare i tuoi circuiti, segnare le tensioni, o fare schizzi prima di costruire!',
   },
   {
-    keywords: ['unlim', 'chat', 'tutor', 'chiedere', 'domanda'],
-    question: 'Come posso usare UNLIM?',
-    answer: 'Io sono UNLIM, il tuo tutor di elettronica! Ecco cosa posso fare:\n\n **Rispondi alle tue domande** — Chiedimi qualsiasi cosa su elettronica e Arduino\n **Ti guido nel manuale** — Ti indico le pagine giuste per approfondire\n **Ti suggerisco esperimenti** — Posso proporti sfide e progetti\n **Ti aiuto col debug** — Descrivi il problema e ti aiuto a risolverlo\n **Analizzo i tuoi disegni** — Puoi mandarmi una foto della lavagna!\n\n**Suggerimenti:**\n- Fai domande specifiche: "Perché il LED non si accende?" è meglio di "Non funziona"\n- Descrivi il tuo circuito: componenti, collegamento, codice\n- Non aver paura di chiedere! Non esistono domande stupide.',
+    keywords: ['galileo', 'chat', 'tutor', 'chiedere', 'domanda'],
+    question: 'Come posso usare Galileo?',
+    answer: 'Io sono Galileo, il tuo tutor di elettronica! Ecco cosa posso fare:\n\n **Rispondi alle tue domande** — Chiedimi qualsiasi cosa su elettronica e Arduino\n **Ti guido nel manuale** — Ti indico le pagine giuste per approfondire\n **Ti suggerisco esperimenti** — Posso proporti sfide e progetti\n **Ti aiuto col debug** — Descrivi il problema e ti aiuto a risolverlo\n **Analizzo i tuoi disegni** — Puoi mandarmi una foto della lavagna!\n\n**Suggerimenti:**\n- Fai domande specifiche: "Perché il LED non si accende?" è meglio di "Non funziona"\n- Descrivi il tuo circuito: componenti, collegamento, codice\n- Non aver paura di chiedere! Non esistono domande stupide.',
   },
 
   // ── SICUREZZA ──────────────────────────────────

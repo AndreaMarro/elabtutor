@@ -18,12 +18,12 @@ const STYLES = {
 // 1. Blocco base Arduino (Setup e Loop combinati) — Hat block (startHats: true)
 Blockly.Blocks['arduino_base'] = {
     init: function () {
-        this.appendDummyInput().appendField("⚡ Quando Arduino si accende");
-        this.appendStatementInput("SETUP").setCheck(null).appendField("  Preparazione (Setup)");
-        this.appendDummyInput().appendField("🔁 Ripeti per sempre");
+        this.appendDummyInput().appendField("Quando Arduino si accende");
+        this.appendStatementInput("SETUP").setCheck(null).appendField("  Prepara (Setup)");
+        this.appendDummyInput().appendField("Ripeti per sempre");
         this.appendStatementInput("LOOP").setCheck(null).appendField("  Ciclo (Loop)");
         this.setStyle(STYLES.BASE);
-        this.setTooltip("Contenitore principale: Setup si esegue una volta, Loop si ripete all'infinito.");
+        this.setTooltip("Il cuore del programma! La Preparazione si fa una volta sola, il Ciclo si ripete all'infinito.");
         this.setHelpUrl("https://www.arduino.cc/reference/en/");
         this.setDeletable(false);
     }
@@ -44,7 +44,7 @@ Blockly.Blocks['arduino_pin_mode'] = {
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.IO);
-        this.setTooltip("Imposta un pin digitale come ingresso o uscita");
+        this.setTooltip("Dice ad Arduino se un pin manda segnali (USCITA) o li riceve (INGRESSO). Come scegliere se una strada e a senso unico!");
     }
 };
 
@@ -62,7 +62,7 @@ Blockly.Blocks['arduino_digital_write'] = {
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.IO);
-        this.setTooltip("Accende o spegne un pin digitale (HIGH = acceso, LOW = spento)");
+        this.setTooltip("Accende (ACCESO) o spegne (SPENTO) un pin. Come un interruttore della luce!");
     }
 };
 
@@ -74,7 +74,7 @@ Blockly.Blocks['arduino_digital_read'] = {
             .appendField(new Blockly.FieldNumber(2, 0, 19), "PIN");
         this.setOutput(true, ["Number", "Boolean"]);
         this.setStyle(STYLES.IO);
-        this.setTooltip("Legge il valore da un pin digitale (ACCESO o SPENTO)");
+        this.setTooltip("Controlla se un pin e acceso o spento. Perfetto per leggere un pulsante!");
     }
 };
 
@@ -116,11 +116,11 @@ Blockly.Blocks['arduino_delay'] = {
     init: function () {
         this.appendValueInput("DELAY_TIME")
             .setCheck("Number")
-            .appendField("⏱ attendi (ms)");
+            .appendField("attendi (ms)");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.TIME);
-        this.setTooltip("Pausa l'esecuzione per i millisecondi specificati");
+        this.setTooltip("Ferma tutto per un po'. 1000 millisecondi = 1 secondo. Come dire 'aspetta un attimo'!");
     }
 };
 
@@ -128,7 +128,7 @@ Blockly.Blocks['arduino_delay'] = {
 Blockly.Blocks['arduino_millis'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("⏱ tempo trascorso (ms)");
+            .appendField("tempo trascorso (ms)");
         this.setOutput(true, "Number");
         this.setStyle(STYLES.TIME);
         this.setTooltip("Restituisce i millisecondi dall'accensione");
@@ -139,7 +139,7 @@ Blockly.Blocks['arduino_millis'] = {
 Blockly.Blocks['arduino_serial_begin'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("💬 avvia seriale a")
+            .appendField("avvia seriale a")
             .appendField(new Blockly.FieldDropdown([
                 ["9600", "9600"], ["19200", "19200"], ["38400", "38400"],
                 ["57600", "57600"], ["115200", "115200"]
@@ -156,7 +156,7 @@ Blockly.Blocks['arduino_serial_begin'] = {
 Blockly.Blocks['arduino_serial_print'] = {
     init: function () {
         this.appendValueInput("CONTENT")
-            .appendField("💬 stampa su seriale")
+            .appendField("stampa su seriale")
             .appendField(new Blockly.FieldCheckbox("TRUE"), "NEWLINE")
             .appendField("a capo");
         this.setPreviousStatement(true, null);
@@ -170,7 +170,7 @@ Blockly.Blocks['arduino_serial_print'] = {
 Blockly.Blocks['arduino_serial_available'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("💬 dati disponibili su seriale?");
+            .appendField("dati disponibili su seriale?");
         this.setOutput(true, "Boolean");
         this.setStyle(STYLES.SERIAL);
         this.setTooltip("Controlla se ci sono dati in arrivo sulla porta seriale");
@@ -181,7 +181,7 @@ Blockly.Blocks['arduino_serial_available'] = {
 Blockly.Blocks['arduino_serial_read'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("💬 leggi dalla seriale");
+            .appendField("leggi dalla seriale");
         this.setOutput(true, "Number");
         this.setStyle(STYLES.SERIAL);
         this.setTooltip("Legge un byte dalla porta seriale (restituisce un numero)");
@@ -192,13 +192,13 @@ Blockly.Blocks['arduino_serial_read'] = {
 Blockly.Blocks['arduino_pulse_in'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("📡 misura impulso pin")
+            .appendField("misura impulso pin")
             .appendField(new Blockly.FieldNumber(7, 0, 13, 1), "PIN")
             .appendField(new Blockly.FieldDropdown([["ALTO", "HIGH"], ["BASSO", "LOW"]]), "VALUE");
         this.setOutput(true, "Number");
         this.setStyle(STYLES.IO);
         this.setTooltip("Misura la durata di un impulso su un pin (in microsecondi). Utile per sensori a ultrasuoni!");
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 };
 
@@ -209,13 +209,13 @@ Blockly.Blocks['arduino_tone'] = {
     init: function () {
         this.appendValueInput("FREQ")
             .setCheck("Number")
-            .appendField("🔊 suona pin")
+            .appendField("suona pin")
             .appendField(new Blockly.FieldNumber(8, 0, 19), "PIN")
             .appendField("frequenza (Hz)");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.SOUND);
-        this.setTooltip("Genera un tono alla frequenza specificata (Hz)");
+        this.setTooltip("Fa suonare una nota! 262=Do, 294=Re, 330=Mi, 440=La. Piu alto il numero, piu acuto il suono.");
     }
 };
 
@@ -223,7 +223,7 @@ Blockly.Blocks['arduino_tone'] = {
 Blockly.Blocks['arduino_no_tone'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("🔇 ferma suono pin")
+            .appendField("ferma suono pin")
             .appendField(new Blockly.FieldNumber(8, 0, 19), "PIN");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -238,7 +238,7 @@ Blockly.Blocks['arduino_no_tone'] = {
 Blockly.Blocks['arduino_servo_attach'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("🎯 collega servo")
+            .appendField("collega servo")
             .appendField(new Blockly.FieldTextInput("myServo"), "NAME")
             .appendField("al pin")
             .appendField(new Blockly.FieldNumber(9, 0, 19), "PIN");
@@ -254,7 +254,7 @@ Blockly.Blocks['arduino_servo_write'] = {
     init: function () {
         this.appendValueInput("ANGLE")
             .setCheck("Number")
-            .appendField("🎯 ruota servo")
+            .appendField("ruota servo")
             .appendField(new Blockly.FieldTextInput("myServo"), "NAME")
             .appendField("a gradi");
         this.setPreviousStatement(true, null);
@@ -268,7 +268,7 @@ Blockly.Blocks['arduino_servo_write'] = {
 Blockly.Blocks['arduino_servo_read'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("🎯 angolo servo")
+            .appendField("angolo servo")
             .appendField(new Blockly.FieldTextInput("myServo"), "NAME");
         this.setOutput(true, "Number");
         this.setStyle(STYLES.SERVO);
@@ -282,7 +282,7 @@ Blockly.Blocks['arduino_servo_read'] = {
 Blockly.Blocks['arduino_lcd_init'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("📺 inizializza LCD  RS")
+            .appendField("inizializza LCD  RS")
             .appendField(new Blockly.FieldNumber(12, 0, 19), "RS")
             .appendField(" E")
             .appendField(new Blockly.FieldNumber(11, 0, 19), "E");
@@ -311,7 +311,7 @@ Blockly.Blocks['arduino_lcd_init'] = {
 Blockly.Blocks['arduino_lcd_print'] = {
     init: function () {
         this.appendValueInput("TEXT")
-            .appendField("📺 scrivi su LCD");
+            .appendField("scrivi su LCD");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.LCD);
@@ -323,7 +323,7 @@ Blockly.Blocks['arduino_lcd_print'] = {
 Blockly.Blocks['arduino_lcd_set_cursor'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("📺 cursore LCD  colonna")
+            .appendField("cursore LCD  colonna")
             .appendField(new Blockly.FieldNumber(0, 0, 39), "COL")
             .appendField("riga")
             .appendField(new Blockly.FieldNumber(0, 0, 3), "ROW");
@@ -338,7 +338,7 @@ Blockly.Blocks['arduino_lcd_set_cursor'] = {
 Blockly.Blocks['arduino_lcd_clear'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("📺 pulisci LCD");
+            .appendField("pulisci LCD");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setStyle(STYLES.LCD);
@@ -399,7 +399,7 @@ Blockly.Blocks['arduino_random'] = {
 // 18. map(value, fromLow, fromHigh, toLow, toHigh)
 Blockly.Blocks['arduino_map'] = {
     init: function () {
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         this.appendValueInput("VALUE").setCheck("Number").appendField("map(");
         this.appendValueInput("FROM_LOW").setCheck("Number").appendField(", da");
         this.appendValueInput("FROM_HIGH").setCheck("Number").appendField("~");

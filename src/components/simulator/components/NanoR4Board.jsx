@@ -142,6 +142,78 @@ const LED_BLUE = '#4488ff';            // power LED (ORDINE 3)
 const LED_BLUE_GLOW = '#6699ff';
 const SOCKET_BG = '#3A3D42';
 
+// ─── SVG Defs sub-component (gradients, patterns, filters) ───────────
+
+function BoardDefs({ id }) {
+  return (
+    <defs>
+      {/* Board clip path */}
+      <clipPath id={`board-clip-${id}`}>
+        <path d={BOARD_PATH} />
+      </clipPath>
+
+      {/* PCB fiberglass texture pattern */}
+      <pattern id={`pcb-texture-${id}`} width="4" height="4" patternUnits="userSpaceOnUse">
+        <rect width="4" height="4" fill={PCB_FILL} />
+        <line x1="0" y1="0" x2="4" y2="0" stroke={PCB_FILL_DARK} strokeWidth="0.15" opacity="0.3" />
+        <line x1="0" y1="2" x2="4" y2="2" stroke={PCB_FILL_DARK} strokeWidth="0.1" opacity="0.2" />
+        <line x1="0" y1="0" x2="0" y2="4" stroke={PCB_FILL_DARK} strokeWidth="0.15" opacity="0.3" />
+        <line x1="2" y1="0" x2="2" y2="4" stroke={PCB_FILL_DARK} strokeWidth="0.1" opacity="0.2" />
+      </pattern>
+
+      {/* PCB surface gradient (subtle top-to-bottom lighting) */}
+      <linearGradient id={`pcb-grad-${id}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor={PCB_FILL_LIGHT} />
+        <stop offset="50%" stopColor={PCB_FILL} />
+        <stop offset="100%" stopColor={PCB_FILL_DARK} />
+      </linearGradient>
+
+      {/* Gold metallic gradient for pads */}
+      <linearGradient id={`gold-pad-${id}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#E8D06A" />
+        <stop offset="40%" stopColor="#D4B84E" />
+        <stop offset="60%" stopColor="#C8A84B" />
+        <stop offset="100%" stopColor="#9E8235" />
+      </linearGradient>
+
+      {/* Nano board navy gradient */}
+      <linearGradient id={`nano-board-${id}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#2A5A8E" />
+        <stop offset="30%" stopColor={BOARD_BLUE} />
+        <stop offset="100%" stopColor={BOARD_BLUE_DARK} />
+      </linearGradient>
+
+      {/* Chip gradient (subtle sheen) */}
+      <linearGradient id={`chip-grad-${id}`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#222222" />
+        <stop offset="30%" stopColor={CHIP_BLACK} />
+        <stop offset="70%" stopColor="#0A0A0A" />
+        <stop offset="100%" stopColor="#1A1A1A" />
+      </linearGradient>
+
+      {/* USB-C metallic gradient */}
+      <linearGradient id={`usb-metal-${id}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#D8DEE4" />
+        <stop offset="30%" stopColor="#C0C6CC" />
+        <stop offset="70%" stopColor="#A8AEB4" />
+        <stop offset="100%" stopColor="#888E96" />
+      </linearGradient>
+
+      {/* Drop shadow filter for board depth */}
+      <filter id={`board-shadow-${id}`} x="-5%" y="-5%" width="115%" height="120%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
+        <feOffset dx="1.5" dy="2.5" result="offsetBlur" />
+        <feFlood floodColor="#000000" floodOpacity="0.18" result="color" />
+        <feComposite in="color" in2="offsetBlur" operator="in" result="shadow" />
+        <feMerge>
+          <feMergeNode in="shadow" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  );
+}
+
 // ─── Important pins to label ──────────────────────────────────────────────
 
 const IMPORTANT_PIN_IDS = new Set([
@@ -214,19 +286,31 @@ const BOARD_PATH = (() => {
 
 // ─── Pin pad subcomponents ────────────────────────────────────────────────
 
-function HeaderPinPad({ pin, stateValue }) {
+function HeaderPinPad({ pin, stateValue, boardId }) {
   const isHigh = stateValue === 'HIGH' || stateValue === 1 || stateValue === true;
   const isActive = stateValue !== undefined && stateValue !== null;
 
   const isPower5V = pin.id === '5V' || pin.id === '3V3' || pin.id === 'VIN';
   const isGround = pin.id === 'GND' || pin.id === 'GND_R' || pin.id === 'MINUS';
-  const padColor = isPower5V ? '#E85040' : isGround ? '#333' : PAD_GOLD;
+  const padColor = isPower5V ? '#E85040' : isGround ? '#333' : `url(#gold-pad-${boardId})`;
+  const padStroke = isPower5V ? '#B53030' : isGround ? '#1A1A1A' : PAD_STROKE;
 
   return (
     <g data-pin={pin.id} className="pin-pad">
+      {/* Pad shadow for depth */}
+      <rect
+        x={pin.x - 2.2} y={pin.y - 2.0} width="4.8" height="4.8" rx="0.7"
+        fill="#00000015"
+      />
+      {/* Main pad with gradient */}
       <rect
         x={pin.x - 2.4} y={pin.y - 2.4} width="4.8" height="4.8" rx="0.7"
-        fill={padColor} stroke={PAD_STROKE} strokeWidth="0.35"
+        fill={padColor} stroke={padStroke} strokeWidth="0.4"
+      />
+      {/* Top highlight for metallic sheen */}
+      <rect
+        x={pin.x - 1.8} y={pin.y - 2.2} width="3.6" height="1.8" rx="0.5"
+        fill="#FFFFFF" opacity="0.12"
       />
       <circle
         cx={pin.x} cy={pin.y} r="1.0"
@@ -234,7 +318,7 @@ function HeaderPinPad({ pin, stateValue }) {
         stroke={isActive ? '#F5C244' : '#555'}
         strokeWidth={isActive ? '0.35' : '0.2'}
       />
-      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.6" fill="#F3C65C" opacity="0.2" />}
+      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.6" fill="#F3C65C" opacity="0.25" />}
       <text
         x={pin.x}
         y={pin.side === 'top' ? pin.y - 4.5 : pin.y + 6.0}
@@ -251,28 +335,33 @@ function HeaderPinPad({ pin, stateValue }) {
   );
 }
 
-function WingPinPad({ pin, stateValue }) {
+function WingPinPad({ pin, stateValue, boardId }) {
   const isHigh = stateValue === 'HIGH' || stateValue === 1 || stateValue === true;
   const isActive = stateValue !== undefined && stateValue !== null;
 
   const isPowerVCC = pin.id === 'W_VCC1' || pin.id === 'W_VCC2';
   const isPowerGND = pin.id === 'W_GND1' || pin.id === 'W_GND2';
-  const padFill = isPowerVCC ? '#E85040' : isPowerGND ? '#333' : PAD_GOLD;
+  const padFill = isPowerVCC ? '#E85040' : isPowerGND ? '#333' : `url(#gold-pad-${boardId})`;
 
   return (
     <g data-pin={pin.id} className="pin-pad">
+      {/* Pad shadow */}
+      <circle cx={pin.x + 0.3} cy={pin.y + 0.4} r="2.5" fill="#00000012" />
       {/* Circular through-hole pad (real hardware) */}
       <circle
         cx={pin.x} cy={pin.y} r="2.5"
         fill={padFill} stroke={PAD_STROKE} strokeWidth="0.3"
       />
+      {/* Metallic highlight */}
+      <ellipse cx={pin.x - 0.3} cy={pin.y - 0.6} rx="1.5" ry="1.0"
+        fill="#FFFFFF" opacity="0.1" />
       <circle
         cx={pin.x} cy={pin.y} r="1.0"
         fill={isHigh ? '#F3A500' : HOLE_DARK}
         stroke={isActive ? '#F5C244' : '#555'}
         strokeWidth="0.2"
       />
-      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.5" fill="#F3C65C" opacity="0.2" />}
+      {isHigh && <circle cx={pin.x} cy={pin.y} r="3.5" fill="#F3C65C" opacity="0.25" />}
       {/* Label rotated -90° above pin (ORDINE 2) */}
       <text
         x={pin.x}
@@ -296,11 +385,25 @@ function WingPinPad({ pin, stateValue }) {
 function NanoSocket() {
   return (
     <g>
+      {/* Socket shadow (inner recess effect) */}
+      <rect x={SOCKET_X + 0.5} y={SOCKET_Y + 0.5} width={SOCKET_W} height={SOCKET_H} rx="2"
+        fill="#00000015" />
+      {/* Main socket body */}
       <rect x={SOCKET_X} y={SOCKET_Y} width={SOCKET_W} height={SOCKET_H} rx="2"
         fill={SOCKET_BG} stroke="#2A2D31" strokeWidth="0.8" />
+      {/* Inner bevel highlight (top edge catches light) */}
+      <rect x={SOCKET_X + 0.8} y={SOCKET_Y + 0.5}
+        width={SOCKET_W - 1.6} height="1.2" rx="0.6"
+        fill="#FFFFFF" opacity="0.06" />
+      {/* Inner bevel shadow (bottom edge) */}
+      <rect x={SOCKET_X + 0.8} y={SOCKET_Y + SOCKET_H - 1.5}
+        width={SOCKET_W - 1.6} height="1.2" rx="0.6"
+        fill="#000000" opacity="0.15" />
+      {/* Inner border */}
       <rect x={SOCKET_X + 0.8} y={SOCKET_Y + 0.8}
         width={SOCKET_W - 1.6} height={SOCKET_H - 1.6} rx="1.5"
         fill="none" stroke="#555" strokeWidth="0.3" opacity="0.4" />
+      {/* Retention clips */}
       {[SOCKET_Y + 8, SOCKET_Y + SOCKET_H - 8].map((ny, i) => (
         <rect key={`notch-${i}`}
           x={SOCKET_X - 1} y={ny - 1.5} width="2" height="3" rx="0.5"
@@ -312,22 +415,34 @@ function NanoSocket() {
 
 // ─── Sub-component: USB-C connector (rendered outside clipPath) ───────────
 
-function UsbConnector() {
+function UsbConnector({ boardId }) {
   return (
     <g>
+      {/* Shadow */}
+      <rect x={USB_X + 0.4} y={USB_Y + 0.6} width={USB_W} height={USB_H} rx="1.8"
+        fill="#00000018" />
+      {/* Outer shell with metallic gradient */}
       <rect x={USB_X} y={USB_Y} width={USB_W} height={USB_H} rx="1.8"
-        fill="#C0C6CC" stroke="#888E96" strokeWidth="0.6" />
+        fill={`url(#usb-metal-${boardId})`} stroke="#7A8088" strokeWidth="0.6" />
+      {/* Top bevel highlight */}
+      <rect x={USB_X + 0.6} y={USB_Y + 0.4} width={USB_W - 1.2} height="1.5" rx="0.8"
+        fill="#FFFFFF" opacity="0.2" />
+      {/* Inner recess */}
       <rect x={USB_X + 0.8} y={USB_Y + 1.2} width={USB_W - 1.6} height={USB_H - 2.4} rx="1.0"
         fill="#888E96" />
+      {/* Port opening */}
       <rect x={USB_X + 1.8} y={USB_Y + 2.0} width={USB_W - 3.6} height={USB_H - 4.0} rx="0.6"
-        fill="#2A2E33" />
+        fill="#1A1E22" />
+      {/* Inner tongue (USB-C has center tongue) */}
+      <rect x={USB_X + 2.2} y={USB_Y + 2.6} width={USB_W - 4.4} height={USB_H - 5.2} rx="0.3"
+        fill="#555D65" />
     </g>
   );
 }
 
 // ─── Sub-component: Arduino Nano R4 module (navy board in socket) ─────────
 
-function NanoModule({ leds, running, onReset }) {
+function NanoModule({ leds, running, onReset, boardId }) {
   const x = NANO_X;
   const y = NANO_Y;
   const w = NANO_W;
@@ -337,15 +452,32 @@ function NanoModule({ leds, running, onReset }) {
 
   return (
     <g>
-      {/* Nano R4 board (ORDINE 3 — navy #1a3a6e) */}
+      {/* Board shadow */}
+      <rect x={x + 0.5} y={y + 0.8} width={w} height={h} rx="1.5"
+        fill="#00000020" />
+      {/* Nano R4 board (ORDINE 3 — navy gradient) */}
       <rect x={x} y={y} width={w} height={h} rx="1.5"
-        fill={BOARD_BLUE} stroke={BOARD_BLUE_DARK} strokeWidth="0.6" />
-      <rect x={x + 0.6} y={y + 0.6} width={w - 1.2} height={h - 1.2} rx="1"
-        fill="none" stroke={BOARD_BLUE_LIGHT} strokeWidth="0.25" opacity="0.3" />
+        fill={`url(#nano-board-${boardId})`} stroke={BOARD_BLUE_DARK} strokeWidth="0.6" />
+      {/* Top edge highlight */}
+      <rect x={x + 1} y={y + 0.4} width={w - 2} height="1.5" rx="0.8"
+        fill="#FFFFFF" opacity="0.08" />
+      {/* Bottom edge shadow */}
+      <rect x={x + 1} y={y + h - 1.5} width={w - 2} height="1.2" rx="0.6"
+        fill="#000000" opacity="0.12" />
 
-      {/* MCU — RA4M1 (ORDINE 3 — chip #111111) */}
+      {/* MCU — RA4M1 (ORDINE 3 — chip gradient) */}
       <rect x={x + 30} y={y + 3} width={22} height={h - 6} rx="0.8"
-        fill={CHIP_BLACK} stroke="#2A2F35" strokeWidth="0.35" />
+        fill={`url(#chip-grad-${boardId})`} stroke="#2A2F35" strokeWidth="0.35" />
+      {/* Chip pin legs (left and right edges) */}
+      {Array.from({length: 5}, (_, i) => {
+        const py = y + 5 + i * ((h - 10) / 4);
+        return (
+          <React.Fragment key={`chip-pin-${i}`}>
+            <rect x={x + 29.2} y={py - 0.4} width="1.2" height="0.8" fill="#888" />
+            <rect x={x + 51.6} y={py - 0.4} width="1.2" height="0.8" fill="#888" />
+          </React.Fragment>
+        );
+      })}
       <circle cx={x + 32} cy={y + 5} r="0.5" fill="#444" />
       <text x={x + 41} y={cy - 1}
         textAnchor="middle" fontSize="1.4" fill="#555" fontFamily="Arial, sans-serif" fontWeight="700">
@@ -445,7 +577,7 @@ function NanoModule({ leds, running, onReset }) {
 
 // ─── Sub-component: Wing breakout connector (ORDINE 2 — on upper arm) ─────
 
-function WingConnector({ wingPins, pinStateFor }) {
+function WingConnector({ wingPins, pinStateFor, boardId }) {
   const midX = WING_PIN_START_X + (WING_PINS.length - 1) * WING_PIN_PITCH / 2;
 
   return (
@@ -457,7 +589,7 @@ function WingConnector({ wingPins, pinStateFor }) {
         BREAKOUT PINS
       </text>
       {wingPins.map((pin) => (
-        <WingPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
+        <WingPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} boardId={boardId} />
       ))}
     </g>
   );
@@ -633,22 +765,26 @@ function SwitchOnOff() {
 
 // ─── Sub-component: Tab power pads (ORDINE 6) ─────────────────────────────
 
-function TabPads() {
+function TabPads({ boardId }) {
   const tabCX = (NOTCH_LEFT + TAB_RIGHT) / 2; // center of tab
   const tabCY = (NOTCH_BOT + BOARD_H) / 2;    // center of tab vertically
 
   return (
     <g>
-      {/* + pad (gold, r=3) */}
+      {/* + pad (gold gradient, r=3) */}
+      <circle cx={tabCX - 6 + 0.3} cy={tabCY + 0.4} r="3" fill="#00000012" />
       <circle cx={tabCX - 6} cy={tabCY} r="3"
-        fill={PAD_GOLD} stroke="#D32F2F" strokeWidth="0.5" />
+        fill={`url(#gold-pad-${boardId})`} stroke="#D32F2F" strokeWidth="0.5" />
+      <ellipse cx={tabCX - 6.3} cy={tabCY - 0.8} rx="1.8" ry="1.2" fill="#FFFFFF" opacity="0.1" />
       <circle cx={tabCX - 6} cy={tabCY} r="1.2" fill={HOLE_DARK} />
       <text x={tabCX - 6} y={tabCY - 5} textAnchor="middle"
         fontSize="5" fill="#D32F2F" fontFamily="Arial, sans-serif" fontWeight="700">+</text>
 
-      {/* − pad (gold, r=3) */}
+      {/* - pad (gold gradient, r=3) */}
+      <circle cx={tabCX + 6 + 0.3} cy={tabCY + 0.4} r="3" fill="#00000012" />
       <circle cx={tabCX + 6} cy={tabCY} r="3"
-        fill={PAD_GOLD} stroke="#212121" strokeWidth="0.5" />
+        fill={`url(#gold-pad-${boardId})`} stroke="#212121" strokeWidth="0.5" />
+      <ellipse cx={tabCX + 5.7} cy={tabCY - 0.8} rx="1.8" ry="1.2" fill="#FFFFFF" opacity="0.1" />
       <circle cx={tabCX + 6} cy={tabCY} r="1.2" fill={HOLE_DARK} />
       <text x={tabCX + 6} y={tabCY - 5} textAnchor="middle"
         fontSize="5" fill="#212121" fontFamily="Arial, sans-serif" fontWeight="700">{'\u2212'}</text>
@@ -675,18 +811,23 @@ const NanoR4Board = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
     <g transform={`translate(${x}, ${y})`} data-component-id={id} data-type="nano-r4" role="img"
        aria-label={`Arduino Nano R4 ${id}`}>
 
-      {/* ClipPath for C-shape */}
-      <defs>
-        <clipPath id={`board-clip-${id}`}>
-          <path d={BOARD_PATH} />
-        </clipPath>
-      </defs>
+      {/* All SVG gradients, patterns, filters, clipPath */}
+      <BoardDefs id={id} />
 
-      {/* PCB board — C-shape with semicircle (ORDINE 1) */}
-      <path d={BOARD_PATH} fill={PCB_FILL} stroke={PCB_BORDER} strokeWidth="2" />
+      {/* Board drop shadow (rendered under main board) */}
+      <g filter={`url(#board-shadow-${id})`}>
+        {/* PCB board — C-shape with texture + gradient overlay */}
+        <path d={BOARD_PATH} fill={`url(#pcb-texture-${id})`} stroke={PCB_BORDER} strokeWidth="2" />
+        {/* Gradient overlay for lighting effect */}
+        <path d={BOARD_PATH} fill={`url(#pcb-grad-${id})`} opacity="0.35" />
+      </g>
+
+      {/* PCB edge bevel — inner highlight for 3D edge */}
+      <path d={BOARD_PATH} fill="none" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.2"
+        transform="translate(0.3, 0.3)" />
 
       {/* USB-C connector (outside clipPath — protrudes from semicircle) */}
-      <UsbConnector />
+      <UsbConnector boardId={id} />
 
       {/* All board content clipped to C-shape */}
       <g clipPath={`url(#board-clip-${id})`}>
@@ -695,18 +836,18 @@ const NanoR4Board = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
         <NanoSocket />
 
         {/* Arduino Nano R4 module */}
-        <NanoModule leds={leds} running={running} onReset={onInteract} />
+        <NanoModule leds={leds} running={running} onReset={onInteract} boardId={id} />
 
         {/* Header pin rows (IMMUTABLE positions) */}
         {topPins.map((pin) => (
-          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
+          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} boardId={id} />
         ))}
         {bottomPins.map((pin) => (
-          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} />
+          <HeaderPinPad key={pin.id} pin={pin} stateValue={pinStateFor(pin)} boardId={id} />
         ))}
 
         {/* Wing breakout connector (ORDINE 2 — on upper arm) */}
-        <WingConnector wingPins={wingPins} pinStateFor={pinStateFor} />
+        <WingConnector wingPins={wingPins} pinStateFor={pinStateFor} boardId={id} />
 
         {/* VIN morsettiera (ORDINE 5 — far left of arm) */}
         <PowerSection />
@@ -721,7 +862,7 @@ const NanoR4Board = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract
         <SwitchOnOff />
 
         {/* Tab +/- power pads (ORDINE 6) */}
-        <TabPads />
+        <TabPads boardId={id} />
 
       </g>{/* end clipPath group */}
 

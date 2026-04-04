@@ -93,7 +93,7 @@ class ErrorBoundary extends React.Component {
               <button
                 onClick={async () => {
                   try {
-                    await navigator.clipboard.writeText(detailsText);
+                    await navigator.clipboard?.writeText(detailsText);
                   } catch {
                     // no-op
                   }

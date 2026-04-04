@@ -104,6 +104,12 @@ const Capacitor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
         fill="#252525" stroke="#111111" strokeWidth="0.35" />
 
       {/* Charge level fill — rises from bottom like liquid filling the capacitor */}
+      {/* Clip path for charge fill — defined once, outside conditional */}
+      <defs>
+        <clipPath id={`${uid}-clip`}>
+          <rect x="-8" y="-11" width="16" height="22" rx="3" />
+        </clipPath>
+      </defs>
       {chargePercent > 0.01 && (() => {
         const bodyH = 22; // body height
         const fillH = bodyH * Math.min(1, chargePercent); // filled portion
@@ -112,12 +118,6 @@ const Capacitor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
         const fillOpacity = 0.15 + chargePercent * 0.35; // 0.15 → 0.50
         return (
           <>
-            {/* Clip to body shape */}
-            <defs>
-              <clipPath id={`${uid}-clip`}>
-                <rect x="-8" y="-11" width="16" height="22" rx="3" />
-              </clipPath>
-            </defs>
             <rect x="-8" y={fillY} width="16" height={fillH}
               fill="#4FC3F7" opacity={fillOpacity}
               clipPath={`url(#${uid}-clip)`} />

@@ -1,0 +1,59 @@
+/* UnlimModeSwitch — CSS Module */
+/* Extracted from inline styles — Sessione 2/5 Ciclo 1 */
+
+.switchBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 2px solid var(--color-border, #E5E5EA);
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-bg, #FFFFFF);
+  color: var(--color-text-secondary, #6B6B80);
+  cursor: pointer;
+  font-size: var(--font-size-sm, 16px);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-semibold, 600);
+  transition: all 0.2s ease;
+  min-height: 56px;
+  min-width: 56px;
+}
+
+.switchBtnActive {
+  composes: switchBtn;
+  border-color: var(--color-accent, #4A7A25);
+  background: var(--color-accent-light, #E8F5E9);
+  color: var(--color-accent-hover, #4A7A25);
+}
+
+.track {
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: #999;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.trackActive {
+  composes: track;
+  background: var(--color-accent, #4A7A25);
+}
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.thumbActive {
+  composes: thumb;
+  left: 18px;
+}

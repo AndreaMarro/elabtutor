@@ -22,7 +22,7 @@ const COLORS = {
     lightBorder: '#f0f0f0',
     text: '#333333',
     textSecondary: '#666666',
-    textMuted: '#999999',
+    textMuted: '#737373',
     headerBg: '#f8f9fa',
 };
 

@@ -198,7 +198,7 @@ export function analyzePinLayout(pins) {
 function computeTO220Assignment(compId, pins, anchor, bbId, bbPos) {
   const pinAssignments = {};
   const holePositions = [];
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   
   // Sort pins by X position (left to right)
   const sortedPins = [...pins].sort((a, b) => a.x - b.x);
@@ -399,7 +399,7 @@ export function computeAutoPinAssignment(compId, compType, dropX, dropY, bbId, b
         anchorPinId = pin.id;
       }
     }
-// © Andrea Marro — 29/03/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   }
   if (!anchor) return null;
 
@@ -483,16 +483,22 @@ export function computeAutoPinAssignment(compId, compType, dropX, dropY, bbId, b
   return { componentX, componentY, pinAssignments };
 }
 
-// Module-level ID counter
-let _idCounter = 0;
+// Module-level ID counter — high-entropy seed prevents HMR/reload collisions
+let _idCounter = Math.floor(Math.random() * 900000) + 100000;
 
 /**
  * Generate a unique component ID for user-dropped components.
+ * Uses random-seeded counter to avoid collisions on HMR reload.
  */
-export function generateComponentId(type) {
-  _idCounter += 1;
+export function generateComponentId(type, existingIds) {
   const prefix = type.replace(/[^a-z0-9]/gi, '').slice(0, 6).toLowerCase();
-  return `${prefix}_${_idCounter}`;
+  const existing = existingIds instanceof Set ? existingIds : new Set(existingIds || []);
+  let id;
+  do {
+    _idCounter += 1;
+    id = `${prefix}_${_idCounter}`;
+  } while (existing.has(id));
+  return id;
 }
 
 /**

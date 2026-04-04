@@ -1,12 +1,14 @@
 /**
  * UnlimBar — Barra input UNLIM sempre visibile in basso al centro
  * Come la barra di ChatGPT: sempre presente, il docente puo chiedere qualsiasi cosa.
+ * La mascotte ELAB è integrata a sinistra dell'input (inline mode di MascotPresence).
  * (c) Andrea Marro — 02/04/2026
  */
 import React, { useState, useCallback, useRef } from 'react';
+import MascotPresence from './MascotPresence';
 import css from './UnlimBar.module.css';
 
-export default function UnlimBar({ onSend, onMicClick, onExpandChat, mascotSrc }) {
+export default function UnlimBar({ onSend, onMicClick, onExpandChat, mascotSrc, speaking = false }) {
   const [text, setText] = useState('');
   const inputRef = useRef(null);
 
@@ -27,34 +29,13 @@ export default function UnlimBar({ onSend, onMicClick, onExpandChat, mascotSrc }
 
   return (
     <div className={css.bar}>
-      {/* Mascotte avatar */}
-      {mascotSrc && (
-        <button
-          className={css.mascotBtn}
-          onClick={onExpandChat}
-          aria-label="Apri chat UNLIM"
-          title="Apri chat completa"
-        >
-          <img src={mascotSrc} alt="UNLIM" className={css.mascotImg} />
-        </button>
-      )}
-      {!mascotSrc && (
-        <button
-          className={css.mascotBtn}
-          onClick={onExpandChat}
-          aria-label="Apri chat UNLIM"
-          title="Apri chat completa"
-        >
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <rect x="4" y="6" width="20" height="16" rx="4" stroke="#1E4D8C" strokeWidth="1.5" />
-            <circle cx="10" cy="14" r="2" fill="#4A7A25" />
-            <circle cx="18" cy="14" r="2" fill="#4A7A25" />
-            <path d="M9 19c0 0 2 2 5 2s5-2 5-2" stroke="#1E4D8C" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M14 6V3" stroke="#E8941C" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="14" cy="2" r="1" fill="#E8941C" />
-          </svg>
-        </button>
-      )}
+      {/* Mascotte ELAB integrata — inline mode */}
+      <MascotPresence
+        mode="inline"
+        speaking={speaking}
+        onClick={onExpandChat}
+        mascotSrc={mascotSrc}
+      />
 
       {/* Input */}
       <form className={css.form} onSubmit={handleSubmit}>

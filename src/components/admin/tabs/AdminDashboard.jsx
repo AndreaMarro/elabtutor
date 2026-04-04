@@ -27,7 +27,7 @@ const COLORS = {
     bg: '#F0F4F8',
     cardBg: 'white',
     text: '#333',
-    textMuted: '#999',
+    textMuted: '#737373',
     border: '#e0e0e0',
 };
 

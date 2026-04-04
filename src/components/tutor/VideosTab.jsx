@@ -45,7 +45,7 @@ export default function VideosTab({
                             placeholder="Incolla link YouTube..."
                             onKeyDown={(e) => e.key === 'Enter' && onAddYoutubeVideo()}
                         />
-                        <button className="v4-toolbar-btn primary" onClick={onAddYoutubeVideo}>▶ Carica</button>
+                        <button className="v4-toolbar-btn primary" onClick={onAddYoutubeVideo}>Carica</button>
                     </div>
 
                     <div className="v4-video-player">
@@ -130,7 +130,7 @@ export default function VideosTab({
                                 <p className="v4-meet-link-display">{meetLink}</p>
                                 <div className="v4-meet-actions">
                                     <button className="v4-meet-join-btn" onClick={onJoinMeet}>
-                                        ▶ Partecipa alla riunione
+                                        Partecipa alla riunione
                                     </button>
                                     <button className="v4-meet-copy-btn" onClick={onCopyMeetLink}>
                                         {meetCopied ? '✓ Copiato!' : 'Copia link'}

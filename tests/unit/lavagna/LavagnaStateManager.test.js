@@ -37,7 +37,7 @@ describe('LavagnaStateManager', () => {
       const result = computePanelActions(STATES.CLEAN, {}, {});
       expect(result.leftPanel).toBe(false);
       expect(result.bottomPanel).toBe(false);
-      expect(result.galileo).toBe(false);
+      expect(result.galileo).toBe(true);
       expect(result.toolbar).toBe(true);
     });
 

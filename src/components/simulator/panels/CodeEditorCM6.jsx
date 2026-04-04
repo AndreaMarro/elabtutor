@@ -39,52 +39,9 @@ const FONT_BODY = "var(--font-sans, 'Open Sans', sans-serif)";
 const FONT_CODE = "var(--font-mono, 'Fira Code', monospace)";
 
 /* ═══════════════════════════════════════════════════════════════════
-   Friendly error translator (gcc → italiano semplice per bambini)
+   Friendly error translator — importato da modulo condiviso
    ═══════════════════════════════════════════════════════════════════ */
-const FRIENDLY_ERRORS = [
-  [/expected '([^']+)' before/i, (m) => `Manca "${m[1]}" — controlla di aver chiuso tutte le parentesi e i punti e virgola!`],
-  [/expected ';' before/i, () => 'Hai dimenticato il punto e virgola (;) alla fine della riga!'],
-  [/expected '\)' before/i, () => 'Manca una parentesi di chiusura ) — controlla che ogni ( abbia la sua )'],
-  [/expected '\}' before/i, () => 'Manca una parentesi graffa di chiusura } — controlla le parentesi graffe!'],
-  [/'([^']+)' was not declared in this scope/i, (m) => `"${m[1]}" non esiste! Controlla di averlo scritto bene o di averlo creato prima.`],
-  [/expected unqualified-id/i, () => 'C\'è qualcosa di strano all\'inizio della riga. Controlla di non aver scritto caratteri extra.'],
-  [/stray '\\([^']+)' in program/i, () => 'C\'è un carattere strano nel codice. Forse hai copiato da un documento con caratteri speciali?'],
-  [/no matching function for call to '([^']+)'/i, (m) => `La funzione "${m[1]}" non accetta questi parametri. Controlla quanti valori servono!`],
-  [/too few arguments to function/i, () => 'Mancano dei valori nella funzione. Servono più numeri tra le parentesi!'],
-  [/too many arguments to function/i, () => 'Hai messo troppi valori nella funzione. Togline qualcuno!'],
-  [/invalid conversion from '([^']+)' to '([^']+)'/i, () => 'Stai usando un tipo di dato sbagliato. Controlla se serve un numero o un testo.'],
-  [/cannot convert/i, () => 'I tipi di dato non corrispondono. Controlla cosa stai assegnando.'],
-  [/redefinition of '([^']+)'/i, (m) => `"${m[1]}" e\' stato definito due volte! Rinomina uno dei due o cancellane uno.`],
-  [/void value not ignored/i, () => 'Stai cercando di usare il risultato di una funzione che non restituisce nulla (void).'],
-  [/control reaches end of non-void/i, () => 'La funzione deve restituire un valore (return) prima di finire!'],
-  [/ISO C\+\+ forbids/i, () => 'Questa scrittura non e\' permessa in C++. Prova a riscrivere in modo diverso.'],
-  [/lvalue required/i, () => 'Non puoi assegnare un valore a questa espressione. Controlla il lato sinistro del =.'],
-  [/subscripted value is not an array/i, () => 'Stai usando le parentesi quadre [] su qualcosa che non e\' un array!'],
-];
-
-function friendlyError(gccError) {
-  if (!gccError) return gccError;
-  const lines = gccError.split('\n');
-  const result = [];
-  for (const line of lines) {
-    let matched = false;
-    for (const [pattern, formatter] of FRIENDLY_ERRORS) {
-      const m = line.match(pattern);
-      if (m) {
-        // Extract line number if present
-        const lineNumMatch = line.match(/\.ino:(\d+):\d+:/);
-        const prefix = lineNumMatch ? `Riga ${lineNumMatch[1]}: ` : '';
-        result.push(prefix + formatter(m));
-        matched = true;
-        break;
-      }
-    }
-    if (!matched && line.trim()) {
-      result.push(line); // keep original if no match
-    }
-  }
-  return result.join('\n');
-}
+import { friendlyError } from '../utils/friendlyError';
 
 /* ═══════════════════════════════════════════════════════════════════
    Arduino Autocompletion List
@@ -480,19 +437,42 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
   }, [compilationErrorLine]);
 
   // ── Status bar ────────────────────────────────────────────────────
+  // Encouraging messages that rotate during compilation
+  const [compileMsg, setCompileMsg] = useState(0);
+  useEffect(() => {
+    if (compilationStatus !== 'compiling') { setCompileMsg(0); return; }
+    const msgs = [
+      'Compilazione in corso...',
+      'Controllo il codice...',
+      'Quasi fatto...',
+      'Traduco in linguaggio Arduino...',
+    ];
+    const interval = setInterval(() => setCompileMsg(i => (i + 1) % msgs.length), 3000);
+    return () => clearInterval(interval);
+  }, [compilationStatus]);
+
+  const COMPILE_MESSAGES = [
+    'Compilazione in corso...',
+    'Controllo il codice...',
+    'Quasi fatto...',
+    'Traduco in linguaggio Arduino...',
+  ];
+
+  const isSuccess = compilationStatus === 'success' || compilationStatus === 'success-local';
   const statusColor =
-    compilationStatus === 'success' ? LIME
+    isSuccess ? LIME
       : compilationStatus === 'error' ? VOL3_RED
         : compilationStatus === 'compiling' ? 'var(--color-vol2)'
           : 'var(--color-text-gray-300)';
 
+  const localIndicator = compilationStatus === 'success-local' ? ' \u26a1' : '';
   const statusText =
-    compilationStatus === 'success'
+    isSuccess
       ? (compilationSize
-        ? `✅ ${compilationSize.bytes}/${compilationSize.total} bytes (${compilationSize.percent}%)`
-        : 'Compilazione OK \u2014 Premi Play')
+        ? `\u2705${localIndicator} ${compilationSize.bytes}/${compilationSize.total} bytes (${compilationSize.percent}%)`
+        : `Compilazione OK${localIndicator} \u2014 Premi Play`)
       : compilationStatus === 'error' ? 'Errore di compilazione'
-        : compilationStatus === 'compiling' ? 'Compilazione in corso...'
+        : compilationStatus === 'compiling' ? COMPILE_MESSAGES[compileMsg]
           : 'Pronto';
 
   return (
@@ -507,7 +487,7 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
               style={codeEditorStyles.fontSizeBtn}
               title="Rimpicciolisci testo"
             >A-</button>
-            <span style={{ fontSize: 14, color: 'var(--color-text-gray-300, #888)', fontFamily: FONT_CODE, minWidth: 18, textAlign: 'center' }}>{fontSize}</span>
+            <span style={{ fontSize: 14, color: 'var(--color-text-gray-300, #737373)', fontFamily: FONT_CODE, minWidth: 18, textAlign: 'center' }}>{fontSize}</span>
             <button
               onClick={() => setFontSize(s => Math.min(22, s + 1))}
               style={codeEditorStyles.fontSizeBtn}
@@ -525,7 +505,7 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
                 color: 'var(--color-accent, #4A7A25)',
                 borderColor: 'var(--color-accent, #4A7A25)',
               }}
-              title="Chiedi a UNLIM di spiegare il codice"
+              title="Chiedi a Galileo di spiegare il codice"
               aria-label="Spiega il codice"
             >? Spiega</button>
           )}
@@ -564,7 +544,7 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
             </span>
             <button
               onClick={() => setShowErrors(false)}
-              style={{ background: 'none', border: 'none', color: 'var(--color-text-gray-300, #888)', cursor: 'pointer', fontSize: 16, padding: 0, minWidth: 56, minHeight: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
+              style={{ background: 'none', border: 'none', color: 'var(--color-text-gray-300, #737373)', cursor: 'pointer', fontSize: 16, padding: 0, minWidth: 56, minHeight: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-sm)' }}
               title="Chiudi errori"
               aria-label="Chiudi pannello errori"
             >
@@ -588,7 +568,7 @@ const CodeEditorCM6 = React.memo(function CodeEditorCM6({
           }}
         >
           {compilationStatus === 'compiling'
-            ? <><span style={{ display: 'inline-block', animation: 'spin 0.8s linear infinite' }}>{'⏳'}</span> Compilazione...</>
+            ? <><span style={{ display: 'inline-block', animation: 'spin 0.8s linear infinite' }}>{'\u25CB'}</span> Compilazione...</>
             : '\u25B6 Compila & Carica'}
         </button>
       </div>
@@ -618,7 +598,7 @@ const codeEditorStyles = {
   title: {
     fontSize: 14,
     fontWeight: 600,
-    color: 'var(--color-text-gray-200, #999)',
+    color: 'var(--color-text-gray-200, #737373)',
     fontFamily: FONT_BODY,
   },
   status: {
@@ -629,7 +609,7 @@ const codeEditorStyles = {
     background: 'transparent',
     border: '1px solid var(--color-editor-border, #2D3748)',
     borderRadius: 3,
-    color: 'var(--color-text-gray-200, #999)',
+    color: 'var(--color-text-gray-200, #737373)',
     fontSize: 14,
     padding: '1px 6px',
     cursor: 'pointer',

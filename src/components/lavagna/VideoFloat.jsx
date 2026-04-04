@@ -65,7 +65,7 @@ function VideoCard({ video, onClick }) {
       <div className={css.cardThumb}>
         <img
           src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`}
-          alt=""
+          alt={video.title || 'Video thumbnail'}
           className={css.thumbImg}
           loading="lazy"
         />

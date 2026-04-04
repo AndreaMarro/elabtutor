@@ -15,6 +15,7 @@
 import React, { useState } from 'react';
 import { getCurriculum } from '../../../data/curriculumData';
 import { getLessonPath } from '../../../data/lesson-paths';
+import { getPrerequisites, getNewConcepts, CONCEPTS } from '../../../data/concept-graph';
 
 /* ─── Component type → Italian display name ─── */
 const COMP_NAMES = {
@@ -139,29 +140,64 @@ function generateCommonMistakes(experiment) {
   return mistakes;
 }
 
-/* ─── Prerequisite text based on volume/chapter ─── */
-const CHAPTER_CONCEPTS = {
-  6: 'circuito chiuso, batteria, LED',
-  7: 'resistori, protezione LED',
-  8: 'LED RGB, miscelazione colori',
-  9: 'circuiti in serie',
-  10: 'circuiti in parallelo',
-  11: 'potenziometro, resistenza variabile',
-  12: 'condensatore, carica/scarica',
-  13: 'pulsante, interruttore',
-  14: 'fotoresistenza, sensori',
-};
-
+/* ─── Rich prerequisites from concept graph ─── */
 function getPrerequisiteText(id) {
-  const chapterNum = getChapterNum(id);
-  if (!chapterNum || chapterNum <= 6) return null;
-  const prevConcepts = CHAPTER_CONCEPTS[chapterNum - 1];
-  if (!prevConcepts) return `i concetti del capitolo ${chapterNum - 1}`;
-  return `${prevConcepts} (capitolo ${chapterNum - 1})`;
+  const prereqs = getPrerequisites(id);
+  if (!prereqs.length) return null;
+  return prereqs.map(p => p.name).join(', ');
+}
+
+/* ─── Build prerequisite cards with analogies — Principio Zero:
+ *  Linguaggio 10-14 anni, parla ALLA CLASSE, non al docente.
+ *  L'insegnante legge e media con le sue parole.
+ * ─── */
+function PrerequisiteCards({ experimentId }) {
+  const prereqs = getPrerequisites(experimentId);
+  const newConcepts = getNewConcepts(experimentId);
+  if (!prereqs.length && !newConcepts.length) return null;
+
+  return (
+    <div style={{ margin: '8px 0 12px', padding: '10px 12px', background: '#F0F7FF', borderRadius: 8, border: '1px solid #D0E0F0' }}>
+      {prereqs.length > 0 && (
+        <>
+          <p style={{ margin: '0 0 6px', fontWeight: 700, fontSize: 16, color: '#1E4D8C' }}>
+            Vi ricordate cosa abbiamo scoperto?
+          </p>
+          {prereqs.map(p => (
+            <div key={p.id} style={{ margin: '4px 0', padding: '6px 8px', background: '#fff', borderRadius: 6, fontSize: 16, lineHeight: 1.5 }}>
+              <strong style={{ color: '#1E4D8C' }}>{p.name}</strong>
+              <span style={{ color: '#555', marginLeft: 4 }}>— {p.analogy}</span>
+            </div>
+          ))}
+        </>
+      )}
+      {newConcepts.length > 0 && (
+        <>
+          <p style={{ margin: '10px 0 6px 0', fontWeight: 700, fontSize: 16, color: '#4A7A25' }}>
+            Oggi scopriamo qualcosa di nuovo:
+          </p>
+          {newConcepts.map(c => (
+            <div key={c.id} style={{ margin: '4px 0', padding: '6px 8px', background: '#F0FFF0', borderRadius: 6, fontSize: 16, lineHeight: 1.5, border: '1px solid #C8E6C9' }}>
+              <strong style={{ color: '#4A7A25' }}>{c.name}</strong>
+              <span style={{ color: '#555', marginLeft: 4 }}>— {c.description}</span>
+              <div style={{ marginTop: 4, fontStyle: 'italic', color: '#4A7A25', fontSize: 14 }}>
+                Pensatela cosi: &laquo;{c.analogy}&raquo;
+              </div>
+              {c.metaphor && (
+                <div style={{ marginTop: 2, fontStyle: 'italic', color: '#666', fontSize: 14 }}>
+                  Oppure: &laquo;{c.metaphor}&raquo;
+                </div>
+              )}
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
 }
 
 /* ─── Phase data structure ─── */
-const LP_PHASE_ICONS = ['📋', '🖥️', '❓', '👀', '🤖', '✅'];
+const LP_PHASE_ICONS = [null, null, null, null, null, null];
 const PHASE_TITLES = [
   'PREPARA',
   'MOSTRA',
@@ -173,7 +209,7 @@ const PHASE_TITLES = [
 const PHASE_DURATIONS = ['prima della lezione', '2 min', '3 min', '15 min', 'quando serve', '5 min'];
 
 /* ─── Rich Lesson Path — Renderizza percorso lezione da JSON UNLIM ─── */
-function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClose, onLoadExperiment }) {
+function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClose, onLoadExperiment, collapsed = false, onToggleCollapse, embedded = false }) {
   const [alreadyLoaded, setAlreadyLoaded] = useState(false);
   const phases = path.phases;
 
@@ -214,7 +250,7 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
     if (phase.teacher_tip) {
       content.push(
         <div key="tip" style={RS.teacherTipBox}>
-          <span style={RS.teacherTipIcon}>💡</span>
+          <span style={RS.teacherTipIcon}>Suggerimento:</span>
           <span>{phase.teacher_tip}</span>
         </div>
       );
@@ -227,11 +263,16 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
       );
     }
 
+    // Prerequisite cards — only in first phase (PREPARA)
+    if (index === 0 && experiment?.id) {
+      content.push(<PrerequisiteCards key="prereqs" experimentId={experiment.id} />);
+    }
+
     // Class hook
     if (phase.class_hook) {
       content.push(
         <div key="hook" style={RS.hookBox}>
-          <span style={RS.hookIcon}>🎤</span>
+          <span style={RS.hookIcon}>Domanda:</span>
           <em>{phase.class_hook}</em>
         </div>
       );
@@ -293,7 +334,7 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
             ...(alreadyLoaded ? { background: '#4A7A25', color: '#fff' } : {}),
           }}
         >
-          {alreadyLoaded ? '✓ Già caricato!' : `🔧 ${phase.build_circuit.button_label || 'Monta il circuito per me'}`}
+          {alreadyLoaded ? 'Gia caricato!' : `${phase.build_circuit.button_label || 'Monta il circuito per me'}`}
         </button>
       );
     }
@@ -302,7 +343,7 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
     if (phase.observation_prompt) {
       content.push(
         <div key="obs" style={RS.observeBox}>
-          <span>👀</span>
+          <span>Osserva:</span>
           <span>{phase.observation_prompt}</span>
         </div>
       );
@@ -318,7 +359,7 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
               <li key={i} style={{ ...S.errorItem, borderLeftColor: '#4A7A25' }}>
                 <strong>{a.concept.replace(/_/g, ' ')}</strong>
                 <p style={{ margin: '2px 0 0', fontSize: 14 }}>{a.text}</p>
-                {a.evidence && <em style={{ fontSize: 14, color: '#999' }}>({a.evidence})</em>}
+                {a.evidence && <em style={{ fontSize: 16, color: '#737373' }}>({a.evidence})</em>}
               </li>
             ))}
           </ul>
@@ -355,23 +396,30 @@ function RichLessonPath({ path, experiment, expandedPhase, onExpandPhase, onClos
   };
 
   return (
-    <div style={S.root}>
-      {/* Header */}
-      <div style={S.header}>
-        <span style={S.headerIcon}>📚</span>
-        <span style={S.headerTitle}>Percorso Lezione</span>
-        <button onClick={onClose} style={S.closeBtn} title="Chiudi">
+    <div style={collapsed ? { ...S.root, ...S.rootCollapsed } : { ...S.root, ...(embedded ? { border: 'none', borderRadius: 0, boxShadow: 'none' } : {}) }} onClick={collapsed ? onToggleCollapse : undefined}>
+      {/* Header — hidden when embedded in FloatingWindow */}
+      {!embedded && (
+      <div style={collapsed ? { ...S.header, borderRadius: 14 } : S.header}>
+        <span style={S.headerIcon}>Lezione</span>
+        <span style={S.headerTitle}>{collapsed ? (path.title || '') : 'Percorso Lezione'}</span>
+        <button onClick={(e) => { e.stopPropagation(); onToggleCollapse?.(); }} style={{ ...S.closeBtn, marginRight: 4 }} title={collapsed ? 'Espandi' : 'Riduci'} aria-label={collapsed ? 'Espandi percorso' : 'Riduci percorso'}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d={collapsed ? 'M3 5L7 9L11 5' : 'M3 9L7 5L11 9'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        <button onClick={(e) => { e.stopPropagation(); onClose(); }} style={S.closeBtn} title="Chiudi" aria-label="Chiudi percorso">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M3 3L11 11M3 11L11 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </button>
       </div>
+      )}
 
       {/* Experiment title + badge */}
       <div style={S.expTitle}>
         <span>{experiment.icon || '●'}</span>
-        <span style={{ flex: 1 }}>{path.title}</span>
-        <span style={RS.richBadge}>Percorso UNLIM</span>
+        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{path.title}</span>
+        <span style={RS.richBadge}>UNLIM</span>
       </div>
 
       {/* Obiettivo */}
@@ -457,7 +505,7 @@ const RS = {
     background: '#E3F2FD',
   },
   progressDot: {
-    fontSize: 14,
+    fontSize: 16,
     opacity: 0.5,
   },
   progressDotActive: {
@@ -465,7 +513,7 @@ const RS = {
     opacity: 1,
   },
   progressLabel: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     textTransform: 'uppercase',
     letterSpacing: '0.3px',
@@ -476,15 +524,16 @@ const RS = {
     fontWeight: 700,
     color: '#fff',
     background: '#4A7A25',
-    padding: '2px 8px',
-    borderRadius: 10,
+    padding: '2px 6px',
+    borderRadius: 6,
     textTransform: 'uppercase',
-    letterSpacing: '0.5px',
+    letterSpacing: '0.3px',
     flexShrink: 0,
+    whiteSpace: 'nowrap',
   },
   objectiveBox: {
     padding: '8px 14px',
-    fontSize: 14,
+    fontSize: 16,
     color: '#444',
     background: '#F0F7FF',
     borderBottom: '1px solid #E5E5E5',
@@ -499,7 +548,7 @@ const RS = {
     borderRadius: 8,
     border: '1px solid #FFE082',
     margin: '8px 0',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
   },
   teacherTipIcon: { flexShrink: 0, fontSize: 16 },
@@ -512,7 +561,7 @@ const RS = {
     borderRadius: 8,
     border: '1px solid #C8E6C9',
     margin: '8px 0',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
   },
   hookIcon: { flexShrink: 0, fontSize: 16 },
@@ -528,7 +577,7 @@ const RS = {
     borderRadius: 10,
     background: 'linear-gradient(135deg, #1E4D8C, #2A5FA0)',
     color: '#fff',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 700,
     cursor: 'pointer',
     minHeight: 56,
@@ -543,7 +592,7 @@ const RS = {
     borderRadius: 8,
     border: '1px solid #BBDEFB',
     margin: '8px 0',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
   },
   summaryBox: {
@@ -551,7 +600,7 @@ const RS = {
     background: '#E8F5E9',
     borderRadius: 8,
     border: '1px solid #C8E6C9',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
     margin: '8px 0',
   },
@@ -566,7 +615,7 @@ const RS = {
     borderRadius: 10,
     background: 'transparent',
     color: '#1E4D8C',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     cursor: 'pointer',
     minHeight: 48,
@@ -580,8 +629,10 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
   onClose,
   onSendToUNLIM,
   onLoadExperiment,
+  embedded = false,
 }) {
   const [expandedPhase, setExpandedPhase] = React.useState(0);
+  const [collapsed, setCollapsed] = React.useState(false); // Start expanded in FloatingWindow
 
   if (!experiment) return null;
 
@@ -596,6 +647,9 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
         onExpandPhase={setExpandedPhase}
         onClose={onClose}
         onLoadExperiment={onLoadExperiment}
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed(c => !c)}
+        embedded={embedded}
       />
     );
   }
@@ -619,7 +673,7 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
       </p>
       {hasCurriculum && (
         <div style={S.curatedBox}>
-          <span style={S.curatedIcon}>📋</span>
+          <span style={S.curatedIcon}>Nota:</span>
           <span>{curriculum.teacherBriefing.beforeClass}</span>
         </div>
       )}
@@ -635,11 +689,7 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
           </ul>
         </>
       )}
-      {prereqText && (
-        <p style={S.prereq}>
-          Gli studenti devono già sapere: {prereqText}.
-        </p>
-      )}
+      <PrerequisiteCards experimentId={experiment.id} />
     </div>,
 
     // Phase 2: MOSTRA
@@ -652,7 +702,7 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
       </p>
       {hasCurriculum ? (
         <div style={S.curatedBox}>
-          <span style={S.curatedIcon}>🎯</span>
+          <span style={S.curatedIcon}>Obiettivo:</span>
           <span>{curriculum.teacherBriefing.duringClass}</span>
         </div>
       ) : experiment.desc ? (
@@ -702,8 +752,8 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
         Se uno studente fa una domanda difficile:
       </p>
       <div style={S.tipBox}>
-        <span style={S.tipIcon}>💡</span>
-        <span><em>"Ottima domanda! Chiediamolo a UNLIM."</em></span>
+        <span style={S.tipIcon}>Suggerimento:</span>
+        <span><em>"Ottima domanda! Chiediamolo a Galileo."</em></span>
       </div>
       <p style={S.phaseHint}>
         Non devi sapere tutto. Usare UNLIM davanti alla classe è un modello positivo:
@@ -763,10 +813,10 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
   ];
 
   return (
-    <div style={S.root}>
+    <div style={S.root} data-elab-lesson-path="true">
       {/* Header */}
       <div style={S.header}>
-        <span style={S.headerIcon}>📚</span>
+        <span style={S.headerIcon}>Lezione</span>
         <span style={S.headerTitle}>Percorso Lezione</span>
         <button onClick={onClose} style={S.closeBtn} title="Chiudi">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -832,18 +882,30 @@ const S = {
     position: 'absolute',
     top: 8,
     right: 8,
-    width: 'min(320px, calc(100% - 16px))',
+    width: 'min(280px, calc(100% - 16px))',
     maxHeight: 'calc(100% - 16px)',
     background: 'rgba(255, 255, 255, 0.97)',
     border: '1px solid var(--color-border, #E5E5E5)',
     borderRadius: 14,
     boxShadow: 'var(--shadow-lg, 0 4px 24px rgba(0, 0, 0, 0.1))',
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-gray-700, #333)',
     overflow: 'auto',
     zIndex: 20,
     backdropFilter: 'blur(8px)',
+    resize: 'both',
+    minWidth: 200,
+    minHeight: 48,
+    transition: 'max-height 300ms ease, width 300ms ease',
+  },
+  rootCollapsed: {
+    maxHeight: 68,
+    width: 'auto',
+    minWidth: 'auto',
+    overflow: 'hidden',
+    resize: 'none',
+    cursor: 'pointer',
   },
 
   header: {
@@ -860,11 +922,15 @@ const S = {
 
   headerTitle: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 700,
     fontFamily: 'var(--font-display, "Oswald", sans-serif)',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    minWidth: 0,
   },
 
   closeBtn: {
@@ -874,8 +940,11 @@ const S = {
     color: '#fff',
     padding: 6,
     borderRadius: 6,
-    width: 56,
-    height: 56,
+    width: 44,
+    height: 44,
+    minWidth: 44,
+    minHeight: 44,
+    flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -886,7 +955,7 @@ const S = {
     alignItems: 'center',
     gap: 8,
     padding: '10px 14px',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 600,
     color: 'var(--color-text, #1A1A2E)',
     borderBottom: '1px solid var(--color-border, #F0F0F0)',
@@ -911,7 +980,7 @@ const S = {
     border: 'none',
     background: 'transparent',
     cursor: 'pointer',
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
     color: 'var(--color-text-gray-700, #333)',
     textAlign: 'left',
@@ -931,49 +1000,49 @@ const S = {
     borderRadius: '50%',
     background: 'var(--color-primary, #1E4D8C)',
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     flexShrink: 0,
   },
 
-  phaseIcon: { fontSize: 15, flexShrink: 0 },
+  phaseIcon: { fontSize: 16, flexShrink: 0 },
 
   phaseName: {
     flex: 1,
     fontWeight: 700,
-    fontSize: 14,
+    fontSize: 16,
     textTransform: 'uppercase',
     letterSpacing: '0.3px',
   },
 
   phaseDuration: {
-    fontSize: 15,
+    fontSize: 16,
     color: 'var(--color-text-secondary, #6B7280)',
     flexShrink: 0,
   },
 
   phaseChevron: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-secondary, #6B7280)',
     flexShrink: 0,
   },
 
   phaseContent: {
     padding: '8px 14px 14px',
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 1.6,
   },
 
   phaseText: {
     margin: '0 0 8px',
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 1.6,
     color: 'var(--color-text-gray-600, #444)',
   },
 
   phaseLabel: {
     margin: '8px 0 4px',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     color: 'var(--color-primary, #1E4D8C)',
     textTransform: 'uppercase',
@@ -982,14 +1051,14 @@ const S = {
 
   phaseNote: {
     margin: '4px 0 0',
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-secondary, #6B7280)',
     fontStyle: 'italic',
   },
 
   phaseHint: {
     margin: '8px 0 0',
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-secondary, #6B7280)',
     fontStyle: 'italic',
     lineHeight: 1.5,
@@ -997,8 +1066,8 @@ const S = {
 
   prereq: {
     margin: '8px 0 0',
-    fontSize: 14,
-    color: 'var(--color-vol2, #E8941C)',
+    fontSize: 16,
+    color: 'var(--color-vol2-text, #996600)', /* G42: WCAG AA */
     fontWeight: 500,
     padding: '6px 10px',
     background: '#FFF8E1',
@@ -1015,7 +1084,7 @@ const S = {
   },
 
   materialItem: {
-    fontSize: 15,
+    fontSize: 16,
     color: 'var(--color-text-gray-600, #444)',
     display: 'flex',
     alignItems: 'center',
@@ -1048,7 +1117,7 @@ const S = {
   },
 
   questionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 600,
     color: 'var(--color-primary, #1E4D8C)',
     lineHeight: 1.4,
@@ -1065,7 +1134,7 @@ const S = {
   },
 
   errorItem: {
-    fontSize: 15,
+    fontSize: 16,
     color: 'var(--color-text-gray-600, #444)',
     lineHeight: 1.5,
     paddingLeft: 8,
@@ -1081,7 +1150,7 @@ const S = {
     borderRadius: 8,
     border: '1px solid #C8E6C9',
     margin: '8px 0',
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 1.5,
   },
 
@@ -1100,7 +1169,7 @@ const S = {
     borderRadius: 6,
     background: 'transparent',
     color: 'var(--color-success, #16A34A)',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 600,
     cursor: 'pointer',
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
@@ -1109,7 +1178,7 @@ const S = {
   },
 
   curatedBadge: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 600,
     color: '#16A34A',
     background: '#DCFCE7',
@@ -1128,12 +1197,12 @@ const S = {
     borderRadius: 8,
     border: '1px solid #FFE082',
     margin: '8px 0',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
     color: 'var(--color-text-gray-700, #333)',
   },
 
-  curatedIcon: { fontSize: 15, flexShrink: 0, lineHeight: 1.5 },
+  curatedIcon: { fontSize: 16, flexShrink: 0, lineHeight: 1.5 },
 
   teacherTipBox: {
     display: 'flex',
@@ -1144,12 +1213,12 @@ const S = {
     borderRadius: 8,
     border: '1px solid #CE93D8',
     margin: '8px 0',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
   },
 
   teacherTipLabel: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     color: '#7B1FA2',
     textTransform: 'uppercase',
@@ -1170,13 +1239,13 @@ const S = {
     background: '#E8F5E9',
     borderRadius: 8,
     border: '1px solid #C8E6C9',
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 1.5,
   },
 
   analogyText: {
     margin: '4px 0 0',
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-gray-600, #444)',
     fontStyle: 'italic',
     lineHeight: 1.5,
@@ -1192,7 +1261,7 @@ const S = {
   },
 
   assessmentItem: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'var(--color-text-gray-600, #444)',
     lineHeight: 1.5,
     paddingLeft: 8,
@@ -1210,7 +1279,7 @@ const S = {
     borderRadius: 8,
     background: 'transparent',
     color: 'var(--color-primary, #1E4D8C)',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 600,
     fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
     cursor: 'pointer',

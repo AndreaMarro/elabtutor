@@ -46,3 +46,36 @@
   50% { transform: scale(0.92); border-color: #E8941C; }
   100% { transform: scale(0.88); border-color: #4A7A25; box-shadow: 0 0 24px rgba(74, 122, 37, 0.6); }
 }
+
+/* Thinking state — gentle wobble while waiting for AI */
+@keyframes unlim-think-wobble {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(232, 148, 28, 0.3), 0 4px 14px rgba(0,0,0,0.12);
+    border-color: #E8941C;
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(232, 148, 28, 0.55), 0 4px 16px rgba(0,0,0,0.15);
+    border-color: #E8941C;
+  }
+}
+
+@keyframes unlim-think-tilt {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.02) rotate(3deg); }
+  75% { transform: scale(1.02) rotate(-3deg); }
+}
+
+/* G41: Nudge overlay fade-in */
+@keyframes nudgeFadeIn {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all UNLIM animations for motion-sensitive users */
+  .unlim-mascot-btn,
+  [style*="nudgeFadeIn"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}

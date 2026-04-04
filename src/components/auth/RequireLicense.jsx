@@ -41,7 +41,7 @@ export default function RequireLicense({ children, onNavigate }) {
                     margin: '40px auto',
                     textAlign: 'center',
                 }}>
-                    <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>⏰</span>
+                    <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>Scaduta</span>
                     <h2 style={{ margin: '0 0 8px', color: '#92400E', fontSize: 20 }}>
                         Licenza scaduta
                     </h2>
