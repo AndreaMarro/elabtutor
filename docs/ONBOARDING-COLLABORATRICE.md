@@ -4,7 +4,7 @@
 ELAB è un tutor educativo per elettronica e Arduino, pensato per bambini 8-14 anni.
 Include un simulatore di circuiti proprietario, un tutor AI ("Galileo"), 62 esperimenti in 3 volumi, e giochi didattici.
 
-**Live**: https://elab-builder.vercel.app
+**Live**: https://www.elabtutor.school
 
 ## Setup iniziale
 

@@ -63,7 +63,7 @@ Include:
 |------|-------|-------|
 | `src/components/simulator/engine/CircuitSolver.js` | 2486 | Solver DC MNA/KCL, Gaussian elimination |
 | `src/components/simulator/engine/AVRBridge.js` | 1242 | Bridge CPU emulation avr8js, GPIO/ADC/PWM/USART |
-| `src/components/simulator/engine/PlacementEngine.js` | ~200 | Posizionamento automatico componenti |
+| `src/components/simulator/engine/PlacementEngine.js` | 822 | Posizionamento automatico componenti |
 | `src/components/simulator/canvas/SimulatorCanvas.jsx` | 3149 | Canvas SVG principale, zoom/pan/drag, 21 componenti |
 | `src/components/simulator/NewElabSimulator.jsx` | 1022 | Shell simulatore, orchestrazione pannelli |
 | `src/services/api.js` | 1040 | Tutte le API calls, routing, retry, fallback chain |

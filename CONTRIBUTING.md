@@ -76,10 +76,10 @@ Questi file sono critici e una modifica sbagliata causa regressioni a cascata:
 
 | File | Motivo |
 |------|--------|
-| `src/components/simulator/engine/CircuitSolver.js` | Cuore del solver, 1700+ righe, algoritmo MNA/KCL |
+| `src/components/simulator/engine/CircuitSolver.js` | Cuore del solver, 2500 righe, algoritmo MNA/KCL |
 | `src/components/simulator/engine/AVRBridge.js` | Bridge CPU emulation, timing critico |
 | `src/components/simulator/engine/PlacementEngine.js` | Posizionamento componenti |
-| `src/components/simulator/canvas/SimulatorCanvas.jsx` | Canvas SVG principale, 1300+ righe |
+| `src/components/simulator/canvas/SimulatorCanvas.jsx` | Canvas SVG principale, 3100+ righe |
 | `src/components/simulator/api/simulator-api.js` | API globale `__ELAB_API` |
 | `src/components/simulator/utils/pinComponentMap.js` | Mapping pin, Union-Find |
 | `vite.config.js` | Build config, chunk splitting |

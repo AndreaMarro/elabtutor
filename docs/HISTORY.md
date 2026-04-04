@@ -106,7 +106,7 @@ UNLIM e' il nome del sistema AI di tutoring. Include:
 |------|-------|---------|
 | engine/CircuitSolver.js | 2486 | Cuore del solver, algoritmo MNA/KCL |
 | engine/AVRBridge.js | 1242 | Bridge CPU emulation, timing critico |
-| engine/PlacementEngine.js | ~200 | Posizionamento automatico componenti |
+| engine/PlacementEngine.js | 822 | Posizionamento automatico componenti |
 | canvas/SimulatorCanvas.jsx | 3149 | Canvas SVG principale |
 | NewElabSimulator.jsx | 1022 | Shell simulatore, orchestrazione |
 | services/api.js | 1040 | Tutte le chiamate API, routing, retry |

@@ -8,7 +8,7 @@ Live: https://www.elabtutor.school
 
 ELAB e' un prodotto completo per l'insegnamento dell'elettronica nelle scuole:
 
-- **Simulatore di circuiti** proprietario con 62 esperimenti in 3 volumi
+- **Simulatore di circuiti** proprietario con 92 esperimenti in 3 volumi
 - **Tutor AI "Galileo"** che guida lo studente passo passo
 - **Scratch/Blockly** per programmare Arduino visualmente
 - **Compilatore Arduino** (C++ -> HEX -> emulazione AVR in browser)
@@ -48,7 +48,7 @@ npm run build      # Build produzione
 src/
   components/
     simulator/              <- CORE: simulatore di circuiti
-      engine/               <- CircuitSolver (MNA/KCL), AVRBridge, SimulationManager
+      engine/               <- CircuitSolver (MNA/KCL), AVRBridge, PlacementEngine
       canvas/               <- SVG canvas, wire bezier routing, DrawingOverlay
       components/           <- 21 componenti SVG (LED, resistore, Arduino, breadboard...)
       panels/               <- Code editor, properties, serial monitor, Scratch
@@ -103,7 +103,7 @@ Font: Oswald (titoli) + Open Sans (body) + Fira Code (codice)
 npm run build && npx vercel --prod --yes
 
 # Backend Supabase
-SUPABASE_ACCESS_TOKEN=sbp_... npx supabase functions deploy --project-ref euqpdueopmlllqjmqnyb
+SUPABASE_ACCESS_TOKEN=sbp_... npx supabase functions deploy --project-ref vxvqalmxqtezvgiboxyv
 ```
 
 ## Regole per sviluppatori
