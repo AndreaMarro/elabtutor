@@ -25,8 +25,8 @@ log "Checking build..."
 BUILD_OUTPUT=$(npm run build --silent 2>&1) || true
 if echo "$BUILD_OUTPUT" | grep -q "built in"; then
   BUILD_SCORE=20
-  BUILD_TIME=$(echo "$BUILD_OUTPUT" | grep -oP 'built in \K[0-9.]+' || echo "?")
-  log "  BUILD: PASS (${BUILD_TIME}s) → 20/20"
+  BUILD_TIME=$(echo "$BUILD_OUTPUT" | grep 'built in' | grep -Eo '[0-9]+(\.[0-9]+)?(ms|s)' | head -1 || echo "?")
+  log "  BUILD: PASS (${BUILD_TIME}) → 20/20"
 else
   BUILD_SCORE=0
   ERRORS="$ERRORS BUILD_FAIL"
@@ -38,8 +38,8 @@ DETAILS="build=$BUILD_SCORE"
 # ── 2. TEST (25 punti) ───────────────────────
 log "Running tests..."
 TEST_OUTPUT=$(npm test -- --run 2>&1) || true
-TEST_PASSED=$(echo "$TEST_OUTPUT" | grep -oP '\d+(?= passed)' | head -1 || echo "0")
-TEST_FAILED=$(echo "$TEST_OUTPUT" | grep -oP '\d+(?= failed)' | head -1 || echo "0")
+TEST_PASSED=$(echo "$TEST_OUTPUT" | perl -ne '/^\s*Tests\s+(\d+) passed/ and print "$1\n"' 2>/dev/null | head -1 || echo "0")
+TEST_FAILED=$(echo "$TEST_OUTPUT" | perl -ne '/(\d+) failed/ and print "$1\n"' 2>/dev/null | head -1 || echo "0")
 TEST_PASSED=${TEST_PASSED:-0}
 TEST_FAILED=${TEST_FAILED:-0}
 
@@ -94,7 +94,7 @@ DETAILS="$DETAILS bundle=$BUNDLE_SCORE(${BUNDLE_KB:-?}KB)"
 log "Checking coverage..."
 COV_FILE="coverage/coverage-summary.json"
 if [ -f "$COV_FILE" ]; then
-  COV_PCT=$(cat "$COV_FILE" | grep -oP '"statements":\s*\{[^}]*"pct":\s*\K[0-9.]+' | head -1 || echo "0")
+  COV_PCT=$(jq -r '.total.statements.pct // 0' "$COV_FILE" 2>/dev/null || echo "0")
   COV_MIN=$(jq -r '.coverage_min // 60' .test-count-baseline.json 2>/dev/null || echo "60")
   COV_PCT_INT=$(echo "$COV_PCT" | cut -d. -f1)
   COV_MIN_INT=$(echo "$COV_MIN" | cut -d. -f1)
@@ -117,7 +117,7 @@ DETAILS="$DETAILS coverage=$COV_SCORE(${COV_PCT:-?}%)"
 # ── 5. CONSOLE ERRORS (10 punti) ─────────────
 log "Checking lint..."
 LINT_OUTPUT=$(npm run lint 2>&1) || true
-LINT_ERRORS=$(echo "$LINT_OUTPUT" | grep -c "error" || echo "0")
+LINT_ERRORS=$(echo "$LINT_OUTPUT" | grep -c "error" || true)
 if [ "${LINT_ERRORS:-0}" -eq "0" ]; then
   LINT_SCORE=10
   log "  LINT: 0 errors → 10/10"
