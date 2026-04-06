@@ -21,7 +21,7 @@ Ogni sessione segue questo ciclo:
 
 ## LE 7 REGOLE FERREE
 
-1. **MAI push su main** — sempre branch `auto/[data]-[topic]`, push con `git push -u origin [branch]`
+1. **MAI push su main** — sempre branch `auto/[data]-[topic]`, push con `git push -u work [branch]` (remote work = elabtutor con Tea)
 2. **MAI commit se test o build falliscono** — se falliscono, fixa prima. Se non riesci, scrivi in OUTBOX come FAIL
 3. **MAI toccare**: .env, vite.config.js (obfuscation), package.json (dipendenze), Supabase schema, deploy prod
 4. **MAX 5 file sorgente modificati per ciclo** — limita il blast radius

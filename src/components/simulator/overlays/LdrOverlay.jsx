@@ -21,7 +21,7 @@ const LdrOverlay = React.memo(function LdrOverlay({ value, onValueChange, onClos
       <div className={ovStyles.card} onClick={(e) => e.stopPropagation()}>
         <div className={ovStyles.overlayHeader}>
           <span className={ovStyles.label}>Foto-Resistore (LDR)</span>
-          <button onClick={onClose} className={ovStyles.closeBtn}>x</button>
+          <button onClick={onClose} className={ovStyles.closeBtn} aria-label="Chiudi pannello LDR">x</button>
         </div>
 
         {/* Sun icon */}
@@ -60,7 +60,7 @@ const LdrOverlay = React.memo(function LdrOverlay({ value, onValueChange, onClos
           />
           <span style={{ fontSize: 15, color: 'var(--color-text-gray-300, #737373)', width: 36, textAlign: 'right' }}>Luce</span>
         </div>
-        <div style={{ textAlign: 'center', fontSize: 15, color: 'var(--color-text-gray-400, #666)', padding: '0 0 6px' }}>
+        <div style={{ textAlign: 'center', fontSize: 15, color: 'var(--color-text-gray-400, #525252)', padding: '0 0 6px' }}>
           ~{luxApprox} lux
         </div>
       </div>

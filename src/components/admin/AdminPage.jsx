@@ -73,8 +73,7 @@ const TABS = [
     { id: 'gestionale',  label: 'Gestionale',   icon: <IconGestionale />, color: '#0F172A' },
 ];
 
-// Admin password hash (SHA-256 of the real password, computed at build time)
-// To change: echo -n "your_password" | shasum -a 256
+// Admin access hash — do not store plaintext passwords in source
 const ADMIN_PWD_HASH = 'a5e8cdee037af3d0c6421f6bf766d840d38fed0c23ec56f24ffb56cc75616140';
 
 async function hashPassword(pwd) {
@@ -131,13 +130,15 @@ export default function AdminPage({ onNavigate }) {
                         value={pwdInput}
                         onChange={e => { setPwdInput(e.target.value); setPwdError(false); }}
                         placeholder="Password admin"
+                        aria-label="Password amministratore"
+                        aria-invalid={pwdError}
                         autoFocus
                         style={{ padding: '10px 16px', borderRadius: '8px', border: pwdError ? '2px solid #EF4444' : '1px solid #ccc', fontSize: '15px', width: '240px' }}
                     />
                     {pwdError && <p style={{ color: '#EF4444', margin: 0, fontSize: '14px' }}>Password errata</p>}
                     <button type="submit" style={S.primaryBtn}>Accedi</button>
                 </form>
-                <button onClick={() => onNavigate('tutor')} style={{ ...S.primaryBtn, background: 'transparent', color: '#666', marginTop: '12px' }}>
+                <button onClick={() => onNavigate('tutor')} style={{ ...S.primaryBtn, background: 'transparent', color: '#525252', marginTop: '12px' }}>
                     {'\u2190'} Torna alla home
                 </button>
             </div>
@@ -217,7 +218,7 @@ export default function AdminPage({ onNavigate }) {
                     <h3 style={{ margin: '0 0 12px', color: '#6366F1', fontSize: '16px', fontWeight: '700' }}>
                         Verifica Licenza Notion
                     </h3>
-                    <p style={{ fontSize: '14px', color: '#666', margin: '0 0 14px' }}>
+                    <p style={{ fontSize: '14px', color: '#525252', margin: '0 0 14px' }}>
                         Interroga il database Notion "Licenze ELAB" tramite webhook backend.
                     </p>
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -253,7 +254,7 @@ export default function AdminPage({ onNavigate }) {
                                     <div><b>Max Utenti:</b> {licenseResult.maxUsers || 1}</div>
                                 </div>
                             ) : (
-                                <div style={{ fontSize: '14px', color: '#666' }}>
+                                <div style={{ fontSize: '14px', color: '#525252' }}>
                                     {licenseResult.error || 'Codice non trovato.'}
                                 </div>
                             )}
@@ -264,7 +265,7 @@ export default function AdminPage({ onNavigate }) {
                     <h3 style={{ margin: '0 0 12px', color: '#6366F1', fontSize: '16px', fontWeight: '700' }}>
                         Info Collegamento
                     </h3>
-                    <div style={{ fontSize: '14px', color: '#666', lineHeight: '1.8' }}>
+                    <div style={{ fontSize: '14px', color: '#525252', lineHeight: '1.8' }}>
                         <div><b>Webhook:</b> <code style={S.code}>{NOTION_LICENSE_URL}</code></div>
                         <div><b>Database:</b> Licenze ELAB</div>
                         <div><b>Campi:</b> Codice, Scuola, Email, Scadenza, Attiva, MaxUtenti, Piano, DeviceId</div>
@@ -315,7 +316,7 @@ export default function AdminPage({ onNavigate }) {
                                         {h.result?.valid ? 'Valida' : 'Non valida'}
                                     </span>
                                 </span>
-                                <span style={{ flex: 1, fontSize: '14px', color: '#666' }}>{h.result?.school || '—'}</span>
+                                <span style={{ flex: 1, fontSize: '14px', color: '#525252' }}>{h.result?.school || '—'}</span>
                                 <span style={{ flex: 1, fontSize: '14px', color: '#737373' }}>{new Date(h.timestamp).toLocaleString('it-IT')}</span>
                             </div>
                         ))}

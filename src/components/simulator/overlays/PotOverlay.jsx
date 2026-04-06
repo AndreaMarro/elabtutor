@@ -52,7 +52,7 @@ const PotOverlay = React.memo(function PotOverlay({ value, onValueChange, onClos
       <div className={ovStyles.card} onClick={(e) => e.stopPropagation()}>
         <div className={ovStyles.overlayHeader}>
           <span className={ovStyles.label}>Potenziometro</span>
-          <button onClick={onClose} className={ovStyles.closeBtn}>x</button>
+          <button onClick={onClose} className={ovStyles.closeBtn} aria-label="Chiudi pannello potenziometro">x</button>
         </div>
 
         {/* Knob SVG */}
