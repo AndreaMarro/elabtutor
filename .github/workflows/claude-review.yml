@@ -1,0 +1,33 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          direct_prompt: |
+            Review this PR for the ELAB Tutor project. Check:
+            1. No regressions in test count or coverage
+            2. WCAG AA contrast ratios (4.5:1 text, 3:1 graphics)
+            3. No emoji-as-icons (must use ElabIcons.jsx)
+            4. Font minimum 13px, touch target 44x44px
+            5. No fake data or demo mocks
+            6. No new npm dependencies without justification
+            7. No modifications to protected files (CircuitSolver.js, AVRBridge.js, vite.config.js)
+            8. Commit messages follow convention: type(area): description
+            Be concise. Flag only real issues.
