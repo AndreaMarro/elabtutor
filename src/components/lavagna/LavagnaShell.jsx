@@ -17,6 +17,8 @@ import { deriveState, computePanelActions, STATES } from './LavagnaStateManager'
 import MascotPresence from './MascotPresence';
 import ErrorToast from './ErrorToast';
 import { soundTick, soundPlay, soundPause } from './lavagnaSounds';
+import PageBar from './PageBar';
+import useLavagnaPages from './useLavagnaPages';
 import css from './LavagnaShell.module.css';
 
 const NewElabSimulator = lazy(() => import('../simulator/NewElabSimulator'));
@@ -24,7 +26,8 @@ const TeacherDashboard = lazy(() => import('../teacher/TeacherDashboard'));
 const StudentDashboard = lazy(() => import('../student/StudentDashboard'));
 const VolumeViewer = lazy(() => import('./VolumeViewer'));
 const PercorsoPanel = lazy(() => import('./PercorsoPanel'));
-const DrawingOverlay = lazy(() => import('../simulator/canvas/DrawingOverlay'));
+import DrawingOverlay from '../simulator/canvas/DrawingOverlay';
+import { useSessionTracker } from '../../hooks/useSessionTracker';
 
 // Component quick-add buttons for left panel (uses __ELAB_API)
 // Realistic component icons — recognizable by a 10-year-old
@@ -42,7 +45,7 @@ function buildQuickComponents(prefix, volumeNumber = 3) {
         <rect x="8" y="17" width="12" height="2" rx="0.5" fill="#bbb" stroke="#999" strokeWidth="0.5" />
         <path d="M10 19v5" stroke="#999" strokeWidth="1.2" strokeLinecap="round" />
         <path d="M18 19v7" stroke="#999" strokeWidth="1.2" strokeLinecap="round" />
-        <text x="19.5" y="27" fontSize="5" fill="#999" fontFamily="sans-serif">+</text>
+        <text x="19.5" y="27" fontSize="5" fill="#737373" fontFamily="sans-serif">+</text>
       </svg>
     )},
     { type: 'resistor', label: 'Resistore', vol: 1, icon: (
@@ -262,8 +265,22 @@ export default function LavagnaShell() {
   const [currentVolumePage, setCurrentVolumePage] = useState(1);
   const [percorsoOpen, setPercorsoOpen] = useState(false);
   const [unlimTab, setUnlimTab] = useState('chat'); // 'chat' | 'percorso'
-  const [buildMode, setBuildMode] = useState('complete'); // complete | guided | sandbox
+  const [buildMode, setBuildMode] = useState('guided'); // complete | guided | sandbox — Default: Passo Passo
   const [drawingEnabled, setDrawingEnabled] = useState(false);
+
+  // ── Multi-page management with localStorage persistence ──
+  const pageSessionId = currentExperiment?.id || 'sandbox';
+  const lavagnaPages = useLavagnaPages(pageSessionId);
+
+  // Session tracker — traccia messaggi, azioni, errori per il fumetto
+  const sessionTracker = useSessionTracker();
+  const sessionTrackerRef = useRef(sessionTracker);
+  sessionTrackerRef.current = sessionTracker;
+
+  // Save pages on unmount
+  useEffect(() => {
+    return () => lavagnaPages.forceSave();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Principio Zero: auto-open picker on first visit if no experiment loaded
   useEffect(() => {
@@ -379,10 +396,10 @@ export default function LavagnaShell() {
     switch (tool) {
       case 'pen': {
         const next = !drawingEnabled;
-        setDrawingEnabled(next);
+        syncDrawing(next);
         setActiveTool(next ? 'pen' : 'select');
-        const penApi = typeof window !== 'undefined' && window.__ELAB_API;
-        if (penApi?.toggleDrawing) penApi.toggleDrawing(next);
+        // Principio Zero: chiudi picker/volumi se la penna si attiva
+        if (next) { setPickerOpen(false); setVolumeOpen(false); }
         return;
       }
       case 'delete': {
@@ -531,8 +548,8 @@ export default function LavagnaShell() {
         percorsoOpen={galileoOpen && unlimTab === 'percorso'}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        showClasseTab={isDocente}
-        showProgressiTab={isStudente}
+        showClasseTab={isDocente || !!localStorage.getItem('elab_class_key')}
+        showProgressiTab={isStudente || !!localStorage.getItem('elab_class_key')}
       />
 
       <div className={css.body}>
@@ -582,18 +599,20 @@ export default function LavagnaShell() {
             onClose={() => { manualOverridesRef.current.galileo = true; setGalileoOpen(false); }}
             onSpeakingChange={setUnlimSpeaking}
             activeTab={unlimTab}
+            sessionTracker={sessionTracker}
+            experiment={currentExperiment}
           />
         </div>
 
         {/* === DASHBOARD VIEW (docente o studente) === */}
-        {activeTab === 'classe' && isDocente && (
+        {activeTab === 'classe' && (
           <div className={css.dashboardView}>
             <Suspense fallback={<div className={css.loading}><span>Caricamento dashboard...</span></div>}>
               <TeacherDashboard />
             </Suspense>
           </div>
         )}
-        {activeTab === 'progressi' && isStudente && (
+        {activeTab === 'progressi' && (
           <div className={css.dashboardView}>
             <Suspense fallback={<div className={css.loading}><span>Caricamento progressi...</span></div>}>
               <StudentDashboard />
@@ -623,6 +642,23 @@ export default function LavagnaShell() {
         />
       </div>
 
+      {/* ── Page navigation bar ── */}
+      {activeTab === 'lavagna' && (
+        <PageBar
+          pages={lavagnaPages.pages}
+          currentPageIndex={lavagnaPages.currentPageIndex}
+          totalPages={lavagnaPages.totalPages}
+          canGoNext={lavagnaPages.canGoNext}
+          canGoPrev={lavagnaPages.canGoPrev}
+          canAddPage={lavagnaPages.canAddPage}
+          onGoNext={lavagnaPages.goNext}
+          onGoPrev={lavagnaPages.goPrev}
+          onGoToPage={lavagnaPages.goToPage}
+          onAddPage={lavagnaPages.addPage}
+          onDeletePage={lavagnaPages.deletePage}
+        />
+      )}
+
       {/* Bottom panel — placeholder for code/serial (simulator handles its own) */}
       {bottomPanelOpen && (
         <RetractablePanel
@@ -641,7 +677,16 @@ export default function LavagnaShell() {
         </RetractablePanel>
       )}
 
-      {/* Drawing overlay controlled via NewElabSimulator's own DrawingOverlay + __ELAB_API.toggleDrawing */}
+      {/* Drawing overlay — Lavagna's own, fullscreen — saves paths to current page */}
+      {drawingEnabled && (
+        <DrawingOverlay
+          drawingEnabled={true}
+          canvasWidth={typeof window !== 'undefined' ? window.innerWidth : 1024}
+          canvasHeight={typeof window !== 'undefined' ? window.innerHeight : 768}
+          initialFullscreen={true}
+          onPathsChange={lavagnaPages.updatePagePaths}
+        />
+      )}
 
       {/* Error-to-UNLIM bridge — toast when circuit/compilation errors occur */}
       <ErrorToast

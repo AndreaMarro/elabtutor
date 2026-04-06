@@ -29,8 +29,8 @@ const Phototransistor = ({ x = 0, y = 0, state = {}, highlighted = false, onInte
         stroke="#9E9E9E" strokeWidth="1.25" strokeLinecap="round" />
 
       {/* Lead labels (tiny) */}
-      <text x="-4" y="-14" fontSize="2" fill="#777" fontFamily="Fira Code, monospace" textAnchor="end">C</text>
-      <text x="-4" y="16" fontSize="2" fill="#777" fontFamily="Fira Code, monospace" textAnchor="end">E</text>
+      <text x="-4" y="-14" fontSize="2" fill="#737373" fontFamily="Fira Code, monospace" textAnchor="end">C</text>
+      <text x="-4" y="16" fontSize="2" fill="#737373" fontFamily="Fira Code, monospace" textAnchor="end">E</text>
 
       {/* Base collar — metallic ring (flat rectangle) */}
       <rect x="-8" y="4" width="16" height="4" rx="1"
@@ -102,7 +102,7 @@ registerComponent('phototransistor', {
   defaultState: Phototransistor.defaultState,
   category: 'input',
   label: 'Fototransistor',
-  icon: '\u{1F4A1}',
+  icon: '',
   volumeAvailableFrom: 2,
 });
 

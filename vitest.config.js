@@ -27,7 +27,9 @@ export default defineConfig({
                     lines: 60,
                     statements: 60,
                 },
+                autoUpdate: true,
             },
+            reportOnFailure: true,
             include: [
                 'src/services/authService.js',
                 'src/utils/crypto.js',

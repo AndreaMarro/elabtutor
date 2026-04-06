@@ -198,7 +198,7 @@
 .heroBadge {
   display: inline-block;
   background: rgba(124,179,66,0.2); border: 1px solid rgba(124,179,66,0.4);
-/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   color: #9CCC65; font-size: 14px; font-weight: 600;
   padding: 4px 16px; border-radius: 20px;
   letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;
@@ -294,7 +294,7 @@
   color: #1A2B4A; font-size: 16px; font-weight: 700;
   margin: 0 0 6px; font-family: var(--font-display, 'Oswald', sans-serif);
 }
-.featureDesc { color: #6B7D94; font-size: 14px; line-height: 1.55; margin: 0; }
+.featureDesc { color: #5A6B7D; font-size: 14px; line-height: 1.55; margin: 0; }
 
 .volumeAccent { height: 5px; width: 100%; }
 .volumeBody { padding: 22px 22px 18px; }
@@ -313,7 +313,7 @@
   font-weight: 700; color: #1A2B4A; font-size: 18px; margin: 4px 0 0;
   font-family: var(--font-display, 'Oswald', sans-serif);
 }
-.volDesc { color: #6B7D94; font-size: 14px; line-height: 1.55; margin: 0 0 16px; }
+.volDesc { color: #5A6B7D; font-size: 14px; line-height: 1.55; margin: 0 0 16px; }
 .volFooter {
   display: flex; justify-content: space-between; align-items: flex-end;
   border-top: 1px solid #F0F2F5; padding-top: 12px;
@@ -324,7 +324,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif); line-height: 1;
 }
 .volStatLabel { color: #6B7A8D; font-size: 14px; font-weight: 500; }
-.volChapters { color: #7A8A9A; font-size: 14px; font-weight: 500; }
+.volChapters { color: #667788; font-size: 14px; font-weight: 500; }
 
 .expandBtn {
   background: white; border: 1px solid #E0E6ED; border-radius: 14px;
@@ -365,7 +365,7 @@
   color: #1A2B4A; font-size: 24px; font-weight: 700; margin: 0 0 8px;
   font-family: var(--font-display, 'Oswald', sans-serif);
 }
-.activationDesc { color: #6B7D94; font-size: 15px; margin: 0 0 24px; line-height: 1.55; }
+.activationDesc { color: #5A6B7D; font-size: 15px; margin: 0 0 24px; line-height: 1.55; }
 .form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .input {
   padding: 14px 18px; border: 2px solid #E0E6ED; border-radius: 12px;
@@ -380,7 +380,7 @@
 .divider { display: flex; align-items: center; gap: 16px; margin: 28px 0; }
 .dividerLine { flex: 1; height: 1px; background: #E8ECF0; }
 .dividerText {
-  color: #7A8A9A; font-size: 14px; font-weight: 600;
+  color: #667788; font-size: 14px; font-weight: 600;
   letter-spacing: 0.5px; white-space: nowrap;
 }
 
@@ -399,7 +399,7 @@
 .schoolsTitle {
   font-size: 24px; font-weight: 700; margin: 0 0 12px;
   font-family: var(--font-display, 'Oswald', sans-serif);
-/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 }
 .schoolsDesc {
   font-size: 15px; line-height: 1.6; margin: 0 0 24px;
@@ -415,7 +415,7 @@
 .schoolsBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
 
 .backLink {
-  background: none; border: none; color: #6B7D94;
+  background: none; border: none; color: #5A6B7D;
   font-size: 14px; cursor: pointer; font-weight: 500;
   padding: 12px 16px; min-height: 44px;
 }

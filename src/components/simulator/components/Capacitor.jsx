@@ -77,7 +77,7 @@ const Capacitor = ({ x = 0, y = 0, state = {}, highlighted = false, onInteract, 
       </text>
 
       {/* Voltage rating (small, below value) */}
-      <text x="1" y="5" textAnchor="middle" fontSize="2" fill="#777777"
+      <text x="1" y="5" textAnchor="middle" fontSize="2" fill="#737373"
         fontFamily="Fira Code, monospace">
         25V
       </text>
@@ -165,7 +165,7 @@ registerComponent('capacitor', {
   defaultState: Capacitor.defaultState,
   category: 'passive',
   label: 'Condensatore',
-  icon: '\u{26A1}',
+  icon: '',
   volumeAvailableFrom: 2,
 });
 
