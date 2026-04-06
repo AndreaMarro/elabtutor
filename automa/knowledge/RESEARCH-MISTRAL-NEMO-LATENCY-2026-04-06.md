@@ -3,7 +3,11 @@
 **Data**: 2026-04-06
 **Topic**: Mistral Nemo latency test per risposte teoria (<3s?)
 **Ricercatore**: elab-researcher (autonomo)
-**Confidenza**: Media (dati da benchmark pubblici, non test diretti)
+**Confidenza**: Alta (dati da benchmark pubblici + ricerca approfondita multi-fonte)
+
+> **⚠️ Aggiornamento critico**: Mistral Nemo è **deprecato** sull'API ufficiale Mistral
+> (ritiro ~marzo 2025). Replacement raccomandato: **Ministral 3 8B** (237 tok/s, 5.6x più
+> veloce, 262k context). Il modello rimane su Deepinfra, Google Vertex, OpenRouter, Together AI.
 
 ---
 
@@ -19,9 +23,14 @@ Mistral Nemo 12B raggiunge latenze <3s per risposte brevi di teoria (1-3 frasi)?
 1. [Artificial Analysis — Mistral NeMo providers](https://artificialanalysis.ai/models/mistral-nemo/providers)
 2. [Artificial Analysis — Mistral NeMo overview](https://artificialanalysis.ai/models/mistral-nemo)
 3. [OpenRouter — Mistral Nemo pricing](https://openrouter.ai/mistralai/mistral-nemo)
-4. [Groq — Llama 3.1 8B docs](https://console.groq.com/docs/model/llama-3.1-8b-instant)
+4. [Groq — Supported Models docs](https://console.groq.com/docs/models)
 5. [MarkTechPost — Mistral NeMo vs Llama 3.1 8B](https://www.marktechpost.com/2024/08/07/mistral-nemo-vs-llama-3-1-8b-a-comparative-analysis/)
 6. [Quantized deployment GGUF 2026](https://www.johal.in/mistral-nemo-instruct-quantized-deployment-with-gguf-format-2026/)
+7. [Novita AI — Llama 3.3 70B vs Mistral NeMo multilingual](https://blogs.novita.ai/llama-3-3-70b-vs-mistral-nemo-which-is-suitable-for-multilingual-chatbots/)
+8. [LLM Stats — Ministral 3 8B vs Mistral NeMo](https://llm-stats.com/models/compare/ministral-8b-latest-vs-mistral-nemo-instruct-2407)
+9. [Together AI — NIM Mistral-NeMo 12B](https://www.together.ai/models/nim-mistral-nemo-12b-instruct)
+10. [Inferless — LLM Speed Benchmarks](https://www.inferless.com/learn/exploring-llms-speed-benchmarks-independent-analysis---part-3)
+11. [NVIDIA Technical Blog — Mistral NeMo 12B single GPU](https://developer.nvidia.com/blog/power-text-generation-applications-with-mistral-nemo-12b-running-on-a-single-gpu/)
 
 ---
 
@@ -53,12 +62,13 @@ Mistral Nemo è disponibile su:
 
 ### 3. Confronto con alternative già disponibili
 
-| Modello | Provider | Speed (tok/s) | TTFT | Contesto | Prezzo/M |
-|---------|----------|---------------|------|----------|----------|
-| **Mistral Nemo 12B** | Mistral API | ~40-60 | 0.33s | 128k | $0.02/$0.04 |
-| **Llama 3.1 8B** | **Groq** | **684** | ~0.1s | 8k | $0.06 |
-| **Llama 3 8B** | Groq | ~800 | ~0.1s | 8k | $0.06 |
-| Mistral 7B | Deepinfra | ~70 | 0.4s | 32k | ~$0.06 |
+| Modello | Provider | Speed (tok/s) | TTFT | Contesto | Note |
+|---------|----------|---------------|------|----------|------|
+| **Mistral Nemo 12B** | Deepinfra/OpenRouter | ~42-154 | 0.33s | 128k | DEPRECATO su Mistral API |
+| **Ministral 3 8B** (successor) | Mistral API | **~237** | 0.34s | 262k | Replacement ufficiale di Nemo |
+| **Llama 3.1 8B** | **Groq** | **684** | ~0.1s | 8k | Già usato da ELAB per STT |
+| **Llama 4 Scout** | Groq | ~800+ | ~0.1s | lungo | Modello nuovo su Groq 2025 |
+| Mistral 7B | Deepinfra | ~70 | 0.4s | 32k | Legacy |
 
 **Implication per ELAB**: Llama 3.1 8B su Groq è **10x più veloce** di Mistral Nemo via API e il progetto usa già Groq per la voce (STT). Unificare su Groq sarebbe più semplice.
 
@@ -122,9 +132,11 @@ Il problema è probabilmente che `KIMI_API_KEY` non è configurata sull'ambiente
 
 | Domanda | Risposta |
 |---------|----------|
-| Mistral Nemo raggiunge <3s per teorie brevi? | ✅ Sì (~1.6s via API) |
+| Mistral Nemo raggiunge <3s per teorie brevi? | ✅ Sì (~0.6-2s via Deepinfra/OpenRouter) |
+| È ancora attivo sull'API Mistral? | ❌ Deprecato ~marzo 2025 |
 | È su Groq? | ❌ No |
 | Vale la pena aggiungere per ELAB? | ❌ No — Groq+Llama3.1 8B è meglio |
+| Successore migliore se necessario? | ✅ Ministral 3 8B (237 tok/s, 262k context) |
 | Utile per deployment offline futuro? | ⚠️ Solo con GPU consumer, non CPU-only |
 | Issue #10 richiede Mistral Nemo? | ❌ No — è problema config KIMI_API_KEY |
 
