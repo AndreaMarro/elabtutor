@@ -2,6 +2,18 @@
 
 Questo file traccia i topic investigati dal ricercatore autonomo ELAB.
 
+## Audit Produzione (elab-auditor)
+
+| Data | Audit | Stato | P0 | P1 | P2 | P3 | Report |
+|------|-------|-------|----|----|----|----|--------|
+| 2026-04-07 | Audit produzione #1 | ✅ 6/6 PASS | 0 | 0 | 0 | 1 | AUDIT-2026-04-06T22-52-26.md |
+
+**Ultimo Audit**: 2026-04-07 — Homepage OK, Login OK, Auth redirect OK, Nessuna regressione critica.
+**Issue noto**: CSP `frame-ancestors` via meta element (P3 — cosmetico, ignorato dal browser).
+**Limitazione**: Esperimenti interni non testabili senza `ELAB_PASSWORD` configurata.
+
+## Research Topics Investigati
+
 | Data | Topic | File | Actionable? | Orders Creati |
 |------|-------|------|-------------|---------------|
 | 2026-04-07 | DM219/PNRR opportunità MePA scuole | RESEARCH-2026-04-07-PNRR-DM219-MEPA.md | SI — critico | ORDER-2026-04-07-MEPA-PNRR-LANDING.md |
