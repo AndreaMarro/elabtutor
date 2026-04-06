@@ -258,12 +258,24 @@ export default function LavagnaShell() {
   const [leftPanelSize, setLeftPanelSize] = useState(180);
   const [bottomPanelSize, setBottomPanelSize] = useState(200);
   const [volumeOpen, setVolumeOpen] = useState(false);
-  const [currentVolume, setCurrentVolume] = useState(1);
-  const [currentVolumePage, setCurrentVolumePage] = useState(1);
+  const [currentVolume, setCurrentVolume] = useState(() => {
+    try { return parseInt(localStorage.getItem('elab-lavagna-volume') || '1', 10) || 1; } catch { return 1; }
+  });
+  const [currentVolumePage, setCurrentVolumePage] = useState(() => {
+    try { return parseInt(localStorage.getItem('elab-lavagna-page') || '1', 10) || 1; } catch { return 1; }
+  });
   const [percorsoOpen, setPercorsoOpen] = useState(false);
   const [unlimTab, setUnlimTab] = useState('chat'); // 'chat' | 'percorso'
   const [buildMode, setBuildMode] = useState('complete'); // complete | guided | sandbox
   const [drawingEnabled, setDrawingEnabled] = useState(false);
+
+  // Persist currentVolume and currentVolumePage to localStorage
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-volume', String(currentVolume)); } catch {}
+  }, [currentVolume]);
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-page', String(currentVolumePage)); } catch {}
+  }, [currentVolumePage]);
 
   // Principio Zero: auto-open picker on first visit if no experiment loaded
   useEffect(() => {
