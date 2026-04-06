@@ -198,7 +198,7 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 <value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
 </block></value>
 <statement name="DO0">
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
 <next><block type="arduino_tone"><field name="PIN">8</field><value name="FREQ"><shadow type="math_number"><field name="NUM">523</field></shadow></value>
 <next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
@@ -399,7 +399,7 @@ const SERIAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
 <value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valore</field></block></value>
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
 </block></next></block></next></block>
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 </statement>
 </block></xml>`;
 
@@ -600,7 +600,7 @@ void loop() {
         { from: "bb1:j22", to: "bb1:a22", color: "orange" },
         { from: "bb1:a26", to: "bb1:a25", color: "orange" },
         { from: "bb1:d30", to: "bb1:bus-bot-minus-30", color: "black" }
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ],
       pinAssignments: {
         "btn1:pin1": "bb1:e18", "btn1:pin2": "bb1:e22",
@@ -801,7 +801,7 @@ void loop() {
         {
           question: "A cosa serve creare funzioni come punto() e linea()?",
           options: ["A rendere il programma piu lento", "A organizzare il codice e evitare ripetizioni", "A cambiare il colore del LED"],
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           correct: 1,
           explanation: "Le funzioni raggruppano istruzioni che si ripetono. Invece di scrivere lo stesso codice 6 volte, creiamo punto() e linea() e le richiamiamo quando servono!"
         }
@@ -1002,7 +1002,7 @@ void loop() {
         { from: "bb1:d23", to: "bb1:d25", color: "green" },
         { from: "bb1:a26", to: "bb1:bus-bot-minus-26", color: "black" },
         { from: "nano1:W_D6", to: "bb1:a22", color: "yellow" },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:a30", to: "bb1:bus-bot-minus-30", color: "black" },
         { from: "nano1:W_D3", to: "bb1:f16", color: "red" },
         { from: "bb1:h23", to: "bb1:h30", color: "green" },
@@ -1203,7 +1203,7 @@ void loop() {
           step: 1,
           text: "Configura i 3 pin — trascina 3 blocchi PinMode nel Setup: pin 5 OUTPUT (verde), pin 6 OUTPUT (giallo), pin 3 OUTPUT (rosso)",
           explanation: "Un semaforo ha 3 luci indipendenti, quindi servono 3 pin diversi. Ogni blocco PinMode configura un pin — puoi impilarli uno sotto l'altro nel Setup.",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           xml: `<xml xmlns="https://developers.google.com/blockly/xml">
 <block type="arduino_base" x="40" y="30" deletable="false">
 <statement name="SETUP">
@@ -1404,7 +1404,7 @@ void loop() {
       observe: "All'avvio il LED verde è acceso e il rosso spento. Ogni volta che premi il pulsante, si scambiano: il verde si spegne e il rosso si accende, o viceversa. Il codice usa il debounce per evitare rimbalzi meccanici del pulsante.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento '2 LED + Pulsante (toggle)' del Volume 3 — Arduino Programmato. Questo è l'esperimento più avanzato del capitolo 7! Il codice usa variabili booleane (statoVerde e ultimoPulsante) per ricordare lo stato tra un ciclo e l'altro. Rileva la transizione HIGH->LOW del pulsante (il momento esatto della pressione) e usa il debounce con delay(50) per evitare falsi contatti. Poi con if/else alterna quale LED è acceso. È come un interruttore che ogni volta che lo premi cambia stanza! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: `// 2 LED + Pulsante Toggle
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 // D6 (W_D6) = pulsante, D10 (W_D10) = verde, D9 (W_D9) = rosso
 // Premi per alternare: verde <-> rosso
 
@@ -1605,7 +1605,7 @@ void loop() {
     },
     {
       id: "v3-cap6-esp7",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       title: "Cap. 6 Esp. 7 - Debounce del pulsante",
       desc: "Miglioriamo il toggle! Il debounce con while aspetta che il pulsante venga rilasciato prima di continuare. Cosi evitiamo che un solo tocco venga letto come tante pressioni.",
       chapter: "Capitolo 6 - I pin digitali",
@@ -1806,7 +1806,7 @@ void loop() {
       layout: {
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "pot1": { x: 462.75, y: 83.75 },
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
@@ -2007,7 +2007,7 @@ void loop() {
       difficulty: 1,
       icon: "\u{1F4A1}",
       simulationMode: "avr",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       components: [
         { type: "breadboard-half", id: "bb1" },
         { type: "nano-r4", id: "nano1" },
@@ -2208,7 +2208,7 @@ void loop() {
         }
       ]
     },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
     {
       id: "v3-cap7-esp8",
       title: "Cap. 7 Esp. 8 - DAC reale (10 bit)",
@@ -2409,7 +2409,7 @@ void loop() { Serial.println("Ciao dal Team di ELAB!"); }`,
         "pot1": { x: 462.75, y: 83.75 }
       },
       steps: [
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Costruisci lo stesso circuito dell'esperimento precedente (potenziometro su A0).",
         "Carica il programma: apre la comunicazione seriale a 9600 baud.",
         "Apri il Serial Monitor nel simulatore (pannello in basso).",
@@ -2610,7 +2610,7 @@ void loop() {
       chapter: "Capitolo 8 - Comunicazione Seriale",
       difficulty: 3,
       icon: "\u{1F3C6}",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       simulationMode: "avr",
       components: [
         { type: "breadboard-half", id: "bb1" },
@@ -2811,7 +2811,7 @@ void loop() {
             "lcd1:vcc": "bb1:bus-bot-plus-25", "lcd1:gnd": "bb1:bus-bot-minus-25"
           },
           hint: "L'LCD usa 6 pin dati (RS, E, D4-D7) + VCC e GND. È il componente più complesso!"
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 2,
@@ -3012,7 +3012,7 @@ void loop() {
           text: "Collega un filo ARANCIONE dal pin D9 dell'Arduino al foro E20 (segnale del servo)",
           wireFrom: "nano1:W_D9",
           wireTo: "bb1:e20",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "orange",
           hint: "Il pin D9 genera il segnale PWM che controlla l'angolo del servo (0-180°)."
         }
@@ -3213,7 +3213,7 @@ void gameOver() {
     }
     tone(BUZZER, 150);
     delay(200);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
     for (int i = 0; i < 4; i++) {
       digitalWrite(LED[i], LOW);
     }
@@ -3414,7 +3414,7 @@ void loop() {
         /* === PULSANTE VERDE (btn2) === */
         {
           step: 20,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il pulsante VERDE a cavallo del gap — pin nel foro E20 e F20",
           componentId: "btn2",
           componentType: "push-button",
@@ -3615,6 +3615,6 @@ void loop() {
     }
   ]
 };
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
 export default EXPERIMENTS_VOL3;

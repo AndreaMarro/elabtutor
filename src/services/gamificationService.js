@@ -198,7 +198,7 @@ function showConfetti(container) {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;overflow:hidden';
   wrapper.setAttribute('aria-hidden', 'true');
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
   for (let i = 0; i < count; i++) {
     const piece = document.createElement('div');

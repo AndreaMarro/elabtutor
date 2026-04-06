@@ -198,7 +198,7 @@ async function requestDataCorrection(userId, corrections) {
 }
 
 /**
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Revoca consenso (Art. 7)
  * @param {string} userId
  * @returns {Promise<Object>}
@@ -399,7 +399,7 @@ function getCOPPARequirements(age) {
 /**
  * Minimizza dati raccolti
  * @param {Object} data - Dati originali
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * @param {Array} allowedFields - Campi consentiti
  * @returns {Object}
  */
