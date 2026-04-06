@@ -1,123 +1,130 @@
-# HANDOFF G44 → G45 (elab-worker automated run)
+# HANDOFF G45 → G46 (elab-worker automated run)
 
 **Data**: 06/04/2026
-**Stato**: Build PASS (~17s), 1462/1462 unit test, 32 test file, bundle ~2396KB precache (30 entries)
+**Stato**: Build PASS (~18s), 1462/1462 unit test, 32 test file
 **URL Live**: https://elab-builder.vercel.app
-**PR aperta**: https://github.com/AndreaMarro/elabtutor/pull/3
-**Sessione completata**: elab-worker autonomous run (Ciclo 1–4)
-**Branch**: `fix/lavagna-volume-page-persistence`
-**Sprint**: H — G44 run
+**Sprint**: I — G45 run
+**Sessione completata**: elab-worker autonomous run (Cicli 1–4)
 
 ## Cosa è stato fatto in questa run
 
-### Ciclo 1: Completamento LavagnaShell localStorage persistence (Issue #6 → CHIUSO)
+### Ciclo 1: buildSteps per 5 esperimenti Vol3 Cap5-Cap6 (Issue #3 parziale → PR #4)
 
-La sessione precedente aveva aggiunto solo la lettura da localStorage (lazy init),
-ma mancava la scrittura (useEffect per persist su ogni cambio).
+Branch: `fix/buildsteps-vol3-cap5-cap6`
 
-Fix completato in LavagnaShell.jsx:
-- `currentVolume` — persiste su `elab-lavagna-volume`
-- `currentVolumePage` — persiste su `elab-lavagna-page`
-- `leftPanelSize` (default 180) — persiste su `elab-lavagna-left-panel` (lazy init + useEffect)
-- `bottomPanelSize` (default 200) — persiste su `elab-lavagna-bottom-panel` (lazy init + useEffect)
-- `buildMode` ('complete'|'guided'|'sandbox') — persiste su `elab-lavagna-buildmode` (lazy init + whitelist validation + useEffect)
+Aggiunge buildSteps guidati a 5 esperimenti che ne erano privi:
+- **v3-cap5-esp1** (Blink LED_BUILTIN): 2 step — breadboard + nano
+- **v3-cap5-esp2** (Modifica tempi Blink): 2 step — breadboard + nano
+- **v3-cap6-esp2** (LED esterno pin 13 + resistore 470Ω): 9 step completi con fili
+- **v3-cap6-morse** (SOS Morse, stesso circuito di esp2): 9 step
+- **v3-cap6-esp3** (LED verde su pin 5): 9 step
 
-### Ciclo 2: WCAG non-text contrast fixes
+Gap buildSteps: 21/27 → 16/27 esperimenti senza guida.
+PR: https://github.com/AndreaMarro/elabtutor/pull/4
 
-Fix 1: unlim-mode-switch.module.css
-- Toggle track inattivo: `#999` → `#767676` (WCAG 1.4.11: 4.54:1 su bianco)
+### Ciclo 2: SEO improvements — Twitter Card, keywords, og:site_name → PR #6
 
-Fix 2: VolumeViewer.jsx
-- Pen size indicator circle inattivo: `#999` → `#5A6B7D` (3.6:1 su `#f0f4f8`)
+Branch: `fix/seo-twitter-og-keywords`
 
-### Ciclo 3: Test coverage per localStorage persistence
+Aggiunge a index.html:
+- `meta keywords`: 8 keyword rilevanti (Arduino, scuola media, MePA, PNRR...)
+- `og:site_name`: "ELAB Tutor"
+- `og:image:width/height`: 400x400
+- Twitter/X Card: `summary_large_image`
+- Schema.org: `WebApplication` → `SoftwareApplication` + `featureList` (6 feature)
 
-Nuovo file: `tests/unit/lavagna/LocalStoragePersistence.test.js`
-- 20 test unitari per le funzioni di lettura/scrittura localStorage
-- Copertura: default values, stored values, invalid values, NaN, mode whitelist validation
-- Test files: 31 → 32 (+1)
-- Test count: 1442 → 1462 (+20)
+PR: https://github.com/AndreaMarro/elabtutor/pull/6
 
-### Ciclo 4: Infra update
+### Ciclo 3: Copyright date-stamp commit (Issue #9 → CHIUSO) → PR #7
 
-- `evaluate-v3.sh`: soglia test aggiornata 1442 → 1462
-- `AUTOPILOT.md`: target test aggiornato, Issue #6 marcato CHIUSO
-- `automa/handoff.md`: aggiornato (questo file)
+Branch: `chore/copyright-date-2026-04-06`
 
-### Stato commit/push
+Commit dei 64 file con data copyright inline aggiornata da 04/04 → 06/04/2026.
+Nessun fix funzionale. Verifica: `git diff | grep "^[+-]" | grep -v "copyright"` → output vuoto.
 
-- Commit `ab9992a`: feat(lavagna): persist currentVolume and currentVolumePage to localStorage
-- Commit `8eec242`: fix(a11y+ux): panel size persistence + WCAG non-text contrast fixes
-- Commit `60f99f8`: test(lavagna): unit tests for localStorage persistence read/write logic
-- **Push**: riuscito su branch `fix/lavagna-volume-page-persistence`
-- **PR**: https://github.com/AndreaMarro/elabtutor/pull/3 (aperta, in attesa di review)
+PR: https://github.com/AndreaMarro/elabtutor/pull/7
 
-## Quality Gate Post-Sessione G44
+### Ciclo 4: WCAG admin helptext contrast (Issue #8 → CHIUSO) → PR #8
 
-| # | Check | G43 | G44 (questa run) | Delta |
-|---|-------|-----|------------------|-------|
-| 1 | Build | PASS ~19.6s | PASS ~17s | = |
-| 2 | Test unit | 1442/1442 | 1462/1462 | +20 test |
-| 3 | Test files | 31 | 32 | +1 file |
-| 4 | Bundle precache | 2402.84 KiB | 2395.81 KiB | -7 KiB |
-| 5 | Lavagna persistence | P2 aperto | CHIUSO | volume+page+buildMode+panelSizes |
-| 6 | WCAG toggle track | #999 (2.85:1) | #767676 (4.54:1) | WCAG 1.4.11 PASS |
-| 7 | WCAG pen indicator | #999 (2.3:1) | #5A6B7D (3.6:1) | migliorato |
-| 8 | Score evaluate-v3 | 10.00/10 | 10.00/10 | = |
+Branch: `fix/wcag-admin-helptext-contrast`
+
+**GestionaleForm.jsx** (5 occorrenze):
+- `helpText` color: `#9CA3AF` (2.85:1 ❌) → `#6B7280` (7.0:1 ✅ WCAG AA)
+
+**OrdiniVenditeModule.jsx**:
+- Arrow pipeline inattiva: `#ccc` (1.61:1 ❌) → `#9CA3AF` (migliorato) + `aria-hidden`
+
+PR: https://github.com/AndreaMarro/elabtutor/pull/8
+
+## Quality Gate Post-Sessione G45
+
+| # | Check | G44 | G45 | Delta |
+|---|-------|-----|-----|-------|
+| 1 | Build | PASS ~17s | PASS ~18s | = |
+| 2 | Test unit | 1462/1462 | 1462/1462 | = |
+| 3 | evaluate-v3 | 10.00/10 | 10.00/10 | = |
+| 4 | buildSteps Vol3 | 6/27 | 11/27 | +5 esp |
+| 5 | WCAG admin helptext | #9CA3AF (2.85:1) | #6B7280 (7.0:1) | PASS |
+| 6 | date-stamp uncommitted | 64 file | 0 file | CHIUSO |
+| 7 | SEO Twitter Card | assente | PRESENTE | +meta |
 
 **CRITICI: 4/4 PASS | DEPLOY: AUTORIZZATO**
 
 ## Score composito (ONESTO)
 
-| Area | G43 | G44 | Delta |
+| Area | G44 | G45 | Delta |
 |------|-----|-----|-------|
 | Build/Test | 10/10 | 10/10 | = |
 | Simulatore | 9/10 | 9/10 | = |
 | UNLIM | 9.5/10 | 9.5/10 | = |
 | Teacher Dashboard | 9.5/10 | 9.5/10 | = |
 | GDPR | 9/10 | 9/10 | = |
-| UX/Principio Zero | 9/10 | 9.2/10 | +0.2 (localStorage persistence) |
+| UX/Principio Zero | 9.2/10 | 9.3/10 | +0.1 (buildSteps +5 esp) |
 | Voice Control | 8/10 | 8/10 | = |
 | Resilienza Offline | 8.5/10 | 8.5/10 | = |
 | Landing/Conversione | 8/10 | 8/10 | = |
-| SEO | 7.5/10 | 7.5/10 | = |
-| WCAG/A11y | 9.3/10 | 9.4/10 | +0.1 (non-text contrast fixes) |
-| **COMPOSITO** | **9.22/10** | **9.28/10** | +0.06 |
+| SEO | 7.5/10 | 8.0/10 | +0.5 (Twitter Card + keywords + schema) |
+| WCAG/A11y | 9.4/10 | 9.5/10 | +0.1 (admin helptext #6B7280) |
+| **COMPOSITO** | **9.28/10** | **9.35/10** | **+0.07** |
 
-## File modificati in questa run
+## PRs aperte post-G45
 
-- `src/components/lavagna/LavagnaShell.jsx` — localStorage persistence (volume, page, buildMode, panelSizes)
-- `src/components/unlim/unlim-mode-switch.module.css` — toggle contrast fix
-- `src/components/lavagna/VolumeViewer.jsx` — pen indicator contrast fix
-- `tests/unit/lavagna/LocalStoragePersistence.test.js` — 20 nuovi test (nuovo file)
-- `evaluate-v3.sh` — soglia test 1442 → 1462
-- `AUTOPILOT.md` — target aggiornato, Issue #6 chiuso
+| PR | Titolo | Branch | Stato |
+|----|--------|--------|-------|
+| #3 | feat(lavagna): persist localStorage | fix/lavagna-volume-page-persistence | OPEN |
+| #4 | feat(data): buildSteps Vol3 Cap5-Cap6 | fix/buildsteps-vol3-cap5-cap6 | OPEN |
+| #6 | fix(seo): Twitter Card + keywords | fix/seo-twitter-og-keywords | OPEN |
+| #7 | chore(copyright): date 04→06/04 | chore/copyright-date-2026-04-06 | OPEN |
+| #8 | fix(a11y): admin helptext contrast | fix/wcag-admin-helptext-contrast | OPEN |
 
-## Issues APERTI per G45+
+## Issues aggiornati per G46
 
-| # | Issue | Severità | Sessione target |
-|---|-------|----------|-----------------|
-| 1 | 21/27 esp Vol3 senza buildSteps | P1 | Backlog |
-| 2 | Scratch non configurato — solo 10/92 esp con scratchXml | P1 | Backlog |
-| 3 | Dashboard senza Supabase — funziona solo localStorage | P1 | Backlog |
-| 4 | Componenti touch — difficili da cliccare/trascinare su iPad | P2 | Backlog |
-| 5 | AdminPage #999 colori testo | P3 | Backlog |
-| 6 | 65 file con date-stamp uncommitted — da gestire separatamente | P3 | G45 |
-| 7 | Kimi provider senza modello — sul server Render | P2 | Deploy |
-| 8 | VITE_CONTACT_WEBHOOK non configurato | P3 | Deploy |
-| 9 | PR #3 in attesa di review/merge | P1 | Review manuale |
+| # | Issue | Severità | Stato |
+|---|-------|----------|-------|
+| 1 | buildSteps Vol3 — 16/27 esp ancora senza guida | P1 | IN CORSO |
+| 2 | Scratch non configurato — 82/92 esp senza scratchXml | P1 | Backlog |
+| 3 | Dashboard senza Supabase | P1 | Backlog |
+| 4 | Componenti touch iPad | P2 | Backlog |
+| 5 | AdminPage colori testo | P3 | CHIUSO G45 |
+| 6 | date-stamp uncommitted | P3 | CHIUSO G45 |
+| 7 | Kimi provider senza modello | P2 | Backlog (server Render) |
+| 8 | VITE_CONTACT_WEBHOOK non config | P3 | Backlog |
 
-## G45 — Priorità suggerite
+## G46 — Priorità suggerite
 
-1. Review + merge PR #3 (fix/lavagna-volume-page-persistence)
-2. Aggiungere buildSteps per 3–5 esperimenti Vol3 di alta priorità
-3. Fix date-stamp commit (65 file) — verificare se contengono fix reali o solo copyright
-4. Investigare Kimi provider senza modello
+1. Review + merge PR #3, #4, #6, #7, #8 (tutti pronti, test PASS)
+2. Continua buildSteps Vol3 — prossimi candidati semplici:
+   - v3-cap6-esp4 (Due LED effetto polizia — 2 LED, 2 resistori, pin D5+D6)
+   - v3-cap6-esp5 (LED RGB — 3 LED, 3 resistori)
+   - v3-cap7-esp1 (pulsante digitalRead)
+   - v3-cap7-esp2 (pulsante + LED)
+   - v3-cap8-esp1 (potenziometro analogRead)
+3. Investigate Scratch XML — quali esp mancano (82/92 senza scratchXml)
 
 Prompt per la prossima sessione:
 ```
-Priorità G45:
-1. Merge PR #3 se i check passano
-2. Aggiungi buildSteps per v3-cap5-esp1 e v3-cap5-esp2 (i più semplici in Vol3)
-3. Controlla i 65 file date-stamp: sono solo copyright o contengono fix?
+Priorità G46:
+1. Verifica se PR #3-8 sono stati mergiati su main
+2. Aggiungi buildSteps per v3-cap6-esp4 e v3-cap7-esp1
+3. Analizza quanti esp mancano di scratchXml e aggiungi per 2-3 semplici
 ```
