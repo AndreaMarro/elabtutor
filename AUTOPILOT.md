@@ -11,7 +11,7 @@
 ## Comandi essenziali
 ```bash
 export PATH="/opt/homebrew/bin:$PATH"   # node/npm non in PATH di default
-npm test -- --run                        # unit tests (target: 1442 pass)
+npm test -- --run                        # unit tests (target: 1462 pass)
 npm run build                            # vite build (target: PASS, ~17s)
 bash evaluate-v3.sh                      # score composito /10
 git push origin <branch> && gh pr create # push + PR (gh auth OK)
@@ -19,7 +19,7 @@ git push origin <branch> && gh pr create # push + PR (gh auth OK)
 
 ## Score target
 - Build: PASS
-- Tests: >= 1442 passati
+- Tests: >= 1462 passati
 - Score composito: >= 9.2/10
 
 ## Score baseline (G43, 2026-04-06)
@@ -47,7 +47,7 @@ git push origin <branch> && gh pr create # push + PR (gh auth OK)
 | 3 | 21/27 esp Vol3 senza buildSteps | P1 | mancano 3 modalità |
 | 4 | Scratch non configurato | P1 | solo 10/92 esp con scratchXml |
 | 5 | Dashboard senza Supabase | P1 | solo localStorage |
-| 6 | Lavagna — no persistenza pagine | P2 | localStorage non salva |
+| 6 | Lavagna — no persistenza pagine | P2 → CHIUSO G44 | volume, page, buildMode, panelSizes ora salvati |
 | 7 | Componenti touch difficili iPad | P2 | 44px touch target |
 | 8 | AdminPage #999 colori testo | P3 | contrasto basso |
 | 9 | 65 file date-stamp uncommitted | P3 | rumore, gestire separatamente |

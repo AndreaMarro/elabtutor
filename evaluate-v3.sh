@@ -26,7 +26,7 @@ fi
 TEST_SCORE=0
 if npm test -- --run --silent > /tmp/elab-test.log 2>&1; then
   TOTAL=$(grep -oE 'Tests\s+[0-9]+ passed' /tmp/elab-test.log | grep -oE '[0-9]+' | head -1 || echo 0)
-  if [ "${TOTAL:-0}" -ge 1442 ]; then
+  if [ "${TOTAL:-0}" -ge 1462 ]; then
     TEST_SCORE=2
     DETAILS+=("tests: 2/2 PASS (${TOTAL} tests)")
   elif [ "${TOTAL:-0}" -ge 1000 ]; then
