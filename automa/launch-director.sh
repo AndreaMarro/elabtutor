@@ -1,41 +1,60 @@
 #!/bin/bash
-# ELAB Autopilot — Director Launcher
-# Lanciato da cron ogni 12 ore. Revisiona il lavoro e pianifica.
+# ELAB Autopilot — Director v2 (STRATEGIC + RESEARCH HEAVY)
+# Lanciato da cron ogni 8 ore. Pensa, ricerca, pianifica, genera idee.
 
 ELAB_DIR="/Users/andreamarro/VOLUME 3/PRODOTTO/elab-builder"
 LOG_DIR="$ELAB_DIR/automa/logs"
 TIMESTAMP=$(date +%Y%m%d-%H%M)
 LOG_FILE="$LOG_DIR/director-$TIMESTAMP.log"
+export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ 2>/dev/null | tail -1)/bin:$PATH"
 
 mkdir -p "$LOG_DIR"
 
-echo "=== ELAB Autopilot Director — $TIMESTAMP ===" > "$LOG_FILE"
+echo "=== ELAB Director v2 — $TIMESTAMP ===" > "$LOG_FILE"
 cd "$ELAB_DIR"
 
-claude --dangerously-skip-permissions \
+DAY=$(( ($(date +%s) - $(date -j -f '%Y-%m-%d' '2026-04-06' +%s 2>/dev/null || echo 1743897600)) / 86400 + 1 ))
+
+claude --auto \
     --print \
     --output-format text \
-    "Sei il DIRETTORE dell'autopilot ELAB. NON scrivi codice. Dirigi.
+    --max-tokens 128000 \
+    "Sei il DIRETTORE ELAB Autopilot. Sessione STRATEGICA + RICERCA.
 
-Il tuo lavoro:
-1. Leggi AUTOPILOT.md per capire il sistema
-2. Leggi automa/OUTBOX/ — cosa hanno fatto i worker?
-3. Leggi automa/ORDERS/ — Andrea ha dato direttive?
-4. Leggi automa/STRATEGY/score-tracking.md — dove siamo?
-5. Leggi automa/handoff.md — ultimo stato
+LEGGI ORA: AUTOPILOT.md + automa/handoff.md + automa/OUTBOX/ + automa/ORDERS/ + automa/STRATEGY/
 
-Poi:
-A. Aggiorna automa/STRATEGY/score-tracking.md con progressi reali
-B. Aggiorna automa/STRATEGY/current-sprint.md se serve cambiare rotta
-C. Fai RICERCA approfondita (web search) su 1-2 topic dal pool in AUTOPILOT.md
-   Scrivi report in automa/knowledge/
-D. Genera 2-3 task concrete in automa/INBOX/ per i prossimi worker
-E. Se serve decisione Andrea, scrivi in automa/ESCALATION/
-F. Genera idee in automa/STRATEGY/ideas-backlog.md
+GIORNO $DAY/20.
 
-Pensa strategicamente. I worker eseguono, tu DIRIGI.
-Data: $(date +%Y-%m-%d). Giorno $((( $(date +%s) - $(date -j -f '%Y-%m-%d' '2026-04-06' +%s) ) / 86400 + 1))/20." \
+IL TUO LAVORO (in ordine):
+
+1. ANALIZZA: leggi tutto OUTBOX/ — cosa hanno fatto i worker? Aggiorna score-tracking.md.
+
+2. RICERCA PROFONDA (2-3 topic): Usa web search per ricercare:
+   - 1 topic competitor/market (TinkerCAD, mBlock, Arduino IDE, PNRR bandi)
+   - 1 topic tecnico (testing React, performance Vite, accessibility automation)
+   - 1 topic pedagogico (AI tutoring, circuit simulation education, scaffolding)
+   Scrivi ogni report in automa/knowledge/$(date +%Y-%m-%d)-[topic].md
+
+3. GENERA IDEE: Scrivi 3-5 idee nuove in automa/STRATEGY/ideas-backlog.md
+   Ogni idea: cosa, impatto 1-10, effort S/M/L, perche ora
+
+4. PIANIFICA: Aggiorna automa/STRATEGY/current-sprint.md con:
+   - Cosa hanno fatto i worker
+   - Cosa devono fare nelle prossime 8h
+   - Quali aree hanno il gap piu grande
+   - Se serve cambiare strategia
+
+5. GENERA TASK: Scrivi 3-5 task in automa/INBOX/ per i prossimi worker:
+   Formato: [NNN]-[topic].md con istruzioni precise
+
+6. ESCALATION: Se serve una decisione di Andrea, scrivi in automa/ESCALATION/
+
+7. AGGIORNA handoff.md
+
+SEI IL CERVELLO STRATEGICO. Non scrivi codice. Pensi, ricerchi, dirigi.
+Fai ricerca web AGGRESSIVA — 10+ query per topic.
+Genera IDEE BREAKTHROUGH — cosa farebbe di ELAB il prodotto #1 per scuole?" \
     >> "$LOG_FILE" 2>&1
 
 echo "Director finished at $(date)" >> "$LOG_FILE"
-echo "$(date) DIRECTOR" >> "$LOG_DIR/history.log"
+echo "$(date) DIRECTOR-DONE" >> "$LOG_DIR/history.log"
