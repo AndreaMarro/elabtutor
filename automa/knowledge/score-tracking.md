@@ -56,21 +56,24 @@
 |------|---------|--------|---------|----------|
 | 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06.md` | PASS — nessun P0/P1 | P2: canonical URL sbagliato; P2: Kimi provider senza modello; P3: 24 elementi font<14px |
 | 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06-RUN2.md` | PASS — nessun P0/P1 | P3: CSP frame-ancestors ridondante nel meta tag; P2 confermati da Run#1 |
+| 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06-RUN3.md` | ⚠️ PASS con regressioni P2 | P1: 7 PR non mergiate (prod = pre-G44); P2: canonical ancora sbagliato; P2: n8n compile webhook 404 |
 
-### Stato Produzione (2026-04-06, Run #2 — Browser test autenticato)
-- **Homepage**: 200 OK, 95ms TTFB, tutti asset caricano
-- **Autenticazione**: Login ELAB2026 funziona correttamente
-- **Esperimenti browser testati**: 5/5 PASS (v1-cap6-esp1, v1-cap9-esp6, v2-cap3-esp1, v2-cap7-esp1, v3-cap5-esp1)
-- **JS Errors**: 0 su tutti gli esperimenti testati
-- **Galileo AI**: v5.5.0, /tutor-chat OK, voice STT(groq)+TTS(google) attivi
-- **n8n Compiler**: Compila Blink correttamente (924 bytes, 0 errori)
-- **Regressioni**: Nessuna P0/P1
-- **Problemi aperti P2**: canonical URL sbagliato, Kimi provider senza modello (da sessione precedente)
-- **Nuovo P3**: CSP `frame-ancestors` nel meta tag genera console warning (sicurezza non impattata)
+### Stato Produzione (2026-04-06, Run #3 — Audit autonomo curl+source)
+- **Homepage**: 200 OK, 169ms, tutti asset caricano
+- **Esperimenti testati (curl)**: 5/5 HTTP 200 (v1-cap10-esp3, v1-cap13-esp1, v2-cap4-esp2, v3-cap7-esp3, v3-extra-servo-sweep)
+- **JS Errors browser**: N/A (headless run, JS Apple Events disattivato)
+- **Galileo AI**: v5.5.0 UP, /health 200, /tutor-chat 200 ✓
+- **n8n**: App UP, ma webhook `/compile-blink` → 404 ⚠️
+- **Kimi provider**: model stringa vuota — P2 confermato
+- **NUOVO P1**: 7 PR aperte non mergiate → main è pre-G44 → canonical sbagliato, buildSteps Vol3 parziali, WCAG fix non deployati
+- **buildSteps Vol3**: 6/27 (22%) — PR#4 aggiunge 5 ma non mergiata
+- **scratchXml**: 11/92 (12%) — P1 invariato
+- **ORDERS creato**: `automa/ORDERS/P1-2026-04-06-prs-not-merged.md`
 
 ---
 
 ## Note Operative
 - Automa usa ~/ELAB/elab-builder (NON ~/ELAB/elabtutor che non esiste)
-- AUTOPILOT.md non trovato — usato MASTER-PLAN.md come riferimento topic
+- AUTOPILOT.md trovato in ~/ELAB/elab-builder/AUTOPILOT.md (non in ~/ELAB/elabtutor)
 - Run schedulati: vedere ~/.claude/scheduled-tasks/elab-researcher/SKILL.md e elab-auditor/SKILL.md
+- ATTENZIONE: AUTOPILOT.md segna issue #1/#2 come "CHIUSO G44" ma fix non è in main (PR non mergiata)
