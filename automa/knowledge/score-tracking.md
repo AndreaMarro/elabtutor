@@ -55,13 +55,18 @@
 | Data | Auditor | Report | Verdict | Problemi |
 |------|---------|--------|---------|----------|
 | 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06.md` | PASS — nessun P0/P1 | P2: canonical URL sbagliato; P2: Kimi provider senza modello; P3: 24 elementi font<14px |
+| 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06-RUN2.md` | PASS — nessun P0/P1 | P3: CSP frame-ancestors ridondante nel meta tag; P2 confermati da Run#1 |
 
-### Stato Produzione (2026-04-06)
-- **Homepage**: 200 OK, 104ms, tutti asset caricano
-- **Esperimenti**: 92/92 presenti nel build (38+27+27)
-- **Galileo AI**: v5.5.0 operativo, 4/5 provider configurati correttamente
-- **n8n Compiler**: 200 OK
+### Stato Produzione (2026-04-06, Run #2 — Browser test autenticato)
+- **Homepage**: 200 OK, 95ms TTFB, tutti asset caricano
+- **Autenticazione**: Login ELAB2026 funziona correttamente
+- **Esperimenti browser testati**: 5/5 PASS (v1-cap6-esp1, v1-cap9-esp6, v2-cap3-esp1, v2-cap7-esp1, v3-cap5-esp1)
+- **JS Errors**: 0 su tutti gli esperimenti testati
+- **Galileo AI**: v5.5.0, /tutor-chat OK, voice STT(groq)+TTS(google) attivi
+- **n8n Compiler**: Compila Blink correttamente (924 bytes, 0 errori)
 - **Regressioni**: Nessuna P0/P1
+- **Problemi aperti P2**: canonical URL sbagliato, Kimi provider senza modello (da sessione precedente)
+- **Nuovo P3**: CSP `frame-ancestors` nel meta tag genera console warning (sicurezza non impattata)
 
 ---
 
