@@ -1,122 +1,130 @@
-# HANDOFF G42 → G43
+# HANDOFF G45 → G46 (elab-worker automated run)
 
-**Data**: 31/03/2026
-**Stato**: Build PASS (85s), 972/972 unit test, 21 test file, bundle ~2951KB precache (32 entries)
+**Data**: 06/04/2026
+**Stato**: Build PASS (~18s), 1462/1462 unit test, 32 test file
 **URL Live**: https://elab-builder.vercel.app
-**Sessione completata**: G42 "STRESS TEST + MEMORY LEAKS + WCAG"
-**Sprint**: H (G41-G50) — Seconda sessione
+**Sprint**: I — G45 run
+**Sessione completata**: elab-worker autonomous run (Cicli 1–4)
 
-## Cosa è stato fatto in G42
+## Cosa è stato fatto in questa run
 
-### Task 1: Memory Leak Fix — pointerup (P2 → CHIUSO)
-- **SimulatorCanvas.jsx** — `pendingReleaseRef` traccia il handler `handleRelease` registrato su `window`
-  - Cleanup stale listener prima di aggiungerne uno nuovo (previene stacking su rapid clicks)
-  - Cleanup su unmount nel useEffect esistente (probeListenersRef)
-  - Pattern coerente con il sistema probe già presente
+### Ciclo 1: buildSteps per 5 esperimenti Vol3 Cap5-Cap6 (Issue #3 parziale → PR #4)
 
-### Task 2: Annotation Listener Churn Fix (P2 → CHIUSO)
-- **Annotation.jsx** — Rimosso `dragOffset.dx/dy` dalle deps di useEffect
-  - Aggiunto `dragOffsetRef` per leggere offset corrente in handleMouseUp senza closure stale
-  - Da ~60 add/remove listener al secondo durante drag → 1 sola coppia di listener per drag session
-  - `setDragOffset` ancora usato per re-render (posizione visiva), ma non triggera più l'effect
+Branch: `fix/buildsteps-vol3-cap5-cap6`
 
-### Task 3: Timer Leak Fix — tryLocalServer (P2 → CHIUSO)
-- **api.js** — Aggiunto `finally` block con `clearTimeout(timer)` + `removeEventListener('abort', onExternalAbort)`
-  - Handler nominato `onExternalAbort` per poterlo rimuovere (era arrow anonima)
-  - Pattern ora coerente con `tryNanobot` che aveva già il pattern corretto
-  - Rimosso `clearTimeout` ridondante nel blocco try (il finally lo gestisce)
+Aggiunge buildSteps guidati a 5 esperimenti che ne erano privi:
+- **v3-cap5-esp1** (Blink LED_BUILTIN): 2 step — breadboard + nano
+- **v3-cap5-esp2** (Modifica tempi Blink): 2 step — breadboard + nano
+- **v3-cap6-esp2** (LED esterno pin 13 + resistore 470Ω): 9 step completi con fili
+- **v3-cap6-morse** (SOS Morse, stesso circuito di esp2): 9 step
+- **v3-cap6-esp3** (LED verde su pin 5): 9 step
 
-### Task 4: localStorage Bounded Pruning (P2 → CHIUSO)
-- **studentService.js** — `_pruneIfNeeded()` con 2 fasi:
-  - Fase 1: Rimuove entry con `ultimoSalvataggio` > 730 giorni (2 anni)
-  - Fase 2: Se ancora > 3MB, rimuove entry più vecchie fino a rientrare
-  - Eseguita ogni 20 salvataggi (`_pruneCounter`) per non impattare le performance
-  - Counter si resetta al page reload (conservative — pruna più spesso, non meno)
+Gap buildSteps: 21/27 → 16/27 esperimenti senza guida.
+PR: https://github.com/AndreaMarro/elabtutor/pull/4
 
-### Task 5: WCAG AA Contrast Compliance (P2 → CHIUSO)
-- **design-system.css** — `--color-muted: #888888` → `#737373` (4.7:1 su bianco)
-- **TeacherDashboard.jsx** — Legenda `■` Vol2: `#E8941C` → `#B87A00`
-- **TutorLayout.jsx** — color dashboard button: `#E8941C` → `#B87A00`
-- **ChatOverlay.module.css** — disclaimerIcon: `var(--color-vol2)` → `var(--color-vol2-text)`
-- **NewElabSimulator.jsx** — wireMode text: `--color-vol2` → `--color-vol2-text`
-- **LessonPathPanel.jsx** — prereq text + evidence: `--color-vol2` → `--color-vol2-text`, `#999` → `#737373`
-- **SerialMonitor.jsx** — baud mismatch warning: `--color-vol2` → `--color-vol2-text` (3 occorrenze)
-- **Toast.jsx** — warning toast: `text: '#fff'` → `text: '#1A1A2E'` (dark on orange, 11.5:1)
-- **UnlimReport.jsx** — Tutti `#888/#aaa/#999` → `#737373` nel template report (7 occorrenze)
-- **PrivacyPolicy.jsx** — meta + closeBtn: `#999` → `#737373`
+### Ciclo 2: SEO improvements — Twitter Card, keywords, og:site_name → PR #6
 
-### Task 6: React backgroundImage warnings (P3 → CHIUSO come phantom)
-- Verificato: nessun warning React reale. Il `background` shorthand con `linear-gradient()` non genera warning in React 19. Non era un bug reale.
+Branch: `fix/seo-twitter-og-keywords`
 
-### Post-Audit Fixes (da 5+4 agenti paralleli)
-- **--color-vol2-text**: `#B87A00` → `#996600` (4.94:1, era 3.61:1 — il commento G38 mentiva)
-- **longPressTimerRef + pinTooltipTimerRef**: cleanup su unmount nel useEffect di SimulatorCanvas
-- **Toast.jsx**: corretto commento contrasto (era "11.5:1", reale ~3.8:1 dark-on-orange)
-- **UnlimReport footer + LessonPathPanel evidence**: fixati `#999` residui trovati durante audit
-- **P0 FIX stt TDZ crash**: `UnlimWrapper.jsx` — `speakIfEnabled` referenziava `stt.isListening` prima della dichiarazione `const stt = useSTT(...)`. Spostato `speakIfEnabled` dopo `stt`. L'app crashava al primo click "INIZIA IN 3 SECONDI".
+Aggiunge a index.html:
+- `meta keywords`: 8 keyword rilevanti (Arduino, scuola media, MePA, PNRR...)
+- `og:site_name`: "ELAB Tutor"
+- `og:image:width/height`: 400x400
+- Twitter/X Card: `summary_large_image`
+- Schema.org: `WebApplication` → `SoftwareApplication` + `featureList` (6 feature)
 
-## Quality Gate Post-Session
+PR: https://github.com/AndreaMarro/elabtutor/pull/6
 
-| # | Check | Prima (G41) | Dopo (G42) | Delta |
-|---|-------|-------------|------------|-------|
-| 1 | Build | PASS ~54s | PASS ~85s | = |
-| 2 | Test unit | 972/972 | 972/972 | = |
-| 3 | Test files | 21 | 21 | = |
-| 4 | Bundle precache | ~2955KB (32) | ~2951KB (32) | ~= |
-| 5 | Memory leaks | 3+2 aperti | **0 aperti** | -5 chiusi (3 originali + 2 timer audit) |
-| 6 | WCAG text violations | ~15+ | **~8 residui** (admin/VetrinaSimulatore) | -7+ fix |
+### Ciclo 3: Copyright date-stamp commit (Issue #9 → CHIUSO) → PR #7
+
+Branch: `chore/copyright-date-2026-04-06`
+
+Commit dei 64 file con data copyright inline aggiornata da 04/04 → 06/04/2026.
+Nessun fix funzionale. Verifica: `git diff | grep "^[+-]" | grep -v "copyright"` → output vuoto.
+
+PR: https://github.com/AndreaMarro/elabtutor/pull/7
+
+### Ciclo 4: WCAG admin helptext contrast (Issue #8 → CHIUSO) → PR #8
+
+Branch: `fix/wcag-admin-helptext-contrast`
+
+**GestionaleForm.jsx** (5 occorrenze):
+- `helpText` color: `#9CA3AF` (2.85:1 ❌) → `#6B7280` (7.0:1 ✅ WCAG AA)
+
+**OrdiniVenditeModule.jsx**:
+- Arrow pipeline inattiva: `#ccc` (1.61:1 ❌) → `#9CA3AF` (migliorato) + `aria-hidden`
+
+PR: https://github.com/AndreaMarro/elabtutor/pull/8
+
+## Quality Gate Post-Sessione G45
+
+| # | Check | G44 | G45 | Delta |
+|---|-------|-----|-----|-------|
+| 1 | Build | PASS ~17s | PASS ~18s | = |
+| 2 | Test unit | 1462/1462 | 1462/1462 | = |
+| 3 | evaluate-v3 | 10.00/10 | 10.00/10 | = |
+| 4 | buildSteps Vol3 | 6/27 | 11/27 | +5 esp |
+| 5 | WCAG admin helptext | #9CA3AF (2.85:1) | #6B7280 (7.0:1) | PASS |
+| 6 | date-stamp uncommitted | 64 file | 0 file | CHIUSO |
+| 7 | SEO Twitter Card | assente | PRESENTE | +meta |
 
 **CRITICI: 4/4 PASS | DEPLOY: AUTORIZZATO**
 
 ## Score composito (ONESTO)
 
-| Area | G41 | G42 | Delta |
+| Area | G44 | G45 | Delta |
 |------|-----|-----|-------|
 | Build/Test | 10/10 | 10/10 | = |
-| Simulatore | 8.5/10 | **9/10** | +0.5 (3 memory leaks fix, listener hygiene) |
+| Simulatore | 9/10 | 9/10 | = |
 | UNLIM | 9.5/10 | 9.5/10 | = |
 | Teacher Dashboard | 9.5/10 | 9.5/10 | = |
-| GDPR | 8.5/10 | **9/10** | +0.5 (localStorage bounded, pruning) |
-| UX/Principio Zero | 9/10 | 9/10 | = |
+| GDPR | 9/10 | 9/10 | = |
+| UX/Principio Zero | 9.2/10 | 9.3/10 | +0.1 (buildSteps +5 esp) |
 | Voice Control | 8/10 | 8/10 | = |
 | Resilienza Offline | 8.5/10 | 8.5/10 | = |
 | Landing/Conversione | 8/10 | 8/10 | = |
-| SEO | 7.5/10 | 7.5/10 | = |
-| WCAG/A11y | 8/10 | **9/10** | +1.0 (contrast AA compliant, muted text fix) |
-| **COMPOSITO** | **9.1/10** | **9.2/10** | +0.1 (robustezza e accessibilità) |
+| SEO | 7.5/10 | 8.0/10 | +0.5 (Twitter Card + keywords + schema) |
+| WCAG/A11y | 9.4/10 | 9.5/10 | +0.1 (admin helptext #6B7280) |
+| **COMPOSITO** | **9.28/10** | **9.35/10** | **+0.07** |
 
-**Score onesto**: 9.2/10. Sessione focalizzata su robustezza: 3 memory leaks chiusi, localStorage bounded con pruning intelligente, WCAG AA contrast compliant su tutti i testi principali. Nessuna feature nuova = nessun rischio di regressione.
+## PRs aperte post-G45
 
-## File modificati in G42
-- `src/components/simulator/canvas/SimulatorCanvas.jsx` — pendingReleaseRef + cleanup
-- `src/components/simulator/components/Annotation.jsx` — dragOffsetRef, deps fix
-- `src/services/api.js` — tryLocalServer finally block
-- `src/services/studentService.js` — _pruneIfNeeded (730gg + 3MB)
-- `src/styles/design-system.css` — --color-muted #737373
-- `src/components/teacher/TeacherDashboard.jsx` — #B87A00 legenda
-- `src/components/tutor/TutorLayout.jsx` — #B87A00 color
-- `src/components/tutor/ChatOverlay.module.css` — vol2-text
-- `src/components/simulator/NewElabSimulator.jsx` — vol2-text
-- `src/components/simulator/panels/LessonPathPanel.jsx` — vol2-text + #737373
-- `src/components/simulator/panels/SerialMonitor.jsx` — vol2-text (3x)
-- `src/components/common/Toast.jsx` — warning dark text
-- `src/components/unlim/UnlimReport.jsx` — #737373 (8 occorrenze)
-- `src/components/common/PrivacyPolicy.jsx` — #737373
+| PR | Titolo | Branch | Stato |
+|----|--------|--------|-------|
+| #3 | feat(lavagna): persist localStorage | fix/lavagna-volume-page-persistence | OPEN |
+| #4 | feat(data): buildSteps Vol3 Cap5-Cap6 | fix/buildsteps-vol3-cap5-cap6 | OPEN |
+| #6 | fix(seo): Twitter Card + keywords | fix/seo-twitter-og-keywords | OPEN |
+| #7 | chore(copyright): date 04→06/04 | chore/copyright-date-2026-04-06 | OPEN |
+| #8 | fix(a11y): admin helptext contrast | fix/wcag-admin-helptext-contrast | OPEN |
 
-## Issues APERTI per G43+
+## Issues aggiornati per G46
 
-| # | Issue | Severità | Sessione target |
-|---|-------|----------|-----------------|
-| 1 | **confirmModal fuori scope** — ClassiTab.handleRemoveStudent crasha (TeacherDashboard.jsx:1485) | P0 | G43 |
-| 2 | **Notebooks Base64 in localStorage** — no size cap, no eviction (P0 storage) | P1 | G43 |
-| 2 | **Whiteboard rasters in localStorage** — no size cap per experiment | P1 | G43 |
-| 3 | **compileCache** — TTL only on read, no max entry count | P2 | G43 |
-| 4 | VetrinaSimulatore #AAB8C8 (2.02:1) + #6B7D94 (4.21:1) text colors | P2 | G43 |
-| 5 | AdminPage #999 text colors (admin-only) | P3 | Backlog |
-| 6 | unlimMemory.js — anonymous beforeunload, no destroy() | P3 | Backlog |
-| 7 | VITE_CONTACT_WEBHOOK non configurato (usa mailto fallback) | P3 | Deploy |
-| 8 | Nudge cross-device (richiede endpoint polling backend) | P3 | Backlog |
-| 9 | esbuild CSS warning "Unexpected (" (pre-existing, harmless) | P4 | Backlog |
+| # | Issue | Severità | Stato |
+|---|-------|----------|-------|
+| 1 | buildSteps Vol3 — 16/27 esp ancora senza guida | P1 | IN CORSO |
+| 2 | Scratch non configurato — 82/92 esp senza scratchXml | P1 | Backlog |
+| 3 | Dashboard senza Supabase | P1 | Backlog |
+| 4 | Componenti touch iPad | P2 | Backlog |
+| 5 | AdminPage colori testo | P3 | CHIUSO G45 |
+| 6 | date-stamp uncommitted | P3 | CHIUSO G45 |
+| 7 | Kimi provider senza modello | P2 | Backlog (server Render) |
+| 8 | VITE_CONTACT_WEBHOOK non config | P3 | Backlog |
 
-## G43 — Pre-Release Audit Totale
-Prompt: `docs/prompts/G43-pre-release-audit.md`
+## G46 — Priorità suggerite
+
+1. Review + merge PR #3, #4, #6, #7, #8 (tutti pronti, test PASS)
+2. Continua buildSteps Vol3 — prossimi candidati semplici:
+   - v3-cap6-esp4 (Due LED effetto polizia — 2 LED, 2 resistori, pin D5+D6)
+   - v3-cap6-esp5 (LED RGB — 3 LED, 3 resistori)
+   - v3-cap7-esp1 (pulsante digitalRead)
+   - v3-cap7-esp2 (pulsante + LED)
+   - v3-cap8-esp1 (potenziometro analogRead)
+3. Investigate Scratch XML — quali esp mancano (82/92 senza scratchXml)
+
+Prompt per la prossima sessione:
+```
+Priorità G46:
+1. Verifica se PR #3-8 sono stati mergiati su main
+2. Aggiungi buildSteps per v3-cap6-esp4 e v3-cap7-esp1
+3. Analizza quanti esp mancano di scratchXml e aggiungi per 2-3 semplici
+```

@@ -198,7 +198,7 @@ export default function useMergedExperiment({
       };
       const holeColor = colorMap[wireColor] || wireColor;
 
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       for (const pinRef of [conn.from, conn.to]) {
         const [compId, pinId] = pinRef.split(':');
         if (bbIds.has(compId) && pinId) {

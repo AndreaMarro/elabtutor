@@ -198,7 +198,7 @@ export const pptxToPages = async (arrayBuffer) => {
         ctx.fillStyle = '#4A7A25';
         ctx.fillRect(0, 0, 1280, 4);
         ctx.fillStyle = '#737373';
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         ctx.font = '14px sans-serif';
         ctx.fillText(`Slide ${si + 1} / ${slideFiles.length}`, 1140, 700);
 
@@ -399,7 +399,7 @@ export const processDocumentUpload = async (files) => {
         }
         // DOCX
         else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
             try {
                 const mammoth = (await import('mammoth')).default;
                 const arrayBuffer = await file.arrayBuffer();

@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL2 = {
       components: [
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 1000 },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "resistor", id: "r2", value: 1000 },
         { type: "multimeter", id: "mm1" },
       ],
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL2 = {
       simulationMode: "circuit",
       components: [
         { type: "battery9v", id: "bat1" },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 330 },
         { type: "led", id: "led1", color: "red" },
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL2 = {
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie colori diversi'. Qui ci sono due LED di colori diversi in serie. Ogni colore di LED ha bisogno di una tensione diversa per accendersi (la tensione forward Vf): il rosso circa 1.8V, il verde circa 2.2V. \u00C8 come se ogni LED fosse una porticina di altezza diversa: la corrente deve superarle tutte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       concept: "Tensione forward diversa per colore, somma Vf in serie",
       layer: "terra",
       buildSteps: [
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL2 = {
           step: 5,
           text: "Prendi il LED rosso dalla palette e posizionalo nei fori D17 e D18.",
           componentId: "led2",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "led",
           targetPins: { "led2:anode": "bb1:d17", "led2:cathode": "bb1:d18" },
           hint: "L'anodo (+, gamba lunga) va in D17 e il catodo (−, gamba corta) in D18."
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:e10",
           wireTo: "bb1:bus-top-minus-10",
           wireColor: "black",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega al bus negativo."
         },
         {
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL2 = {
           wireColor: "black",
           hint: "Metti a massa anche il condensatore."
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 13,
           text: "Collega un filo NERO dal foro bus − superiore (col. 1) al polo − della batteria.",
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL2 = {
           wireTo: "bb1:a10",
           wireColor: "red",
           hint: "Il filo rosso porta la corrente positiva."
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 13,
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
         },
         {
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il resistore da 1kΩ dalla palette e posizionalo nei fori E15 e E22.",
           componentId: "r1",
           componentType: "resistor",
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL2 = {
           componentType: "mosfet-n",
           targetPins: { "mos1:gate": "bb1:f17", "mos1:drain": "bb1:f18", "mos1:source": "bb1:f19" },
           hint: "I 3 pin: Gate in F17, Drain in F18, Source in F19."
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 4,
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:bus-top-plus-5",
           wireTo: "bb1:a5",
           wireColor: "red",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo porta la corrente dal bus positivo al componente."
         },
         {
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL2 = {
           step: 12,
           text: "Collega un filo NERO dal foro bus − superiore (col. 1) al polo − della batteria.",
           wireFrom: "bb1:bus-top-minus-1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bat1:negative",
           wireColor: "black",
           hint: "Questo filo chiude il circuito riportando la corrente alla batteria."
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Collega la sonda rossa (+) del multimetro al foro B9.",
           wireFrom: "mm1:probe-positive",
           wireTo: "bb1:b9",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Posiziona la sonda per misurare la tensione nel punto desiderato."
         },
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 12,
           text: "Collega un filo ROSSO dal foro bus + superiore (col. 3) al foro A3.",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:bus-top-plus-3",
           wireTo: "bb1:a3",
           wireColor: "red",
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL2 = {
       quiz: [
         {
           question: "Cosa converte il motore DC in questo circuito?",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           options: ["Energia luminosa in energia elettrica", "Energia elettrica in energia meccanica (movimento)", "Energia meccanica in energia elettrica"],
           correct: 1,
           explanation: "Il motore DC converte l'energia elettrica della batteria in movimento rotatorio. La corrente crea un campo magnetico che fa girare l'asse!"
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
         },
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:g12",
           wireTo: "bb1:a16",
           wireColor: "yellow",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega due parti del circuito."
         },
         {
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori E23 e E30.",
           componentId: "r2",
           componentType: "resistor",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "r2:pin1": "bb1:e23", "r2:pin2": "bb1:e30" },
           hint: "Il resistore limita la corrente nel circuito."
         },
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL2 = {
           options: ["Per far girare il robot VERSO la luce", "Per far girare il robot LONTANO dalla luce", "Non c'è un motivo, è casuale"],
           correct: 0,
           explanation: "La cross-connection fa sì che illuminando il sensore destro si attivi il motore destro, facendo girare il robot a sinistra — cioè verso la sorgente di luce!"
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           question: "A cosa servono i diodi collegati ai motori?",

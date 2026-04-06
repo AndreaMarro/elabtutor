@@ -198,7 +198,7 @@ export function buildPinComponentMap(experiment) {
           }
         }
         map[pinNum] = { compId: target.id, compType: target.type };
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
       }
     }
   });

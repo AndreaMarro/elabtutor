@@ -198,7 +198,7 @@ export const POE_CHALLENGES = [
     chapter: 11,
     layer: 'schema',
     question: 'Se stampi un valore ogni millisecondo con Serial.println(), il Monitor Seriale...',
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
     type: 'choice',
     options: ['Mostra tutti i valori perfettamente', 'Rallenta e perde valori', 'Si blocca', 'Mostra solo l\'ultimo valore'],
     correctAnswer: 1,
