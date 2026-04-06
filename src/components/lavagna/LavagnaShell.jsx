@@ -255,8 +255,12 @@ export default function LavagnaShell() {
   const [isEditing, setIsEditing] = useState(false);
   const [lessonSteps, setLessonSteps] = useState([]);
   const [unlimSpeaking, setUnlimSpeaking] = useState(false);
-  const [leftPanelSize, setLeftPanelSize] = useState(180);
-  const [bottomPanelSize, setBottomPanelSize] = useState(200);
+  const [leftPanelSize, setLeftPanelSize] = useState(() => {
+    try { return parseInt(localStorage.getItem('elab-lavagna-left-panel') || '180', 10) || 180; } catch { return 180; }
+  });
+  const [bottomPanelSize, setBottomPanelSize] = useState(() => {
+    try { return parseInt(localStorage.getItem('elab-lavagna-bottom-panel') || '200', 10) || 200; } catch { return 200; }
+  });
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(() => {
     try { return parseInt(localStorage.getItem('elab-lavagna-volume') || '1', 10) || 1; } catch { return 1; }
@@ -266,10 +270,24 @@ export default function LavagnaShell() {
   });
   const [percorsoOpen, setPercorsoOpen] = useState(false);
   const [unlimTab, setUnlimTab] = useState('chat'); // 'chat' | 'percorso'
-  const [buildMode, setBuildMode] = useState('complete'); // complete | guided | sandbox
+  const [buildMode, setBuildMode] = useState(() => {
+    try {
+      const v = localStorage.getItem('elab-lavagna-buildmode');
+      return ['complete', 'guided', 'sandbox'].includes(v) ? v : 'complete';
+    } catch { return 'complete'; }
+  }); // complete | guided | sandbox
   const [drawingEnabled, setDrawingEnabled] = useState(false);
 
-  // Persist currentVolume and currentVolumePage to localStorage
+  // Persist layout sizes and volume navigation to localStorage
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-left-panel', String(leftPanelSize)); } catch {}
+  }, [leftPanelSize]);
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-bottom-panel', String(bottomPanelSize)); } catch {}
+  }, [bottomPanelSize]);
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-buildmode', buildMode); } catch {}
+  }, [buildMode]);
   useEffect(() => {
     try { localStorage.setItem('elab-lavagna-volume', String(currentVolume)); } catch {}
   }, [currentVolume]);
