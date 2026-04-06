@@ -77,7 +77,7 @@ function FormField({ field, value, onChange, hasError }) {
                 >
                     {label}
                 </span>
-                {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginLeft: '4px' }}>{helpText}</small>}
+                {helpText && <small style={{ color: '#6B7280', fontSize: '0.75rem', marginLeft: '4px' }}>{helpText}</small>}
             </div>
         );
     }
@@ -104,7 +104,7 @@ function FormField({ field, value, onChange, hasError }) {
                         fontFamily: 'inherit',
                     }}
                 />
-                {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
+                {helpText && <small style={{ color: '#6B7280', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
             </div>
         );
     }
@@ -139,7 +139,7 @@ function FormField({ field, value, onChange, hasError }) {
                         </option>
                     ))}
                 </select>
-                {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
+                {helpText && <small style={{ color: '#6B7280', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
             </div>
         );
     }
@@ -195,7 +195,7 @@ function FormField({ field, value, onChange, hasError }) {
                         {formatCurrencyPreview(value)}
                     </div>
                 )}
-                {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
+                {helpText && <small style={{ color: '#6B7280', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
             </div>
         );
     }
@@ -223,7 +223,7 @@ function FormField({ field, value, onChange, hasError }) {
                 className={`gestionale-field${hasError ? ' has-error' : ''}`}
                 style={baseInputStyle}
             />
-            {helpText && <small style={{ color: '#9CA3AF', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
+            {helpText && <small style={{ color: '#6B7280', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>{helpText}</small>}
         </div>
     );
 }

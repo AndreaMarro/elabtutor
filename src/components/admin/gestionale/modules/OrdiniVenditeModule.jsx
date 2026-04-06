@@ -170,7 +170,7 @@ export default function OrdiniVenditeModule({ isMobile }) {
         const active = PIPELINE.indexOf(stato) >= i;
         return (
           <React.Fragment key={step}>
-            {i > 0 && <span style={{ color: active ? PIPELINE_COLORS[step] : '#ccc', fontSize: 14 }}>&#9654;</span>}
+            {i > 0 && <span style={{ color: active ? PIPELINE_COLORS[step] : '#9CA3AF', fontSize: 14 }} aria-hidden="true">&#9654;</span>}
             <span style={{
               padding: '2px 8px', borderRadius: 12, fontSize: 14, fontWeight: active ? 600 : 400,
               background: active ? PIPELINE_COLORS[step] + '22' : '#f0f0f0',
