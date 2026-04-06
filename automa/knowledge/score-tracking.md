@@ -50,7 +50,22 @@
 
 ---
 
+## Audit Produzione
+
+| Data | Auditor | Report | Verdict | Problemi |
+|------|---------|--------|---------|----------|
+| 2026-04-06 | elab-auditor | `AUDIT-PRODUZIONE-2026-04-06.md` | PASS — nessun P0/P1 | P2: canonical URL sbagliato; P2: Kimi provider senza modello; P3: 24 elementi font<14px |
+
+### Stato Produzione (2026-04-06)
+- **Homepage**: 200 OK, 104ms, tutti asset caricano
+- **Esperimenti**: 92/92 presenti nel build (38+27+27)
+- **Galileo AI**: v5.5.0 operativo, 4/5 provider configurati correttamente
+- **n8n Compiler**: 200 OK
+- **Regressioni**: Nessuna P0/P1
+
+---
+
 ## Note Operative
 - Automa usa ~/ELAB/elab-builder (NON ~/ELAB/elabtutor che non esiste)
 - AUTOPILOT.md non trovato — usato MASTER-PLAN.md come riferimento topic
-- Run schedulati: vedere ~/.claude/scheduled-tasks/elab-researcher/SKILL.md
+- Run schedulati: vedere ~/.claude/scheduled-tasks/elab-researcher/SKILL.md e elab-auditor/SKILL.md
