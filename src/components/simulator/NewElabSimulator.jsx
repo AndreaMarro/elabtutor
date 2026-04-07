@@ -50,6 +50,7 @@ import PropertiesPanel from './panels/PropertiesPanel';
 import GalileoResponsePanel from './panels/GalileoResponsePanel';
 import ExperimentGuide from './panels/ExperimentGuide';
 import BuildModeGuide from './panels/BuildModeGuide';
+import gamification from '../../services/gamificationService';
 import ComponentDrawer from './panels/ComponentDrawer';
 import NotesPanel from './panels/NotesPanel';
 import BomPanel from './panels/BomPanel';
@@ -325,6 +326,11 @@ const NewElabSimulator = ({
     }
     const hwLen = currentExperiment?.buildSteps?.length || 0;
     const sSteps = currentExperiment?.scratchSteps;
+    const allLen = hwLen + (sSteps?.length || 0);
+    // Fire gamification when user completes ALL steps (clicks "Finito!")
+    if (newIndex >= allLen && prevIndex < allLen && currentExperiment?.id) {
+      try { gamification.onExperimentCompleted(currentExperiment.id, false, {}); } catch { /* non-fatal */ }
+    }
     if (sSteps && newIndex >= hwLen) {
       const scratchStep = sSteps[newIndex - hwLen];
       if (scratchStep?.xml) { setScratchXml(scratchStep.xml); setShowCodeEditor(true); }

@@ -1,122 +1,121 @@
-# HANDOFF G42 → G43
+# HANDOFF elab-worker — Run 6 (07/04/2026)
 
-**Data**: 31/03/2026
-**Stato**: Build PASS (85s), 972/972 unit test, 21 test file, bundle ~2951KB precache (32 entries)
-**URL Live**: https://elab-builder.vercel.app
-**Sessione completata**: G42 "STRESS TEST + MEMORY LEAKS + WCAG"
-**Sprint**: H (G41-G50) — Seconda sessione
+## Cicli completati: 4
 
-## Cosa è stato fatto in G42
+---
 
-### Task 1: Memory Leak Fix — pointerup (P2 → CHIUSO)
-- **SimulatorCanvas.jsx** — `pendingReleaseRef` traccia il handler `handleRelease` registrato su `window`
-  - Cleanup stale listener prima di aggiungerne uno nuovo (previene stacking su rapid clicks)
-  - Cleanup su unmount nel useEffect esistente (probeListenersRef)
-  - Pattern coerente con il sistema probe già presente
+## Score per ciclo
 
-### Task 2: Annotation Listener Churn Fix (P2 → CHIUSO)
-- **Annotation.jsx** — Rimosso `dragOffset.dx/dy` dalle deps di useEffect
-  - Aggiunto `dragOffsetRef` per leggere offset corrente in handleMouseUp senza closure stale
-  - Da ~60 add/remove listener al secondo durante drag → 1 sola coppia di listener per drag session
-  - `setDragOffset` ancora usato per re-render (posizione visiva), ma non triggera più l'effect
+| Ciclo | Task | Score PRIMA | Score DOPO | Delta |
+|-------|------|-------------|------------|-------|
+| 1 | buildSteps Cap5+Cap6 (5 esp) | 100/100 | 100/100 | = |
+| 2 | buildSteps Cap6+Cap7 (5 esp) | 100/100 | 100/100 | = |
+| 3 | buildSteps Cap6+Cap7+Cap8 (5 esp) | 100/100 | 100/100 | = |
+| 4 | buildSteps TUTTI i rimanenti (6 esp) | 100/100 | 100/100 | = |
 
-### Task 3: Timer Leak Fix — tryLocalServer (P2 → CHIUSO)
-- **api.js** — Aggiunto `finally` block con `clearTimeout(timer)` + `removeEventListener('abort', onExternalAbort)`
-  - Handler nominato `onExternalAbort` per poterlo rimuovere (era arrow anonima)
-  - Pattern ora coerente con `tryNanobot` che aveva già il pattern corretto
-  - Rimosso `clearTimeout` ridondante nel blocco try (il finally lo gestisce)
+---
 
-### Task 4: localStorage Bounded Pruning (P2 → CHIUSO)
-- **studentService.js** — `_pruneIfNeeded()` con 2 fasi:
-  - Fase 1: Rimuove entry con `ultimoSalvataggio` > 730 giorni (2 anni)
-  - Fase 2: Se ancora > 3MB, rimuove entry più vecchie fino a rientrare
-  - Eseguita ogni 20 salvataggi (`_pruneCounter`) per non impattare le performance
-  - Counter si resetta al page reload (conservative — pruna più spesso, non meno)
+## Ciclo 1 — buildSteps Vol3 Cap5-Cap6 (5 esperimenti)
 
-### Task 5: WCAG AA Contrast Compliance (P2 → CHIUSO)
-- **design-system.css** — `--color-muted: #888888` → `#737373` (4.7:1 su bianco)
-- **TeacherDashboard.jsx** — Legenda `■` Vol2: `#E8941C` → `#B87A00`
-- **TutorLayout.jsx** — color dashboard button: `#E8941C` → `#B87A00`
-- **ChatOverlay.module.css** — disclaimerIcon: `var(--color-vol2)` → `var(--color-vol2-text)`
-- **NewElabSimulator.jsx** — wireMode text: `--color-vol2` → `--color-vol2-text`
-- **LessonPathPanel.jsx** — prereq text + evidence: `--color-vol2` → `--color-vol2-text`, `#999` → `#737373`
-- **SerialMonitor.jsx** — baud mismatch warning: `--color-vol2` → `--color-vol2-text` (3 occorrenze)
-- **Toast.jsx** — warning toast: `text: '#fff'` → `text: '#1A1A2E'` (dark on orange, 11.5:1)
-- **UnlimReport.jsx** — Tutti `#888/#aaa/#999` → `#737373` nel template report (7 occorrenze)
-- **PrivacyPolicy.jsx** — meta + closeBtn: `#999` → `#737373`
+**Branch:** feat/buildsteps-vol3-cap5-cap6-run6
+**PR:** https://github.com/AndreaMarro/elabtutor/pull/15
+**File modificati (1):** `src/data/experiments-vol3.js`
 
-### Task 6: React backgroundImage warnings (P3 → CHIUSO come phantom)
-- Verificato: nessun warning React reale. Il `background` shorthand con `linear-gradient()` non genera warning in React 19. Non era un bug reale.
+Esperimenti con buildSteps aggiunti:
+- v3-cap5-esp1: Blink LED_BUILTIN (2 step: solo Arduino + USB)
+- v3-cap5-esp2: Modifica tempi Blink (2 step)
+- v3-cap6-esp2: LED esterno su pin 13 (5 step)
+- v3-cap6-morse: SOS codice Morse (5 step)
+- v3-cap6-esp3: Cambia pin — pin 5 (5 step)
 
-### Post-Audit Fixes (da 5+4 agenti paralleli)
-- **--color-vol2-text**: `#B87A00` → `#996600` (4.94:1, era 3.61:1 — il commento G38 mentiva)
-- **longPressTimerRef + pinTooltipTimerRef**: cleanup su unmount nel useEffect di SimulatorCanvas
-- **Toast.jsx**: corretto commento contrasto (era "11.5:1", reale ~3.8:1 dark-on-orange)
-- **UnlimReport footer + LessonPathPanel evidence**: fixati `#999` residui trovati durante audit
-- **P0 FIX stt TDZ crash**: `UnlimWrapper.jsx` — `speakIfEnabled` referenziava `stt.isListening` prima della dichiarazione `const stt = useSTT(...)`. Spostato `speakIfEnabled` dopo `stt`. L'app crashava al primo click "INIZIA IN 3 SECONDI".
+---
 
-## Quality Gate Post-Session
+## Ciclo 2 — buildSteps Vol3 Cap6-Cap7 (5 esperimenti)
 
-| # | Check | Prima (G41) | Dopo (G42) | Delta |
-|---|-------|-------------|------------|-------|
-| 1 | Build | PASS ~54s | PASS ~85s | = |
-| 2 | Test unit | 972/972 | 972/972 | = |
-| 3 | Test files | 21 | 21 | = |
-| 4 | Bundle precache | ~2955KB (32) | ~2951KB (32) | ~= |
-| 5 | Memory leaks | 3+2 aperti | **0 aperti** | -5 chiusi (3 originali + 2 timer audit) |
-| 6 | WCAG text violations | ~15+ | **~8 residui** (admin/VetrinaSimulatore) | -7+ fix |
+Esperimenti con buildSteps aggiunti:
+- v3-cap6-esp5: Pulsante INPUT_PULLUP + LED toggle (8 step)
+- v3-cap7-esp1: analogRead base con potenziometro (9 step)
+- v3-cap7-esp4: analogWrite PWM fade (5 step)
+- v3-cap7-esp5: PWM con valori manuali (5 step)
+- v3-cap7-esp6: Fade up/down effetto respiro (5 step)
 
-**CRITICI: 4/4 PASS | DEPLOY: AUTORIZZATO**
+---
 
-## Score composito (ONESTO)
+## Ciclo 3 — buildSteps Vol3 Cap6-Cap7-Cap8 (5 esperimenti)
 
-| Area | G41 | G42 | Delta |
-|------|-----|-----|-------|
-| Build/Test | 10/10 | 10/10 | = |
-| Simulatore | 8.5/10 | **9/10** | +0.5 (3 memory leaks fix, listener hygiene) |
-| UNLIM | 9.5/10 | 9.5/10 | = |
-| Teacher Dashboard | 9.5/10 | 9.5/10 | = |
-| GDPR | 8.5/10 | **9/10** | +0.5 (localStorage bounded, pruning) |
-| UX/Principio Zero | 9/10 | 9/10 | = |
-| Voice Control | 8/10 | 8/10 | = |
-| Resilienza Offline | 8.5/10 | 8.5/10 | = |
-| Landing/Conversione | 8/10 | 8/10 | = |
-| SEO | 7.5/10 | 7.5/10 | = |
-| WCAG/A11y | 8/10 | **9/10** | +1.0 (contrast AA compliant, muted text fix) |
-| **COMPOSITO** | **9.1/10** | **9.2/10** | +0.1 (robustezza e accessibilità) |
+Esperimenti con buildSteps aggiunti:
+- v3-cap6-esp7: Debounce pulsante con while (8 step)
+- v3-cap7-esp2: analogRead con conversione Volt (9 step)
+- v3-cap7-esp7: Trimmer controlla luminosita con map() (9 step)
+- v3-cap8-esp1: Serial.println in setup (2 step — solo Arduino)
+- v3-cap8-esp2: Serial.println in loop (2 step — solo Arduino)
 
-**Score onesto**: 9.2/10. Sessione focalizzata su robustezza: 3 memory leaks chiusi, localStorage bounded con pruning intelligente, WCAG AA contrast compliant su tutti i testi principali. Nessuna feature nuova = nessun rischio di regressione.
+---
 
-## File modificati in G42
-- `src/components/simulator/canvas/SimulatorCanvas.jsx` — pendingReleaseRef + cleanup
-- `src/components/simulator/components/Annotation.jsx` — dragOffsetRef, deps fix
-- `src/services/api.js` — tryLocalServer finally block
-- `src/services/studentService.js` — _pruneIfNeeded (730gg + 3MB)
-- `src/styles/design-system.css` — --color-muted #737373
-- `src/components/teacher/TeacherDashboard.jsx` — #B87A00 legenda
-- `src/components/tutor/TutorLayout.jsx` — #B87A00 color
-- `src/components/tutor/ChatOverlay.module.css` — vol2-text
-- `src/components/simulator/NewElabSimulator.jsx` — vol2-text
-- `src/components/simulator/panels/LessonPathPanel.jsx` — vol2-text + #737373
-- `src/components/simulator/panels/SerialMonitor.jsx` — vol2-text (3x)
-- `src/components/common/Toast.jsx` — warning dark text
-- `src/components/unlim/UnlimReport.jsx` — #737373 (8 occorrenze)
-- `src/components/common/PrivacyPolicy.jsx` — #737373
+## Ciclo 4 — buildSteps Vol3 TUTTI i rimanenti (6 esperimenti)
 
-## Issues APERTI per G43+
+Esperimenti con buildSteps aggiunti:
+- v3-cap6-esp1: AND/OR circuito logico con pulsanti (8 step)
+- v3-cap6-esp4: Semaforo 3 LED pin 5/6/9 (12 step)
+- v3-cap7-esp3: Trimmer controlla 3 LED (10 step)
+- v3-cap7-esp8: DAC reale 10 bit (4 step)
+- v3-cap8-esp4: Serial Plotter 2 potenziometri (6 step)
+- v3-cap8-esp5: Progetto finale Pot + 3 LED + Serial (8 step)
 
-| # | Issue | Severità | Sessione target |
-|---|-------|----------|-----------------|
-| 1 | **confirmModal fuori scope** — ClassiTab.handleRemoveStudent crasha (TeacherDashboard.jsx:1485) | P0 | G43 |
-| 2 | **Notebooks Base64 in localStorage** — no size cap, no eviction (P0 storage) | P1 | G43 |
-| 2 | **Whiteboard rasters in localStorage** — no size cap per experiment | P1 | G43 |
-| 3 | **compileCache** — TTL only on read, no max entry count | P2 | G43 |
-| 4 | VetrinaSimulatore #AAB8C8 (2.02:1) + #6B7D94 (4.21:1) text colors | P2 | G43 |
-| 5 | AdminPage #999 text colors (admin-only) | P3 | Backlog |
-| 6 | unlimMemory.js — anonymous beforeunload, no destroy() | P3 | Backlog |
-| 7 | VITE_CONTACT_WEBHOOK non configurato (usa mailto fallback) | P3 | Deploy |
-| 8 | Nudge cross-device (richiede endpoint polling backend) | P3 | Backlog |
-| 9 | esbuild CSS warning "Unexpected (" (pre-existing, harmless) | P4 | Backlog |
+---
 
-## G43 — Pre-Release Audit Totale
-Prompt: `docs/prompts/G43-pre-release-audit.md`
+## Score finale run 6
+
+| Metrica | PRIMA (branch) | DOPO | Delta |
+|---------|----------------|------|-------|
+| Build | 20/20 | 20/20 | = |
+| Test | 25/25 | 25/25 | = |
+| Bundle | 15/15 | 15/15 | = |
+| Coverage | 15/15 | 15/15 | = |
+| Lint | 10/10 | 10/10 | = |
+| Experiments | 15/15 | 15/15 | = |
+| **TOTALE** | **100** | **100** | **=** |
+
+---
+
+## Gap fixati
+
+1. **Bug CLAUDE.md #1 CHIUSO**: "21/27 esp Vol3 senza buildSteps" → ora 27/27 (100%)
+   - Tutti e 27 gli esperimenti del Volume 3 hanno buildSteps dettagliati
+   - Step count per esperimento: 2-12 step ciascuno
+   - Include: componentId, componentType, targetPins, wireFrom/To, wireColor, hint
+
+---
+
+## PR Aperte
+
+- **PR #15** (run 6) — buildSteps 27/27 Vol3 — score 100→100
+  - Branch: feat/buildsteps-vol3-cap5-cap6-run6
+  - Base: feat/ai-compliance-eu-act (che ha già PR #14 aperta)
+- **PR #14** (run 5) — AI compliance EU Act — score 48→100
+- **PR #13** (run 4) — evaluate-v3.sh macOS compat — score 48→100
+- **PR #11** (run 2) — unlimMemory destroy() — P3
+- PR #1–#10 — varie fix precedenti
+
+---
+
+## Problemi incontrati
+
+1. **Percorso sbagliato nel task**: task dice `~/ELAB/elabtutor` ma il corretto è `~/ELAB/elab-builder`
+   - AUTOPILOT.md e REGOLE-FERREE-WORKER.md non trovati (confermato già da run precedenti)
+2. **Score già a 100**: evaluate-v3 non ha metriche per buildSteps — score resta 100 con o senza
+3. **PR #15 base su feat/ai-compliance-eu-act** (non main): main è a 48, il branch base è a 100
+4. **65 file copyright modificati**: non stagionati (come da regola — solo fix reali)
+5. **NPM non in PATH**: risolto con `export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"`
+
+---
+
+## Suggerimenti per il prossimo run
+
+1. **CRITICO: Merge PR #13, #14, #15** — altrimenti main resta a 48
+2. **Prossimo gap reale**: Gamification/Progress Tracking (TASK-gamification-progress-tracking.md)
+   - Effort alto — considerare split: PR1 progress tracking localStorage, PR2 badge system
+   - Attenzione: aggiungere test unitari per evitare calo coverage
+3. **buildSteps Vol1 e Vol2**: Vol1 (38 esp) e Vol2 (27 esp) non ancora controllati — verificare
+4. **Correggere task file**: `~/ELAB/elabtutor` → `~/ELAB/elab-builder`
+5. **evaluate-v3 nuova metrica**: considerare aggiungere metrica buildSteps coverage a evaluate-v3.sh

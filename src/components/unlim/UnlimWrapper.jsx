@@ -716,6 +716,11 @@ export default function UnlimWrapper({ children }) {
       {children}
 
       <UnlimErrorBoundary fallback={null}>
+        {/* EU AI Act Art. 52 — AI disclosure obbligatoria prima dell'interazione */}
+        <div role="note" className={css.aiDisclosureBanner} aria-label="Avviso sistema AI">
+          Assistente AI — Le risposte possono contenere errori. Verifica sempre.
+        </div>
+
         {/* G36: Persistent offline banner — orange, not scary red */}
         {isOffline && (
           <div role="alert" className={css.offlineBanner}>
