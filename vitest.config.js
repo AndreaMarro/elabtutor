@@ -8,9 +8,20 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
     plugins: [react()],
+    css: {
+        // Override PostCSS config per test environment.
+        // @tailwindcss/postcss v4 requires lightningcss binary (linux-x64-gnu.node)
+        // that npm ci may not install on Linux CI runners.
+        // Using empty PostCSS config avoids the binary dependency during tests.
+        postcss: {
+            plugins: [],
+        },
+    },
     test: {
         environment: 'jsdom',
         globals: true,
+        testTimeout: 15000,
+        css: false,
         setupFiles: ['./tests/setup.js'],
         env: {
             VITE_N8N_AUTH_URL: 'https://api.elab-tutor.test/auth',

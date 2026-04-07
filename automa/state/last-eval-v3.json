@@ -1,0 +1,13 @@
+{
+  "score": 48,
+  "max": 100,
+  "timestamp": "2026-04-07T12:40:48Z",
+  "details": "build=20 test=0(0) bundle=0(13572KB) coverage=10(?%) lint=3(0
+0) experiments=15(577)",
+  "errors": " NO_TESTS BUNDLE_HUGE(13572KB)",
+  "test_passed": 0,
+  "test_failed": 0,
+  "bundle_kb": 13572,
+  "coverage_pct": 0,
+  "experiments": 577
+}
