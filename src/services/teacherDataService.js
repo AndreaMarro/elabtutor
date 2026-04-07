@@ -198,7 +198,7 @@ export function transformToLegacyFormat(students, sessions, moods) {
           nome: s.experiment_id,
           completato: s.completed,
           durata: s.duration_seconds,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           timestamp: s.started_at,
         })),
       sessioni: mySessions.map(s => ({
@@ -245,4 +245,51 @@ async function getClassStudentIds(classId) {
  */
 export function isCloudDataAvailable() {
   return isSupabaseConfigured();
+}
+
+/**
+ * Fetch dati da TUTTE le classi del docente e restituisce formato legacy unificato.
+ * Risolve il bug "solo classes[0]" — i docenti con piu classi vedevano dati incompleti.
+ * Gli studenti duplicati (in piu classi) vengono deduplicati per student_id.
+ * @param {number} days - finestra temporale per le sessioni
+ * @returns {Promise<Array>} array in formato legacy (transformToLegacyFormat)
+ */
+export async function fetchAllClassesData(days = 30) {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const classes = await fetchTeacherClasses();
+    if (!classes.length) return [];
+
+    const results = await Promise.all(
+      classes.map(cls =>
+        Promise.all([
+          fetchClassStudents(cls.id),
+          fetchClassSessions(cls.id, days),
+          fetchClassMoods(cls.id),
+        ])
+      )
+    );
+
+    // Merge all students, sessions, moods — deduplicate students by id
+    const seenStudents = new Set();
+    const allStudents = [];
+    const allSessions = [];
+    const allMoods = [];
+
+    results.forEach(([students, sessions, moods]) => {
+      students.forEach(s => {
+        if (!seenStudents.has(s.id)) {
+          seenStudents.add(s.id);
+          allStudents.push(s);
+        }
+      });
+      allSessions.push(...sessions);
+      allMoods.push(...moods);
+    });
+
+    return transformToLegacyFormat(allStudents, allSessions, allMoods);
+  } catch (err) {
+    logger.warn('[TeacherData] fetchAllClassesData failed:', err.message);
+    return [];
+  }
 }

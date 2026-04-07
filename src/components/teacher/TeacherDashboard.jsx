@@ -16,7 +16,7 @@ import { showToast } from '../common/Toast';
 import LESSON_PATHS from '../../data/lesson-paths/index';
 import { sendNudge } from '../../services/nudgeService';
 import { isSupabaseConfigured } from '../../services/supabaseClient';
-import { fetchTeacherClasses, fetchClassStudents, fetchClassSessions, fetchClassMoods, transformToLegacyFormat } from '../../services/teacherDataService';
+import { fetchAllClassesData } from '../../services/teacherDataService';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import css from './TeacherDashboard.module.css';
 // Colori ELAB ufficiali
@@ -481,28 +481,18 @@ export default function TeacherDashboard({ onNavigate }) {
         async function loadData() {
             setIsLoadingData(true);
             try {
-                // G50: Supabase path — dati reali cross-device
+                // G50: Supabase path — dati reali cross-device (tutte le classi)
                 if (isSupabaseConfigured()) {
                     try {
-                        const classes = await fetchTeacherClasses();
-                        if (!cancelled && classes.length > 0) {
-                            const cls = classes[0]; // Use first class
-                            const [students, sessions, moods] = await Promise.all([
-                                fetchClassStudents(cls.id),
-                                fetchClassSessions(cls.id, 30),
-                                fetchClassMoods(cls.id),
-                            ]);
+                        const transformed = await fetchAllClassesData(30);
+                        if (!cancelled && transformed.length > 0) {
                             const legacyData = {};
-                            const transformed = transformToLegacyFormat(students, sessions, moods);
                             transformed.forEach(s => { legacyData[s.userId] = s; });
-                            if (Object.keys(legacyData).length > 0) {
-                                setAllStudentData(legacyData);
-                                setDataSource('cloud');
-                                // Build report from transformed Supabase data
-                                setClassReport(_buildReportFromLegacyData(legacyData));
-                                setIsLoadingData(false);
-                                return;
-                            }
+                            setAllStudentData(legacyData);
+                            setDataSource('cloud');
+                            setClassReport(_buildReportFromLegacyData(legacyData));
+                            setIsLoadingData(false);
+                            return;
                         }
                     } catch (e) {
                         // Supabase failed, continue to legacy
