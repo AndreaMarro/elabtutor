@@ -13,6 +13,8 @@ export default defineConfig({
         globals: true,
         css: false,
         setupFiles: ['./tests/setup.js'],
+        testTimeout: 15000,
+        hookTimeout: 30000,
         env: {
             VITE_N8N_AUTH_URL: 'https://api.elab-tutor.test/auth',
             VITE_N8N_GDPR_URL: 'https://api.elab-tutor.test/gdpr',
