@@ -198,7 +198,7 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
 
 /**
  * Try nanobot server first (lower latency, circuit-aware MCP).
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Returns null if unavailable — caller falls through to backend webhook.
  * Uses /tutor-chat endpoint with experiment context and persistent session.
  */
@@ -399,7 +399,7 @@ function friendlyError(error) {
 
     if (error?.name === 'AbortError' || msg.includes('timeout')) {
         return 'UNLIM ci sta mettendo un po\' troppo. Riprova tra qualche secondo.';
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
         return 'Sembra che la connessione internet non funzioni. Controlla e riprova.';
@@ -576,7 +576,7 @@ export async function sendChat(message, images = [], options = {}) {
 
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
-    const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
+    const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano. Usa scaffolding: adatta il supporto alla difficoltà dimostrata. Spiega PERCHÉ l\'errore è sbagliato. Aggiungi incoraggiamento breve ("Ottima domanda!"). Non superare 3 concetti per risposta.';
     const nanobotMessage = experimentContext
         ? `${BREVITY_RULE}\n${experimentContext}\n\nMessaggio studente:\n${message}`
         : `${BREVITY_RULE}\n\nMessaggio studente:\n${message}`;
@@ -600,7 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
 
         // Se ci sono immagini, invia al backend con l'immagine in base64
         if (images.length > 0) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
             // Image analysis via backend Vision
 
             // Security: sessionStorage instead of localStorage — session IDs must not
@@ -801,7 +801,7 @@ function extractActions(text, userMessage = '') {
     if (!text) return { commands: [], buttons: [], route: null };
 
     const actions = {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         commands: [],  // Azioni eseguite automaticamente
         buttons: [],   // Pulsanti mostrati all'utente (solo se utili!)
         route: null    // Routing suggerito: 'simulator' | 'canvas' | 'manual' | 'page' | null
@@ -1002,7 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     // 2. Fallback: backend webhook
     if (COMPILE_WEBHOOK) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         const result = await tryCompile(COMPILE_WEBHOOK, 'Backend webhook');
         if (result) return result;
     }
