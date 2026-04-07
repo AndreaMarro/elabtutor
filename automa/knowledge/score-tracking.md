@@ -1,6 +1,7 @@
 # ELAB Researcher — Score Tracking
 > Registro dei topic investigati dall'agente autonomo elab-researcher.
 > Aggiornato automaticamente ad ogni run.
+> Score ultimo ciclo (2026-04-07 13:55): **43/100** — BUILD_FAIL locale (evaluate-v3.sh bug su macOS?), dist/ presente, CI infra bloccata da lightningcss Linux binary
 
 ---
 

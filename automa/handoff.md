@@ -1,122 +1,92 @@
-# HANDOFF G42 → G43
+# Handoff — 2026-04-07 13:55
 
-**Data**: 31/03/2026
-**Stato**: Build PASS (85s), 972/972 unit test, 21 test file, bundle ~2951KB precache (32 entries)
-**URL Live**: https://elab-builder.vercel.app
-**Sessione completata**: G42 "STRESS TEST + MEMORY LEAKS + WCAG"
-**Sprint**: H (G41-G50) — Seconda sessione
+## Score: 43/100
+**ATTENZIONE**: Score probabilmente inaffidabile. evaluate-v3.sh riporta BUILD_FAIL localmente ma dist/ esiste (build precedente ok). PR#33 + PR#11 fixano automa/evaluate-v3.sh — merge urgente per avere score accurato.
 
-## Cosa è stato fatto in G42
+---
 
-### Task 1: Memory Leak Fix — pointerup (P2 → CHIUSO)
-- **SimulatorCanvas.jsx** — `pendingReleaseRef` traccia il handler `handleRelease` registrato su `window`
-  - Cleanup stale listener prima di aggiungerne uno nuovo (previene stacking su rapid clicks)
-  - Cleanup su unmount nel useEffect esistente (probeListenersRef)
-  - Pattern coerente con il sistema probe già presente
+## Ultimo Ciclo (Coordinator run 13:36-13:55)
 
-### Task 2: Annotation Listener Churn Fix (P2 → CHIUSO)
-- **Annotation.jsx** — Rimosso `dragOffset.dx/dy` dalle deps di useEffect
-  - Aggiunto `dragOffsetRef` per leggere offset corrente in handleMouseUp senza closure stale
-  - Da ~60 add/remove listener al secondo durante drag → 1 sola coppia di listener per drag session
-  - `setDragOffset` ancora usato per re-render (posizione visiva), ma non triggera più l'effect
+### Diagnosi CI
+- **TUTTE** le 22 PR falliscono CI
+- **Causa principale**: lightningcss.linux-x64-gnu.node mancante su GitHub Actions ubuntu-latest
+- **Causa secondaria**: quality-ratchet fallisce perché i test non girano (baseline=1700, actual=26)
+- `npm ci || npm install` già in workflow test.yml ma NON risolve lightningcss (npm ci riesce con macOS binary, il fallback npm install non scatta)
+- Anche main fallisce CI → problema infrastrutturale sistemico, NON bug nel codice delle PR
 
-### Task 3: Timer Leak Fix — tryLocalServer (P2 → CHIUSO)
-- **api.js** — Aggiunto `finally` block con `clearTimeout(timer)` + `removeEventListener('abort', onExternalAbort)`
-  - Handler nominato `onExternalAbort` per poterlo rimuovere (era arrow anonima)
-  - Pattern ora coerente con `tryNanobot` che aveva già il pattern corretto
-  - Rimosso `clearTimeout` ridondante nel blocco try (il finally lo gestisce)
+### FASE 1 — Merge main nei branch
+- **22 branch** processati, nessun conflitto
+- **3 branch aggiornati** (nuovi commit pushati):
+  - `fix/evaluate-v3-macos-perl-compat-g45` (PR#33)
+  - `auto/test-factory-1002` (PR#22)
+  - `auto/test-factory-0747` (PR#21)
+- **19 branch** già aggiornati con main (nessuna azione)
 
-### Task 4: localStorage Bounded Pruning (P2 → CHIUSO)
-- **studentService.js** — `_pruneIfNeeded()` con 2 fasi:
-  - Fase 1: Rimuove entry con `ultimoSalvataggio` > 730 giorni (2 anni)
-  - Fase 2: Se ancora > 3MB, rimuove entry più vecchie fino a rientrare
-  - Eseguita ogni 20 salvataggi (`_pruneCounter`) per non impattare le performance
-  - Counter si resetta al page reload (conservative — pruna più spesso, non meno)
+### FASE 2 — PR duplicate chiuse
+| PR chiusa | Titolo | Sostituita da |
+|-----------|--------|---------------|
+| #25 | test(gdpr): +58 test gdprService | PR#27 (superset) |
+| #26 | test(auth+voice): +64 test | PR#27 (superset) |
+| #23 | test: +27 test gamificationService | PR#30 (superset) |
 
-### Task 5: WCAG AA Contrast Compliance (P2 → CHIUSO)
-- **design-system.css** — `--color-muted: #888888` → `#737373` (4.7:1 su bianco)
-- **TeacherDashboard.jsx** — Legenda `■` Vol2: `#E8941C` → `#B87A00`
-- **TutorLayout.jsx** — color dashboard button: `#E8941C` → `#B87A00`
-- **ChatOverlay.module.css** — disclaimerIcon: `var(--color-vol2)` → `var(--color-vol2-text)`
-- **NewElabSimulator.jsx** — wireMode text: `--color-vol2` → `--color-vol2-text`
-- **LessonPathPanel.jsx** — prereq text + evidence: `--color-vol2` → `--color-vol2-text`, `#999` → `#737373`
-- **SerialMonitor.jsx** — baud mismatch warning: `--color-vol2` → `--color-vol2-text` (3 occorrenze)
-- **Toast.jsx** — warning toast: `text: '#fff'` → `text: '#1A1A2E'` (dark on orange, 11.5:1)
-- **UnlimReport.jsx** — Tutti `#888/#aaa/#999` → `#737373` nel template report (7 occorrenze)
-- **PrivacyPolicy.jsx** — meta + closeBtn: `#999` → `#737373`
+### FASE 3 — Commenti CI PASS
+- Nessuna PR con CI verde. Nessun commento aggiunto.
 
-### Task 6: React backgroundImage warnings (P3 → CHIUSO come phantom)
-- Verificato: nessun warning React reale. Il `background` shorthand con `linear-gradient()` non genera warning in React 19. Non era un bug reale.
+### FASE 4 — Stato file automa/state/
+- BUILD-RESULT.md: **non trovato**
+- TEST-RESULT.md: **non trovato**
+- AUDIT-REPORT.md: **non trovato**
+- shared-results.md: ultimo aggiornamento 2026-03-25 (stale)
+- last-eval-v3.json: score 43/100 @ 11:38:14 (BUILD_FAIL, NO_TESTS, BUNDLE=15, COVERAGE=10, LINT=3, EXPERIMENTS=15)
 
-### Post-Audit Fixes (da 5+4 agenti paralleli)
-- **--color-vol2-text**: `#B87A00` → `#996600` (4.94:1, era 3.61:1 — il commento G38 mentiva)
-- **longPressTimerRef + pinTooltipTimerRef**: cleanup su unmount nel useEffect di SimulatorCanvas
-- **Toast.jsx**: corretto commento contrasto (era "11.5:1", reale ~3.8:1 dark-on-orange)
-- **UnlimReport footer + LessonPathPanel evidence**: fixati `#999` residui trovati durante audit
-- **P0 FIX stt TDZ crash**: `UnlimWrapper.jsx` — `speakIfEnabled` referenziava `stt.isListening` prima della dichiarazione `const stt = useSTT(...)`. Spostato `speakIfEnabled` dopo `stt`. L'app crashava al primo click "INIZIA IN 3 SECONDI".
+---
 
-## Quality Gate Post-Session
+## PR Aperte: 22
 
-| # | Check | Prima (G41) | Dopo (G42) | Delta |
-|---|-------|-------------|------------|-------|
-| 1 | Build | PASS ~54s | PASS ~85s | = |
-| 2 | Test unit | 972/972 | 972/972 | = |
-| 3 | Test files | 21 | 21 | = |
-| 4 | Bundle precache | ~2955KB (32) | ~2951KB (32) | ~= |
-| 5 | Memory leaks | 3+2 aperti | **0 aperti** | -5 chiusi (3 originali + 2 timer audit) |
-| 6 | WCAG text violations | ~15+ | **~8 residui** (admin/VetrinaSimulatore) | -7+ fix |
+| # | Titolo | CI | Nota |
+|---|--------|-----|------|
+| 34 | test(services): +126 test sessionReport+lessonPrep | RUNNING | Più recente test run |
+| 33 | fix(automa): evaluate-v3.sh macOS compat | FAIL | Fix critico per score accurato |
+| 32 | test(services): +134 test sessionMetrics+projectHistory+license+classProfile | FAIL | Ultimo run completo |
+| 30 | test(utils+services): +123 test activityBuffer+aiSafety+gamification | FAIL | |
+| 29 | test(services): +76 test sessionMetrics+license+nudge | FAIL | |
+| 27 | test(classProfile+utils): +71 test | FAIL | Superset di PR#25,#26 (chiuse) |
+| 22 | test: +22 test simulator-api.js | FAIL | Aggiornato con main |
+| 21 | test: +29 test voiceCommands | FAIL | Aggiornato con main |
+| 20 | fix(gdpr): hash parentEmail | FAIL | |
+| 19 | chore(baseline): alza baseline 1442→1460 | FAIL | PERICOLOSA — main ha 1700 |
+| 18 | feat(gamification): buildSteps → gamification | FAIL | |
+| 17 | feat(data): buildSteps Vol2 Cap3-Cap5 | FAIL | |
+| 16 | feat(retention): activation tracker | FAIL | |
+| 15 | feat(data): buildSteps Vol3 Cap5-Cap6 | FAIL | |
+| 14 | feat(ai-compliance): EU AI Act disclosure | FAIL | |
+| 11 | fix(unlimMemory): destroy() cleanup | FAIL | |
+| 8 | fix(a11y): admin contrast WCAG AA | FAIL | |
+| 6 | fix(seo): Twitter Card + og:site_name | FAIL | |
+| 5 | research(automa): GDPR audit + Mistral Nemo | FAIL | |
+| 3 | feat(lavagna): persist volume/page | FAIL | |
+| 2 | fix(a11y): WCAG AA VetrinaSimulatore | FAIL | |
+| 1 | fix(seo+infra): canonical URL + infra | FAIL | |
 
-**CRITICI: 4/4 PASS | DEPLOY: AUTORIZZATO**
+**CI PASS: 0 | In esecuzione: 1 (PR#34) | Pronte per review: 0**
 
-## Score composito (ONESTO)
+---
 
-| Area | G41 | G42 | Delta |
-|------|-----|-----|-------|
-| Build/Test | 10/10 | 10/10 | = |
-| Simulatore | 8.5/10 | **9/10** | +0.5 (3 memory leaks fix, listener hygiene) |
-| UNLIM | 9.5/10 | 9.5/10 | = |
-| Teacher Dashboard | 9.5/10 | 9.5/10 | = |
-| GDPR | 8.5/10 | **9/10** | +0.5 (localStorage bounded, pruning) |
-| UX/Principio Zero | 9/10 | 9/10 | = |
-| Voice Control | 8/10 | 8/10 | = |
-| Resilienza Offline | 8.5/10 | 8.5/10 | = |
-| Landing/Conversione | 8/10 | 8/10 | = |
-| SEO | 7.5/10 | 7.5/10 | = |
-| WCAG/A11y | 8/10 | **9/10** | +1.0 (contrast AA compliant, muted text fix) |
-| **COMPOSITO** | **9.1/10** | **9.2/10** | +0.1 (robustezza e accessibilità) |
+## Prossimo Ciclo
 
-**Score onesto**: 9.2/10. Sessione focalizzata su robustezza: 3 memory leaks chiusi, localStorage bounded con pruning intelligente, WCAG AA contrast compliant su tutti i testi principali. Nessuna feature nuova = nessun rischio di regressione.
+### Priorità 1 — Fix infrastrutturale CI (CRITICO)
+Il problema lightningcss.linux-x64-gnu.node blocca TUTTO. Opzioni:
+1. Aggiungere `npm rebuild lightningcss` esplicito nel workflow dopo npm ci
+2. Rimuovere @tailwindcss/postcss v4 dal postcss.config.js e usare PostCSS/tailwindcss v3
+3. Aggiungere `.npmrc` con `node-linker=node-modules` e rebuild lightningcss esplicitamente
 
-## File modificati in G42
-- `src/components/simulator/canvas/SimulatorCanvas.jsx` — pendingReleaseRef + cleanup
-- `src/components/simulator/components/Annotation.jsx` — dragOffsetRef, deps fix
-- `src/services/api.js` — tryLocalServer finally block
-- `src/services/studentService.js` — _pruneIfNeeded (730gg + 3MB)
-- `src/styles/design-system.css` — --color-muted #737373
-- `src/components/teacher/TeacherDashboard.jsx` — #B87A00 legenda
-- `src/components/tutor/TutorLayout.jsx` — #B87A00 color
-- `src/components/tutor/ChatOverlay.module.css` — vol2-text
-- `src/components/simulator/NewElabSimulator.jsx` — vol2-text
-- `src/components/simulator/panels/LessonPathPanel.jsx` — vol2-text + #737373
-- `src/components/simulator/panels/SerialMonitor.jsx` — vol2-text (3x)
-- `src/components/common/Toast.jsx` — warning dark text
-- `src/components/unlim/UnlimReport.jsx` — #737373 (8 occorrenze)
-- `src/components/common/PrivacyPolicy.jsx` — #737373
+### Priorità 2 — PR#19 da chiudere
+Alza baseline a 1442→1460 ma main ha già baseline=1700. PR#19 è stale e pericolosa.
 
-## Issues APERTI per G43+
+### Priorità 3 — Merge PR test serie (dopo fix CI)
+Ordine suggerito: PR#21 → PR#22 → PR#27 → PR#29 → PR#30 → PR#32 → PR#34
 
-| # | Issue | Severità | Sessione target |
-|---|-------|----------|-----------------|
-| 1 | **confirmModal fuori scope** — ClassiTab.handleRemoveStudent crasha (TeacherDashboard.jsx:1485) | P0 | G43 |
-| 2 | **Notebooks Base64 in localStorage** — no size cap, no eviction (P0 storage) | P1 | G43 |
-| 2 | **Whiteboard rasters in localStorage** — no size cap per experiment | P1 | G43 |
-| 3 | **compileCache** — TTL only on read, no max entry count | P2 | G43 |
-| 4 | VetrinaSimulatore #AAB8C8 (2.02:1) + #6B7D94 (4.21:1) text colors | P2 | G43 |
-| 5 | AdminPage #999 text colors (admin-only) | P3 | Backlog |
-| 6 | unlimMemory.js — anonymous beforeunload, no destroy() | P3 | Backlog |
-| 7 | VITE_CONTACT_WEBHOOK non configurato (usa mailto fallback) | P3 | Deploy |
-| 8 | Nudge cross-device (richiede endpoint polling backend) | P3 | Backlog |
-| 9 | esbuild CSS warning "Unexpected (" (pre-existing, harmless) | P4 | Backlog |
-
-## G43 — Pre-Release Audit Totale
-Prompt: `docs/prompts/G43-pre-release-audit.md`
+### Attenzione
+- **PR#19**: PERICOLOSA — abbassa il ratchet (1700 → 1460). Chiudere.
+- **Score 43/100**: non fidarsi finché evaluate-v3.sh non è fixato (PR#33 o PR#11 merged)
+- **lightningcss**: NESSUN worker deve aprire nuove PR finché CI non è verde. Spreco di cicli.
