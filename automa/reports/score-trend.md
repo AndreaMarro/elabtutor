@@ -1,3 +1,22 @@
+## Score Trend — 07/04/2026 (Audit Produzione)
+
+```
+Homepage/Assets  ████████████████████ 10.0 (=)  ← 16/16 200 OK, 0 JS errors
+PWA              ███████████████████▌  9.8 (=)  ← manifest OK, SW registrato
+Routing          ███████████████████   9.5 (=)  ← 5/5 rotte PASS
+SEO              ████████████          6.0 (=)  ← canonical/og:url ancora vercel.app
+```
+
+**Produzione complessiva**: ~8.8/10
+- P0/P1: 0
+- P2: 3 (SEO — PR #1 non mergiata)
+- P3: 1 (25 PR aperte)
+- Limitazione: ELAB_PASSWORD non disponibile → test con login non eseguiti
+
+Azione urgente: merge PR #1 (fix/seo-canonical-infra-worker) + rideploy Vercel
+
+---
+
 ## Score Trend — 23/03/2026
 
 ```
