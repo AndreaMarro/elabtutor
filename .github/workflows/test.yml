@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci || npm install
 
+      - name: Rebuild native addons (lightningcss)
+        run: npm rebuild lightningcss 2>/dev/null || true
+
       - name: Run linter
         run: npm run lint
         continue-on-error: true
