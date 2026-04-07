@@ -4,6 +4,8 @@
  * © Andrea Marro — 01/04/2026
  */
 
+import activationTracker from './activationTracker';
+
 const POINTS_KEY = 'elab_gamification_points';
 const STREAK_KEY = 'elab_gamification_streak';
 const BADGES_KEY = 'elab_gamification_badges';
@@ -196,9 +198,9 @@ function showConfetti(container) {
   const colors = ['#1E4D8C', '#4A7A25', '#E8941C', '#E54B3D', '#FFD700'];
   const count = 50;
   const wrapper = document.createElement('div');
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
   wrapper.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;overflow:hidden';
   wrapper.setAttribute('aria-hidden', 'true');
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
   for (let i = 0; i < count; i++) {
     const piece = document.createElement('div');
@@ -227,10 +229,14 @@ function showConfetti(container) {
 }
 
 // ─── Orchestration: call these from components ──
-function onExperimentCompleted(experimentId, isFirst = false) {
+function onExperimentCompleted(experimentId, isFirst = false, meta = {}) {
+  // Track activation (aha moment + retention signal) before checking isFirst
+  const activation = activationTracker.markExperimentCompleted(experimentId, meta);
+  const firstEver = isFirst || activation.isFirstEver;
+
   playFanfare();
   showConfetti();
-  const pts = isFirst ? POINT_VALUES.firstExperiment : POINT_VALUES.experimentCompleted;
+  const pts = firstEver ? POINT_VALUES.firstExperiment : POINT_VALUES.experimentCompleted;
   const total = addPoints(pts, `Esperimento ${experimentId}`);
   const streak = updateStreak();
   const newBadges = checkAndUnlockBadges({
@@ -243,7 +249,7 @@ function onExperimentCompleted(experimentId, isFirst = false) {
     if (_badgeUnlockTimer) clearTimeout(_badgeUnlockTimer);
     _badgeUnlockTimer = setTimeout(() => { playBadgeUnlock(); _badgeUnlockTimer = null; }, 600);
   }
-  return { total, newBadges, streak };
+  return { total, newBadges, streak, activation };
 }
 
 function onQuizCorrect(experimentId) {
