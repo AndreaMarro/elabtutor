@@ -1,12 +1,13 @@
 {
-  "score": 75,
+  "score": 48,
   "max": 100,
-  "timestamp": "2026-04-07T12:15:15Z",
-  "details": "build=20 test=0(0) bundle=15(0KB) coverage=15(62.07%) lint=10(0) experiments=15(577)",
-  "errors": "TEST_FAIL(1)",
+  "timestamp": "2026-04-07T12:40:48Z",
+  "details": "build=20 test=0(0) bundle=0(13572KB) coverage=10(?%) lint=3(0
+0) experiments=15(577)",
+  "errors": " NO_TESTS BUNDLE_HUGE(13572KB)",
   "test_passed": 0,
-  "test_failed": 1,
-  "bundle_kb": 0,
-  "coverage_pct": 62.07,
+  "test_failed": 0,
+  "bundle_kb": 13572,
+  "coverage_pct": 0,
   "experiments": 577
 }
