@@ -37,7 +37,7 @@ DETAILS="build=$BUILD_SCORE"
 
 # ── 2. TEST (25 punti) ───────────────────────
 log "Running tests..."
-TEST_OUTPUT=$(npm test -- --run 2>&1) || true
+TEST_OUTPUT=$(npm test -- --run --coverage 2>&1) || true
 TEST_PASSED=$(echo "$TEST_OUTPUT" | perl -nle 'print $1 if /^\s+Tests\s+(\d+) passed/' | head -1 || echo "0")
 TEST_FAILED=$(echo "$TEST_OUTPUT" | perl -nle 'print $1 if /^\s+Tests\s+.*?(\d+) failed/' | head -1 || echo "0")
 TEST_PASSED=${TEST_PASSED:-0}
