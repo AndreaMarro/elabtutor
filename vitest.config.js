@@ -11,6 +11,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         globals: true,
+        css: false,
         setupFiles: ['./tests/setup.js'],
         env: {
             VITE_N8N_AUTH_URL: 'https://api.elab-tutor.test/auth',
