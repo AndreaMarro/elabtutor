@@ -1,3 +1,36 @@
+# Handoff — 2026-04-07 16:25
+
+## Run Worker run14 — Ciclo 1 (16:00-16:25)
+
+### Score
+- **PRIMA**: 97/100 (test=22/25, 1531 test)
+- **DOPO**: **100/100** (+3) — PR #42 (branch: feat/worker-run14-tests-125)
+  - Aggiunti 174 nuovi test in 6 file (solo test, zero modifiche a src/)
+  - Test count: 1531 → 1705 (>= baseline 1700) → TEST 22→25 (+3)
+  - BUILD=20 TEST=25 BUNDLE=15 COV=15 LINT=10 EXP=15
+
+### Test files aggiunti
+- tests/unit/contentFilter.test.js: 56 test (checkContent, checkPII, sanitizeOutput, validateMessage)
+- tests/unit/sessionMetrics.test.js: 36 test (trackExperimentLoad, trackCompilation, formatForContext)
+- tests/unit/activityBuffer.test.js: 34 test (pushActivity, getRecentActivities, formatForContext, ring buffer overflow)
+- tests/unit/friendlyErrorExtended.test.js: 22 test (GCC error patterns: redefinition, void, lvalue, stray, multiline)
+- tests/unit/truncateResponseExtended.test.js: 16 test (edge cases: exact maxWords, custom limit, falsy inputs)
+- tests/unit/logger.test.js: 11 test (warn/error chiama console, debug/info non throw, 4 metodi esportati)
+
+### PR
+- PR #42: https://github.com/AndreaMarro/elabtutor/pull/42
+- Branch: `feat/worker-run14-tests-125`
+
+### Note per prossimo worker
+- quality-gate.yml ha fix pendente (grep line filter) ma push bloccato da mancanza di `workflow` OAuth scope
+  - Fix è in commit f6bc7e7 su branch fix/vitest-timeout-flaky-tests-g46 (non pushato)
+  - Il fix è: `grep '^\s*Tests\s'` prima di grep per numero, evita catturare "33 passed" (file) invece di "1531 passed" (test)
+- PR #40 (fix/vitest-timeout-flaky-tests-g46) è ancora aperto — contiene lightningcss PostCSS fix + timeout fix
+- PR #19 (chore/raise-test-baseline-1460-run7) PERICOLOSO: abbassa baseline da 1700 → 1460, NON mergiare
+- Score 100/100 confermato localmente con evaluate-v3.sh
+
+---
+
 # Handoff — 2026-04-07 15:45
 
 ## Run Worker run12 — Ciclo 1 (15:00-15:45)
