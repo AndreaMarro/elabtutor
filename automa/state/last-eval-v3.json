@@ -1,11 +1,11 @@
 {
   "score": 75,
   "max": 100,
-  "timestamp": "2026-04-07T12:15:15Z",
+  "timestamp": "2026-04-07T12:35:51Z",
   "details": "build=20 test=0(0) bundle=15(0KB) coverage=15(62.07%) lint=10(0) experiments=15(577)",
-  "errors": "TEST_FAIL(1)",
+  "errors": " TEST_FAIL(4)",
   "test_passed": 0,
-  "test_failed": 1,
+  "test_failed": 4,
   "bundle_kb": 0,
   "coverage_pct": 62.07,
   "experiments": 577
