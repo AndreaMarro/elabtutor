@@ -1,10 +1,47 @@
-# HANDOFF elab-worker — 07/04/2026
+# HANDOFF elab-worker — 07/04/2026 (run 2)
 
-**Data**: 07/04/2026 (run autonomo scheduled)
+**Data**: 07/04/2026 (run autonomo scheduled — secondo run del giorno)
+**Branch**: `fix/unlim-memory-destroy-p3` → PR #11
+**Score**: 100 → 100 (già al massimo — fix qualità P3)
+
+## Cicli completati: 1
+
+---
+
+## Ciclo 1 — Fix P3: unlimMemory anonymous beforeunload + destroy()
+
+**Score PRIMA**: 100 | **Score DOPO**: 100 | **Delta**: 0 (score già al massimo)
+
+### Contesto
+Il run precedente (questa stessa giornata) aveva già portato lo score da 48 a 100.
+Tutti i P1/P2 dal backlog erano già stati risolti (localStorage size caps per
+Notebooks, Whiteboard, compileCache). Rimanevano solo P3.
+
+### Problema (P3 #6 dal backlog)
+`unlimMemory.js` registrava il listener `beforeunload` con una arrow function anonima,
+rendendo impossibile la rimozione con `removeEventListener`. Nessun metodo `destroy()`
+per cleanup completo al teardown del componente.
+
+### Fix (1 file: src/services/unlimMemory.js)
+- Aggiunto `_beforeUnloadHandler` (riferimento named)
+- Registrazione con la variabile invece di lambda anonima
+- Aggiunto `destroy()` → chiama `stopSync()` + `removeEventListener`
+- Esportato `destroy` nell'API pubblica
+
+### Note operative
+- `gh` disponibile in `/opt/homebrew/bin` (non in PATH default della shell schedulata)
+- Percorso progetto: `~/ELAB/elab-builder` (non `~/ELAB/elabtutor` come scritto nel task)
+- 67 file di rumore (copyright date 04→07/04) in working tree — stashati, non committati
+- PR #11 creata: https://github.com/AndreaMarro/elabtutor/pull/11
+
+---
+
+## Storico precedente (run 1 — 07/04/2026)
+
 **Branch**: `docs/regole-ferree-worker` → PR #10
 **Score**: 48 → 100 (+52)
 
-## Cicli completati: 3
+## Cicli completati (run 1): 3
 
 ---
 
@@ -79,22 +116,23 @@ Baseline miscalibrato (valori aspirazionali, non misurati):
 - PR #9 (branch fix/evaluate-v3-macos-baseline) già aperta con fix simili dallo stesso giorno
 - Overlap parziale tra PR #9 e PR #10: PR #9 NON genera coverage, PR #10 sì
 
-## Issue aperte (da handoff G42)
+## Issue aperte (aggiornato 07/04/2026 run 2)
 
 | # | Issue | Severità | Stato |
 |---|-------|----------|-------|
-| 1 | **Notebooks Base64 in localStorage** — no size cap, no eviction | P1 | Aperto |
-| 2 | **Whiteboard rasters in localStorage** — no size cap per experiment | P1 | Aperto |
-| 3 | **compileCache** — TTL only on read, no max entry count | P2 | Aperto |
+| 1 | **Notebooks Base64 in localStorage** — no size cap, no eviction | P1 | ✅ FIXATO (cappedToDataURL + MAX_NOTEBOOKS già in ElabTutorV4.jsx) |
+| 2 | **Whiteboard rasters in localStorage** — no size cap per experiment | P1 | ✅ FIXATO (MAX_WB_ENTRIES + MAX_WB_ENTRY_SIZE già in WhiteboardOverlay.jsx) |
+| 3 | **compileCache** — TTL only on read, no max entry count | P2 | ✅ FIXATO (MAX_CACHE_ENTRIES=50 già in compileCache.js) |
 | 4 | **confirmModal fuori scope in ClassiTab** | P0 | Verificato: code OK, già fixato |
 | 5 | AdminPage #999 text colors (admin-only) | P3 | Aperto |
-| 6 | unlimMemory.js — anonymous beforeunload, no destroy() | P3 | Aperto |
+| 6 | unlimMemory.js — anonymous beforeunload, no destroy() | P3 | ✅ FIXATO in PR #11 (run 2 07/04) |
 | 7 | VITE_CONTACT_WEBHOOK non configurato | P3 | Aperto |
 | 8 | Nudge cross-device (endpoint polling backend) | P3 | Backlog |
 
-## PR aperte (10 totali in origin)
+## PR aperte (11 totali in origin)
 
-- **PR #10** (questo run) — evaluate-v3.sh fix + coverage + baseline — score 48→100
+- **PR #11** (run 2 questo run) — unlimMemory destroy() — score 100→100 (qualità P3)
+- **PR #10** (run 1) — evaluate-v3.sh fix + coverage + baseline — score 48→100
 - **PR #9** — evaluate-v3.sh fix + baseline (senza coverage) — score 48→95
 - **PR #8** — WCAG contrasto admin
 - **PR #7** — copyright date 64 file (non urgente)
@@ -107,8 +145,10 @@ Baseline miscalibrato (valori aspirazionali, non misurati):
 
 ## Suggerimenti per il prossimo run
 
-1. **Merge PR #10 o #9** — entrambe fixano evaluate-v3.sh, scegliere una (PR #10 aggiunge coverage)
-2. **Attaccare P1: localStorage size cap** — Notebooks Base64 e Whiteboard rasters senza limite
-3. **VetrinaSimulatore WCAG** — #6B7D94 (4.21:1) ancora presente (fix in PR #2 e PR #9)
-4. **Cleanup branch stale** — 10 PR aperte, alcune overlapping
-5. **Align main locale/origin** — verificare con `git pull origin main`
+1. **Merge PR #10** — fix fondamentale evaluate-v3.sh, prerequisito per tutto il worker
+2. **Merge o close PR #9** — overlap con PR #10, valutare quale tenere
+3. **Cleanup PR stale** — 11 PR aperte (alcune overlap); priorità: #10, poi #2/#8 (WCAG), poi #4 (content)
+4. **Tutti P1/P2 già fixati** — solo P3 rimangono (AdminPage #999 e VITE_CONTACT_WEBHOOK)
+5. **Score già 100/100** — prossimo worker non può migliorare score; focus su merge PR e P3 restanti
+6. **PATH note**: `/opt/homebrew/bin` non in PATH default scheduled — aggiungere al task file
+7. **Percorso progetto**: `~/ELAB/elab-builder` (task file dice `~/ELAB/elabtutor` — correggere)
