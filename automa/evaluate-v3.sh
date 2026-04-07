@@ -117,7 +117,8 @@ DETAILS="$DETAILS coverage=$COV_SCORE(${COV_PCT:-?}%)"
 # ── 5. CONSOLE ERRORS (10 punti) ─────────────
 log "Checking lint..."
 LINT_OUTPUT=$(npm run lint 2>&1) || true
-LINT_ERRORS=$(echo "$LINT_OUTPUT" | grep -c "error" || echo "0")
+LINT_ERRORS=$(echo "$LINT_OUTPUT" | grep -c "error" 2>/dev/null) || LINT_ERRORS=0
+LINT_ERRORS=$(echo "$LINT_ERRORS" | tr -d '[:space:]')
 if [ "${LINT_ERRORS:-0}" -eq "0" ]; then
   LINT_SCORE=10
   log "  LINT: 0 errors → 10/10"
