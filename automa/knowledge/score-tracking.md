@@ -50,7 +50,20 @@
 
 ---
 
+## Audit Produzione (elab-auditor)
+
+| Data | Esperimenti | P0 | P1 | P2 | P3 | Status | Report |
+|------|-------------|----|----|----|----|--------|--------|
+| 2026-04-06 | 5/5 PASS | 0 | 0 | 0 | 0 | ✅ STABILE | AUDIT-2026-04-06T22-49-51.json |
+| 2026-04-07 | 5/5 PASS | 0 | 0 | 0 | 1 | ✅ STABILE | AUDIT-2026-04-07T07-45-00.md |
+
+**Issues P3 aperti:**
+- Copyright banner: `console.log` stampato una volta per navigazione SPA (multi-init). Guard `window.__elabBannerShown` suggerito.
+
+---
+
 ## Note Operative
 - Automa usa ~/ELAB/elab-builder (NON ~/ELAB/elabtutor che non esiste)
 - AUTOPILOT.md non trovato — usato MASTER-PLAN.md come riferimento topic
 - Run schedulati: vedere ~/.claude/scheduled-tasks/elab-researcher/SKILL.md
+- $ELAB_PASSWORD non disponibile in sessione schedulata — audit autenticato non eseguibile
