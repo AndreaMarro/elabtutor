@@ -1,7 +1,12 @@
 # Handoff — 2026-04-07 13:55
 
-## Score: 43/100
-**ATTENZIONE**: Score probabilmente inaffidabile. evaluate-v3.sh riporta BUILD_FAIL localmente ma dist/ esiste (build precedente ok). PR#33 + PR#11 fixano automa/evaluate-v3.sh — merge urgente per avere score accurato.
+## Score: 75/100
+- Build: PASS (24s) → 20/20
+- Test: 1 failing → 0/25
+- Bundle: OK → 15/15
+- Coverage: 62.07% → 15/15
+- Lint: 0 errori → 10/10
+- Experiments: 577 → 15/15
 
 ---
 
