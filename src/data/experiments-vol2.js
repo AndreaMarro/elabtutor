@@ -77,6 +77,38 @@ const EXPERIMENTS_VOL2 = {
         { question: "A cosa serve il multimetro?", options: ["A caricare la batteria", "A misurare tensione, corrente e resistenza", "A far suonare il buzzer"], correct: 1, explanation: "Il multimetro e uno strumento che puo misurare tante cose: Volt (tensione), Ampere (corrente) e Ohm (resistenza)!" },
         { question: "Che valore ti aspetti misurando una batteria 9V nuova?", options: ["Circa 1.5V", "Circa 9V o poco piu", "Circa 220V"], correct: 1, explanation: "Una batteria 9V nuova misura circa 9.4-9.6V. Se e sotto 7V, e quasi scarica!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la batteria 9V nell'area di lavoro.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "La batteria ha un polo + (rosso) e un polo - (nero). E la fonte di energia!"
+        },
+        {
+          step: 2,
+          text: "Posiziona il multimetro e imposta la rotella su V (Volt).",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "La modalita V misura la tensione. Il voltmetro si collega sempre IN PARALLELO."
+        },
+        {
+          step: 3,
+          text: "Collega il puntale ROSSO del multimetro al polo + della batteria.",
+          wireFrom: "mm1:v-ohm",
+          wireTo: "bat1:positive",
+          wireColor: "red",
+          hint: "Il puntale rosso va sempre al polo + (positivo)."
+        },
+        {
+          step: 4,
+          text: "Collega il puntale NERO (COM) al polo - della batteria. Leggi il valore: ~9V!",
+          wireFrom: "mm1:com",
+          wireTo: "bat1:negative",
+          wireColor: "black",
+          hint: "Una batteria nuova segna 9.4-9.6V. Sotto 7V e quasi scarica."
+        }
+      ],
     },
     {
       id: "v2-cap3-esp2",
@@ -110,6 +142,38 @@ const EXPERIMENTS_VOL2 = {
         { question: "Perche la tensione della batteria diminuisce col tempo?", options: ["Perche fa freddo", "Perche l'energia chimica dentro si esaurisce", "Perche il multimetro la consuma"], correct: 1, explanation: "La batteria converte energia chimica in elettrica. Quando i reagenti chimici si esauriscono, la tensione scende!" },
         { question: "Sotto quale valore una batteria 9V e quasi scarica?", options: ["Sotto 8V", "Sotto 7V", "Sotto 5V"], correct: 1, explanation: "Sotto 7V la batteria non riesce piu a far funzionare bene i circuiti. E ora di cambiarla!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la batteria 9V nell'area di lavoro.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "Questa e la batteria che misurerai ogni giorno per il tuo diario scientifico!"
+        },
+        {
+          step: 2,
+          text: "Posiziona il multimetro e imposta su V (Volt).",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "Usa sempre la stessa scala ogni giorno per confrontare i valori."
+        },
+        {
+          step: 3,
+          text: "Collega il puntale ROSSO al polo + della batteria.",
+          wireFrom: "mm1:v-ohm",
+          wireTo: "bat1:positive",
+          wireColor: "red",
+          hint: "Puntale rosso = polo positivo (+)."
+        },
+        {
+          step: 4,
+          text: "Collega il puntale NERO al polo -. Leggi e annota il valore sul tuo diario!",
+          wireFrom: "mm1:com",
+          wireTo: "bat1:negative",
+          wireColor: "black",
+          hint: "Segna data e valore ogni giorno. Quanto scende in una settimana?"
+        }
+      ],
     },
     {
       id: "v2-cap3-esp3",
@@ -134,6 +198,7 @@ const EXPERIMENTS_VOL2 = {
       layer: "schema",
       steps: [
         "Prendi un resistore da 330 Ohm e leggi le bande colorate.",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Imposta il multimetro su Ohm (simbolo omega).",
         "Tocca i terminali del resistore con i puntali.",
         "Confronta il valore misurato con quello delle bande: sono uguali?"
@@ -143,6 +208,38 @@ const EXPERIMENTS_VOL2 = {
       quiz: [
         { question: "In che modalita devi mettere il multimetro per misurare una resistenza?", options: ["V (Volt)", "A (Ampere)", "Ohm (simbolo omega)"], correct: 2, explanation: "Per misurare le resistenze serve la modalita Ohm, indicata dal simbolo greco omega. Il multimetro manda una piccola corrente e calcola la resistenza!" },
         { question: "Se le bande dicono 330 Ohm e il multimetro misura 328 Ohm, e un problema?", options: ["Si, la resistenza e rotta", "No, e normale — le resistenze hanno una tolleranza del 5%", "Si, bisogna cambiarla"], correct: 1, explanation: "Le resistenze hanno una tolleranza (di solito +-5%). Quindi 330 Ohm puo misurare da 313 a 347 Ohm. 328 e perfettamente nella norma!" },
+      ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Prendi il resistore da 330 Ohm e posizionalo nell'area di lavoro.",
+          componentId: "r1",
+          componentType: "resistor",
+          hint: "Le bande colorate indicano il valore: arancio-arancio-marrone = 330 Ohm."
+        },
+        {
+          step: 2,
+          text: "Posiziona il multimetro e imposta la rotella su Ohm (simbolo omega).",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "In modalita Ohm il multimetro manda una piccola corrente e calcola R = V/I."
+        },
+        {
+          step: 3,
+          text: "Collega un puntale a un terminale del resistore e l'altro all'altro terminale.",
+          wireFrom: "mm1:v-ohm",
+          wireTo: "r1:pin1",
+          wireColor: "red",
+          hint: "Per le resistenze non importa la polarita: puoi collegare i puntali in qualsiasi verso."
+        },
+        {
+          step: 4,
+          text: "Collega il secondo puntale. Leggi il valore: dovrebbe essere ~328-332 Ohm!",
+          wireFrom: "mm1:com",
+          wireTo: "r1:pin2",
+          wireColor: "black",
+          hint: "La tolleranza del 5% e normale: da 313 a 347 Ohm va benissimo!"
+        }
       ],
     },
     {
@@ -182,6 +279,44 @@ const EXPERIMENTS_VOL2 = {
         { question: "Come si collega il multimetro per misurare la corrente?", options: ["In parallelo al componente", "In serie (interrompendo il circuito)", "Non importa come"], correct: 1, explanation: "Per misurare la corrente il multimetro deve stare IN SERIE: la corrente deve passare ATTRAVERSO il multimetro. Devi interrompere il circuito e inserirlo nel mezzo!" },
         { question: "Con 9V e 1kOhm, quanta corrente passa? (V=RxI)", options: ["9 Ampere", "9 milliAmpere (0.009A)", "1000 milliAmpere"], correct: 1, explanation: "I = V/R = 9V / 1000 Ohm = 0.009A = 9mA. La Legge di Ohm funziona!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la breadboard nell'area di lavoro.",
+          componentId: "bb1",
+          componentType: "breadboard-half",
+          hint: "La breadboard collega i componenti senza saldature."
+        },
+        {
+          step: 2,
+          text: "Posiziona la batteria 9V accanto alla breadboard.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "La batteria fornisce i 9V al circuito."
+        },
+        {
+          step: 3,
+          text: "Inserisci il resistore da 1kOhm sulla breadboard.",
+          componentId: "r1",
+          componentType: "resistor",
+          hint: "Il resistore limita la corrente: I = V/R = 9/1000 = 9mA."
+        },
+        {
+          step: 4,
+          text: "Posiziona il multimetro e imposta su mA (milliAmpere).",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "Per la corrente usa la porta mA e il simbolo A. ATTENZIONE: va in SERIE!"
+        },
+        {
+          step: 5,
+          text: "Collega la batteria al circuito e inserisci il multimetro IN SERIE (interrompi il filo e metti il multimetro nel mezzo). Leggi ~9mA!",
+          wireFrom: "bat1:positive",
+          wireTo: "mm1:ma",
+          wireColor: "red",
+          hint: "Il multimetro in modalita amperometro deve stare nel percorso della corrente."
+        }
+      ],
     },
 
     // ═══════════════════════════════════════════════════
@@ -198,7 +333,6 @@ const EXPERIMENTS_VOL2 = {
       components: [
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 1000 },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "resistor", id: "r2", value: 1000 },
         { type: "multimeter", id: "mm1" },
       ],
@@ -225,6 +359,36 @@ const EXPERIMENTS_VOL2 = {
         { question: "Due resistori da 1kOhm in parallelo danno:", options: ["2000 Ohm", "500 Ohm", "1000 Ohm"], correct: 1, explanation: "In parallelo la resistenza totale e MINORE di ogni singola resistenza! La formula: 1/Rtot = 1/R1 + 1/R2 = 1/1000 + 1/1000 = 2/1000. Rtot = 500 Ohm!" },
         { question: "Perche in parallelo la resistenza diminuisce?", options: ["Perche i resistori si rompono", "Perche la corrente ha piu strade dove passare", "Perche il multimetro sbaglia"], correct: 1, explanation: "Come un'autostrada: piu corsie ci sono, piu macchine (corrente) possono passare contemporaneamente. Piu strade = meno resistenza totale!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la breadboard nell'area di lavoro.",
+          componentId: "bb1",
+          componentType: "breadboard-half",
+          hint: "Userai la breadboard per collegare i due resistori in parallelo."
+        },
+        {
+          step: 2,
+          text: "Inserisci il primo resistore da 1kOhm sulla breadboard (es. fori A1 e A5).",
+          componentId: "r1",
+          componentType: "resistor",
+          hint: "Il primo resistore sara una delle due strade per la corrente."
+        },
+        {
+          step: 3,
+          text: "Inserisci il secondo resistore da 1kOhm SUGLI STESSI nodi del primo (in parallelo).",
+          componentId: "r2",
+          componentType: "resistor",
+          hint: "In parallelo i due terminali devono essere collegati agli stessi nodi del primo resistore."
+        },
+        {
+          step: 4,
+          text: "Posiziona il multimetro e imposta su Ohm. Misura tra i due nodi: ~500 Ohm!",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "Due 1kOhm in parallelo danno 500 Ohm. La meta! Formula: 1/Rtot = 1/R1 + 1/R2."
+        }
+      ],
     },
     {
       id: "v2-cap4-esp2",
@@ -235,6 +399,7 @@ const EXPERIMENTS_VOL2 = {
       icon: "\u{1F4CF}",
       simulationMode: "circuit",
       components: [
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 1000 },
         { type: "resistor", id: "r2", value: 1000 },
@@ -264,6 +429,43 @@ const EXPERIMENTS_VOL2 = {
       quiz: [
         { question: "Tre resistori da 1kOhm in serie danno:", options: ["333 Ohm", "1000 Ohm", "3000 Ohm"], correct: 2, explanation: "In serie le resistenze si sommano: 1000 + 1000 + 1000 = 3000 Ohm = 3kOhm. Semplice come mettere in fila tre tubi stretti!" },
         { question: "Se aggiungi un quarto resistore da 1kOhm in serie, quanto diventa?", options: ["4000 Ohm", "250 Ohm", "1000 Ohm"], correct: 0, explanation: "Basta sommare: 1000 x 4 = 4000 Ohm = 4kOhm. In serie si sommano sempre!" },
+      ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la breadboard nell'area di lavoro.",
+          componentId: "bb1",
+          componentType: "breadboard-half",
+          hint: "I tre resistori verranno collegati in fila, uno dopo l'altro."
+        },
+        {
+          step: 2,
+          text: "Inserisci il primo resistore da 1kOhm sulla breadboard.",
+          componentId: "r1",
+          componentType: "resistor",
+          hint: "Il primo ostacolo della corrente nella fila."
+        },
+        {
+          step: 3,
+          text: "Inserisci il secondo resistore da 1kOhm IN SERIE (il pin1 collegato al pin2 del primo).",
+          componentId: "r2",
+          componentType: "resistor",
+          hint: "In serie significa 'in fila': l'uscita del primo entra nel secondo."
+        },
+        {
+          step: 4,
+          text: "Inserisci il terzo resistore da 1kOhm IN SERIE con i primi due.",
+          componentId: "r3",
+          componentType: "resistor",
+          hint: "Tre resistori in fila. La corrente deve passare tutti e tre!"
+        },
+        {
+          step: 5,
+          text: "Posiziona il multimetro su Ohm e misura tra l'inizio e la fine della serie: ~3000 Ohm!",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "In serie si sommano: 1000 + 1000 + 1000 = 3kOhm."
+        }
       ],
     },
     {
@@ -307,6 +509,44 @@ const EXPERIMENTS_VOL2 = {
         { question: "Con 3 resistori uguali e 9V, quanta tensione c'e ai capi di ogni resistore?", options: ["9V su ognuno", "3V su ognuno", "0V su ognuno"], correct: 1, explanation: "La tensione si divide equamente tra resistori uguali: 9V / 3 = 3V su ognuno. E il principio del partitore di tensione!" },
         { question: "A cosa serve un partitore di tensione?", options: ["A moltiplicare la corrente", "A ottenere una tensione piu bassa da una piu alta", "A caricare la batteria"], correct: 1, explanation: "Il partitore permette di ottenere tensioni intermedie. Per esempio, da 9V puoi ottenere 3V o 6V cambiando dove misuri!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la breadboard nell'area di lavoro.",
+          componentId: "bb1",
+          componentType: "breadboard-half",
+          hint: "I tre resistori formeranno una catena in serie alimentata dalla batteria."
+        },
+        {
+          step: 2,
+          text: "Posiziona la batteria 9V.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "9V divisi tra 3 resistori uguali = 3V su ognuno."
+        },
+        {
+          step: 3,
+          text: "Inserisci i tre resistori da 1kOhm in serie sulla breadboard.",
+          componentId: "r1",
+          componentType: "resistor",
+          hint: "Mettili in fila: R1, R2, R3 con i terminali collegati uno al prossimo."
+        },
+        {
+          step: 4,
+          text: "Posiziona il multimetro su V (Volt). Misura tra + batteria e il punto tra R1 e R2: ~6V!",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "Tra l'inizio e il punto dopo R1: 6V (2/3 della tensione totale)."
+        },
+        {
+          step: 5,
+          text: "Misura tra il punto R1-R2 e il punto R2-R3: solo 3V! Prova anche tra R2-R3 e il -: 3V!",
+          wireFrom: "mm1:v-ohm",
+          wireTo: "bat1:positive",
+          wireColor: "red",
+          hint: "Ogni resistore uguale 'prende' la sua quota di tensione: 9V / 3 = 3V ciascuno."
+        }
+      ],
     },
 
     // ═══════════════════════════════════════════════════
@@ -347,6 +587,38 @@ const EXPERIMENTS_VOL2 = {
         { question: "Due batterie da 9V in serie danno:", options: ["9V", "18V", "4.5V"], correct: 1, explanation: "In serie le tensioni si sommano: 9V + 9V = 18V! E come mettere due scale una sopra l'altra: sali il doppio!" },
         { question: "Le pile nella torcia sono collegate:", options: ["In serie (una dopo l'altra)", "In parallelo (fianco a fianco)", "A caso"], correct: 0, explanation: "Le pile nella torcia stanno una dopo l'altra, col + di una che tocca il - della successiva. Le tensioni si sommano!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la prima batteria 9V nell'area di lavoro.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "Prima batteria: 9V. Due in serie daranno 18V!"
+        },
+        {
+          step: 2,
+          text: "Posiziona la seconda batteria 9V.",
+          componentId: "bat2",
+          componentType: "battery9v",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
+          hint: "Questa e la seconda batteria che aggiungi in serie."
+        },
+        {
+          step: 3,
+          text: "Collega il polo + della prima batteria al polo - della seconda (in serie).",
+          wireFrom: "bat1:positive",
+          wireTo: "bat2:negative",
+          wireColor: "orange",
+          hint: "In serie il + di una va al - della successiva: le tensioni si sommano!"
+        },
+        {
+          step: 4,
+          text: "Posiziona il multimetro su V. Misura tra il - della bat1 e il + della bat2: ~18V!",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "9V + 9V = 18V. Come due scale una sopra l'altra: sali il doppio!"
+        }
+      ],
     },
     {
       id: "v2-cap5-esp2",
@@ -383,6 +655,37 @@ const EXPERIMENTS_VOL2 = {
         { question: "Due batterie da 9V in antiserie (una al contrario) danno:", options: ["18V", "0V", "9V"], correct: 1, explanation: "Se una spinge in un verso e l'altra spinge in verso opposto, si annullano: 9V - 9V = 0V! Come due persone che tirano una corda in direzioni opposte." },
         { question: "L'antiserie e pericolosa per le batterie?", options: ["Si, possono esplodere", "No, semplicemente si annullano", "Solo se sono cariche"], correct: 1, explanation: "Con batterie uguali l'antiserie non e pericolosa — semplicemente le forze si annullano e non passa corrente. Ma non farlo con batterie diverse!" },
       ],
+      buildSteps: [
+        {
+          step: 1,
+          text: "Posiziona la prima batteria 9V nell'area di lavoro.",
+          componentId: "bat1",
+          componentType: "battery9v",
+          hint: "Prima batteria. Questa spinge la corrente in una direzione."
+        },
+        {
+          step: 2,
+          text: "Posiziona la seconda batteria 9V.",
+          componentId: "bat2",
+          componentType: "battery9v",
+          hint: "Seconda batteria. La metteremo 'al contrario' della prima!"
+        },
+        {
+          step: 3,
+          text: "Collega il polo + della prima batteria al polo + della seconda (antiserie!).",
+          wireFrom: "bat1:positive",
+          wireTo: "bat2:positive",
+          wireColor: "red",
+          hint: "+ con +: le due forze si oppongono. Come un tiro alla fune alla pari!"
+        },
+        {
+          step: 4,
+          text: "Posiziona il multimetro su V e misura tra i due poli - . Il risultato e ~0V!",
+          componentId: "mm1",
+          componentType: "multimeter",
+          hint: "9V - 9V = 0V. Le forze opposte si annullano. E sicuro con batterie uguali."
+        }
+      ],
     },
 
     // ═══════════════════════════════════════════════════
@@ -399,7 +702,6 @@ const EXPERIMENTS_VOL2 = {
       simulationMode: "circuit",
       components: [
         { type: "battery9v", id: "bat1" },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 330 },
         { type: "led", id: "led1", color: "red" },
@@ -499,6 +801,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 8,
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ARANCIONE dal foro A12 al foro A14.",
           wireFrom: "bb1:a12",
           wireTo: "bb1:a14",
@@ -600,7 +903,6 @@ const EXPERIMENTS_VOL2 = {
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'LED in serie colori diversi'. Qui ci sono due LED di colori diversi in serie. Ogni colore di LED ha bisogno di una tensione diversa per accendersi (la tensione forward Vf): il rosso circa 1.8V, il verde circa 2.2V. \u00C8 come se ogni LED fosse una porticina di altezza diversa: la corrente deve superarle tutte! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
       concept: "Tensione forward diversa per colore, somma Vf in serie",
       layer: "terra",
       buildSteps: [
@@ -700,6 +1002,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           question: "In un circuito serie, la corrente è uguale in tutti i componenti. Vero o falso?",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           options: ["Vero: la stessa corrente passa attraverso ogni componente", "Falso: la corrente si divide", "Dipende dal colore dei LED"],
           correct: 0,
           explanation: "In serie c'è un solo percorso per la corrente, come l'acqua in un tubo: la stessa quantità passa attraverso ogni componente. Le tensioni invece si dividono!"
@@ -801,7 +1104,6 @@ const EXPERIMENTS_VOL2 = {
           step: 5,
           text: "Prendi il LED rosso dalla palette e posizionalo nei fori D17 e D18.",
           componentId: "led2",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "led",
           targetPins: { "led2:anode": "bb1:d17", "led2:cathode": "bb1:d18" },
           hint: "L'anodo (+, gamba lunga) va in D17 e il catodo (−, gamba corta) in D18."
@@ -901,6 +1203,7 @@ const EXPERIMENTS_VOL2 = {
         "led1:cathode": "bb1:f10"
       },
       connections: [
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-2", to: "bb1:a2", color: "red" },
         { from: "bb1:e9", to: "bb1:f9", color: "orange" },
@@ -1002,7 +1305,6 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:e10",
           wireTo: "bb1:bus-top-minus-10",
           wireColor: "black",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega al bus negativo."
         },
         {
@@ -1102,6 +1404,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega il polo + del condensatore (a5) al resistore (a16).",
         "Collega a massa (bus -) il polo - del condensatore (a6) e l'uscita del resistore (a23).",
         "Collega batteria e multimetro, poi premi il pulsante per caricare!"
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ],
       observe: "Premendo il pulsante, il condensatore si carica istantaneamente a 9V. Rilasciandolo, la batteria viene scollegata e il condensatore si scarica lentamente attraverso il resistore da 1kΩ. Il tempo di scarica dipende da Tau = R × C = 1kΩ × 1000µF = 1 secondo.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica condensatore + multimetro'. Il condensatore è come una piccola batteria ricaricabile. Premendo il pulsante lo colleghiamo alla batteria 9V e si ricarica subito. Rilasciando il pulsante, l'energia immagazzinata si scarica lentamente attraverso il resistore, seguendo una curva esponenziale visibile sul multimetro. Il tempo di scarica dipende da R e C: Tau = R x C. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni.",
@@ -1203,7 +1506,6 @@ const EXPERIMENTS_VOL2 = {
           wireColor: "black",
           hint: "Metti a massa anche il condensatore."
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 13,
           text: "Collega un filo NERO dal foro bus − superiore (col. 1) al polo − della batteria.",
@@ -1303,6 +1605,7 @@ const EXPERIMENTS_VOL2 = {
         "Collega l'uscita del pulsante (g12) al polo + del condensatore (c5), poi dal condensatore (a5) al resistore (a15).",
         "Collega il catodo del LED (a24) alla riga -.",
         "Collega il multimetro: sonda rossa al foro b5, sonda nera al foro b6."
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ],
       observe: "Premendo il pulsante, il LED si accende e poi sfuma lentamente! Puoi VEDERE l'energia del condensatore che si esaurisce. Il multimetro mostra la tensione che cala contemporaneamente.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Scarica con LED rosso'. Qui il condensatore si scarica attraverso un LED e un resistore: puoi VEDERE l'energia che se ne va! Il LED parte luminoso e sfuma piano piano, come una torcia che si scarica. Questo \u00E8 il concetto di scarica RC reso visibile. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
@@ -1404,7 +1707,6 @@ const EXPERIMENTS_VOL2 = {
           wireTo: "bb1:a10",
           wireColor: "red",
           hint: "Il filo rosso porta la corrente positiva."
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 13,
@@ -1504,6 +1806,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bb1:a4", to: "bb1:bus-top-minus-4", color: "black" },
         { from: "bb1:a8", to: "bb1:bus-top-minus-8", color: "black" },
         { from: "bb1:a11", to: "bb1:bus-top-minus-11", color: "black" },
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" },
         { from: "bb1:a10", to: "bb1:a19", color: "orange" },
         { from: "bb1:a27", to: "bb1:bus-top-minus-27", color: "black" }
@@ -1605,7 +1908,6 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
         },
         {
@@ -1705,6 +2007,7 @@ const EXPERIMENTS_VOL2 = {
       ]
     },
 
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
     // -----------------------------------------------
     // v2-cap7-esp4: Variare R nella scarica RC
     // Same layout as cap7-esp2 (Cap + button + R + LED + multimeter)
@@ -1806,7 +2109,6 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il resistore da 1kΩ dalla palette e posizionalo nei fori E15 e E22.",
           componentId: "r1",
           componentType: "resistor",
@@ -1906,6 +2208,7 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "mm1:probe-negative",
           wireTo: "bb1:b6",
           wireColor: "black",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Posiziona la sonda per misurare la tensione nel punto desiderato."
         }
       ],
@@ -2007,7 +2310,6 @@ const EXPERIMENTS_VOL2 = {
           componentType: "mosfet-n",
           targetPins: { "mos1:gate": "bb1:f17", "mos1:drain": "bb1:f18", "mos1:source": "bb1:f19" },
           hint: "I 3 pin: Gate in F17, Drain in F18, Source in F19."
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 4,
@@ -2107,6 +2409,7 @@ const EXPERIMENTS_VOL2 = {
       title: "Cap. 8 Esp. 2 - MOSFET e carica del corpo",
       desc: "Gate flottante! Tocca il Gate col dito: la carica statica del corpo accende il LED!",
       chapter: "Capitolo 8 - Cosa sono i transistor?",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
       difficulty: 2,
       icon: "\u{1F91A}",
       simulationMode: "circuit",
@@ -2208,7 +2511,6 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:bus-top-plus-5",
           wireTo: "bb1:a5",
           wireColor: "red",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo porta la corrente dal bus positivo al componente."
         },
         {
@@ -2308,6 +2610,7 @@ const EXPERIMENTS_VOL2 = {
         "Inserisci il MOSFET con gate in f17, drain in f18, source in f19.",
         "Posiziona il potenziometro da 10k\u03A9 con vcc in f24, signal in f25, gnd in f26.",
         "Collega la riga + al foro a5 e al foro g24 (vcc del pot).",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Collega il source del MOSFET (g19) e il gnd del pot (g26) alla riga -.",
         "Collega il signal del pot (g25) al gate del MOSFET (g17) con un filo verde.",
         "Collega il multimetro: sonda rossa al foro h17 (gate), sonda nera alla riga -."
@@ -2409,7 +2712,6 @@ const EXPERIMENTS_VOL2 = {
           step: 12,
           text: "Collega un filo NERO dal foro bus − superiore (col. 1) al polo − della batteria.",
           wireFrom: "bb1:bus-top-minus-1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bat1:negative",
           wireColor: "black",
           hint: "Questo filo chiude il circuito riportando la corrente alla batteria."
@@ -2509,6 +2811,7 @@ const EXPERIMENTS_VOL2 = {
         "bat1": { x: 30, y: 55 },
         "bb1": { x: 100, y: 10 },
         "pt1": { x: 170.25, y: 73.75 },
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "r1": { x: 241.5, y: 73.75 },
         "mm1": { x: 340, y: 20 }
       },
@@ -2610,7 +2913,6 @@ const EXPERIMENTS_VOL2 = {
           text: "Collega la sonda rossa (+) del multimetro al foro B9.",
           wireFrom: "mm1:probe-positive",
           wireTo: "bb1:b9",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Posiziona la sonda per misurare la tensione nel punto desiderato."
         },
@@ -2710,6 +3012,7 @@ const EXPERIMENTS_VOL2 = {
         "Nella riga inferiore, posiziona R2 (10k\u03A9) tra f11 e f18, R3 (10k\u03A9) tra f3 e f10.",
         "Posiziona R4 (10k\u03A9) tra f20 e f27 come pull-down dal Gate a GND.",
         "Inserisci il MOSFET con gate in f28, drain in f29, source in f30.",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Posiziona R5 (470\u03A9) tra e20 e e27. Inserisci il LED bianco con anodo in d27 e catodo in d28.",
         "Collega i fili: a10 a g3 (nodo sensore), a11 a g11 (emettitore), g10 a g20 a g28 (gate).",
         "Collega a28 a g29 (catodo LED a drain MOSFET). Collega source (g30) alla riga -."
@@ -2811,7 +3114,6 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 12,
           text: "Collega un filo ROSSO dal foro bus + superiore (col. 3) al foro A3.",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:bus-top-plus-3",
           wireTo: "bb1:a3",
           wireColor: "red",
@@ -2911,6 +3213,7 @@ const EXPERIMENTS_VOL2 = {
           correct: 0,
           explanation: "Il pull-down scarica la tensione al Gate quando il fototransistor conduce. Senza di esso, il Gate potrebbe restare carico e il MOSFET resterebbe sempre acceso!"
         }
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ]
     },
 
@@ -3012,7 +3315,6 @@ const EXPERIMENTS_VOL2 = {
       quiz: [
         {
           question: "Cosa converte il motore DC in questo circuito?",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           options: ["Energia luminosa in energia elettrica", "Energia elettrica in energia meccanica (movimento)", "Energia meccanica in energia elettrica"],
           correct: 1,
           explanation: "Il motore DC converte l'energia elettrica della batteria in movimento rotatorio. La corrente crea un campo magnetico che fa girare l'asse!"
@@ -3112,6 +3414,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 6,
           text: "Collega un filo NERO dal bus − (colonna 1) al polo − della batteria.",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:bus-top-minus-1",
           wireTo: "bat1:negative",
           wireColor: "black",
@@ -3213,7 +3516,6 @@ const EXPERIMENTS_VOL2 = {
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
         },
@@ -3313,6 +3615,7 @@ const EXPERIMENTS_VOL2 = {
         "Inserisci il LED verde con l'anodo in d23 e il catodo in d24.",
         "Collega la riga + al foro a10 (pulsante).",
         "Dal pulsante (g12), collega sia al motore che al resistore (a16).",
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Collega il catodo del LED (a24) e il negativo del motore alla riga -."
       ],
       observe: "Premendo il pulsante, il motore gira E il LED verde si accende contemporaneamente! Il LED e il motore sono in parallelo: ricevono la stessa tensione ma la corrente si divide. Il LED verde funziona come una spia che indica che il motore \u00E8 in funzione.",
@@ -3414,7 +3717,6 @@ const EXPERIMENTS_VOL2 = {
           wireFrom: "bb1:g12",
           wireTo: "bb1:a16",
           wireColor: "yellow",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega due parti del circuito."
         },
         {
@@ -3514,6 +3816,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bb1:g9", to: "bb1:bus-minus-9", color: "black" },
         // Diodo D1: anode to mos1:drain net, cathode to bat+
         { from: "bb1:g12", to: "bb1:g8", color: "purple" },
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:g13", to: "bb1:bus-plus-13", color: "purple" },
         // Motore destro (mot2): bat+ -> mot2 -> mos2:drain
         { from: "bb1:bus-plus-22", to: "mot2:positive", color: "red" },
@@ -3615,7 +3918,6 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori E23 e E30.",
           componentId: "r2",
           componentType: "resistor",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "r2:pin1": "bb1:e23", "r2:pin2": "bb1:e30" },
           hint: "Il resistore limita la corrente nel circuito."
         },
@@ -3715,6 +4017,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 21,
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo VERDE dal foro A6 al foro G21.",
           wireFrom: "bb1:a6",
           wireTo: "bb1:g21",
@@ -3816,7 +4119,6 @@ const EXPERIMENTS_VOL2 = {
           options: ["Per far girare il robot VERSO la luce", "Per far girare il robot LONTANO dalla luce", "Non c'è un motivo, è casuale"],
           correct: 0,
           explanation: "La cross-connection fa sì che illuminando il sensore destro si attivi il motore destro, facendo girare il robot a sinistra — cioè verso la sorgente di luce!"
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           question: "A cosa servono i diodi collegati ai motori?",
