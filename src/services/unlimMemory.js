@@ -198,7 +198,7 @@ async function saveContext(classId, experimentId, context) {
     _saveContextLocal(classId, experimentId, context);
 
     if (!isSupabaseConfigured()) return;
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
     try {
         const userId = _getCurrentUserId();
@@ -393,13 +393,14 @@ let _syncDirty = false;
 let _syncTimer = null;
 let _autoSaveTimer = null;
 let _beaconPayload = null; // Pre-serialized for beforeunload
+let _beforeUnloadHandler = null; // Named reference for removeEventListener
 const SYNC_INTERVAL = 60_000;
 const AUTOSAVE_INTERVAL = 30_000;
 
 function _getSessionId() {
     const KEY = 'elab_tutor_session';
+// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
     try {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return localStorage.getItem(KEY) || '';
     } catch { return ''; }
 }
@@ -529,7 +530,7 @@ function initSync() {
     _autoSaveTimer = setInterval(_autoSave, AUTOSAVE_INTERVAL);
 
     if (typeof window !== 'undefined') {
-        window.addEventListener('beforeunload', () => {
+        _beforeUnloadHandler = () => {
             // Last-chance auto-save to localStorage
             _autoSave();
             // Send pre-serialized payload via beacon (no serialization during event)
@@ -541,7 +542,20 @@ function initSync() {
                     );
                 } catch { /* last resort */ }
             }
-        });
+        };
+        window.addEventListener('beforeunload', _beforeUnloadHandler);
+    }
+}
+
+/**
+ * Full cleanup: stop timers and remove the beforeunload listener.
+ * Call this when unmounting the top-level component that owns unlimMemory.
+ */
+function destroy() {
+    stopSync();
+    if (typeof window !== 'undefined' && _beforeUnloadHandler) {
+        window.removeEventListener('beforeunload', _beforeUnloadHandler);
+        _beforeUnloadHandler = null;
     }
 }
 
@@ -567,6 +581,7 @@ export const unlimMemory = {
     loadFromBackend,
     initSync,
     stopSync,
+    destroy,
 };
 
 // Expose globally for buildTutorContext() access
