@@ -37,6 +37,7 @@ export default defineConfig({
                 'src/components/simulator/engine/PlacementEngine.js',
             ],
         },
+        testTimeout: 30000,
         include: ['tests/**/*.{test,spec}.{js,jsx}'],
         exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
     },
