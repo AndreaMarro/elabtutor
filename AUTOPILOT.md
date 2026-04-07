@@ -53,6 +53,24 @@ git push origin <branch> && gh pr create # push + PR (gh auth OK)
 | 9 | 65 file date-stamp uncommitted | P3 | rumore, gestire separatamente |
 | 10 | Kimi provider senza modello | P2 | sul server Render |
 
+## ORDINI DA ANDREA (PRIORITA' MASSIMA)
+Leggi SEMPRE `automa/ORDERS/` a inizio sessione. Se ci sono file, eseguili PRIMA di tutto.
+Ordini hanno priorita' su qualsiasi altro lavoro.
+Se non ci sono ordini, segui il lavoro normale sotto.
+
+**ADESSO**: Leggi `automa/ORDERS/MEGA-ORDERS-PRE-VOLO.md` — contiene 8 ordini urgenti.
+
+## Pattern Karpathy (OBBLIGATORIO)
+```
+1. bash automa/evaluate-v3.sh → score PRIMA
+2. Lavora (max 5 file)
+3. npm test -- --run && npm run build
+4. bash automa/evaluate-v3.sh → score DOPO
+5. DOPO >= PRIMA? → commit + PR
+6. DOPO < PRIMA? → git checkout -- . (revert)
+```
+OGNI PR deve avere nel body: "Score PRIMA: X → Score DOPO: Y"
+
 ## Regole di lavoro
 
 1. **Mai pushare su main** — sempre branch + PR
