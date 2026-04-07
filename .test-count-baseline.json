@@ -1,8 +1,8 @@
 {
-  "total": 1442,
+  "total": 1460,
   "date": "2026-04-07",
   "coverage_min": 60.0,
   "bundle_max_kb": 12500,
   "regression_threshold": 0.02,
-  "notes": "Baseline misurato 07/04/2026. 1442 test, 62.07% coverage, ~11884KB bundle (uncompressed con obfuscation)."
+  "notes": "Baseline aggiornato 07/04/2026 (run 7). 1460 test (+18 activationTracker), 62.07% coverage, ~11900KB bundle."
 }
