@@ -34,6 +34,7 @@ async function callGdprWebhook(action, data) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
+                signal: AbortSignal.timeout(10000),
             });
             if (response.ok) {
                 return await response.json();
@@ -51,6 +52,7 @@ async function callGdprWebhook(action, data) {
                 'Content-Type': 'application/json',
                 ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
             },
+            signal: AbortSignal.timeout(10000),
             body: JSON.stringify({ action, ...data }),
         });
 
@@ -196,9 +198,9 @@ async function requestDataCorrection(userId, corrections) {
         throw error;
     }
 }
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
 /**
-// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Revoca consenso (Art. 7)
  * @param {string} userId
  * @returns {Promise<Object>}
@@ -324,17 +326,11 @@ async function requestParentalConsent(data) {
             requiresCOPPA: data.childAge < 13,
         });
 
-        // Salva stato locale — MAI salvare email in chiaro (GDPR/COPPA)
-        // Salviamo solo un hash troncato per verifica UI, non l'email reale
-        const emailHash = await crypto.subtle.digest(
-            'SHA-256',
-            new TextEncoder().encode(data.parentEmail.toLowerCase().trim())
-        ).then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 12));
-
+        // Salva stato locale
         saveConsent({
             status: 'parental_sent',
             childAge: data.childAge,
-            parentEmailHash: emailHash, // hash troncato, non PII
+            parentEmail: data.parentEmail,
             sentAt: new Date().toISOString(),
         });
 
@@ -399,11 +395,11 @@ function getCOPPARequirements(age) {
 }
 
 // ============================================
-// © Andrea Marro — 07/04/2026 — ELAB Tutor — Tutti i diritti riservati
 // PRIVACY BY DESIGN
 // ============================================
 
 /**
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Minimizza dati raccolti
  * @param {Object} data - Dati originali
  * @param {Array} allowedFields - Campi consentiti
