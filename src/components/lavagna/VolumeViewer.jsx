@@ -209,7 +209,7 @@ export default function VolumeViewer({
             <span className={css.penSep} />
             {PEN_SIZES.map(s => (
               <button key={s} onClick={() => setPenSize(s)} className={css.penSizeBtn} aria-label={`Spessore ${s}`} style={{ border: penSize === s ? '1px solid #1E4D8C' : '1px solid transparent' }}>
-                <span style={{ width: s + 4, height: s + 4, borderRadius: '50%', background: penSize === s ? '#1E4D8C' : '#999', display: 'block' }} />
+                <span style={{ width: s + 4, height: s + 4, borderRadius: '50%', background: penSize === s ? '#1E4D8C' : '#5A6B7D', display: 'block' }} />
               </button>
             ))}
             <span className={css.penSep} />
