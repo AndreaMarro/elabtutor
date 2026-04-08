@@ -198,3 +198,37 @@ Prompt: `docs/prompts/G43-pre-release-audit.md`
 5. **Merge PR in ordine** — le 34 PR di test aperte contengono molti test nuovi. Mergarle alzarebbe TEST_SCORE verso 25/25
 6. **Coverage** — nessun coverage report generato. Per ottenerlo: `npm test -- --run --coverage`. Senza report, COVERAGE sempre 10/15 (baseline stimata)
 
+
+---
+
+# HANDOFF G48 → G49
+
+**Data**: 07/04/2026
+**Branch**: fix/worker-run13-coverage
+**PR creata**: #41 (fix/worker-run13-coverage)
+**PR chiusa**: #33 (duplicata di #39)
+
+## Ciclo completato (Run 13)
+
+### PRIMA: 77/100
+- build=20 test=22(1507) bundle=0(11876KB) coverage=10(?%) lint=10 experiments=15
+
+### DOPO: 82/100
+- build=20 test=22(1507) bundle=0(11904KB) coverage=**15**(62.07%) lint=10 experiments=15
+- Delta: **+5 punti**
+
+### Fix implementati (2 file)
+1. **automa/evaluate-v3.sh**: `--coverage` aggiunto al comando test
+2. **vitest.config.js**: reporter `json-summary` aggiunto (genera `coverage-summary.json`)
+
+## Problemi incontrati
+
+1. **bundle_max_kb=3500, non 12500** — il file `.test-count-baseline.json` ha `bundle_max_kb: 3500`, non 12500. Il bundle production (11876KB) è genuinamente troppo grande. La nota nel summary precedente era errata.
+
+2. **`coverage-final.json` vs `coverage-summary.json`** — vitest con reporter `json` genera `coverage-final.json`, ma evaluate-v3.sh cerca `coverage-summary.json` (formato istanbul/nyc). Fix: aggiungere `json-summary` ai reporter.
+
+## Suggerimenti per il prossimo run
+
+1. **Ridurre bundle size** — da 11876KB → target 3500KB. Richiede code splitting aggressivo, lazy loading, rimozione dipendenze pesanti. È il gap più grande (0/15 → 15/15 = +15 punti).
+2. **Aumentare test count** — da 1507 → 1700 (baseline). Mancano ~193 test. Con 1700+ test: TEST_SCORE 22→25 (+3 punti).
+3. **Merge PR aperte** — #39 e #41 in pipeline. Mergiarle prima di iniziare il run 14 per avere una base pulita.
