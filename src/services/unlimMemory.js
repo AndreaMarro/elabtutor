@@ -198,7 +198,7 @@ async function saveContext(classId, experimentId, context) {
     _saveContextLocal(classId, experimentId, context);
 
     if (!isSupabaseConfigured()) return;
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
     try {
         const userId = _getCurrentUserId();
@@ -393,13 +393,14 @@ let _syncDirty = false;
 let _syncTimer = null;
 let _autoSaveTimer = null;
 let _beaconPayload = null; // Pre-serialized for beforeunload
+let _beforeUnloadHandler = null; // Named reference for removal
 const SYNC_INTERVAL = 60_000;
 const AUTOSAVE_INTERVAL = 30_000;
 
 function _getSessionId() {
     const KEY = 'elab_tutor_session';
+// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
     try {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return localStorage.getItem(KEY) || '';
     } catch { return ''; }
 }
@@ -479,6 +480,10 @@ function stopSync() {
         clearInterval(_autoSaveTimer);
         _autoSaveTimer = null;
     }
+    if (_beforeUnloadHandler && typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', _beforeUnloadHandler);
+        _beforeUnloadHandler = null;
+    }
 }
 
 /**
@@ -529,7 +534,7 @@ function initSync() {
     _autoSaveTimer = setInterval(_autoSave, AUTOSAVE_INTERVAL);
 
     if (typeof window !== 'undefined') {
-        window.addEventListener('beforeunload', () => {
+        _beforeUnloadHandler = () => {
             // Last-chance auto-save to localStorage
             _autoSave();
             // Send pre-serialized payload via beacon (no serialization during event)
@@ -541,7 +546,8 @@ function initSync() {
                     );
                 } catch { /* last resort */ }
             }
-        });
+        };
+        window.addEventListener('beforeunload', _beforeUnloadHandler);
     }
 }
 
