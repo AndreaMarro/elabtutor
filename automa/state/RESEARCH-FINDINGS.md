@@ -1,6 +1,6 @@
-# Research Findings — 2026-04-09 03:22
+# Research Findings — 2026-04-09 01:22
 
-## Topic: Teacher Adoption EdTech — Barriere Onboarding
-## Key Finding: I docenti sono esausti e NON vogliono altro software da imparare. Vogliono semplicita' e riduzione del lavoro.
-## Azione suggerita: semplificare Teacher Dashboard a max 3 schermate, first-use experience <60 secondi
-## Urgenza: MEDIA — strategica per vendite, non tecnica
+## Topic: PNRR Bandi EdTech Italia 2026
+## Key Finding: DM 219/2025 — 100M€ per AI scuole, scadenza 17 APRILE (8 giorni!)
+## Azione suggerita: URGENTE — preparare scheda tecnica ELAB per DM 219/2025, contattare scuole
+## Urgenza: ALTA — scadenza imminente
