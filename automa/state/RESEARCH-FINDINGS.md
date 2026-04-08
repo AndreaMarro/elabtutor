@@ -1,6 +1,6 @@
-# Research Findings — 2026-04-09 03:22
+# Research Findings — 2026-04-09 04:22
 
-## Topic: Teacher Adoption EdTech — Barriere Onboarding
-## Key Finding: I docenti sono esausti e NON vogliono altro software da imparare. Vogliono semplicita' e riduzione del lavoro.
-## Azione suggerita: semplificare Teacher Dashboard a max 3 schermate, first-use experience <60 secondi
-## Urgenza: MEDIA — strategica per vendite, non tecnica
+## Topic: Gamification Electronics Education
+## Key Finding: Engagement SI, learning dipende. Badge da soli peggiorano. Streak + feedback narrativo (report fumetto) funzionano meglio.
+## Azione suggerita: non aggiungere piu' gamification, migliorare feedback educativo sui badge esistenti
+## Urgenza: BASSA — miglioramento incrementale, non urgente
