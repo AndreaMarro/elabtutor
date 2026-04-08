@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> work/main
 # Handoff — 2026-04-09 00:40
 ## Score: evaluate-v3.sh score in progress
 ## PR mergiate stanotte: #5, #20, #41, #44 (4 totali)
@@ -8,6 +11,8 @@
 ## MacBook: 8 task loop attivi
 ## Test su main: 1442 + PR mergiate
 ## Prossimo: continuare test + merge PR buone
+<<<<<<< HEAD
+=======
 =======
 # HANDOFF G44 → G45 (elab-worker automated run)
 
@@ -132,4 +137,5 @@ Priorità G45:
 2. Aggiungi buildSteps per v3-cap5-esp1 e v3-cap5-esp2 (i più semplici in Vol3)
 3. Controlla i 65 file date-stamp: sono solo copyright o contengono fix?
 ```
+>>>>>>> work/main
 >>>>>>> work/main
