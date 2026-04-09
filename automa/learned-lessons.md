@@ -25,3 +25,21 @@
   RISULTATO: Ha rotto hover state e transizioni
   MOTIVO: opacity influenza tutti i figli, non solo il colore
   REGOLA: Per contrast fix usare SOLO background-color e color, mai opacity/filter.
+
+---
+
+## ERRORI SESSIONE 09/04/2026 — I PIU' GRAVI
+
+[2026-04-09] ERRORE GRAVE: Pushato 36+ commit su main senza verificare CI remoto
+  RISULTATO: OGNI commit genero' CI failure + email errore ad Andrea
+  MOTIVO: Quality gate locale passava, GitHub Actions falliva (lightningcss Linux binary)
+  REGOLA: PRIMA di dichiarare "quality gate PASS", eseguire `gh run list --limit 1`.
+  FIX CI: `rm -rf node_modules package-lock.json && npm install` in workflow.
+
+[2026-04-09] ERRORE: Dichiarato "score 95, 4.7/5" mentre CI era rotto su OGNI commit
+  RISULTATO: Report inflati, auto-celebrazione senza verificare realta'
+  REGOLA: MAI dichiarare quality gate senza CI remoto verde.
+
+[2026-04-09] ERRORE: Push diretto su main 36+ volte (viola CLAUDE.md)
+  RISULTATO: Nessun branch protection, nessuna review
+  REGOLA: Anche in autonomia, usare branch + PR. Il CI verifica prima del merge.
