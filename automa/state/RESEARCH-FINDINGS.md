@@ -1,5 +1,6 @@
-# Research Findings — 2026-04-09 08:22
-## Topic: AI Tutoring K-12 STEM Effectiveness
-## Key Finding: AI tutor effect size 0.73-1.3 SD (RCT), performance +15-35%, engagement +40%. Galileo e' nel segmento giusto.
-## Azione: usare questi numeri per bando DM 219/2025 + landing /scuole
-## Urgenza: ALTA — dati per pitch commerciale PNRR
+# Research Findings — 2026-04-09 01:22
+
+## Topic: PNRR Bandi EdTech Italia 2026
+## Key Finding: DM 219/2025 — 100M€ per AI scuole, scadenza 17 APRILE (8 giorni!)
+## Azione suggerita: URGENTE — preparare scheda tecnica ELAB per DM 219/2025, contattare scuole
+## Urgenza: ALTA — scadenza imminente
