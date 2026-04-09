@@ -68,3 +68,10 @@
 | `research-self-improving.md` | Observability → eval → flywheel → A/B test → retraining, Argilla curation |
 | `research-context-management.md` | RAG ChromaDB, entity memory studente, structured prompts, knowledge distillation |
 | `research-genius-ideas.md` | 20 idee: Electron View, 12 lingue, Debug Real Circuit, School Dashboard, PCB export |
+
+## Ricerche Autonome (elab-researcher schedulato)
+| File | Contenuto chiave |
+|------|-----------------|
+| `RESEARCH-VOCAB-SCAFFOLDING-2026-04-06.md` | Learning progressions, forbidden_terms → anticipatory prompts, analogia prima del termine, cluster 3-4 concetti |
+| `RESEARCH-UX-WIZARD-CTCGO-2026-04-06.md` | Wizard UX per docenti inesperti, CTC GO! competitor analysis (20 sessioni, LMS, teacher guide), vantaggi ELAB |
+| `score-tracking.md` | Registro topic investigati, ORDERS creati, pool topic futuri |
