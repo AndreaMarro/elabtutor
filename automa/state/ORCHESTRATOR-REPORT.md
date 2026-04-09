@@ -1,21 +1,23 @@
-# Orchestrator Report — 2026-04-09 11:00 (Ciclo 11)
+# Orchestrator Report — 2026-04-09 12:00 (Ciclo 12 — MIDDAY)
 
-## 26 PR MERGIATE. 296 TEST. 23 MODULI. 0 REGRESSIONI.
+## 28 PR MERGIATE. ~308 TEST. 25 MODULI. 0 REGRESSIONI.
 
 | Metrica | Valore |
 |---------|--------|
-| PR mergiate | **26** |
-| Test nuovi | **296** |
-| Moduli coperti | **23** |
+| PR mergiate | **28** |
+| Test nuovi | **~308** |
+| Moduli | **25** (16 servizi + 5 hook + 1 data + 2 utils + 1 component) |
 | Bug fix | 2 |
-| Research | 10 report |
+| Research | 11 report |
 | Regressioni | **ZERO** |
+| Ore lavoro | ~14 |
 
 ## Quality Gate: PASS
 ## Score: 5.0/5
 
 ## Per Andrea
-1. PNRR DM219 scade 17/04
-2. 296 test, 23 moduli, 10 research report
-3. Mac Mini offline
-4. Il sistema e' stabile e produttivo
+1. PNRR DM219 scade 17/04 — 100M€
+2. MePA: senza iscrizione le scuole non possono comprare ELAB
+3. 308 test per 25 moduli
+4. 11 research report actionable
+5. Mac Mini offline
