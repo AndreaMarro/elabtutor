@@ -1,5 +1,5 @@
-# Research Findings — 2026-04-09 10:22
-## Topic: Arduino Education Competitors
-## Key Finding: Nessun competitor ha AI tutor + kit fisico + volumi. ELAB e' unico nel settore.
-## Azione: creare pagina /confronto e enfatizzare unicita' AI nel bando DM219
-## Urgenza: ALTA — supporta pitch commerciale
+# Research Findings — 2026-04-09 11:22
+## Topic: MePA Marketplace Inserimento Prodotto
+## Key Finding: Iscrizione gratuita, 2 step, 3-5 giorni. Le scuole DEVONO comprare su MePA sotto €140K.
+## Azione: chiedere a Davide se ELAB e' gia' su MePA, preparare scheda prodotto
+## Urgenza: ALTA — senza MePA le scuole non possono comprare ELAB con fondi PNRR
