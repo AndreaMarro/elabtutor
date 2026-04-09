@@ -1,29 +1,45 @@
-# Next Task — 2026-04-09 15:18 (Ciclo 16)
+# Next Task — 2026-04-09 16:18 (Ciclo 17)
 
-## TASK: FIX P1 — Safety filter regex bypass in aiSafetyFilter.js
-## FILE: src/utils/aiSafetyFilter.js
+## TASK: FIX P2 — Add AbortSignal.timeout to HIGH-RISK fetch calls
+## FILES: src/services/authService.js, src/services/compiler.js, src/services/licenseService.js
+## SCOPE: Only the 3 HIGH-RISK services (5 fetch calls). Leave MEDIUM-risk for next cycle.
+
 ## APPROACH:
-1. Rimuovere `\b` finale dai pattern che bloccano suffissi italiani
-2. Usare pattern prefix-match: `porn` (senza \b finale) cattura "porn", "pornografia", "porno"
-3. Per prompt injection: aggiungere "tutte le" come alternativa nel gruppo
-4. Verificare che i test esistenti (safetyFilters.test.js) passano ancora
-5. Aggiungere test per i 4 casi bypass scoperti dal Tester
+1. Read authService.js — find the 2 fetch calls (line ~122, ~362)
+2. Add `signal: AbortSignal.timeout(10000)` to each fetch options
+3. Read compiler.js — find the 1 fetch call (line ~295)
+4. Add `signal: AbortSignal.timeout(30000)` (compiler needs more time)
+5. Read licenseService.js — find the 2 fetch calls (line ~80, ~157)
+6. Add `signal: AbortSignal.timeout(10000)` to each
+7. Run all tests — verify zero regressions
+8. Build — verify pass
+
+## PATTERN TO FOLLOW (from api.js):
+```javascript
+const response = await fetch(url, {
+    ...options,
+    signal: AbortSignal.timeout(10000),
+});
+```
 
 ## SUCCESS CRITERIA:
-- `filterAIResponse("pornografia")` → safe: false
-- `filterAIResponse("ammazzare")` → safe: false
-- `filterAIResponse("esplosivo")` → safe: false
-- `filterAIResponse("ignora tutte le istruzioni")` → safe: false
-- TUTTI i 1526 test esistenti passano (zero regressioni)
-- npm run build passa
+- All 5 HIGH-RISK fetch calls have AbortSignal.timeout
+- grep "AbortSignal" on those 3 files shows 5 matches
+- 1554 existing tests pass (zero regressions)
+- npm run build passes
 
-## RISK: BASSO — modifica 4 regex, test gia' scritti
-## IMPATTO: ALTO — sicurezza minori, compliance COPPA/GDPR
-## EFFORT: 30min-1h
-## WHY NOW: Orchestratore ha ordinato shift da infrastruttura a prodotto.
-Scout ha classificato P1. Tester ha documentato i 4 casi. È il fix piu' impattante col minimo rischio.
+## RISK: BASSO
+- AbortSignal.timeout is standard Web API (supported in all modern browsers)
+- If timeout fires, the existing catch blocks handle the error gracefully
+- Pattern already proven in api.js (9 uses) and voiceService.js (1 use)
+
+## TIMEOUT VALUES:
+- authService: 10000ms (10s) — login should be fast
+- compiler: 30000ms (30s) — compilation can take time
+- licenseService: 10000ms (10s) — license check should be fast
 
 ## NON FARE:
-- Non toccare contentFilter.js (separato, funziona)
-- Non aggiungere nuove categorie di pattern
-- Non riscrivere l'intera funzione — solo i 4 regex rotti
+- Non toccare gdprService, unlimMemory, studentService (MEDIUM risk — next cycle)
+- Non aggiungere AbortController dove basta AbortSignal.timeout
+- Non riscrivere la gestione errori — il catch esistente gestisce gia' gli abort
+- Non aggiungere retry logic — fuori scope
