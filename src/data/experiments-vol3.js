@@ -199,6 +199,7 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 </block></value>
 <statement name="DO0">
 // © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
 <next><block type="arduino_tone"><field name="PIN">8</field><value name="FREQ"><shadow type="math_number"><field name="NUM">523</field></shadow></value>
 <next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
@@ -400,6 +401,7 @@ const SERIAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
 </block></next></block></next></block>
 // © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 </statement>
 </block></xml>`;
 
@@ -456,6 +458,512 @@ const MINI_TOGGLE_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/x
 </statement>
 </block></xml>`;
 
+// ═══ Cap.5 Esp.1 — Blink LED_BUILTIN (pin 13, 1s ON / 1s OFF) ═══
+const BLINK_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+</block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.5 Esp.2 — Blink veloce (pin 13, 200ms ON / 200ms OFF) ═══
+const BLINK_FAST_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+</block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Esp.2 — LED esterno pin 13 (stesso Blink, LED su breadboard) ═══
+const BLINK_EXTERNAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+</block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Morse — SOS semplificato (pin 13, punti 200ms, linee 600ms) ═══
+const SOS_MORSE_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">400</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">600</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">600</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">600</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">400</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+</block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Esp.3 — LED su pin 5 (blink su pin diverso) ═══
+const BLINK_PIN5_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+</block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Esp.4 — Semaforo 3 LED (pin 5/6/9) ═══
+const SEMAFORO_3LED_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">6</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">9</field><field name="MODE">OUTPUT</field>
+</block></next></block></next></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">9</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">3000</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">9</field><field name="STATE">LOW</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">9</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">3000</field></shadow></value>
+</block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Esp.5 — digitalRead con pulsante + LED (pin 10 INPUT_PULLUP, pin 5 LED) ═══
+const PULLUP_LED_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">10</field><field name="MODE">INPUT_PULLUP</field>
+<next><block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field>
+</block></next></block>
+</statement>
+<statement name="LOOP">
+<block type="controls_if">
+<mutation else="1"/>
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+<value name="IF0">
+<block type="logic_compare"><field name="OP">EQ</field>
+<value name="A"><block type="arduino_digital_read"><field name="PIN">10</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">HIGH</field></block>
+</statement>
+<statement name="ELSE">
+<block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field></block>
+</statement>
+</block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.6 Esp.7 — Debounce pulsante (pin 10 btn, pin 5 LED) — semplificato come toggle ═══
+const DEBOUNCE_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">10</field><field name="MODE">INPUT_PULLUP</field>
+<next><block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field>
+</block></next></block>
+</statement>
+<statement name="LOOP">
+<block type="controls_if">
+<value name="IF0">
+<block type="logic_compare"><field name="OP">EQ</field>
+<value name="A"><block type="arduino_digital_read"><field name="PIN">10</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">HIGH</field>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">300</field></shadow></value>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+</block></next></block></next></block>
+</statement>
+</block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.1 — analogRead base (A0 trimmer, pin 13 LED, soglia 511) ═══
+const ANALOG_READ_BASE_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreLetto</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A0</field></block></value>
+<next><block type="controls_if">
+<mutation else="1"/>
+<value name="IF0">
+<block type="logic_compare"><field name="OP">GT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">511</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field></block>
+</statement>
+<statement name="ELSE">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field></block>
+</statement>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.2 — analogRead con tensione (A0, pin 13, soglia 2.5V = 511) ═══
+// Semplificato: Scratch non supporta float, usiamo soglia 511 come equivalente di 2.5V
+const ANALOG_VOLTAGE_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">13</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreLetto</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A0</field></block></value>
+<next><block type="controls_if">
+<mutation else="1"/>
+<value name="IF0">
+<block type="logic_compare"><field name="OP">GT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">511</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">HIGH</field></block>
+</statement>
+<statement name="ELSE">
+<block type="arduino_digital_write"><field name="PIN">13</field><field name="STATE">LOW</field></block>
+</statement>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.3 — Trimmer controlla 3 LED (A0, pin 3/5/6, soglie 341/682) ═══
+const ANALOG_3LED_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">3</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">6</field><field name="MODE">OUTPUT</field>
+</block></next></block></next></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreLetto</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A0</field></block></value>
+<next><block type="controls_if">
+<mutation elseif="1" else="1"/>
+<value name="IF0">
+<block type="logic_compare"><field name="OP">LT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">341</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">3</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">LOW</field>
+</block></next></block></next></block>
+</statement>
+<value name="IF1">
+<block type="logic_compare"><field name="OP">LT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">682</field></shadow></value>
+</block>
+</value>
+<statement name="DO1">
+<block type="arduino_digital_write"><field name="PIN">3</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">LOW</field>
+</block></next></block></next></block>
+</statement>
+<statement name="ELSE">
+<block type="arduino_digital_write"><field name="PIN">3</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">HIGH</field>
+</block></next></block></next></block>
+</statement>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.4 — PWM fade up (pin 5, for 0→255 step 5) ═══
+const PWM_FADE_UP_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="controls_for">
+<field name="VAR">i</field>
+<value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="TO"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<value name="BY"><shadow type="math_number"><field name="NUM">5</field></shadow></value>
+<statement name="DO">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">i</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+</block></next></block>
+</statement>
+</block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.5 — PWM valori manuali (pin 5, 0/64/128/255) ═══
+const PWM_MANUAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><shadow type="math_number"><field name="NUM">64</field></shadow></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><shadow type="math_number"><field name="NUM">128</field></shadow></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+<next><block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
+</block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.6 — Fade up/down (pin 5, for 0→255 e 255→0) ═══
+const PWM_FADE_UPDOWN_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="controls_for">
+<field name="VAR">i</field>
+<value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+<value name="TO"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<value name="BY"><shadow type="math_number"><field name="NUM">5</field></shadow></value>
+<statement name="DO">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">i</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+</block></next></block>
+</statement>
+<next><block type="controls_for">
+<field name="VAR">i</field>
+<value name="FROM"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<value name="TO"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="BY"><shadow type="math_number"><field name="NUM">-5</field></shadow></value>
+<statement name="DO">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">i</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+</block></next></block>
+</statement>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.7 — Trimmer controlla luminosita con map (A0→pin 5 PWM) ═══
+const TRIMMER_PWM_MAP_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreLetto</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A0</field></block></value>
+<next><block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valorePWM</field>
+<value name="VALUE"><block type="arduino_map">
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+<value name="FROM_LOW"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="FROM_HIGH"><shadow type="math_number"><field name="NUM">1023</field></shadow></value>
+<value name="TO_LOW"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="TO_HIGH"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+</block></value>
+<next><block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">valorePWM</field></block></value>
+</block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.7 Esp.8 — DAC reale (A1 input, A0 output) — semplificato come analog read+write ═══
+const DAC_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">A0</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreLetto</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A1</field></block></value>
+<next><block type="arduino_analog_write"><field name="PIN">A0</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">valoreLetto</field></block></value>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.8 Esp.1 — Serial.println in setup (messaggio singolo) ═══
+const SERIAL_SETUP_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_serial_begin"><field name="BAUD">9600</field>
+<next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
+<value name="CONTENT"><shadow type="text"><field name="TEXT">Ciao dal Team di ELAB!</field></shadow></value>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.8 Esp.2 — Serial.println in loop (messaggio ripetuto) ═══
+const SERIAL_LOOP_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_serial_begin"><field name="BAUD">9600</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
+<value name="CONTENT"><shadow type="text"><field name="TEXT">Ciao dal Team di ELAB!</field></shadow></value>
+</block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.8 Esp.4 — Serial Plotter 2 pot (A3, A4) ═══
+const SERIAL_PLOTTER_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_serial_begin"><field name="BAUD">9600</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreA3</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A3</field></block></value>
+<next><block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valoreA4</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A4</field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">FALSE</field>
+<value name="CONTENT"><shadow type="text"><field name="TEXT">A3:</field></shadow></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">FALSE</field>
+<value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valoreA3</field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">FALSE</field>
+<value name="CONTENT"><shadow type="text"><field name="TEXT"> A4:</field></shadow></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
+<value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valoreA4</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
+</block></next></block></next></block></next></block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;
+
+// ═══ Cap.8 Esp.5 — Pot + 3 LED + Serial (A3, pin 12/11/10) ═══
+const FINAL_PROJECT_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">12</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">11</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_pin_mode"><field name="PIN">10</field><field name="MODE">OUTPUT</field>
+<next><block type="arduino_serial_begin"><field name="BAUD">9600</field>
+</block></next></block></next></block></next></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valore</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A3</field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
+<value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valore</field></block></value>
+<next><block type="controls_if">
+<mutation elseif="1" else="1"/>
+<value name="IF0">
+<block type="logic_compare"><field name="OP">LT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valore</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">300</field></shadow></value>
+</block>
+</value>
+<statement name="DO0">
+<block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">11</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">10</field><field name="STATE">LOW</field>
+</block></next></block></next></block>
+</statement>
+<value name="IF1">
+<block type="logic_compare"><field name="OP">LT</field>
+<value name="A"><block type="arduino_variable_get"><field name="VAR">valore</field></block></value>
+<value name="B"><shadow type="math_number"><field name="NUM">700</field></shadow></value>
+</block>
+</value>
+<statement name="DO1">
+<block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">11</field><field name="STATE">HIGH</field>
+<next><block type="arduino_digital_write"><field name="PIN">10</field><field name="STATE">LOW</field>
+</block></next></block></next></block>
+</statement>
+<statement name="ELSE">
+<block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">11</field><field name="STATE">LOW</field>
+<next><block type="arduino_digital_write"><field name="PIN">10</field><field name="STATE">HIGH</field>
+</block></next></block></next></block>
+</statement>
+</block></next></block></next></block>
+</statement>
+</block></xml>`;
+
 const EXPERIMENTS_VOL3 = {
   title: "Volume 3 - Arduino Programmato",
   subtitle: "Programmazione Arduino: LED, pulsanti, sensori analogici",
@@ -496,6 +1004,7 @@ void loop() {
         "bb1": { x: 280, y: 10 }
       },
       concept: "pinMode, digitalWrite, delay, LED_BUILTIN, ciclo loop infinito",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       layer: "schema",
 
       buildSteps: [
@@ -508,6 +1017,7 @@ void loop() {
           hint: "Il LED integrato e gia sulla scheda Arduino, collegato al pin 13. Basta il codice!"
         }
       ],
+      scratchXml: BLINK_SCRATCH,
       steps: [
         "Collega l'Arduino Nano al computer con il cavo USB.",
         "Apri l'editor e scrivi il codice: pinMode(13, OUTPUT) nel setup(), poi digitalWrite e delay nel loop().",
@@ -573,6 +1083,7 @@ void loop() {
           hint: "Nessun componente esterno. Modifichiamo solo i valori di delay() nel codice."
         }
       ],
+      scratchXml: BLINK_FAST_SCRATCH,
       steps: [
         "Parti dal programma Blink del Cap. 5 Esp. 1.",
         "Cambia delay(1000) in delay(200) in entrambi i posti.",
@@ -856,9 +1367,11 @@ void loop() {
           hint: "Stesso programma Blink, ma ora il LED e sulla breadboard!"
         }
       ],
+      scratchXml: BLINK_EXTERNAL_SCRATCH,
       steps: [
         "Collega il resistore da 470 ohm dal pin 13 dell'Arduino a una colonna della breadboard.",
         "Collega l'anodo (+) del LED alla stessa colonna, e il catodo (-) al binario GND.",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Carica il programma Blink: ora lampeggia il LED sulla breadboard!"
       ],
       observe: "Il LED esterno sulla breadboard lampeggia insieme al LED integrato sulla scheda, perche entrambi sono collegati al pin 13. Il resistore da 470 ohm protegge il LED dalla troppa corrente.",
@@ -1007,6 +1520,7 @@ void loop() {
           hint: "Il LED lampeggera SOS: punto-punto-punto linea-linea-linea punto-punto-punto!"
         }
       ],
+      scratchXml: SOS_MORSE_SCRATCH,
       steps: [
         "Usa lo stesso circuito dell'esperimento precedente (LED su pin 13 con resistore).",
         "Modifica il programma: crea due funzioni, punto() per lampi brevi e linea() per lampi lunghi.",
@@ -1139,6 +1653,7 @@ void loop() {
           hint: "Nel codice cambia 13 con 5: il LED lampeggia dal pin 5!"
         }
       ],
+      scratchXml: BLINK_PIN5_SCRATCH,
       steps: [
         "Prendi il circuito dell'Es. 2 e scollega il filo dal pin 13.",
         "Ricollegalo a un altro pin, ad esempio il pin 5.",
@@ -1176,6 +1691,7 @@ void loop() {
         { type: "resistor", id: "r1", value: 470 },
         { type: "resistor", id: "r2", value: 470 },
         { type: "resistor", id: "r3", value: 470 },
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "led", id: "led1", color: "green" },
         { type: "led", id: "led2", color: "yellow" },
         { type: "led", id: "led3", color: "red" }
@@ -1357,6 +1873,7 @@ void loop() {
           hint: "3 LED su 3 pin diversi. Il programma li accende in sequenza!"
         }
       ],
+      scratchXml: SEMAFORO_3LED_SCRATCH,
       steps: [
         "Collega 3 LED (verde, giallo, rosso) con i loro resistori ai pin 5, 6 e 9.",
         "Nel setup() configura tutti e 3 i pin come OUTPUT.",
@@ -1508,6 +2025,7 @@ void loop() {
           wireColor: "green",
           hint: "Collega il resistore al LED verde attraverso le colonne."
         },
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 4,
           text: "Prendi il resistore R2 (470Ω) e posizionalo nei fori E22 e E29 — circuito giallo",
@@ -1709,6 +2227,7 @@ void loop() {
 // Pin 10 = pulsante, Pin 5 = LED
 
 bool statoLED = false;
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
 void setup() {
   pinMode(10, INPUT_PULLUP);
@@ -1815,6 +2334,7 @@ void loop() {
           hint: "Pulsante su D10 con INPUT_PULLUP, LED su D5. Ogni pressione cambia stato!"
         }
       ],
+      scratchXml: PULLUP_LED_SCRATCH,
       steps: [
         "Collega il pulsante a cavallo della scanalatura della breadboard.",
         "Un lato del pulsante va al pin 10 di Arduino, l'altro a GND.",
@@ -1992,6 +2512,7 @@ void loop() {
           wireFrom: "bb1:h25",
           wireTo: "bb1:h27",
           wireColor: "green",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Collega il resistore al LED rosso."
         },
         {
@@ -2243,6 +2764,7 @@ void loop() {
           hint: "Il while aspetta che rilasci il pulsante prima di continuare."
         }
       ],
+      scratchXml: DEBOUNCE_SCRATCH,
       steps: [
         "Usa lo stesso circuito dell'Es. 6.5 (pulsante + LED).",
         "La differenza e nel codice: dopo aver cambiato stato, il programma ASPETTA che il pulsante venga rilasciato.",
@@ -2276,6 +2798,7 @@ void loop() {
       chapter: "Capitolo 7 - I pin analogici",
       difficulty: 2,
       icon: "\u{1F39B}",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       simulationMode: "avr",
       components: [
         { type: "breadboard-half", id: "bb1" },
@@ -2412,6 +2935,7 @@ void loop() {
 // © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
         }
       ],
+      scratchXml: ANALOG_READ_BASE_SCRATCH,
       steps: [
         "Collega il potenziometro: VCC al 5V, GND a massa, segnale al pin A0.",
         "Collega un LED con resistore al pin 13.",
@@ -2577,6 +3101,7 @@ void loop() {
           hint: "La formula (valore * 5.0) / 1023 converte il numero in Volt reali."
         }
       ],
+      scratchXml: ANALOG_VOLTAGE_SCRATCH,
       steps: [
         "Usa lo stesso circuito dell'Es. 7.1 (potenziometro + LED).",
         "Nel codice, la variabile float tensione converte il valore 0-1023 in Volt 0-5V.",
@@ -2658,6 +3183,7 @@ void loop() {
   if ((valoreLetto >= 0) && (valoreLetto < 341)) {
     digitalWrite(3, HIGH); digitalWrite(5, LOW); digitalWrite(6, LOW);
   } else if ((valoreLetto >= 341) && (valoreLetto < 682)) {
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
     digitalWrite(3, LOW); digitalWrite(5, HIGH); digitalWrite(6, LOW);
   } else {
     digitalWrite(3, LOW); digitalWrite(5, LOW); digitalWrite(6, HIGH);
@@ -2840,6 +3366,7 @@ void loop() {
           hint: "Il range 0-1023 e diviso in 3 zone. Ogni zona accende un LED diverso!"
         }
       ],
+      scratchXml: ANALOG_3LED_SCRATCH,
       steps: [
         "Collega il potenziometro ad A0 come prima.",
         "Collega 3 LED con resistori ai pin 3, 5 e 6.",
@@ -2965,6 +3492,7 @@ void loop() {
           hint: "analogWrite(5, i) manda valori da 0 (spento) a 255 (pieno). E il PWM!"
         }
       ],
+      scratchXml: PWM_FADE_UP_SCRATCH,
       steps: [
         "Collega un LED con resistore al pin 5 (deve essere un pin PWM!).",
         "Il for loop parte da 0 e arriva a 255, aumentando di 5 ogni volta.",
@@ -3095,6 +3623,7 @@ void loop() {
           hint: "0 = spento, 64 = debole, 128 = meta, 255 = massimo. E un dimmer digitale!"
         }
       ],
+      scratchXml: PWM_MANUAL_SCRATCH,
       steps: [
         "Usa lo stesso circuito dell'Es. 7.4 (LED su pin PWM).",
         "Il codice mostra 4 livelli di luminosita in sequenza.",
@@ -3138,6 +3667,7 @@ void loop() {
         { from: "nano1:GND_R", to: "bb1:bus-bot-minus-1", color: "black" },
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
       ],
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       pinAssignments: {
         "r1:pin1": "bb1:c18", "r1:pin2": "bb1:c25",
         "led1:anode": "bb1:d27", "led1:cathode": "bb1:d28"
@@ -3219,6 +3749,7 @@ void loop() {
           hint: "Due for: uno sale (0 a 255) e uno scende (255 a 0). Effetto ipnotico!"
         }
       ],
+      scratchXml: PWM_FADE_UPDOWN_SCRATCH,
       steps: [
         "Usa lo stesso circuito dell'Es. 7.4 (LED su pin 5).",
         "Il primo for sale (i va da 0 a 255), il secondo scende (i va da 255 a 0).",
@@ -3384,6 +3915,7 @@ void loop() {
           hint: "map(valore, 0, 1023, 0, 255) converte la lettura del trimmer in PWM!"
         }
       ],
+      scratchXml: TRIMMER_PWM_MAP_SCRATCH,
       steps: [
         "Collega il potenziometro ad A0 e un LED con resistore al pin 5.",
         "La funzione map() converte il range del trimmer (0-1023) in quello del PWM (0-255).",
@@ -3501,6 +4033,7 @@ void loop() {
           hint: "analogWriteResolution(10) usa 1024 livelli. DAC e diverso dal PWM: tensione continua!"
         }
       ],
+      scratchXml: DAC_SCRATCH,
       steps: [
         "Collega il trimmer al pin A1 (ingresso).",
         "Il pin A0 e configurato come uscita DAC a 10 bit.",
@@ -3538,6 +4071,7 @@ void loop() {
       components: [
         { type: "breadboard-half", id: "bb1" },
         { type: "nano-r4", id: "nano1" }
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ],
       connections: [],
       code: `// Serial println in setup — messaggio singolo
@@ -3567,6 +4101,7 @@ void loop() { }`,
           hint: "Basta il cavo USB. Il Serial Monitor riceve i messaggi da Arduino."
         }
       ],
+      scratchXml: SERIAL_SETUP_SCRATCH,
       steps: [
         "Non serve nessun componente esterno: basta il cavo USB!",
         "Serial.begin(9600) avvia la comunicazione a 9600 baud.",
@@ -3626,6 +4161,7 @@ void loop() { Serial.println("Ciao dal Team di ELAB!"); }`,
           hint: "Stesso circuito dell'Es. 8.1. La differenza e nel codice: println e nel loop!"
         }
       ],
+      scratchXml: SERIAL_LOOP_SCRATCH,
       steps: [
         "Il codice e quasi identico all'Es. 8.1, ma println e nel loop() invece che nel setup().",
         "Carica e apri il Serial Monitor: il messaggio appare continuamente!",
@@ -3759,6 +4295,7 @@ void loop() {
       // S102: Scratch steps — analogRead + Serial Monitor
       scratchSteps: [
         {
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           label: "Apri l'editor blocchi",
           description: "Programmiamo la lettura analogica! Apri l'editor e vai sulla tab Blocchi.",
           explanation: "Questo esperimento introduce due concetti nuovi: leggere un valore analogico (0-1023) e stamparlo sul Serial Monitor. È come avere un termometro digitale che mostra la temperatura sullo schermo!",
@@ -3936,6 +4473,7 @@ void loop() {
           hint: "Due grafici colorati in tempo reale! Gira le manopole per muovere le linee."
         }
       ],
+      scratchXml: SERIAL_PLOTTER_SCRATCH,
       steps: [
         "Collega due potenziometri: uno ad A3 e uno ad A4.",
         "Il formato 'etichetta:valore spazio etichetta:valore' e quello richiesto dal Serial Plotter.",
@@ -4202,9 +4740,11 @@ void loop() {
           hint: "Progetto finale! Vedi i valori nel Serial Monitor E i LED cambiano in tempo reale!"
         }
       ],
+      scratchXml: FINAL_PROJECT_SCRATCH,
       steps: [
         "Collega il potenziometro ad A3.",
         "Collega 3 LED con resistori ai pin 12, 11 e 10.",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Apri il Serial Monitor: vedrai i valori del trimmer mentre i LED cambiano!"
       ],
       observe: "Girando il trimmer si vedono i valori cambiare nel Serial Monitor E i LED si accendono in base alla zona: sotto 300 il primo, tra 300 e 700 il secondo, sopra 700 il terzo. Combina input analogico, output digitale e comunicazione seriale!",
@@ -4406,6 +4946,7 @@ void loop() {
         {
           question: "Cosa fa il comando lcd.setCursor(0, 0)?",
           options: ["Spegne il display", "Cancella tutto il testo", "Posiziona il cursore alla prima colonna della prima riga"],
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           correct: 2,
           explanation: "setCursor(0, 0) sposta il cursore alla posizione colonna 0, riga 0, cioè l'angolo in alto a sinistra del display. Da lì inizia a scrivere!"
         }
@@ -4607,6 +5148,7 @@ void loop() {
         { from: "nano1:W_D9", to: "bb1:a16", color: "red" },
         { from: "nano1:W_D10", to: "bb1:a22", color: "green" },
         { from: "nano1:W_D11", to: "bb1:f16", color: "blue" },
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "nano1:W_D12", to: "bb1:f22", color: "yellow" },
         /* LED GND wires: cathode column → GND bus */
         { from: "bb1:a24", to: "bb1:bus-bot-minus-24", color: "black" },
@@ -4808,6 +5350,7 @@ void loop() {
         {
           step: 5,
           text: "Posiziona il resistore R2 (470Ω) — riga E, dal foro 22 al foro 29",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "r2",
           componentType: "resistor",
           targetPins: { "r2:pin1": "bb1:e22", "r2:pin2": "bb1:e29" },
@@ -5009,6 +5552,7 @@ void loop() {
         /* === CICALINO (buz1) === */
         {
           step: 29,
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il cicalino piezo con il pin (+) nel foro B10 e il pin (−) nel foro B11",
           componentId: "buz1",
           componentType: "buzzer-piezo",
