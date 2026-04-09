@@ -1,7 +1,7 @@
-# Next Task — 2026-04-09 10:17 (Ciclo 11)
-## TASK: Scrivi 10+ test per lesson-paths data layer (experiments-index, lesson paths)
-## FILE: tests/unit/lessonPaths.test.js (NUOVO)
-## APPROACH: Test: findExperimentById, getLessonPath, experiment count per volume, data integrity
-## SUCCESS: npm test passa, +10 test
+# Next Task — 2026-04-09 11:17 (Ciclo 12)
+## TASK: Scrivi 8+ test per crypto.js (hash, encrypt/decrypt, edge cases)
+## FILE: tests/unit/crypto.test.js (NUOVO)
+## APPROACH: Test: hashPassword, encrypt/decrypt round-trip, corrupted data, empty input
+## SUCCESS: npm test passa, +8 test
 ## RISK: Zero (solo tests/)
-## NOTE: 21 moduli gia' coperti. Si passa al data layer (92 esperimenti, integrità dati).
+## NOTE: crypto.js gestisce sicurezza password. 24° modulo.
