@@ -1,5 +1,5 @@
-# Research Findings — 2026-04-09 08:22
-## Topic: AI Tutoring K-12 STEM Effectiveness
-## Key Finding: AI tutor effect size 0.73-1.3 SD (RCT), performance +15-35%, engagement +40%. Galileo e' nel segmento giusto.
-## Azione: usare questi numeri per bando DM 219/2025 + landing /scuole
-## Urgenza: ALTA — dati per pitch commerciale PNRR
+# Research Findings — 2026-04-09 09:22
+## Topic: React Code Splitting Vite Performance
+## Key Finding: react-pdf (1911KB) e NewElabSimulator (1298KB) sono candidati perfetti per lazy loading. 40-60% reduction attesa.
+## Azione: React.lazy su react-pdf e NewElabSimulator
+## Urgenza: MEDIA — impatta Lighthouse performance (gap 6→7)
