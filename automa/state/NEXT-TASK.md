@@ -1,7 +1,7 @@
-# Next Task — 2026-04-09 13:17 (Ciclo 14)
-## TASK: Scrivi 8+ test per pinComponentMap.js (Union-Find, connettivita' elettrica, 28° modulo)
-## FILE: tests/unit/pinComponentMap.test.js (NUOVO)
-## APPROACH: Test: Union-Find merge, find, isConnected, component count, edge cases
-## SUCCESS: npm test passa, +8 test
-## RISK: Zero (solo tests/)
-## NOTE: Questo e' il cuore del simulatore — determinare se i componenti sono collegati elettricamente.
+# Next Task — 2026-04-09 14:17 (Ciclo 15)
+## TASK: CONSOLIDAMENTO — aggiorna learned-lessons con le lezioni di questa sessione
+## FILE: automa/learned-lessons.md
+## APPROACH: Documenta: quali moduli non si possono testare con unit test (e perche'), cosa ha funzionato bene nel sistema 8 task, cosa no
+## SUCCESS: learned-lessons aggiornato con 3+ nuove lezioni
+## RISK: Zero
+## NOTE: 28 moduli = limite unit test. Prossimo step: Playwright e2e. Questa sessione va documentata per le prossime.
