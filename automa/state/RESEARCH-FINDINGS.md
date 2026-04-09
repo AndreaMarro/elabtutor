@@ -1,22 +1,33 @@
-# Research Findings — 2026-04-09 16:25 (Ciclo 16)
+# Research Findings — 2026-04-09 17:25 (Ciclo 17)
 
-## Topic: Competitive Analysis — ELAB vs Top 5 EdTech (TinkerCAD, Arduino Cloud, Wokwi, micro:bit, PhET)
+## Topic: Google Classroom Integration — 3 opzioni, MVP in 2-4 ore
 
-## Key Finding
-ELAB e' l'UNICO prodotto che combina: simulatore Arduino + AI tutor + kit fisico + volumi IT + Scratch.
-Nessun competitor ha piu' di 2-3 di questi 5 pilastri.
+## Key Findings
 
-## Competitor Pricing
-- TinkerCAD: GRATIS (nessun AI, nessun kit)
-- Arduino Cloud: ~€3-5/studente/anno (nessun simulatore)
-- Wokwi: $67/anno individuale, custom classroom (target maker, non K-8)
-- micro:bit: GRATIS software, ~£15-20 hardware (non Arduino)
-- PhET: GRATIS (nessun Arduino, nessuna programmazione)
-- ELAB: €200/classe/anno (tutto incluso)
+### 1. Share to Classroom Button = MVP in 2-4 ore
+Un bottone HTML/JS che condivide link ELAB come assignment in Google Classroom.
+Zero OAuth, zero marketplace review, funziona subito. Elimina il gap competitivo #1.
 
-## Azioni Suggerite
-1. **Pitch deck**: usare matrice competitiva dal report
-2. **Obiezione "TinkerCAD gratis"**: "gratis ma senza AI, kit, italiano, percorso"
-3. **Real competitor**: Arduino Cloud (a pagamento, management) — non TinkerCAD
-4. **Nicchia vuota**: scuole IT primarie/medie che vogliono Arduino + AI = ZERO competitor
-5. **Google Classroom integration**: tutti ce l'hanno, ELAB no — da aggiungere
+### 2. Google Classroom NON supporta LTI (nessuna versione)
+L'unica via e' la Classroom API o il Classroom Add-on. Non esiste standard.
+
+### 3. Classroom Add-on richiede tier a pagamento Google
+Solo scuole con Teaching and Learning Upgrade o Education Plus possono usare add-on.
+Il Share Button funziona per TUTTI i tier (incluso il gratuito).
+
+### 4. OAuth verification richiede 3-5 giorni lavorativi
+Per usare la Classroom API (roster, grading) serve OAuth verified.
+Per il bottone Share = NON serve OAuth.
+
+### 5. Edlink offre unified API per 10+ LMS
+Un'alternativa a integrare ogni piattaforma singolarmente.
+Costo non pubblico. Da valutare se ELAB vuole multi-LMS.
+
+## Azione Suggerita per Builder
+- Implementare Share to Classroom button (2-4h, zero rischio)
+- Il bottone va nella dashboard docente, accanto agli esperimenti
+
+## Azione Suggerita per Andrea
+- Creare Google Cloud Project per ELAB
+- Registrare OAuth consent screen (anche se non serve subito per il bottone)
+- Pianificare Classroom API per Fase 2 (Maggio)
