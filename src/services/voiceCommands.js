@@ -5,9 +5,12 @@
  * Flusso: STT text → matchVoiceCommand() → se match → esegui via __ELAB_API → feedback TTS
  *                                         → se no match → invia a AI come prima
  *
- * 24 comandi: simulazione, navigazione, pannelli, compilazione, zoom,
- * montaggio circuito (aggiungi/rimuovi componente, pulisci, monta esperimento)
+ * 36 comandi: simulazione, navigazione, pannelli, compilazione, zoom,
+ * montaggio circuito (aggiungi/rimuovi componente, pulisci, monta esperimento),
+ * Principio Zero (volume, capitolo, quiz, report, lezione, esperimento successivo)
  */
+
+import { getVolumeChapters } from '../data/chapter-map.js';
 
 /**
  * @typedef {Object} VoiceCommand
@@ -195,10 +198,10 @@ const VOICE_COMMANDS = [
       const all = window.__ELAB_API?.getExperimentList?.();
       const exps = [...(all?.vol1 || []), ...(all?.vol2 || []), ...(all?.vol3 || [])];
       const match = exps.find(e => e.title?.toLowerCase().includes('semafor'));
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       if (match) window.__ELAB_API?.mountExperiment?.(match.id);
     },
     feedback: 'Sto montando il semaforo!',
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   },
 
   // ── UNLIM ONNIPOTENTE: Modalità costruzione ──
@@ -214,7 +217,219 @@ const VOICE_COMMANDS = [
     execute: () => window.__ELAB_API?.setBuildMode?.('guided'),
     feedback: 'Modalità passo passo attivata!',
   },
+
+  // ── Principio Zero: Monta il circuito ──
+  {
+    action: 'mountCircuit',
+    patterns: ['monta il circuito', 'monta circuito', 'costruisci il circuito', 'costruisci circuito'],
+    execute: () => {
+      const exp = window.__ELAB_API?.getCurrentExperiment?.();
+      if (exp?.id) {
+        window.__ELAB_API?.setBuildMode?.('complete');
+        window.__ELAB_API?.mountExperiment?.(exp.id);
+      }
+    },
+    feedback: 'Monto il circuito!',
+  },
+  {
+    action: 'mountStepByStep',
+    patterns: ['monta passo passo', 'monta passo a passo', 'costruisci passo passo'],
+    execute: () => {
+      const exp = window.__ELAB_API?.getCurrentExperiment?.();
+      if (exp?.id) {
+        window.__ELAB_API?.setBuildMode?.('guided');
+        window.__ELAB_API?.mountExperiment?.(exp.id);
+      }
+    },
+    feedback: 'Montiamo il circuito passo passo!',
+  },
+
+  // ── Principio Zero: Prossimo / precedente esperimento ──
+  {
+    action: 'nextExperiment',
+    patterns: ['prossimo esperimento', 'esperimento successivo', 'next experiment'],
+    execute: () => {
+      const api = window.__ELAB_API;
+      const current = api?.getCurrentExperiment?.();
+      if (!current?.id) return;
+      const all = api?.getExperimentList?.();
+      const flat = [...(all?.vol1 || []), ...(all?.vol2 || []), ...(all?.vol3 || [])];
+      const idx = flat.findIndex(e => e.id === current.id);
+      if (idx >= 0 && idx < flat.length - 1) {
+        api?.mountExperiment?.(flat[idx + 1].id);
+      }
+    },
+    feedback: 'Prossimo esperimento!',
+  },
+  {
+    action: 'prevExperiment',
+    patterns: ['esperimento precedente', 'torna all esperimento precedente', 'previous experiment'],
+    execute: () => {
+      const api = window.__ELAB_API;
+      const current = api?.getCurrentExperiment?.();
+      if (!current?.id) return;
+      const all = api?.getExperimentList?.();
+      const flat = [...(all?.vol1 || []), ...(all?.vol2 || []), ...(all?.vol3 || [])];
+      const idx = flat.findIndex(e => e.id === current.id);
+      if (idx > 0) {
+        api?.mountExperiment?.(flat[idx - 1].id);
+      }
+    },
+    feedback: 'Esperimento precedente.',
+  },
+
+  // ── Principio Zero: Prepara la lezione ──
+  {
+    action: 'prepareLesson',
+    patterns: ['prepara la lezione', 'prepara lezione', 'prepara la classe', 'inizia la lezione'],
+    execute: () => {
+      // Dispatch a custom event that UNLIM/Lavagna can listen to
+      window.dispatchEvent(new CustomEvent('elab-voice-command', {
+        detail: { action: 'prepareLesson' },
+      }));
+    },
+    feedback: 'Preparo la lezione!',
+  },
+
+  // ── Principio Zero: Compila il codice (alias espliciti) ──
+  {
+    action: 'compileCode',
+    patterns: ['compila il codice', 'compila codice', 'compila il programma', 'compila programma'],
+    execute: () => {
+      const code = window.__ELAB_API?.getEditorCode?.();
+      if (code) {
+        window.__ELAB_API?.compile?.(code);
+      }
+    },
+    feedback: 'Compilazione in corso...',
+  },
+
+  // ── Principio Zero: Mostra / Nascondi codice ──
+  {
+    action: 'hideEditor',
+    patterns: ['nascondi il codice', 'nascondi codice', 'chiudi editor', 'chiudi codice', 'nascondi editor'],
+    execute: () => window.__ELAB_API?.hideEditor?.(),
+    feedback: 'Editor nascosto.',
+  },
+
+  // ── Principio Zero: Quiz ──
+  {
+    action: 'startQuiz',
+    patterns: ['fai il quiz', 'inizia il quiz', 'apri il quiz', 'quiz', 'avvia quiz', 'fai quiz'],
+    execute: () => {
+      window.dispatchEvent(new CustomEvent('elab-voice-command', {
+        detail: { action: 'startQuiz' },
+      }));
+    },
+    feedback: 'Apro il quiz!',
+  },
+
+  // ── Principio Zero: Report ──
+  {
+    action: 'createReport',
+    patterns: ['crea il report', 'crea report', 'mostra report', 'genera report', 'report fumetto', 'apri report'],
+    execute: () => {
+      window.dispatchEvent(new CustomEvent('elab-voice-command', {
+        detail: { action: 'createReport' },
+      }));
+    },
+    feedback: 'Genero il report!',
+  },
+
+  // ── Principio Zero: Volume 1 / 2 / 3 ──
+  {
+    action: 'selectVolume1',
+    patterns: ['volume 1', 'volume uno', 'apri volume 1', 'apri volume uno', 'vai al volume 1'],
+    execute: () => {
+      const all = window.__ELAB_API?.getExperimentList?.();
+      const first = all?.vol1?.[0];
+      if (first) window.__ELAB_API?.mountExperiment?.(first.id);
+    },
+    feedback: 'Volume 1 — Le Basi!',
+  },
+  {
+    action: 'selectVolume2',
+    patterns: ['volume 2', 'volume due', 'apri volume 2', 'apri volume due', 'vai al volume 2'],
+    execute: () => {
+      const all = window.__ELAB_API?.getExperimentList?.();
+      const first = all?.vol2?.[0];
+      if (first) window.__ELAB_API?.mountExperiment?.(first.id);
+    },
+    feedback: 'Volume 2 — Approfondiamo!',
+  },
+  {
+    action: 'selectVolume3',
+    patterns: ['volume 3', 'volume tre', 'apri volume 3', 'apri volume tre', 'vai al volume 3'],
+    execute: () => {
+      const all = window.__ELAB_API?.getExperimentList?.();
+      const first = all?.vol3?.[0];
+      if (first) window.__ELAB_API?.mountExperiment?.(first.id);
+    },
+    feedback: 'Volume 3 — Arduino!',
+  },
+
+  // ── Principio Zero: Capitolo X (usa chapter-map.js) ──
+  {
+    action: 'selectChapter',
+    patterns: [
+      'capitolo 1', 'capitolo uno',
+      'capitolo 2', 'capitolo due',
+      'capitolo 3', 'capitolo tre',
+      'capitolo 4', 'capitolo quattro',
+      'capitolo 5', 'capitolo cinque',
+      'capitolo 6', 'capitolo sei',
+      'capitolo 7', 'capitolo sette',
+      'capitolo 8', 'capitolo otto',
+      'capitolo 9', 'capitolo nove',
+      'capitolo 10', 'capitolo dieci',
+    ],
+    execute: (_matchedPattern) => {
+      // Extract chapter number from matched pattern stored by executeVoiceCommand
+      const num = _extractChapterNumber(_matchedPattern);
+      if (!num) return;
+
+      // Determine current volume from loaded experiment
+      const current = window.__ELAB_API?.getCurrentExperiment?.();
+      let volume = 1;
+      if (current?.id?.startsWith('v2')) volume = 2;
+      else if (current?.id?.startsWith('v3')) volume = 3;
+
+      // Find chapter in the chapter-map
+      const chapters = getVolumeChapters(volume);
+      const chapter = chapters.find(c => c.displayChapter === num);
+      if (!chapter) return;
+
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+      // Find first experiment matching this chapter key
+      const all = window.__ELAB_API?.getExperimentList?.();
+      const volKey = `vol${volume}`;
+      const exps = all?.[volKey] || [];
+      const match = exps.find(e => e.id.startsWith(chapter.key));
+      if (match) window.__ELAB_API?.mountExperiment?.(match.id);
+    },
+    feedback: '__CHAPTER_FEEDBACK__',
+  },
 ];
+
+/** Map Italian number words to digits */
+const ITALIAN_NUMBERS = {
+  uno: 1, due: 2, tre: 3, quattro: 4, cinque: 5,
+  sei: 6, sette: 7, otto: 8, nove: 9, dieci: 10,
+};
+
+/**
+ * Extract chapter number from a matched pattern like "capitolo 3" or "capitolo tre".
+ * @param {string} pattern
+ * @returns {number|null}
+ */
+function _extractChapterNumber(pattern) {
+  if (!pattern) return null;
+  const parts = pattern.split(/\s+/);
+  const last = parts[parts.length - 1];
+  const digit = parseInt(last, 10);
+  if (!isNaN(digit) && digit >= 1 && digit <= 10) return digit;
+  return ITALIAN_NUMBERS[last] || null;
+}
 
 /**
  * Normalizza il testo per il matching: lowercase, trim, rimuove punteggiatura, accenti.
@@ -232,6 +447,8 @@ function normalize(text) {
 
 /**
  * Cerca un match tra il testo STT e i comandi vocali.
+ * Preferisce il pattern piu' lungo per evitare ambiguita'
+ * (es. "prossimo esperimento" non viene catturato da "prossimo").
  * @param {string} text - Testo riconosciuto da STT
  * @returns {{ command: VoiceCommand, matched: string } | null}
  */
@@ -240,35 +457,47 @@ export function matchVoiceCommand(text) {
 
   const normalized = normalize(text);
 
+  // Collect all matches, then pick the longest pattern
+  let bestMatch = null;
+  let bestLen = 0;
+
   for (const cmd of VOICE_COMMANDS) {
     for (const pattern of cmd.patterns) {
-      if (normalized === pattern) {
-        return { command: cmd, matched: pattern };
-      }
-      // Word-boundary match: pattern must appear as whole words within text
-      const re = new RegExp(`\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
-      if (re.test(normalized)) {
-        return { command: cmd, matched: pattern };
+      if (normalized === pattern || (() => {
+        const re = new RegExp(`\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+        return re.test(normalized);
+      })()) {
+        if (pattern.length > bestLen) {
+          bestLen = pattern.length;
+          bestMatch = { command: cmd, matched: pattern };
+        }
       }
     }
   }
 
-  return null;
+  return bestMatch;
 }
 
 /**
  * Esegui un comando vocale e ritorna il feedback.
- * Gestisce il token speciale __CIRCUIT_DESCRIPTION__ per describeCircuit.
+ * Gestisce i token speciali __CIRCUIT_DESCRIPTION__ e __CHAPTER_FEEDBACK__.
  * @param {VoiceCommand} command
+ * @param {string} [matchedPattern] - Il pattern che ha fatto match (per comandi parametrici)
  * @returns {string} feedback text
  */
-export function executeVoiceCommand(command) {
+export function executeVoiceCommand(command, matchedPattern) {
   try {
-    command.execute();
+    command.execute(matchedPattern);
 
     // Token speciale: sostituisci con la descrizione reale del circuito
     if (command.feedback === '__CIRCUIT_DESCRIPTION__') {
       return window.__ELAB_API?.getCircuitDescription?.() || 'Circuito vuoto.';
+    }
+
+    // Token speciale: feedback dinamico per capitolo
+    if (command.feedback === '__CHAPTER_FEEDBACK__') {
+      const num = _extractChapterNumber(matchedPattern);
+      return num ? `Capitolo ${num}!` : 'Capitolo selezionato!';
     }
 
     return command.feedback;
@@ -285,6 +514,8 @@ export function getAvailableCommands() {
   return VOICE_COMMANDS.map(({ action, patterns, feedback }) => ({
     action,
     patterns,
-    feedback: feedback === '__CIRCUIT_DESCRIPTION__' ? '(descrizione circuito dinamica)' : feedback,
+    feedback: feedback === '__CIRCUIT_DESCRIPTION__' ? '(descrizione circuito dinamica)'
+      : feedback === '__CHAPTER_FEEDBACK__' ? '(capitolo dinamico)'
+      : feedback,
   }));
 }
