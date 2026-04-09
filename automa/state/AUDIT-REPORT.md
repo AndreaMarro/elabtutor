@@ -1,63 +1,43 @@
-# Audit Report — 2026-04-09 16:12 (Ciclo 16 — FLOW VERIFICATION)
+# Audit Report — 2026-04-09 17:12 (Ciclo 18 — AI CHAT VERIFIED)
 
-## Servizi Live — Stato Completo
+## Servizi Live
 
-| # | Servizio | URL | Status | Dettaglio |
-|---|----------|-----|--------|-----------|
-| 1 | Frontend | elabtutor.school | **200 OK** (1.0s) | HTML + JS bundle caricano |
-| 2 | JS Bundle | /assets/index-Ds9vSCgJ.js | **200 OK** | Main bundle serve correttamente |
-| 3 | Compiler | n8n.srv1022317.hstgr.cloud | **VERIFIED** | Blink LED compilato → 924 bytes HEX |
-| 4 | Render Nanobot | elab-galileo.onrender.com | **OK v5.5.0** | 5 provider, primary deepseek-chat |
-| 5 | Supabase Edge | unlim-chat | **200 OK** | Risponde, richiede session |
-| 6 | Brain VPS | 72.60.129.50:11434 | **OK** | 2 modelli: galileo-brain, galileo-brain-v13 |
+| # | Servizio | Status | Verificato |
+|---|----------|--------|-----------|
+| 1 | Frontend | **200 OK** (0.99s) | HTML serves |
+| 2 | **Nanobot AI /tutor-chat** | **200 OK** | **CHAT VERIFIED** — risposta 423 chars |
+| 3 | Compiler | **200 OK** | E2E verified (ciclo precedente) |
+| 4 | Brain VPS | **200 OK** | Ollama active |
+| 5 | Supabase Edge | **200 OK** | Responds |
+| 6 | Render /health | **v5.5.0** | 5 providers, primary deepseek |
 
-## Verifiche End-to-End
+## Nanobot AI Chat — PRIMA VERIFICA END-TO-END
 
-### Compiler E2E: PASS
-Compilato codice Blink LED reale:
-```c
-void setup() { pinMode(13, OUTPUT); }
-void loop() { digitalWrite(13, HIGH); delay(1000); digitalWrite(13, LOW); delay(1000); }
-```
-- Output: 924 bytes (3% storage), 9 bytes RAM
-- HEX: 58 righe valide (ATmega328p)
-- Errori: null
-- Questo prova che il flusso completo funziona: C++ → n8n → Arduino CLI → HEX
+**Prompt**: "Come collego un LED?"
+**Endpoint**: POST /tutor-chat (non /chat come tentato prima)
+**Risposta** (423 chars): "Per collegare un LED, devi connettere l'anodo (il lato positivo) del LED a un potenziale più alto rispetto al catodo..."
 
-### Frontend Asset Loading: PASS
-- HTML serve correttamente con `<title>ELAB Tutor — Simulatore...</title>`
-- JS bundle `index-Ds9vSCgJ.js` carica (200 OK)
-- Service Worker `registerSW.js` presente
+**Valutazione risposta**: CORRETTA — spiega polarita' LED, resistore in serie, concetti appropriati per target 8-14. Nessun contenuto inappropriato.
 
-### Nanobot AI Stack: OPERATIONAL
-- Render v5.5.0 con 5 provider AI operativi
-- Brain VPS ha 2 modelli Galileo caricati e pronti
-- Supabase Edge Function risponde
+**Nota**: L'endpoint corretto e' `/tutor-chat` (text) o `/chat` (con immagini). Root `/` restituisce 404 — non un errore, semplicemente no route.
 
 ## Build & Test
 
-| Metrica | Valore | Delta vs ciclo 15 |
-|---------|--------|--------------------|
-| Test | 1554 passed, 34 files | +112 |
-| Build | 56.10s | stabile |
-| Bundle | 2408 KiB precache | stabile |
-| Failures | 0 | = |
+| Metrica | Valore |
+|---------|--------|
+| Test | 1578 passed, 35 files |
+| Build | 50.05s |
+| Bundle | 2411 KiB precache |
+| Failures | 0 |
 
-## Problemi Confermati
-
-### Supabase DB Key — ANCORA 401
-Non testato in questo ciclo (serve API key corretta da Andrea).
-Impatto: sync cross-device non funziona, solo localStorage.
-
-### Deploy Non Sincronizzato
-Il JS bundle in produzione (`index-Ds9vSCgJ.js`) potrebbe non includere il P1 safety fix
-(`bfd5380`) se non e' stato fatto `npx vercel --prod`. Il fix e' su git ma serve deploy.
+## Problemi Aperti (da cicli precedenti)
+1. **Supabase DB key 401** — non ritestato (serve Andrea)
+2. **P1+P2 fix non live** — serve `npx vercel --prod` per deploy
+3. **Safety filter live** — NON verificabile senza deploy (il JS bundle in produzione potrebbe essere vecchio)
 
 ## Regressioni: ZERO
-Tutti i servizi stabili. Test suite clean. Build clean.
+Tutti i servizi stabili. Build+test clean. AI chat funzionante.
 
-## Conclusione
-5/5 servizi verificati con dati reali (non solo HTTP status).
-Compiler testato end-to-end con codice Blink LED.
-Brain VPS ha entrambi i modelli Galileo.
-Unico problema: Supabase DB key 401 (serve Andrea).
+## Novita' questo ciclo
+- **Prima verifica AI chat end-to-end** — risposta educativa corretta
+- **Endpoint corretto scoperto**: /tutor-chat (non /chat per testo)
