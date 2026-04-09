@@ -1,4 +1,4 @@
-# Scout Findings — 2026-04-09 12:05 (Ciclo 13)
-## Codebase: PULITO (13 cicli consecutivi)
-## 28 PR mergiate, ~8 aperte (Mac Mini conflitti)
-## 25 moduli testati. Sistema stabile da 14+ ore.
+# Scout Findings — 2026-04-09 13:05 (Ciclo 14)
+## Codebase: PULITO (14 cicli consecutivi)
+## 30 PR mergiate, ~7 aperte (Mac Mini conflitti)
+## 27 moduli testati. 12/12 research. Sistema stabile 16+ ore.
