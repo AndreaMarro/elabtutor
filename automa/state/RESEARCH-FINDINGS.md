@@ -1,40 +1,41 @@
-# Research Findings — 2026-04-09 (Ciclo 14)
+# Research Findings — 2026-04-09 15:20 (Ciclo 15)
 
-## Topic: Italian School EdTech Procurement + Teacher Dashboard Requirements 2026
+## Topic: Kit GDPR per EdTech Italiana — Documenti per Vendere alle Scuole
 
 ## Key Findings
 
-### 1. Garante Privacy sta ispezionando AI nelle scuole (40+ ispezioni H1 2026)
-ELAB DEVE avere: DPA template, informativa famiglie, DPIA, scheda GDPR compliance.
-Senza questi documenti nessun DS comprera' ELAB. Rischio legale reale.
+### 1. MIM ha pubblicato Linee Guida AI Scuola (DM 166/2025)
+Sotto 14 anni: NESSUN AI senza consenso parentale. Opt-out training obbligatorio.
+Fornitori devono dimostrare compliance. Sperimentazione 2025-2027.
 
-### 2. Il vero decisore e' l'Animatore Digitale, non il DS
-L'Animatore propone e testa. Il DS firma. Il DSGA compra su MePA.
-Strategia: targetizzare Animatori Digitali con trial gratuito 30 giorni.
+### 2. ELAB deve avere 6 documenti per vendere
+1. DPA Art. 28 (nomina responsabile trattamento)
+2. Informativa privacy genitori (art. 13-14)
+3. DPIA (valutazione impatto — obbligatoria per AI+minori)
+4. Registro trattamenti (art. 30)
+5. Scheda tecnica GDPR/AI Act
+6. Modulo consenso parentale con opt-out AI
+NESSUNO di questi esiste ancora. Senza di essi, nessuna vendita.
 
-### 3. Sotto €5.000 il DS compra senza gara
-Piano Classe €200/anno = sotto soglia. Acquisto diretto, zero burocrazia.
-Piano Scuola €1.500/anno (10 classi) = ancora sotto soglia.
+### 3. DeepSeek (Cina) e' un problema per GDPR
+Il Nanobot usa DeepSeek come provider primario. Trasferimento dati in Cina
+richiede SCC o anonimizzazione prima dell'invio. Documentare che nessun
+dato personale raggiunge provider extra-UE.
 
-### 4. PNRR richiede 60% budget in digitale
-Software e contenuti digitali sono spesa ammissibile. ELAB qualifica.
-Scadenza rendicontazione: 30/06/2026.
+### 4. Garante offre software DPIA gratuito
+Il CNIL (raccomandato dal Garante italiano) offre tool gratuito per compilare DPIA.
+Non serve consulente esterno per la prima versione.
 
-### 5. Dashboard MVP obbligatoria per vendere
-Minimo: lista studenti + progressi + export CSV + vista classe.
-Senza dashboard, nessuna scuola compra. I docenti vogliono DATI.
-
-### 6. 92% docenti scopre EdTech tramite free trial
-Senza trial gratuito senza carta di credito, ELAB non entra nelle scuole.
-
-### 7. Mercato EdTech Italia €2.7B ma 68% punta a enterprise
-Poche startup puntano a scuole K-8. ELAB ha spazio competitivo reale.
-
-## Azione Suggerita per Builder
-- Implementare export CSV nella Teacher Dashboard (P0, 4-6h)
-- Creare pagina /gdpr con documentazione compliance
+### 5. Modelli DPA disponibili gratuitamente
+Il Consiglio Nazionale Forense e Orizzonte Scuola offrono template DPA art. 28
+adattabili per scuole. Clausole contrattuali standard UE disponibili dal 2021.
 
 ## Azione Suggerita per Andrea
-- URGENTE: Candidatura DM 219/2025 entro 17/04/2026 (100M€ AI scuole)
-- Chiedere a Davide stato MePA
-- Preparare kit documentale GDPR (DPA + informativa famiglie)
+- Scaricare template DPA dal CNF e adattarlo per ELAB
+- Scrivere informativa genitori (1 pagina, italiano semplice)
+- Usare tool CNIL per DPIA
+- Valutare anonimizzazione messaggi prima di inviarli a DeepSeek
+
+## Azione Suggerita per Builder
+- Fix regex safety filter (P1, gia' assegnato)
+- Aggiungere pagina /privacy al sito
