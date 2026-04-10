@@ -9,9 +9,13 @@ vi.mock('../../src/hooks/useSessionTracker', () => ({
   getSavedSessions: vi.fn(() => []),
 }));
 
-vi.mock('../../src/data/lesson-paths', () => ({
-  getLessonPath: vi.fn((id) => id ? { title: 'Test Experiment', concepts_covered: ['LED', 'resistenza'] } : null),
-}));
+vi.mock('../../src/data/lesson-paths', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    getLessonPath: vi.fn((id) => id ? { title: 'Test Experiment', concepts_covered: ['LED', 'resistenza'] } : null),
+  };
+});
 
 import { buildClassProfile } from '../../src/services/classProfile';
 import { getSavedSessions } from '../../src/hooks/useSessionTracker';
