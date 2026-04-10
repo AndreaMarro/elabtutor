@@ -198,6 +198,7 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 <next><block type="arduino_no_tone"><field name="PIN">8</field>
 </block></next></block></next></block></next></block></next></block></next></block>
 </statement>
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <next><block type="controls_if">
 <value name="IF0"><block type="logic_compare"><field name="OP">EQ</field>
 <value name="A"><block type="arduino_digital_read"><field name="PIN">6</field></block></value>
@@ -219,7 +220,6 @@ const SIMON_SCRATCH_STEP28 = `<xml xmlns="https://developers.google.com/blockly/
 <value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
 </block></value>
 <statement name="DO0">
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <block type="arduino_digital_write"><field name="PIN">12</field><field name="STATE">HIGH</field>
 <next><block type="arduino_tone"><field name="PIN">8</field><value name="FREQ"><shadow type="math_number"><field name="NUM">523</field></shadow></value>
 <next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
@@ -399,6 +399,7 @@ const SEMAFORO_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml"
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
 <next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
 <next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">LOW</field>
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <next><block type="arduino_digital_write"><field name="PIN">3</field><field name="STATE">HIGH</field>
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">3000</field></shadow></value>
 </block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
@@ -420,7 +421,6 @@ const SERIAL_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
 <value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valore</field></block></value>
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
 </block></next></block></next></block>
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 </statement>
 </block></xml>`;
 
@@ -600,6 +600,7 @@ void loop() {
       quiz: [
         {
           question: "Se metti delay(500) acceso e delay(100) spento, cosa succede?",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           options: ["Il LED resta sempre acceso", "Il LED sta acceso piu a lungo di quanto sta spento", "Il LED non funziona piu"],
           correct: 1,
           explanation: "Con delay(500) il LED sta acceso mezzo secondo, con delay(100) sta spento solo un decimo di secondo. Sembra quasi sempre acceso con un breve spegnimento!"
@@ -623,7 +624,6 @@ void loop() {
           step: 2,
           text: "Posiziona l'Arduino Nano R4 sopra la breadboard al centro.",
           componentId: "nano1",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "nano-r4",
           hint: "Il LED integrato sulla scheda lampeggerà. Prova a cambiare i numeri nei delay() per controllare la velocità!"
         }
@@ -801,6 +801,7 @@ void loop() {
         },
         {
           step: 5,
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ARANCIO dal pin W_D13 dell'Arduino al foro A18.",
           wireFrom: "nano1:W_D13",
           wireTo: "bb1:a18",
@@ -825,7 +826,6 @@ void loop() {
         },
         {
           step: 8,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo NERO dal pin GND_R dell'Arduino al binario GND (−) inferiore, colonna 1.",
           wireFrom: "nano1:GND_R",
           wireTo: "bb1:bus-bot-minus-1",
@@ -1002,6 +1002,7 @@ void loop() {
           step: 9,
           text: "Collega un filo ROSSO dal pin 5V dell'Arduino al binario + inferiore, colonna 1.",
           wireFrom: "nano1:5V",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bb1:bus-bot-plus-1",
           wireColor: "red",
           hint: "Alimenta il binario positivo della breadboard."
@@ -1027,7 +1028,6 @@ void loop() {
         { from: "nano1:W_D5", to: "bb1:a18", color: "green" },
         { from: "bb1:d25", to: "bb1:d27", color: "green" },
         { from: "bb1:a28", to: "bb1:bus-bot-minus-28", color: "black" },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "nano1:GND_R", to: "bb1:bus-bot-minus-1", color: "black" },
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
       ],
@@ -1203,6 +1203,7 @@ void setup() {
 void loop() {
   digitalWrite(5, HIGH); digitalWrite(6, LOW); digitalWrite(9, LOW); delay(3000);
   digitalWrite(5, LOW); digitalWrite(6, HIGH); digitalWrite(9, LOW); delay(1000);
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
   digitalWrite(5, LOW); digitalWrite(6, LOW); digitalWrite(9, HIGH); delay(3000);
 }`,
       layout: {
@@ -1230,7 +1231,6 @@ void loop() {
           question: "Perche nel codice del semaforo si scrive digitalWrite(5, LOW) prima di accendere il pin 6?",
           options: ["Perche il pin 5 si rompe se resta acceso", "Per spegnere il LED precedente prima di accendere quello nuovo", "Perche Arduino puo accendere solo un pin alla volta"],
           correct: 1,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           explanation: "Se non spegni i LED precedenti, resterebbero tutti accesi insieme! Nel semaforo deve brillare solo un colore alla volta, quindi spegni gli altri prima di accendere quello nuovo."
         },
         {
@@ -1404,6 +1404,7 @@ void loop() {
         {
           step: 8,
           text: "Collega un filo VERDE dal foro H23 al foro H30 (ponte R3→LED rosso)",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:h23",
           wireTo: "bb1:h30",
           wireColor: "green",
@@ -1431,7 +1432,6 @@ void loop() {
           wireFrom: "nano1:W_D6",
           wireTo: "bb1:a22",
           wireColor: "yellow",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "D6 controlla il LED giallo."
         },
         {
@@ -1605,6 +1605,7 @@ void loop() {
           question: "Con INPUT_PULLUP, cosa legge Arduino quando il pulsante NON e premuto?",
           options: ["LOW (0)", "HIGH (1)", "Nessun valore"],
           correct: 1,
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           explanation: "INPUT_PULLUP attiva una resistenza interna che tiene il pin HIGH. Quando premi il pulsante, colleghi il pin a GND e Arduino legge LOW."
         },
         {
@@ -1633,7 +1634,6 @@ void loop() {
         { type: "led", id: "led1", color: "green" },
         { type: "led", id: "led2", color: "red" }
       ],
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       pinAssignments: {
         "btn1:pin1": "bb1:e20",
         "btn1:pin2": "bb1:f20",
@@ -1806,6 +1806,7 @@ void loop() {
           hint: "Catodo del LED verde verso massa."
         },
         {
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 12,
           text: "Collega un filo ROSSO dal pin D9 dell'Arduino al foro F18",
           wireFrom: "nano1:W_D9",
@@ -1834,7 +1835,6 @@ void loop() {
           text: "Collega un filo ROSSO dal pin 5V al binario +. Premi il pulsante per alternare i LED!",
           wireFrom: "nano1:5V",
           wireTo: "bb1:bus-bot-plus-1",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Pulsante (D6) + LED verde (D10) + LED rosso (D9). Il codice usa il debounce!"
         }
@@ -2007,6 +2007,7 @@ void loop() {
   int valoreLetto = analogRead(A0);
   if (valoreLetto > 511) { digitalWrite(13, HIGH); } else { digitalWrite(13, LOW); }
 }`,
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       layout: {
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 },
@@ -2037,7 +2038,6 @@ void loop() {
           correct: 1,
           explanation: "Il codice dice if(valoreLetto > 511): il 511 NON e maggiore di 511, quindi la condizione e falsa e il LED resta spento. Serve almeno 512 per accenderlo!"
         }
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ]
     },
     {
@@ -2208,6 +2208,7 @@ void loop() {
         },
         {
           question: "Se il valore letto dal trimmer e 500, quale LED si accende?",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           options: ["Il primo LED (pin 3)", "Il secondo LED (pin 5)", "Il terzo LED (pin 6)"],
           correct: 1,
           explanation: "500 e compreso tra 341 e 681, quindi cade nella seconda zona. Il codice entra nell'else if e accende il pin 5 (secondo LED)!"
@@ -2240,7 +2241,6 @@ void loop() {
         "led1:anode": "bb1:d27", "led1:cathode": "bb1:d28"
       },
       code: `// PWM fade up — luminosita crescente
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 // Pin 5 = LED (deve essere un pin PWM: 3, 5, 6, 9, 10, 11)
 
 void setup() { pinMode(5, OUTPUT); }
@@ -2409,6 +2409,7 @@ void loop() {
           options: ["Perche un solo for non funziona su Arduino", "Uno fa salire la luminosita da 0 a 255, l'altro la fa scendere da 255 a 0", "Perche il LED ha bisogno di due cicli per accendersi"],
           correct: 1,
           explanation: "Il primo for aumenta i da 0 a 255 (fade up), il secondo diminuisce i da 255 a 0 (fade down). Insieme creano il ciclo sale-scende che sembra un respiro!"
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           question: "Come puoi rendere l'effetto respiro piu lento?",
@@ -2444,7 +2445,6 @@ void loop() {
         { from: "nano1:5V", to: "bb1:bus-bot-plus-1", color: "red" }
       ],
       pinAssignments: {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "pot1:vcc": "bb1:h22", "pot1:signal": "bb1:h23", "pot1:gnd": "bb1:h24",
         "r1:pin1": "bb1:c18", "r1:pin2": "bb1:c25",
         "led1:anode": "bb1:d27", "led1:cathode": "bb1:d28"
@@ -2610,6 +2610,7 @@ void loop() { }`,
         {
           question: "Cosa succede se dimentichi Serial.begin(9600)?",
           options: ["Il messaggio appare lo stesso", "Non appare niente nel Serial Monitor perche la comunicazione non e stata avviata", "Arduino si resetta"],
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           correct: 1,
           explanation: "Serial.begin() apre il canale di comunicazione. Senza questa istruzione, Arduino non sa che deve parlare con il computer e println non manda nulla!"
         }
@@ -2648,7 +2649,6 @@ void loop() { Serial.println("Ciao dal Team di ELAB!"); }`,
       ],
       observe: "Il Serial Monitor si riempie di messaggi velocissimamente! Senza delay, Arduino stampa migliaia di righe al secondo. Aggiungendo delay(1000) il messaggio appare una volta al secondo.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta confrontando setup vs loop per Serial. Spiega che il loop si ripete all'infinito: senza delay, Arduino e molto veloce e stampa tantissimo. Questo e utile per leggere sensori in tempo reale! Rispondi in italiano.",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       quiz: [
         {
           question: "Qual e la differenza tra mettere Serial.println nel setup() o nel loop()?",
@@ -2811,6 +2811,7 @@ void loop() {
           options: ["A programmare Arduino", "A vedere i dati che Arduino invia al computer in tempo reale", "A controllare la temperatura di Arduino"],
           correct: 1,
           explanation: "Il Serial Monitor è una finestra che mostra i messaggi inviati da Arduino al computer tramite Serial.println(). Utilissimo per il debug!"
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         }
       ]
     },
@@ -2849,7 +2850,6 @@ void setup() {
   pinMode(A3, INPUT);
   pinMode(A4, INPUT);
   Serial.begin(9600);
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
   while (!Serial);
 }
 
@@ -3012,6 +3012,7 @@ void loop() {
         { type: "nano-r4", id: "nano1" },
         { type: "lcd16x2", id: "lcd1" }
       ],
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       pinAssignments: {
         "lcd1:rs": "bb1:a25",
         "lcd1:e": "bb1:a26",
@@ -3052,7 +3053,6 @@ LiquidCrystal lcd(12, 11, 5, 10, 3, 6);
 
 void setup() {
   lcd.begin(16, 2);
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
   lcd.setCursor(0, 0);
   lcd.print("Hello World!");
   lcd.setCursor(0, 1);
@@ -3213,6 +3213,7 @@ void loop() {
       steps: [
         "Collega il servomotore alla breadboard: segnale su D9, VCC e GND.",
         "Premi Compila per compilare il codice.",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Premi Play per avviare la simulazione.",
         "Osserva il braccio del servo che oscilla da 0 a 180 gradi e ritorno."
       ],
@@ -3253,7 +3254,6 @@ void loop() {
           xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="arduino_base" x="40" y="30" deletable="false"><statement name="SETUP"><block type="arduino_servo_attach"><field name="PIN">9</field></block></statement></block></xml>`,
         },
         {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           label: "Posizione 0 gradi",
           description: "Nel Loop, trascina 'Servo.write' e imposta l'angolo a 0. Poi aggiungi 'Attendi 1000ms' per dare tempo al servo di muoversi.",
           explanation: "servo.write(0) porta il braccio tutto a sinistra. Il delay di 1 secondo dà tempo al servo di raggiungere la posizione — i servo non sono istantanei, hanno bisogno di qualche decimo di secondo per ruotare.",
@@ -3414,6 +3414,7 @@ void loop() {
         "led2": { x: 511.5, y: 43.75 },
         "led3": { x: 466.5, y: 83.75 },
         "led4": { x: 511.5, y: 83.75 },
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         /* Buttons: straddling gap at cols 17, 20, 25, 28 */
         "btn1": { x: 432.75, y: 81.25 },
         "btn2": { x: 455.25, y: 81.25 },
@@ -3454,7 +3455,6 @@ void setup() {
   randomSeed(analogRead(A0));
   // Lampeggio iniziale con suono
   for (int i = 0; i < 4; i++) {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
     digitalWrite(LED[i], HIGH);
   }
   tone(BUZZER, 523);
@@ -3615,6 +3615,7 @@ void loop() {
           componentId: "r3",
           componentType: "resistor",
           targetPins: { "r3:pin1": "bb1:g16", "r3:pin2": "bb1:g23" },
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Ora usiamo la sezione inferiore della breadboard (sotto il gap)."
         },
         {
@@ -3655,7 +3656,6 @@ void loop() {
           text: "Posiziona il LED GIALLO con l'anodo nel foro H29 e il catodo nel foro H30",
           componentId: "led4",
           componentType: "led",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "led4:anode": "bb1:h29", "led4:cathode": "bb1:h30" },
           hint: "L'ultimo LED completa il quartetto di colori del Simon."
         },
@@ -3816,6 +3816,7 @@ void loop() {
           text: "Collega un filo ROSSO dal pin 5V dell'Arduino al binario + della breadboard",
           wireFrom: "nano1:5V",
           wireTo: "bb1:bus-bot-plus-1",
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Il circuito è completo! Carica il codice e sfida la tua memoria con luci E suoni!",
           scratchXml: SIMON_SCRATCH_FULL
@@ -3856,7 +3857,6 @@ void loop() {
         },
         {
           step: 6,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Dopo i 4 'Se', aggiungi 'Attendi 500ms', poi spegni tutti i LED (pin 9-12 LOW) e 'Ferma suono pin 8'",
           hint: "Prima accendi LED+suono, aspetti che il giocatore lo veda/senta, poi spegni tutto. Questo è un turno della sequenza.",
           explanation: "Il delay(500) dà tempo al giocatore di VEDERE e SENTIRE il LED acceso. Poi si spegne tutto per prepararsi al prossimo turno. Senza il delay, il LED si accenderebbe e spegnerebbe troppo velocemente!"
