@@ -337,3 +337,56 @@ export const POT_3LED_SERIAL_SCRATCH = `<xml xmlns="https://developers.google.co
 <next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
 </block></next></statement>
 </block></xml>`;
+
+// ─── Cap.7 Esp.6 — PWM fade up + down (respiro di luce) ────
+export const PWM_FADE_UPDOWN_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_pin_mode"><field name="PIN">5</field><field name="MODE">OUTPUT</field></block>
+</statement>
+<statement name="LOOP">
+<block type="controls_for">
+<value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="TO"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<value name="BY"><shadow type="math_number"><field name="NUM">5</field></shadow></value>
+<statement name="DO">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">i</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+</block></next></block>
+</statement>
+<next><block type="controls_for">
+<value name="FROM"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
+<value name="TO"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+<value name="BY"><shadow type="math_number"><field name="NUM">-5</field></shadow></value>
+<statement name="DO">
+<block type="arduino_analog_write"><field name="PIN">5</field>
+<value name="VALUE"><block type="arduino_variable_get"><field name="VAR">i</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+</block></next></block>
+</statement>
+</block></next></block>
+</statement>
+</block></xml>`;
+
+// ─── Cap.8 Esp.4 — Serial Plotter con 2 potenziometri ──────
+export const SERIAL_2POT_SCRATCH = `<xml xmlns="https://developers.google.com/blockly/xml">
+<block type="arduino_base" x="40" y="30" deletable="false">
+<statement name="SETUP">
+<block type="arduino_serial_begin"><field name="BAUD">9600</field></block>
+</statement>
+<statement name="LOOP">
+<block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valA3</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A3</field></block></value>
+<next><block type="arduino_variable_set"><field name="TYPE">int</field><field name="VAR">valA4</field>
+<value name="VALUE"><block type="arduino_analog_read"><field name="PIN">A4</field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">FALSE</field>
+<value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valA3</field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">FALSE</field>
+<value name="CONTENT"><block type="text"><field name="TEXT"> </field></block></value>
+<next><block type="arduino_serial_print"><field name="NEWLINE">TRUE</field>
+<value name="CONTENT"><block type="arduino_variable_get"><field name="VAR">valA4</field></block></value>
+<next><block type="arduino_delay"><value name="DELAY_TIME"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
+</block></next></block></next></block></next></block></next></block></next></block>
+</statement>
+</block></xml>`;

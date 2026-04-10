@@ -39,6 +39,27 @@
  * ──────────────────────────────────────────────────────────────────────
  */
 
+// ═══ Scratch XML Templates (importati da scratch-xml-templates.js) ════════
+import {
+  BLINK_BUILTIN_SCRATCH,
+  BLINK_FAST_SCRATCH,
+  LED_ESTERNO_SCRATCH,
+  CAMBIA_PIN_SCRATCH,
+  POLIZIA_SCRATCH,
+  PULSANTE_TOGGLE_SCRATCH,
+  MORSE_SIMPLE_SCRATCH,
+  ANALOG_READ_BASE_SCRATCH,
+  TRIMMER_3LED_SCRATCH,
+  PWM_FADE_SCRATCH,
+  PWM_MANUAL_SCRATCH,
+  PWM_FADE_UPDOWN_SCRATCH,
+  TRIMMER_MAP_SCRATCH,
+  SERIAL_SETUP_SCRATCH,
+  SERIAL_LOOP_SCRATCH,
+  SERIAL_2POT_SCRATCH,
+  POT_3LED_SERIAL_SCRATCH,
+} from './scratch-xml-templates';
+
 // ═══ Simon Game — Scratch XML Workspaces (progressivi) ═══════════════════
 
 // Step 4: LED rosso completo — blink semplice
@@ -495,6 +516,7 @@ void loop() {
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 }
       },
+      scratchXml: BLINK_BUILTIN_SCRATCH,
       concept: "pinMode, digitalWrite, delay, LED_BUILTIN, ciclo loop infinito",
       layer: "schema",
       steps: [
@@ -565,6 +587,7 @@ void loop() {
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 }
       },
+      scratchXml: BLINK_FAST_SCRATCH,
       concept: "Parametri delay, sperimentazione, millisecondi vs secondi",
       layer: "schema",
       steps: [
@@ -721,6 +744,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: LED_ESTERNO_SCRATCH,
       concept: "LED esterno, resistore di protezione, circuito su breadboard",
       layer: "schema",
       steps: [
@@ -885,6 +909,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: MORSE_SIMPLE_SCRATCH,
       concept: "Funzioni personalizzate, temporizzazione, codice Morse",
       layer: "schema",
       steps: [
@@ -1031,6 +1056,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: CAMBIA_PIN_SCRATCH,
       concept: "Pin digitali intercambiabili, configurazione flessibile",
       layer: "schema",
       steps: [
@@ -1189,6 +1215,7 @@ void loop() {
         "r3": { x: 436.5, y: 113.75 },
         "led3": { x: 519, y: 83.75 }
       },
+      scratchXml: POLIZIA_SCRATCH,
       concept: "Piu pin OUTPUT, sequenza di stati, semaforo",
       layer: "schema",
       steps: [
@@ -1563,6 +1590,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: PULSANTE_TOGGLE_SCRATCH,
       concept: "digitalRead, INPUT_PULLUP, variabile booleana, toggle semplice",
       layer: "schema",
       steps: [
@@ -1908,6 +1936,7 @@ void loop() {
     delay(300);
   }
 }`,
+      scratchXml: PULSANTE_TOGGLE_SCRATCH,
       concept: "Debounce con while, rimbalzo meccanico, attesa rilascio",
       layer: "schema",
       steps: [
@@ -1985,6 +2014,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: ANALOG_READ_BASE_SCRATCH,
       concept: "analogRead, valori 0-1023, soglia, confronto",
       layer: "schema",
       steps: [
@@ -2060,6 +2090,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: ANALOG_READ_BASE_SCRATCH,
       concept: "Conversione ADC-Volt, float, formula proporzionale",
       layer: "schema",
       steps: [
@@ -2158,6 +2189,7 @@ void loop() {
         "led2": { x: 511.5, y: 43.75 },
         "led3": { x: 519, y: 83.75 }
       },
+      scratchXml: TRIMMER_3LED_SCRATCH,
       concept: "Intervalli, if-else if-else, range analogico diviso in zone",
       layer: "schema",
       steps: [
@@ -2225,6 +2257,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: PWM_FADE_SCRATCH,
       concept: "analogWrite, PWM, for loop, luminosita graduale",
       layer: "schema",
       steps: [
@@ -2295,6 +2328,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: PWM_MANUAL_SCRATCH,
       concept: "Valori PWM discreti, relazione numero-luminosita",
       layer: "schema",
       steps: [
@@ -2359,6 +2393,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: PWM_FADE_UPDOWN_SCRATCH,
       concept: "Due cicli for, fade up e down, effetto respiro",
       layer: "schema",
       steps: [
@@ -2434,6 +2469,7 @@ void loop() {
         "r1": { x: 451.5, y: 58.75 },
         "led1": { x: 496.5, y: 43.75 }
       },
+      scratchXml: TRIMMER_MAP_SCRATCH,
       concept: "map(), conversione range, trimmer come controller, analogRead+analogWrite",
       layer: "schema",
       steps: [
@@ -2554,6 +2590,7 @@ void loop() { }`,
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 }
       },
+      scratchXml: SERIAL_SETUP_SCRATCH,
       concept: "Serial.begin, Serial.println, Serial Monitor, comunicazione USB",
       layer: "schema",
       steps: [
@@ -2601,6 +2638,7 @@ void loop() { Serial.println("Ciao dal Team di ELAB!"); }`,
         "nano1": { x: 230, y: 10, parentId: "bb1" },
         "bb1": { x: 280, y: 10 }
       },
+      scratchXml: SERIAL_LOOP_SCRATCH,
       concept: "Differenza setup vs loop, flusso continuo, velocita seriale",
       layer: "schema",
       steps: [
@@ -2829,6 +2867,7 @@ void loop() {
         "pot1": { x: 462.75, y: 83.75 },
         "pot2": { x: 500.25, y: 83.75 }
       },
+      scratchXml: SERIAL_2POT_SCRATCH,
       concept: "Serial Plotter, formato label:valore, grafici in tempo reale, 2 canali",
       layer: "schema",
       steps: [
@@ -2931,6 +2970,7 @@ void loop() {
         "led2": { x: 511.5, y: 43.75 },
         "led3": { x: 519, y: 83.75 }
       },
+      scratchXml: POT_3LED_SERIAL_SCRATCH,
       concept: "Progetto combinato, analogRead + digitalOutput + Serial, intervalli",
       layer: "schema",
       steps: [

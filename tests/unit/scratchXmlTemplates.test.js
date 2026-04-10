@@ -45,6 +45,8 @@ const TEMPLATES = {
   SERIAL_SETUP_SCRATCH: T.SERIAL_SETUP_SCRATCH,
   SERIAL_LOOP_SCRATCH: T.SERIAL_LOOP_SCRATCH,
   POT_3LED_SERIAL_SCRATCH: T.POT_3LED_SERIAL_SCRATCH,
+  PWM_FADE_UPDOWN_SCRATCH: T.PWM_FADE_UPDOWN_SCRATCH,
+  SERIAL_2POT_SCRATCH: T.SERIAL_2POT_SCRATCH,
 };
 
 describe('scratch-xml-templates — validity', () => {
@@ -165,5 +167,20 @@ describe('scratch-xml-templates — output correctness', () => {
     expect(code).toContain('pinMode(12, OUTPUT)');
     expect(code).toContain('pinMode(11, OUTPUT)');
     expect(code).toContain('pinMode(10, OUTPUT)');
+  });
+
+  it('PWM_FADE_UPDOWN uses two for loops (fade up + fade down)', () => {
+    const code = codeFromXml(T.PWM_FADE_UPDOWN_SCRATCH);
+    expect(code).toContain('analogWrite(5,');
+    // Should have two for loops
+    const forCount = (code.match(/for \(int/g) || []).length;
+    expect(forCount).toBe(2);
+  });
+
+  it('SERIAL_2POT reads A3 and A4 with serial output', () => {
+    const code = codeFromXml(T.SERIAL_2POT_SCRATCH);
+    expect(code).toContain('Serial.begin(9600)');
+    expect(code).toContain('analogRead(A3)');
+    expect(code).toContain('analogRead(A4)');
   });
 });
