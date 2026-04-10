@@ -16,6 +16,7 @@ import React, { useState } from 'react';
 import { getCurriculum } from '../../../data/curriculumData';
 import { getLessonPath } from '../../../data/lesson-paths';
 import { getPrerequisites, getNewConcepts, CONCEPTS } from '../../../data/concept-graph';
+import { getNextExperiment, getExperimentPosition } from '../../../data/chapter-map';
 
 /* ─── Component type → Italian display name ─── */
 const COMP_NAMES = {
@@ -62,18 +63,16 @@ function buildMaterialList(components) {
   return Object.entries(counts).map(([label, qty]) => ({ label, qty }));
 }
 
-/* ─── Find next experiment in sequence ─── */
-function findNextExperiment(currentId, allExperiments) {
-  if (!allExperiments?.length || !currentId) return null;
-  const idx = allExperiments.findIndex(e => e.id === currentId);
-  if (idx < 0 || idx >= allExperiments.length - 1) return null;
-  return allExperiments[idx + 1];
+/* ─── Find next experiment — delegates to chapter-map for cross-chapter navigation ─── */
+function findNextExp(currentId) {
+  const result = getNextExperiment(currentId);
+  return result ? result.experiment : null;
 }
 
-/* ─── Extract chapter number from experiment id ─── */
+/* ─── Extract chapter number + position from chapter-map ─── */
 function getChapterNum(id) {
-  const m = id?.match(/cap(\d+)/);
-  return m ? parseInt(m[1], 10) : null;
+  const pos = getExperimentPosition(id);
+  return pos ? pos.chapterNumber : null;
 }
 
 /* ─── Generate starter question based on experiment concept ─── */
@@ -656,7 +655,7 @@ const LessonPathPanel = React.memo(function LessonPathPanel({
 
   const curriculum = getCurriculum(experiment.id);
   const materials = buildMaterialList(experiment.components);
-  const nextExp = findNextExperiment(experiment.id, allExperiments);
+  const nextExp = findNextExp(experiment.id);
   const chapterNum = getChapterNum(experiment.id);
   const starterQuestion = generateStarterQuestion(experiment);
   const fallbackMistakes = generateCommonMistakes(experiment);

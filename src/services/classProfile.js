@@ -7,6 +7,7 @@
 
 import { getSavedSessions } from '../hooks/useSessionTracker';
 import { getLessonPath } from '../data/lesson-paths';
+import { getExperimentPosition, getVolumeProgress } from '../data/chapter-map';
 
 // ─── Memoization cache (avoids triple localStorage parse in welcome flow) ────
 let _profileCache = null;
@@ -144,6 +145,14 @@ export function buildClassContext() {
 
   if (profile.nextSuggested) {
     parts.push(`Prossimo suggerito: ${profile.nextSuggestedTitle} (${profile.nextSuggested})`);
+  }
+
+  // Position context from chapter-map
+  const pos = getExperimentPosition(profile.lastExperimentId);
+  if (pos) {
+    parts.push(`Posizione: ${pos.volumeLabel}, ${pos.chapterName}, esperimento ${pos.posInChapter}/${pos.totalInChapter}`);
+    const progress = getVolumeProgress(pos.volumeKey, profile.experimentsCompleted);
+    parts.push(`Progresso volume: ${progress.completed}/${progress.total} (${progress.percent}%)`);
   }
 
   return parts.join('\n');
