@@ -23,19 +23,19 @@ const VOLUMES = [
         num: 1, color: '#4A7A25', gradient: 'linear-gradient(135deg, #4A7A25 0%, #9CCC65 100%)',
         title: 'Basi', experiments: 38,
         desc: 'LED, resistori, condensatori, pulsanti — dal primo circuito alle basi solide',
-        chapters: '11 capitoli',
+        chapters: '9 capitoli',
     },
     {
         num: 2, color: '#E8941C', textColor: '#996600', gradient: 'linear-gradient(135deg, #E8941C 0%, #FFB74D 100%)',
         title: 'Intermedio', experiments: 18,
         desc: 'Sensori, motori, display LCD, servo — progetti via via pi\u00F9 complessi',
-        chapters: '5 capitoli',
+        chapters: '9 capitoli',
     },
     {
         num: 3, color: '#E54B3D', textColor: '#C62828', gradient: 'linear-gradient(135deg, #E54B3D 0%, #EF5350 100%)',
         title: 'Avanzato', experiments: 14,
         desc: 'Arduino Nano, MOSFET, comunicazione seriale — programmazione e robotica',
-        chapters: '5 capitoli',
+        chapters: '6 capitoli',
     },
 ];
 
