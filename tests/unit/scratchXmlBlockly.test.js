@@ -9,7 +9,7 @@
  *
  * Principio Zero: se il docente clicca "Scratch", deve funzionare al primo colpo.
  */
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import * as Blockly from 'blockly';
 import '../../src/components/simulator/panels/scratchBlocks';
 import { arduinoGenerator, generateArduinoCode } from '../../src/components/simulator/panels/scratchGenerator';
@@ -245,8 +245,11 @@ describe('scratchXml — code output correctness', () => {
   });
 
   it('Mini Toggle generates if/else with digitalRead', () => {
-    const mini = ALL_SCRATCH.find(e => e.label.includes('top-level') && e.id.includes('mini') ||
-      (e.label.includes('top-level') && extractBlockTypes(e.xml).has('controls_if') && extractBlockTypes(e.xml).has('arduino_digital_read')));
+    const mini = ALL_SCRATCH.find(e =>
+      e.label.includes('top-level') &&
+      extractBlockTypes(e.xml).has('controls_if') &&
+      extractBlockTypes(e.xml).has('arduino_digital_read')
+    );
     if (!mini) return;
     const code = generateFromXml(mini.xml);
     expect(code).toContain('digitalRead(');

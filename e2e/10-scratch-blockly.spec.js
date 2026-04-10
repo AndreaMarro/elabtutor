@@ -18,33 +18,31 @@ test.describe('Scratch/Blockly — runtime integration', () => {
 
   test('Scratch tab is visible for Vol3 experiments', async ({ page }) => {
     await page.goto('/#prova');
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
 
     // Look for Scratch/Blockly tab or panel
     const scratchTab = page.locator('button, [role="tab"]', { hasText: /Scratch|Blockly|Codice Visuale/i });
-    // Vol3 should show scratch capability
-    const count = await scratchTab.count();
-    expect(count).toBeGreaterThanOrEqual(0); // May not be immediately visible
+    // Vol3 must show scratch capability
+    await expect(scratchTab.first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Blockly workspace renders without errors', async ({ page }) => {
     await page.goto('/#prova');
     await page.waitForTimeout(5000);
 
-    // Check for Blockly container if Scratch tab is clicked
+    // Click Scratch tab
     const scratchTab = page.locator('button, [role="tab"]', { hasText: /Scratch|Blockly/i });
-    if (await scratchTab.count() > 0) {
-      await scratchTab.first().click();
-      await page.waitForTimeout(2000);
+    await expect(scratchTab.first()).toBeVisible({ timeout: 10000 });
+    await scratchTab.first().click();
+    await page.waitForTimeout(2000);
 
-      // Blockly injects a .blocklySvg element
-      const blocklySvg = page.locator('.blocklySvg');
-      await expect(blocklySvg).toBeVisible({ timeout: 10000 });
+    // Blockly injects a .blocklySvg element
+    const blocklySvg = page.locator('.blocklySvg');
+    await expect(blocklySvg).toBeVisible({ timeout: 10000 });
 
-      // Toolbox should be present
-      const toolbox = page.locator('.blocklyToolboxDiv');
-      await expect(toolbox).toBeVisible({ timeout: 5000 });
-    }
+    // Toolbox should be present
+    const toolbox = page.locator('.blocklyToolboxDiv');
+    await expect(toolbox).toBeVisible({ timeout: 5000 });
   });
 
   test('Blockly workspace has ELAB categories', async ({ page }) => {
@@ -52,21 +50,14 @@ test.describe('Scratch/Blockly — runtime integration', () => {
     await page.waitForTimeout(5000);
 
     const scratchTab = page.locator('button, [role="tab"]', { hasText: /Scratch|Blockly/i });
-    if (await scratchTab.count() > 0) {
-      await scratchTab.first().click();
-      await page.waitForTimeout(2000);
+    await expect(scratchTab.first()).toBeVisible({ timeout: 10000 });
+    await scratchTab.first().click();
+    await page.waitForTimeout(2000);
 
-      // ELAB-specific categories should be present
-      const categories = page.locator('.blocklyToolboxCategory');
-      const catCount = await categories.count();
-      expect(catCount).toBeGreaterThan(3);
-
-      // Check for Arduino-specific category names
-      const ioCategory = page.locator('.blocklyToolboxCategoryLabel', { hasText: /Accendi|Spegni/i });
-      if (await ioCategory.count() > 0) {
-        await expect(ioCategory).toBeVisible();
-      }
-    }
+    // ELAB-specific categories should be present
+    const categories = page.locator('.blocklyToolboxCategory');
+    const catCount = await categories.count();
+    expect(catCount).toBeGreaterThan(3);
   });
 
   test('no console errors during Blockly load', async ({ page }) => {
@@ -101,21 +92,19 @@ test.describe('Scratch/Blockly — runtime integration', () => {
     await vol3Tab.click();
 
     const semaforoBtn = page.locator('button', { hasText: /semaforo/i });
-    if (await semaforoBtn.count() > 0) {
-      await semaforoBtn.first().click();
-      await page.waitForTimeout(3000);
+    await expect(semaforoBtn.first()).toBeVisible({ timeout: 10000 });
+    await semaforoBtn.first().click();
+    await page.waitForTimeout(3000);
 
-      // Switch to Scratch view
-      const scratchTab = page.locator('button, [role="tab"]', { hasText: /Scratch|Blockly/i });
-      if (await scratchTab.count() > 0) {
-        await scratchTab.first().click();
-        await page.waitForTimeout(3000);
+    // Switch to Scratch view
+    const scratchTab = page.locator('button, [role="tab"]', { hasText: /Scratch|Blockly/i });
+    await expect(scratchTab.first()).toBeVisible({ timeout: 10000 });
+    await scratchTab.first().click();
+    await page.waitForTimeout(3000);
 
-        // Blockly workspace should have blocks (not empty)
-        const blocks = page.locator('.blocklyDraggable');
-        const blockCount = await blocks.count();
-        expect(blockCount).toBeGreaterThan(0);
-      }
-    }
+    // Blockly workspace should have blocks (not empty)
+    const blocks = page.locator('.blocklyDraggable');
+    const blockCount = await blocks.count();
+    expect(blockCount).toBeGreaterThan(0);
   });
 });
