@@ -15,6 +15,21 @@
 
 **Se non puoi dimostrarlo, non è fatto.**
 
+### PROATTIVITÀ OBBLIGATORIA
+Dopo aver fatto QUALSIASI cosa — anche la più piccola:
+1. **NON dare per scontato che sia giusta.** Verifica.
+2. **NON aspettare che qualcuno te lo chieda.** Se vedi un problema, fixalo.
+3. **NON pensare "questo è ovvio, funziona".** Testalo.
+4. Se un test passa ma il comportamento in Chrome è sbagliato → **il test è sbagliato, non il codice**.
+5. Se hai scritto codice e non l'hai testato live → **non l'hai scritto**.
+
+### MODALITÀ PROGETTO
+Questo è un PRODOTTO REALE per scuole italiane. Non è un esercizio.
+- Lunedì c'è una riunione con gli stakeholder (Omaric + Giovanni Fagherazzi)
+- Giovanni è l'ex Arduino Global Sales Director — SA come deve funzionare un prodotto EdTech
+- Se qualcosa non funziona dal vivo, la reputazione di Andrea è a rischio
+- Ogni riga di codice deve servire il Principio Zero
+
 ---
 
 ## PRINCIPIO ZERO — La Bussola di TUTTO
