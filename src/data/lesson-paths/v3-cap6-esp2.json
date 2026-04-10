@@ -1,44 +1,96 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap6-esp2",
   "volume": 3,
   "chapter": 6,
-  "title": "Cambia pin del LED",
+  "title": "Colleghiamo la resistenza",
   "chapter_title": "I pin digitali",
   "difficulty": 1,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Collegare un LED esterno a un pin digitale diverso dal 13 e modificare il codice per controllarlo. Capire che ogni pin digitale puo diventare OUTPUT.",
+  "objective": "Collegare un LED esterno con il suo resistore di protezione sulla breadboard e programmarlo con il Blink classico sul pin 13. Il LED esterno lampeggia insieme al LED integrato sulla scheda. Impariamo perche' il resistore e' fondamentale per proteggere il LED.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
-    { "name": "Fili di collegamento", "quantity": 4, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "❤️"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 4,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "digitale", "OUTPUT", "HIGH", "LOW", "LED", "resistore", "breadboard", "anodo", "catodo", "pinMode", "digitalWrite", "GND"],
-    "forbidden": ["PWM", "analogWrite", "registro", "PORTD", "PORTB", "interrupt"],
-    "note": "Focus sul collegamento fisico pin-LED e sulla corrispondenza tra numero nel codice e pin sulla scheda"
+    "allowed": [
+      "Arduino",
+      "pin",
+      "digitale",
+      "OUTPUT",
+      "HIGH",
+      "LOW",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "setup",
+      "loop",
+      "programma",
+      "codice",
+      "Blink",
+      "pinMode",
+      "digitalWrite",
+      "GND",
+      "massa",
+      "protezione"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "analogico"
+    ],
+    "note": "Cap 6 Vol 3 — primo circuito LED esterno con resistore, Blink su pin 13."
   },
-  "prerequisites": ["v3-cap5-esp1", "v3-cap6-esp1"],
+  "prerequisites": [
+    "v3-cap6-esp1"
+  ],
   "next_experiment": {
     "id": "v3-cap6-esp3",
-    "title": "2 LED alternati",
-    "preview": "Nella prossima lezione controlleremo due LED contemporaneamente, alternandoli come le luci di un passaggio a livello."
+    "title": "Cambia il numero di pin",
+    "preview": "Nel prossimo esperimento spostiamo il LED su un pin diverso: scopriamo che Arduino ha tanti pin e possiamo usarli tutti!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Finora abbiamo usato il LED integrato al pin 13. Ma Arduino ha tanti pin digitali. Oggi colleghiamo un LED esterno a un pin diverso e cambiamo il codice.",
-      "teacher_tip": "Mostrare sulla scheda dove sono i pin digitali numerati. Far contare alla classe quanti ce ne sono.",
-      "class_hook": "Arduino ha 14 pin digitali. Se ognuno controlla un LED, quanti LED possiamo accendere insieme?",
+      "teacher_message": "Oggi colleghiamo il primo LED esterno ad Arduino! Serve un componente importantissimo: il resistore. Senza di lui il LED si brucia. Impariamo a costruire il circuito sulla breadboard e a farlo lampeggiare con il codice Blink.",
+      "teacher_tip": "Chiedi: 'Qualcuno ha mai bruciato una lampadina? Cosa succede se passa troppa corrente?' Il resistore e' come un rubinetto che limita il flusso di corrente per proteggere il LED. Usa questa analogia idraulica.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Il LED sulla scheda Arduino lampeggia gia' da solo. Ma come facciamo a collegare un LED ESTERNO e farlo lampeggiare noi? Oggi impariamo il segreto: serve un guardiano chiamato resistore!",
       "action_tags": [],
       "auto_action": null
     },
@@ -46,45 +98,155 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il circuito: un LED rosso collegato al pin 7 con un resistore da 470 ohm. Nel codice, al posto di LED_BUILTIN scriviamo 7. Tutto il resto resta uguale.",
-      "teacher_tip": "Sottolineare la corrispondenza: il numero nel codice DEVE corrispondere al pin fisico dove e collegato il filo. Se sbagli numero, il LED non si accende.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp2]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Il circuito e' semplice: dal pin 13 di Arduino parte un filo che va al resistore 470Ω, dal resistore al LED (anodo, gamba lunga), e dal catodo del LED (gamba corta) a GND. Il codice Blink fa alternare HIGH e LOW sul pin 13 ogni secondo.",
+      "teacher_tip": "Spiega il percorso della corrente: 'Arduino manda il segnale HIGH sul pin 13 → la corrente passa nel filo → attraversa il resistore (che la limita) → entra nel LED (che si accende) → esce verso GND.' Quando il pin va LOW, la corrente si ferma e il LED si spegne.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap6-esp2]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito Blink con LED esterno su pin 13",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:W_D13",
+              "to": "bb1:a16",
+              "color": "orange"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d23",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il LED e collegato al pin 7, ma nel codice scrivo pin 9. Cosa succede? Il LED si accende lo stesso o resta spento?",
-      "teacher_tip": "Lasciare che provino nel simulatore. L'errore intenzionale e il miglior insegnante. Collegamento fisico e codice devono corrispondere.",
-      "provocative_question": "Se collego il filo al pin 7 ma scrivo nel codice il pin 9, Arduino sa che ho sbagliato? O fa quello che gli ho scritto?",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito e' pronto. Prima di accenderlo, pensiamo: perche' serve il resistore? Cosa succede al LED senza resistore?",
+      "teacher_tip": "Guida la discussione: senza resistore passa troppa corrente e il LED si brucia in pochi secondi. Il resistore 470Ω limita la corrente a circa 7mA, perfetta per il LED. Non serve fare i calcoli, basta l'idea che il resistore e' una protezione.",
+      "provocative_question": "Perche' serve il resistore? Cosa succede senza? E se mettessimo un resistore piu' grande, il LED sarebbe piu' luminoso o meno luminoso?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED non si accende",
+          "teacher_response": "Controlla la polarita' del LED: la gamba lunga (anodo) va verso il resistore, la gamba corta (catodo) va verso GND. Se e' al contrario, non funziona!",
+          "analogy": "Il LED e' come una porta girevole che gira in una sola direzione: se provi a spingerla al contrario, non si muove."
+        },
+        {
+          "mistake": "Il LED resta sempre acceso senza lampeggiare",
+          "teacher_response": "Controlla che il codice sia caricato correttamente. Verifica che ci siano i delay() nel loop: senza delay, il lampeggio e' troppo veloce per vederlo!",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play e osserviamo il LED esterno lampeggiare. Notate la differenza con il LED integrato: e piu luminoso perche e un vero LED con il suo resistore.",
-      "teacher_tip": "Se il tempo lo permette, far provare a spostare il filo su un altro pin e modificare il codice. Rafforza il concetto pin fisico = numero nel codice.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Il LED esterno sulla breadboard lampeggia insieme al LED integrato sulla scheda Arduino. Entrambi sono collegati al pin 13: quando il codice scrive HIGH, si accendono; quando scrive LOW, si spengono.",
+      "teacher_tip": "Fai notare la sincronia: il LED esterno e quello sulla scheda lampeggiano insieme! Chiedi: 'Perche' sono sincronizzati?' Risposta: perche' sono entrambi collegati allo stesso pin 13. Un pin puo' controllare piu' cose contemporaneamente.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]",
+        "[AZIONE:highlight:r1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il LED esterno lampeggia come quello integrato? Provate a cambiare pin e numero nel codice."
+      "observation_prompt": "Il LED esterno lampeggia in sincronia con il LED integrato. Entrambi rispondono al pin 13. Il resistore protegge il LED limitando la corrente.",
+      "analogies": [
+        {
+          "concept": "resistore_protezione",
+          "text": "Il resistore e' come un rubinetto dell'acqua: lascia passare un filo d'acqua (corrente) giusto, senza allagare tutto. Senza rubinetto, l'acqua (corrente) arriverebbe tutta insieme e romperebbe il tubo (LED)!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        },
+        {
+          "concept": "pin_output",
+          "text": "Il pin OUTPUT di Arduino e' come un interruttore comandato dal programma: quando il codice dice HIGH, l'interruttore si chiude e la corrente passa. Quando dice LOW, si apre e la corrente si ferma.",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Ogni pin digitale di Arduino puo controllare un componente esterno. Il numero nel codice deve corrispondere al pin fisico. Se sbagli numero, Arduino accende il pin sbagliato.",
-      "teacher_tip": "Rafforzare il concetto: Arduino non 'capisce' cosa c'e collegato. Esegue gli ordini alla lettera. La responsabilita e del programmatore.",
-      "summary_for_class": "I pin digitali di Arduino sono uscite controllabili via codice. Il numero nel programma deve corrispondere al pin dove e collegato il LED.",
-      "concepts_learned": ["pin digitali numerati", "collegamento LED esterno", "corrispondenza codice-pin fisico", "resistore di protezione LED", "anodo e catodo"],
-      "next_preview": "Nella prossima lezione controlleremo due LED alternati: quando uno e acceso l'altro e spento, come un passaggio a livello."
+      "duration_minutes": 5,
+      "teacher_message": "Ottimo! Avete costruito il vostro primo circuito LED esterno con Arduino. Il resistore protegge il LED, il pin 13 lo comanda, e il codice Blink lo fa lampeggiare. Questo schema base (pin → resistore → LED → GND) lo userete in tantissimi progetti!",
+      "teacher_tip": "Recap: 'Il circuito base di ogni LED e': pin Arduino → resistore → LED → GND. Il resistore e' OBBLIGATORIO, sempre. Il codice Blink usa: pinMode(13, OUTPUT) nel setup, e digitalWrite + delay nel loop.' Questo schema lo riuseranno decine di volte.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il circuito LED esterno segue sempre lo schema: pin Arduino → resistore → LED → GND. Il resistore e' indispensabile per proteggere il LED. Il programma Blink alterna HIGH e LOW con delay() per creare il lampeggio.",
+      "concepts_learned": [
+        "LED esterno con resistore",
+        "schema pin → resistore → LED → GND",
+        "pinMode OUTPUT",
+        "digitalWrite HIGH/LOW",
+        "Blink su pin 13"
+      ],
+      "next_preview": "Nel prossimo esperimento spostiamo il LED su un pin diverso dal 13: scoprirete che Arduino ha tanti pin digitali e potete usarli come volete!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega a cosa serve il resistore con parole proprie → comprensione della protezione del LED",
+    "Se nota che LED esterno e integrato lampeggiano insieme → comprensione del collegamento al pin",
+    "Se chiede cosa succede cambiando il valore del resistore → curiosita' e pensiero critico"
+  ],
   "session_save": {
-    "concepts_covered": ["pin digitali", "LED esterno", "corrispondenza pin-codice", "resistore protezione"],
+    "concepts_covered": [
+      "led_esterno",
+      "resistore_protezione",
+      "schema_circuito_led",
+      "blink_pin13",
+      "pinMode_OUTPUT"
+    ],
     "next_suggested": "v3-cap6-esp3",
-    "resume_message": "L'ultima volta avete collegato un LED esterno a un pin digitale. Oggi ne controlliamo due alternati."
+    "resume_message": "Avete costruito il primo circuito LED esterno con resistore! Prossimo passo: spostare il LED su un pin diverso."
   }
 }

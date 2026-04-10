@@ -1,46 +1,44 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp6",
   "volume": 3,
   "chapter": 7,
-  "title": "2 LED con pulsante (toggle)",
-  "chapter_title": "I pin di input",
-  "difficulty": 3,
-  "duration_minutes": 40,
+  "title": "Fade up/down con for",
+  "chapter_title": "I pin analogici",
+  "difficulty": 2,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Costruire un circuito toggle: ogni pressione del pulsante alterna quale dei due LED e acceso. Introduciamo le variabili di stato booleane e il concetto di debounce per evitare i rimbalzi meccanici del pulsante.",
+  "objective": "Creare un effetto respiro (breathing LED) usando due cicli for: uno crescente da 0 a 255 e uno decrescente da 255 a 0. Il LED pulsa continuamente come se respirasse, combinando fade up e fade down in loop.",
   "components_needed": [
     { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
     { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
-    { "name": "LED verde", "quantity": 1, "icon": "led" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
     { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Resistore 470ohm", "quantity": 2, "icon": "resistor" },
-    { "name": "Fili di collegamento", "quantity": 8, "icon": "wire" }
+    { "name": "Fili di collegamento", "quantity": 4, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "INPUT_PULLUP", "pulsante", "digitalRead", "toggle", "debounce", "variabile", "stato", "LED", "resistore", "breadboard", "codice", "programma", "GND", "booleano"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico"],
-    "note": "Cap 7 Vol 3 — toggle, variabili booleane, debounce con delay."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogWrite", "fade", "respiro", "breathing", "for", "ciclo", "crescente", "decrescente", "0-255", "Arduino"],
+    "forbidden": ["interrupt", "map", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
+    "note": "Esperimento estetico e coinvolgente. L'effetto breathing e molto soddisfacente e motiva i ragazzi. Preparare il terreno per il concetto di combinare due cicli in sequenza."
   },
-  "prerequisites": ["v3-cap7-esp3"],
+  "prerequisites": ["v3-cap7-esp5"],
   "next_experiment": {
     "id": "v3-cap7-esp7",
-    "title": "Contatore con LED binario",
-    "preview": "Nel prossimo esperimento contiamo le pressioni del pulsante e mostriamo il numero in binario con i LED! Impariamo a contare come un computer."
+    "title": "Trimmer controlla luminosita",
+    "preview": "Nella prossima lezione colleghiamo il trimmer alla luminosita del LED: giri la manopola e il LED segue in tempo reale!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Nell'esperimento con il pulsante, il LED si spegneva solo mentre tenevamo premuto. Oggi facciamo un salto: ogni pressione CAMBIA lo stato per sempre. Come il tasto Caps Lock: premi una volta e resta attivo fino alla prossima pressione.",
-      "teacher_tip": "Parti dall'esperienza quotidiana: Caps Lock, tasto Mute, Play/Pausa. Tutti sono toggle. La sfida tecnica e che il loop gira migliaia di volte al secondo: come fa Arduino a capire che e UNA pressione e non mille? Servono due ingredienti: variabile di stato e debounce.",
-      "class_hook": "Conoscete il tasto Caps Lock? Quando lo premete una volta, le lettere diventano maiuscole. Quando lo ripremete, tornano minuscole. Non serve tenerlo premuto! Oggi costruiamo lo stesso meccanismo con due LED.",
+      "teacher_message": "Avete visto il LED accendersi gradualmente. Ma poi? Resta acceso al massimo e basta. Oggi aggiungiamo il viaggio di ritorno: dopo essere salito a 255, il LED ridiscende a 0. E un respiro: inspira (su) ed espira (giu), all'infinito.",
+      "teacher_tip": "L'effetto breathing e usato ovunque: il LED di standby dei MacBook, le luci notturne, le console in sleep mode. Cattura l'attenzione perche e organico, non meccanico.",
+      "class_hook": "Avete presente la luce del computer quando dorme? Pulsa piano, come se respirasse. Oggi la costruiamo noi!",
       "action_tags": [],
       "auto_action": null
     },
@@ -48,50 +46,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il circuito ha tre parti: il pulsante su INPUT_PULLUP, il LED verde e il LED rosso su due pin OUTPUT. Il codice usa una variabile booleana per ricordare quale LED e acceso. A ogni pressione la variabile si inverte: da true diventa false e viceversa.",
-      "teacher_tip": "Spiega la variabile booleana con un esempio fisico: e come un post-it dove scrivi 'verde' o 'rosso'. Ogni volta che premi il pulsante, cancelli e scrivi l'altro colore. Senza il post-it, Arduino non saprebbe quale LED era acceso al ciclo precedente.",
+      "teacher_message": "Il circuito e identico: LED con resistore sul pin 5. La novita e nel codice: due cicli for nel loop. Il primo sale da 0 a 255, il secondo scende da 255 a 0. Insieme creano l'effetto respiro che si ripete all'infinito.",
+      "teacher_tip": "Il for decrescente e la novita: for(int i=255; i>=0; i--). Spiegare i-- come il contrario di i++. Confrontare i due for fianco a fianco per mostrare la simmetria.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp6]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il codice ha un delay(50) dopo aver letto la pressione del pulsante. A cosa serve? Provate a pensare: cosa succede fisicamente quando premete un pulsante? Il contatto e perfetto o rimbalza un po'?",
-      "teacher_tip": "Il debounce e fondamentale. Un pulsante meccanico rimbalza per 5-20 millisecondi dopo ogni pressione, generando tanti contatti rapidi. Senza delay, Arduino potrebbe leggere 5-10 pressioni invece di una sola. Il delay(50) aspetta che il rimbalzo finisca. Analogia: una moneta che cade sul tavolo rimbalza prima di fermarsi.",
-      "provocative_question": "Se togliamo il delay(50) dal codice, il toggle funzionera ancora correttamente? O succede qualcosa di strano?",
+      "duration_minutes": 10,
+      "teacher_message": "Come facciamo a far SCENDERE la luminosita gradualmente? Il primo for va da 0 a 255 con i++. Per scendere, partiamo da 255 e arriviamo a 0 con i--. Due cicli opposti, uno dopo l'altro, creano il respiro.",
+      "teacher_tip": "Chiedere: cosa succede se cambiamo il delay? Con delay(5) il respiro e veloce e agitato. Con delay(20) e lento e rilassante. Il delay controlla la velocita del respiro. Far provare diversi valori.",
+      "provocative_question": "Se cambio delay(10) con delay(5), il LED respira il doppio piu veloce. E se metto delay(0)? Il fade sarebbe istantaneo e vedreste solo il LED lampeggiare. Perche?",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! Il LED verde si accende. Cliccate sul pulsante: il verde si spegne e il rosso si accende. Cliccate ancora: si scambiano di nuovo! Ogni pressione alterna lo stato per sempre.",
-      "teacher_tip": "Fai notare che e una vera ALTERNANZA di stato: ogni pressione cambia. Non e come tenere premuto un pulsante normale. Questo meccanismo e ovunque nell'elettronica: interruttori della luce, tasto Mute, tasto Play/Pausa. La variabile booleana e la chiave.",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:btn1]", "[AZIONE:highlight:led1]", "[AZIONE:highlight:led2]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Osservate l'effetto respiro: il LED si accende lentamente, raggiunge il massimo, poi si spegne lentamente. E ricomincia. Un ciclo continuo, ipnotico e rilassante.",
+      "teacher_tip": "Far osservare che la discesa sembra piu veloce della salita (percezione logaritmica). Sfida creativa: come fare un respiro asimmetrico? Salita lenta (delay 15) e discesa veloce (delay 5)?",
+      "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Verde acceso, rosso spento. Premi il pulsante: si scambiano! Premi ancora: si scambiano di nuovo. La variabile di stato ricorda quale LED e acceso tra una pressione e l'altra."
+      "observation_prompt": "Effetto respiro: il LED pulsa come se respirasse. Salita graduale, massimo, discesa graduale, spento, e ricomincia. Riuscite a contare quanti respiri fa in 30 secondi?"
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete costruito un vero toggle! Tre concetti fondamentali: la variabile booleana per ricordare lo stato, il debounce per evitare rimbalzi, e INPUT_PULLUP per il pulsante. Con questi strumenti potete costruire qualsiasi interfaccia interattiva.",
-      "teacher_tip": "Recap: variabile booleana = memoria tra un ciclo e l'altro. Debounce con delay(50) = ignora i rimbalzi meccanici. Toggle = ogni pressione inverte lo stato. Sfida: e se volessimo 3 stati invece di 2? Servirebbe un int invece di un bool.",
-      "summary_for_class": "Il toggle usa tre ingredienti: INPUT_PULLUP per il pulsante, variabile booleana per ricordare lo stato corrente, e debounce con delay per ignorare i rimbalzi meccanici. Il risultato e un pulsante che ogni pressione cambia stato permanentemente, come il Caps Lock!",
-      "concepts_learned": [
-        "variabili booleane di stato",
-        "toggle: alternanza permanente di stato",
-        "debounce con delay",
-        "combinazione INPUT + OUTPUT"
-      ],
-      "next_preview": "Nel prossimo esperimento contiamo le pressioni del pulsante e le mostriamo in binario con i LED. Impariamo a contare come un computer: con 0 e 1!"
+      "duration_minutes": 8,
+      "teacher_message": "Oggi avete combinato due cicli for per creare l'effetto breathing: salita con i++ e discesa con i--. Il delay controlla la velocita del respiro. Questo effetto si usa in tantissimi dispositivi elettronici.",
+      "teacher_tip": "Ricapitolare: due for opposti creano un ciclo su-giu. Cambiando il delay si cambia la velocita. Cambiando il range si cambia l'intensita. Tante variazioni con un concetto semplice.",
+      "summary_for_class": "Due cicli for creano l'effetto respiro: il primo sale da 0 a 255 (i++), il secondo scende da 255 a 0 (i--). Con delay(10) il respiro dura circa 5 secondi. Il loop ripete il ciclo all'infinito.",
+      "concepts_learned": ["ciclo for decrescente (i--)", "effetto breathing/respiro", "combinare due cicli for", "delay controlla la velocita", "pattern su-giu ripetibile"],
+      "next_preview": "Nella prossima lezione colleghiamo trimmer e LED: girando la manopola controllerete la luminosita in tempo reale con la funzione map()!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["toggle", "variabile_booleana", "debounce", "INPUT_PULLUP_con_LED"],
+    "concepts_covered": ["for decrescente", "effetto breathing", "due cicli combinati", "velocita con delay"],
     "next_suggested": "v3-cap7-esp7",
-    "resume_message": "Avete costruito un toggle con pulsante e due LED! Prossimo: contatore binario con LED."
+    "resume_message": "L'ultima volta avete creato l'effetto respiro con due cicli for. Oggi il trimmer controllera la luminosita del LED in tempo reale!"
   }
 }

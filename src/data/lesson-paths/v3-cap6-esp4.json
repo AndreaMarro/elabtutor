@@ -1,45 +1,107 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap6-esp4",
   "volume": 3,
   "chapter": 6,
-  "title": "LED + Buzzer",
+  "title": "Due LED: effetto polizia",
   "chapter_title": "I pin digitali",
   "difficulty": 2,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Collegare un LED e un buzzer piezoelettrico ad Arduino. Usare tone() per generare un suono e digitalWrite per il LED, combinando luce e suono nello stesso programma.",
+  "objective": "Costruire un semaforo funzionante con 3 LED colorati (verde, giallo, rosso) controllati da 3 pin digitali di Arduino. Il programma accende in sequenza verde (3 secondi), giallo (1 secondo), rosso (3 secondi). Impariamo a gestire piu' pin OUTPUT e a creare sequenze temporizzate con delay().",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
-    { "name": "Buzzer piezoelettrico", "quantity": 1, "icon": "🔔" },
-    { "name": "Fili di collegamento", "quantity": 6, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "LED verde",
+      "quantity": 1,
+      "icon": "💚"
+    },
+    {
+      "name": "LED giallo",
+      "quantity": 1,
+      "icon": "💛"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "❤️"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 3,
+      "icon": "⚡"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 10,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "digitale", "OUTPUT", "buzzer", "piezoelettrico", "tone", "noTone", "frequenza", "hertz", "LED", "suono", "nota"],
-    "forbidden": ["PWM", "duty cycle", "onda quadra", "oscillatore", "pitch", "MIDI"],
-    "note": "Prima introduzione di tone(). Spiegare la frequenza come 'quanto veloce vibra': numero alto = suono acuto"
+    "allowed": [
+      "Arduino",
+      "pin",
+      "digitale",
+      "OUTPUT",
+      "HIGH",
+      "LOW",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "setup",
+      "loop",
+      "programma",
+      "codice",
+      "semaforo",
+      "sequenza",
+      "pinMode",
+      "digitalWrite",
+      "GND",
+      "massa",
+      "millisecondi"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "analogico"
+    ],
+    "note": "Cap 6 Vol 3 — semaforo 3 LED, sequenza di stati con delay(), piu' pin OUTPUT."
   },
-  "prerequisites": ["v3-cap6-esp3"],
+  "prerequisites": [
+    "v3-cap6-esp3"
+  ],
   "next_experiment": {
     "id": "v3-cap6-esp5",
-    "title": "Sirena con Buzzer",
-    "preview": "Nella prossima lezione creeremo una sirena della polizia che cambia nota continuamente."
+    "title": "Pulsante con INPUT_PULLUP",
+    "preview": "Nel prossimo esperimento aggiungiamo un pulsante! Arduino non solo comanda, ma anche ascolta: legge se il pulsante e' premuto o no."
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Finora abbiamo controllato solo la luce. Oggi aggiungiamo il suono con un componente nuovo: il buzzer. Quando Arduino gli manda un segnale, il buzzer vibra e produce un suono.",
-      "teacher_tip": "Far vedere e toccare il buzzer prima di collegarlo. Spiegare che dentro c'e un disco di ceramica che vibra. Non serve corrente forte.",
-      "class_hook": "Se faccio vibrare qualcosa 440 volte al secondo, che suono sento? E la nota LA, quella che usano per accordare gli strumenti.",
+      "duration_minutes": 6,
+      "teacher_message": "Finora abbiamo usato un solo LED su un solo pin. Oggi ne usiamo TRE! Costruiamo un semaforo con verde, giallo e rosso, ciascuno su un pin diverso. Il programma li accende in sequenza, come un vero semaforo stradale.",
+      "teacher_tip": "Chiedi: 'Avete mai osservato un semaforo? Quanto tempo sta verde? E il giallo?' Questo aggancia la realta' al progetto. Spiega che il programma ha tre 'fasi': verde ON (altri OFF), giallo ON (altri OFF), rosso ON (altri OFF). Ogni fase dura un certo numero di secondi.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 3 LED (verde, giallo, rosso), 3 resistori 470Ω, fili di collegamento.",
+      "class_hook": "Un LED e' facile. Ma un semaforo ha TRE luci! Riusciremo a controllare 3 LED con un solo Arduino? Certo: basta usare 3 pin diversi e scrivere il programma giusto!",
       "action_tags": [],
       "auto_action": null
     },
@@ -47,45 +109,211 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il circuito: LED sul pin 7 e buzzer sul pin 9. Nel codice usiamo tone(9, 440) per suonare la nota LA e digitalWrite(7, HIGH) per il LED.",
-      "teacher_tip": "Far notare che tone() ha bisogno di due informazioni: quale pin e quale frequenza. Non serve pinMode per tone(), ma e buona pratica metterlo.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp4]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Il circuito ha tre rami identici: pin Arduino → resistore 470Ω → LED → GND. Usiamo i pin D5 (verde), D6 (giallo) e D9 (rosso). Il codice nel setup configura tutti e tre come OUTPUT. Nel loop, accende un colore alla volta e spegne gli altri, con delay() fra ogni fase.",
+      "teacher_tip": "Spiega il codice concettualmente: 'Il loop ha tre blocchi. Blocco 1: verde ON, giallo OFF, rosso OFF, aspetta 3 secondi. Blocco 2: verde OFF, giallo ON, rosso OFF, aspetta 1 secondo. Blocco 3: verde OFF, giallo OFF, rosso ON, aspetta 3 secondi. Poi ricomincia!' Non entrare nella sintassi C++.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap6-esp4]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il semaforo a 3 LED su pin 5, 6, 9",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "resistor",
+              "id": "r2",
+              "value": 470
+            },
+            {
+              "type": "resistor",
+              "id": "r3",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "green"
+            },
+            {
+              "type": "led",
+              "id": "led2",
+              "color": "yellow"
+            },
+            {
+              "type": "led",
+              "id": "led3",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a10",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d14",
+              "to": "bb1:d16",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a18",
+              "to": "bb1:bus-bot-minus-18",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D6",
+              "to": "bb1:a20",
+              "color": "yellow"
+            },
+            {
+              "from": "bb1:d24",
+              "to": "bb1:d26",
+              "color": "yellow"
+            },
+            {
+              "from": "bb1:a28",
+              "to": "bb1:bus-bot-minus-28",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D9",
+              "to": "bb1:f10",
+              "color": "red"
+            },
+            {
+              "from": "bb1:h14",
+              "to": "bb1:h16",
+              "color": "red"
+            },
+            {
+              "from": "bb1:f18",
+              "to": "bb1:bus-bot-minus-19",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Se cambio il numero 440 con 880, il suono diventa piu acuto o piu grave? E se metto 220? Proviamo a indovinare prima di testare.",
-      "teacher_tip": "Regola semplice: numero doppio = un'ottava sopra. 220=LA grave, 440=LA centrale, 880=LA acuto. I ragazzi lo scoprono da soli.",
-      "provocative_question": "Il buzzer puo suonare qualsiasi nota? Anche quelle che il nostro orecchio non sente?",
+      "duration_minutes": 10,
+      "teacher_message": "Il semaforo e' montato! Prima di accenderlo, rispondete: come facciamo a dire ad Arduino 'aspetta 3 secondi'? E perche' il giallo dura meno del verde?",
+      "teacher_tip": "La risposta e': delay(3000) aspetta 3000 millisecondi = 3 secondi. delay(1000) aspetta 1 secondo. Chiedi: 'Se voglio che il verde duri 5 secondi, che numero scrivo?' Risposta: 5000. Questo esercizio mentale rafforza la comprensione dei millisecondi.",
+      "provocative_question": "Come facciamo a dire ad Arduino 'aspetta 3 secondi'? delay(3000) - ma perche' 3000 e non 3? E se il programma accende il verde ma NON spegne gli altri, cosa succede?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Due LED restano accesi contemporaneamente",
+          "teacher_response": "Ogni fase deve spegnere tutti i LED tranne quello giusto! Se manca un digitalWrite LOW, il LED precedente resta acceso.",
+          "analogy": "E' come le luci di casa: se vuoi che solo il salotto sia illuminato, devi SPEGNERE le altre stanze, non basta accendere il salotto."
+        },
+        {
+          "mistake": "Un LED non si accende mai",
+          "teacher_response": "Controlla il collegamento: il filo dal pin giusto va al resistore? Il resistore va al LED? La polarita' del LED e' corretta? Verifica anche che il pin nel codice corrisponda al pin fisico.",
+          "analogy": null
+        },
+        {
+          "mistake": "Il semaforo va troppo veloce o troppo lento",
+          "teacher_response": "Controlla i numeri nei delay(): delay(3000) = 3 secondi, delay(1000) = 1 secondo. Se scrivi delay(300) il semaforo va 10 volte piu' veloce!",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play. Il LED si accende e il buzzer suona contemporaneamente. Provate a cambiare la frequenza del tone e osservate come cambia il suono.",
-      "teacher_tip": "Far provare frequenze basse (100-200) e alte (2000-4000). Sotto 100 e sopra 5000 il buzzer piezo rende male: e normale.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Il semaforo prende vita: verde 3 secondi, giallo 1 secondo, rosso 3 secondi. Solo un colore alla volta e' acceso. Il ciclo si ripete all'infinito, come un vero semaforo!",
+      "teacher_tip": "Fai notare: 'Quanto dura il giallo rispetto al verde? Perche' e' piu' corto?' Nei semafori reali il giallo serve solo come avviso. Chiedi anche: 'Il loop si ferma mai?' No, va avanti all'infinito, esattamente come i semafori stradali.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]",
+        "[AZIONE:highlight:led2]",
+        "[AZIONE:highlight:led3]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Quale frequenza vi sembra un campanello? Quale un allarme? Segnatevi i numeri preferiti."
+      "observation_prompt": "Il semaforo funziona! Verde per 3 secondi, giallo per 1 secondo, rosso per 3 secondi. Solo un colore alla volta e' acceso. Il ciclo si ripete all'infinito.",
+      "analogies": [
+        {
+          "concept": "sequenza_stati",
+          "text": "Il programma del semaforo e' come una ricetta di cucina: prima fai il passo 1 (verde), poi il passo 2 (giallo), poi il passo 3 (rosso), e quando finisci ricominci da capo. Arduino segue le istruzioni nell'ordine esatto in cui le abbiamo scritte.",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        },
+        {
+          "concept": "delay_millisecondi",
+          "text": "delay(3000) e' come dire ad Arduino 'fermati e conta fino a 3000 millisecondi'. 1000 millisecondi = 1 secondo. E' il cronometro di Arduino!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Con tone() Arduino fa vibrare il buzzer a una frequenza precisa. Numero alto significa suono acuto, numero basso suono grave. Luce e suono insieme nello stesso programma.",
-      "teacher_tip": "Collegare al mondo reale: sveglie, campanelli, allarmi auto usano tutti buzzer piezoelettrici controllati in modo simile.",
-      "summary_for_class": "La funzione tone(pin, frequenza) fa suonare il buzzer. La frequenza in hertz decide se il suono e grave o acuto. LED e buzzer funzionano insieme.",
-      "concepts_learned": ["buzzer piezoelettrico", "funzione tone e noTone", "frequenza in hertz", "suono acuto e grave", "combinare LED e buzzer"],
-      "next_preview": "Nella prossima lezione creeremo una sirena della polizia che sale e scende di nota continuamente."
+      "duration_minutes": 5,
+      "teacher_message": "Fantastico! Avete costruito un semaforo con 3 LED e 3 pin OUTPUT! Il programma usa una sequenza di stati: ogni fase accende un LED e spegne gli altri, con delay() che controlla la durata di ogni colore.",
+      "teacher_tip": "Recap: 'setup() configura 3 pin come OUTPUT. Il loop() ha 3 blocchi: verde, giallo, rosso. Ogni blocco accende un LED, spegne gli altri, e aspetta. Questi concetti — piu' pin, sequenze, timing — sono la base di progetti molto piu' complessi!' Sfida finale: 'Come aggiungereste una fase di lampeggio giallo?'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il semaforo usa 3 pin OUTPUT per controllare 3 LED. Il programma accende un colore alla volta con una sequenza precisa e delay() per il timing. Questo schema di 'sequenza di stati' e' alla base di tantissimi progetti elettronici!",
+      "concepts_learned": [
+        "piu' pin OUTPUT contemporanei",
+        "sequenza di stati nel loop",
+        "delay() in millisecondi",
+        "spegnere esplicitamente i LED non attivi",
+        "circuito multi-LED con resistori"
+      ],
+      "next_preview": "Nel prossimo esperimento aggiungiamo un pulsante! I pin di INPUT permettono ad Arduino di leggere cosa fa l'utente: premeremo un bottone e il LED rispondera'!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega perche' serve spegnere gli altri LED → comprensione del funzionamento dei pin OUTPUT",
+    "Se identifica il delay da cambiare per modificare la durata di un colore → comprensione del timing",
+    "Se propone di aggiungere una fase di lampeggio → pensiero creativo applicato"
+  ],
   "session_save": {
-    "concepts_covered": ["buzzer", "tone()", "frequenza hertz", "suono + luce"],
+    "concepts_covered": [
+      "multi_pin_output",
+      "sequenza_stati",
+      "delay_millisecondi",
+      "semaforo_3led",
+      "spegnimento_esplicito"
+    ],
     "next_suggested": "v3-cap6-esp5",
-    "resume_message": "L'ultima volta avete usato il buzzer con tone(). Oggi creiamo una sirena che cambia frequenza."
+    "resume_message": "Avete costruito il semaforo a 3 LED! Prossimo passo: i pin di INPUT e i pulsanti."
   }
 }

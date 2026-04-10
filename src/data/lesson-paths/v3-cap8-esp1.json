@@ -1,40 +1,40 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap8-esp1",
   "volume": 3,
   "chapter": 8,
   "title": "Serial.println in setup",
-  "chapter_title": "Comunicazione seriale",
+  "chapter_title": "Comunicazione Seriale",
   "difficulty": 1,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Scoprire la comunicazione seriale: Arduino puo mandare messaggi al computer! Con Serial.begin apriamo il canale di comunicazione e con Serial.println nel setup stampiamo un messaggio una sola volta. E il primo passo per il debug e l'interazione con il PC.",
+  "objective": "Scoprire la comunicazione seriale: Arduino puo mandare messaggi al computer attraverso il cavo USB! Con Serial.begin apriamo il canale di comunicazione e con Serial.println nel setup stampiamo un messaggio una sola volta. E il primo passo per il debug e l'interazione con il PC.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Cavo USB", "quantity": 1, "icon": "cable" }
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "Serial", "println", "begin", "baud", "rate", "monitor", "seriale", "comunicazione", "setup", "messaggio", "testo", "stringa", "USB", "9600"],
+    "allowed": ["Arduino", "Serial", "monitor", "baud", "USB", "println", "plotter", "begin", "rate", "seriale", "comunicazione", "setup", "messaggio", "testo", "stringa", "9600"],
     "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "I2C", "SPI"],
-    "note": "Cap 8 Vol 3 — Serial.begin, Serial.println, baud rate, Serial Monitor. Solo nel setup."
+    "note": "Cap 8 Vol 3 — Serial.begin, Serial.println, baud rate, Serial Monitor. Solo nel setup, comunicazione USB."
   },
   "prerequisites": ["v3-cap7-esp8"],
   "next_experiment": {
     "id": "v3-cap8-esp2",
     "title": "Serial.println in loop",
-    "preview": "Nel prossimo esperimento il messaggio si ripete all'infinito nel loop! Aggiungiamo un contatore per numerare ogni riga stampata."
+    "preview": "Nel prossimo esperimento il messaggio si ripete all'infinito nel loop! Senza delay il Serial Monitor si riempie a velocita pazzesca."
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Finora Arduino ha comunicato solo con LED: luce accesa o spenta. Oggi impara a PARLARE con il computer! Attraverso il cavo USB, Arduino puo mandare messaggi di testo che vediamo sul Serial Monitor. E come una chat dove Arduino scrive e noi leggiamo.",
-      "teacher_tip": "L'analogia della chat funziona bene: Arduino e un amico che ci manda messaggi via USB. Il Serial Monitor e la finestra della chat dove leggiamo i messaggi. Serial.begin e come accendere il telefono, e Serial.println e come inviare un messaggio.",
+      "duration_minutes": 7,
+      "teacher_message": "Oggi Arduino impara a PARLARE con noi! Comunica attraverso il cavo USB. Finora abbiamo usato solo LED per comunicare: luce accesa o spenta. Oggi apriamo un canale di comunicazione vero e proprio dove Arduino puo scrivere messaggi di testo che leggiamo sullo schermo.",
+      "teacher_tip": "L'analogia della chat funziona bene: Arduino e un amico che ci manda messaggi via USB. Il Serial Monitor e la finestra della chat dove leggiamo. Serial.begin e come accendere il telefono, e Serial.println e come inviare un messaggio.",
       "class_hook": "Arduino sa accendere LED, ma non sa ancora parlare. Oggi gli insegniamo a scrivere messaggi che appaiono sul nostro schermo! E come aprire una chat con Arduino: lui scrive e noi leggiamo.",
       "action_tags": [],
       "auto_action": null
@@ -43,8 +43,8 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Non serve nessun circuito! Solo Arduino e il cavo USB. Il codice ha due righe nel setup: Serial.begin(9600) apre la comunicazione a velocita 9600 baud, e Serial.println scrive il messaggio. Tutto nel setup, quindi il messaggio appare una sola volta.",
-      "teacher_tip": "Spiega il baud rate con una analogia: e la velocita della conversazione. Se Arduino parla a 9600 baud e il monitor ascolta a 9600, si capiscono. Se le velocita sono diverse, vedrai caratteri strani (come parlare italiano a qualcuno che ascolta in francese). 9600 e lo standard per principianti.",
+      "teacher_message": "Non serve nessun circuito esterno! Solo Arduino sulla breadboard e il cavo USB. Il codice ha due righe nel setup: Serial.begin(9600) apre la comunicazione a velocita 9600 baud, e Serial.println(\"Ciao dal Team di ELAB!\") scrive il messaggio. Tutto nel setup, quindi il messaggio appare una sola volta.",
+      "teacher_tip": "Spiega il baud rate con una analogia: e la velocita della conversazione. Se Arduino parla a 9600 baud e il monitor ascolta a 9600, si capiscono. Se le velocita sono diverse, vedrai caratteri strani. 9600 e lo standard per principianti.",
       "action_tags": ["[AZIONE:loadexp:v3-cap8-esp1]"],
       "auto_action": "load_experiment"
     },
@@ -52,7 +52,7 @@
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Serial.println e nel setup, non nel loop. Cosa significa? Il messaggio apparira una sola volta o si ripetera? E se volessimo che si ripeta all'infinito, dove dovremmo spostarlo?",
+      "teacher_message": "Il messaggio appare una sola volta. Perche? Dove lo abbiamo messo? Serial.println e nel setup, non nel loop. Se volessimo che si ripeta all'infinito, dove dovremmo spostarlo?",
       "teacher_tip": "Rinforza la differenza setup/loop: setup gira UNA volta all'accensione, loop gira all'infinito. Serial.begin deve stare nel setup (si apre la comunicazione una volta sola). Serial.println puo stare in entrambi: nel setup per un messaggio singolo, nel loop per messaggi ripetuti.",
       "provocative_question": "Se dimentichiamo Serial.begin(9600) e scriviamo solo Serial.println, cosa succede? Il messaggio appare lo stesso o no?",
       "action_tags": [],
@@ -61,32 +61,33 @@
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play e apri il Serial Monitor! Vedete il messaggio che appare una sola volta. Arduino lo ha scritto nel setup e poi non ha piu nulla da dire. Provate a premere il pulsante Reset nel simulatore: il messaggio riappare perche il setup si riesegue!",
-      "teacher_tip": "Il pulsante Reset e una scoperta importante: resetta Arduino ed esegue di nuovo il setup. E come riavviare il programma. Se il messaggio non appare, verifica che il baud rate del monitor sia 9600. Fai notare che dopo il messaggio, Arduino non fa nulla: il loop e vuoto.",
+      "duration_minutes": 12,
+      "teacher_message": "Premi Play e apri il Serial Monitor! Vedete il messaggio 'Ciao dal Team di ELAB!' che appare una sola volta. Arduino lo ha scritto nel setup e poi non ha piu nulla da dire. Provate a premere il pulsante Reset: il messaggio riappare perche il setup si riesegue!",
+      "teacher_tip": "Il pulsante Reset e una scoperta importante: resetta Arduino ed esegue di nuovo il setup. Se il messaggio non appare, verifica che il baud rate del monitor sia 9600. Fai notare che dopo il messaggio, Arduino non fa nulla: il loop e vuoto.",
       "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Sul Serial Monitor appare una sola riga di testo. Dopo di che, niente. Arduino ha eseguito il setup e ora gira nel loop vuoto senza fare nulla. Premendo Reset il messaggio riappare."
+      "observation_prompt": "Sul Serial Monitor appare una sola riga: 'Ciao dal Team di ELAB!'. Dopo di che, niente. Arduino ha eseguito il setup e ora gira nel loop vuoto senza fare nulla. Premendo Reset il messaggio riappare."
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete aperto il primo canale di comunicazione tra Arduino e il computer! Serial.begin apre la porta, Serial.println manda il messaggio. Da oggi Arduino non e piu muto: puo dirci cosa sta facendo, che valori legge, se qualcosa non funziona.",
+      "duration_minutes": 8,
+      "teacher_message": "setup() si esegue una volta sola. Per ripetere, serve il loop()! Avete aperto il primo canale di comunicazione tra Arduino e il computer. Serial.begin apre la porta, Serial.println manda il messaggio. Da oggi Arduino non e piu muto: puo dirci cosa sta facendo!",
       "teacher_tip": "Recap: Serial.begin(9600) nel setup apre la comunicazione. Serial.println('testo') invia una riga di testo. Il Serial Monitor mostra i messaggi ricevuti. Il baud rate deve corrispondere (9600 su entrambi i lati). Questa e la base del debug: quando qualcosa non funziona, stampi i valori per capire cosa succede.",
-      "summary_for_class": "La comunicazione seriale e il modo in cui Arduino parla col computer. Serial.begin apre il canale, Serial.println invia un messaggio. Nel setup il messaggio appare una sola volta. Il Serial Monitor e la finestra dove leggiamo i messaggi. Da oggi Arduino puo dirci cosa sta succedendo nel suo codice!",
+      "summary_for_class": "La comunicazione seriale e il modo in cui Arduino parla col computer attraverso il cavo USB. Serial.begin apre il canale, Serial.println invia un messaggio. Nel setup il messaggio appare una sola volta. Il Serial Monitor e la finestra dove leggiamo i messaggi di Arduino!",
       "concepts_learned": [
         "Serial.begin() e baud rate 9600",
         "Serial.println() per stampare testo",
         "Serial Monitor per leggere i messaggi",
+        "comunicazione USB tra Arduino e computer",
         "differenza setup (una volta) vs loop (infinito)"
       ],
-      "next_preview": "Nel prossimo esperimento spostiamo Serial.println nel loop: il messaggio si ripetera all'infinito con un contatore che numera ogni riga!"
+      "next_preview": "Nel prossimo esperimento spostiamo Serial.println nel loop: il messaggio si ripetera all'infinito e vedrete quanto e veloce Arduino senza delay!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["Serial_begin", "Serial_println", "baud_rate_9600", "Serial_Monitor", "messaggio_singolo"],
+    "concepts_covered": ["Serial_begin", "Serial_println", "baud_rate_9600", "Serial_Monitor", "comunicazione_USB", "messaggio_singolo"],
     "next_suggested": "v3-cap8-esp2",
-    "resume_message": "Avete fatto parlare Arduino col Serial Monitor! Prossimo: println nel loop con contatore."
+    "resume_message": "Avete fatto parlare Arduino col Serial Monitor! Prossimo: println nel loop senza delay."
   }
 }

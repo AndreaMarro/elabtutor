@@ -1,43 +1,107 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap6-esp5",
   "volume": 3,
   "chapter": 6,
-  "title": "Sirena con Buzzer",
+  "title": "Pulsante con INPUT_PULLUP",
   "chapter_title": "I pin digitali",
   "difficulty": 2,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Creare una sirena che cambia frequenza usando un ciclo for. Il buzzer sale e scende di nota, simulando la sirena di un'auto della polizia. Primo contatto con il ciclo for.",
+  "objective": "Usare digitalRead() per leggere lo stato di un pulsante con INPUT_PULLUP e creare un toggle: ogni pressione cambia lo stato del LED (acceso/spento). Scopriamo i pin di INPUT, il concetto di variabile booleana e perche' INPUT_PULLUP legge LOW quando il pulsante e' premuto.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "Buzzer piezoelettrico", "quantity": 1, "icon": "🔔" },
-    { "name": "Fili di collegamento", "quantity": 3, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Pulsante",
+      "quantity": 1,
+      "icon": "🔘"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED verde",
+      "quantity": 1,
+      "icon": "💚"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 6,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "buzzer", "tone", "frequenza", "hertz", "ciclo", "for", "variabile", "sale", "scende", "sirena", "ripetere"],
-    "forbidden": ["while", "do-while", "ricorsione", "array", "funzione", "interrupt"],
-    "note": "Primo ciclo for del volume. Spiegarlo come 'ripeti questa cosa cambiando un numero ogni volta'"
+    "allowed": [
+      "Arduino",
+      "pin",
+      "digitale",
+      "OUTPUT",
+      "INPUT",
+      "INPUT_PULLUP",
+      "HIGH",
+      "LOW",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "setup",
+      "loop",
+      "programma",
+      "codice",
+      "pulsante",
+      "digitalRead",
+      "digitalWrite",
+      "pinMode",
+      "variabile",
+      "booleano",
+      "toggle",
+      "GND",
+      "massa",
+      "if"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "analogico"
+    ],
+    "note": "Cap 6 Vol 3 — pin INPUT_PULLUP, digitalRead, toggle LED con pulsante."
   },
-  "prerequisites": ["v3-cap6-esp4"],
+  "prerequisites": [
+    "v3-cap6-esp4"
+  ],
   "next_experiment": {
-    "id": "v3-cap6-semaforo",
-    "title": "Semaforo 3 LED",
-    "preview": "Nella prossima lezione costruiamo un semaforo completo con 3 LED colorati che si alternano."
+    "id": "v3-cap6-esp7",
+    "title": "Debounce del pulsante",
+    "preview": "Nel prossimo esperimento risolviamo un problema: il pulsante a volte conta doppio! Impariamo il debounce per rendere il toggle piu' preciso."
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "La sirena della polizia non suona una nota sola: sale e scende continuamente. Per farla servono tante note in sequenza, una dopo l'altra. Ma scrivere 100 righe di tone() sarebbe assurdo.",
-      "teacher_tip": "Questo e il momento perfetto per introdurre il ciclo for come soluzione a un problema reale: ripetere qualcosa con un numero che cambia.",
-      "class_hook": "Se la sirena va da 400 a 800 hertz salendo di 10 ogni volta, quante righe di codice servirebbero senza il ciclo for?",
+      "teacher_message": "Finora Arduino ha solo COMANDATO i LED (OUTPUT). Oggi impariamo qualcosa di nuovo: Arduino puo' anche ASCOLTARE! Con un pulsante collegato a un pin di INPUT, il programma legge se il bottone e' premuto o no, e reagisce di conseguenza.",
+      "teacher_tip": "Spiega la differenza OUTPUT vs INPUT con un'analogia: 'OUTPUT e' come la bocca: Arduino PARLA (manda segnali). INPUT e' come l'orecchio: Arduino ASCOLTA (legge segnali dall'esterno).' Chiedi: 'Cosa potremmo far fare ad Arduino quando premiamo il pulsante?'",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 pulsante, 1 resistore 470Ω, 1 LED verde, fili di collegamento.",
+      "class_hook": "Finora Arduino comandava e basta. Ma se volessimo che Arduino CI ASCOLTASSE? Oggi colleghiamo un pulsante: Arduino legge se lo premiamo e risponde accendendo o spegnendo il LED!",
       "action_tags": [],
       "auto_action": null
     },
@@ -45,45 +109,174 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il programma. Il ciclo for parte da 400, arriva a 800, e ogni giro aggiunge 10 alla frequenza. Sono 40 note in 3 righe di codice invece di 40 righe.",
-      "teacher_tip": "Leggere il for ad alta voce come una frase: 'parti da 400, finche sei sotto 800, aggiungi 10 ogni volta'. Non insistere sulla sintassi con i punto e virgola.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp5]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Il circuito ha due parti: il LED verde sul pin 5 (come prima) con il suo resistore, e il pulsante collegato al pin 10 con INPUT_PULLUP. Con INPUT_PULLUP non serve un resistore esterno per il pulsante: Arduino ne ha uno interno! Il pulsante collega il pin a GND quando e' premuto.",
+      "teacher_tip": "INPUT_PULLUP e' un concetto controintuitivo: quando il pulsante NON e' premuto, il pin legge HIGH (grazie al resistore interno). Quando il pulsante E' premuto, il pin legge LOW (collegato a GND). Usa l'analogia: 'E' come un palloncino legato a un filo (PULLUP = tirato su). Quando premi il pulsante, tiri il palloncino giu' (LOW).'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap6-esp5]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito pulsante + LED con INPUT_PULLUP",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "pushbutton",
+              "id": "btn1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "green"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a16",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d23",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D10",
+              "to": "bb1:f5",
+              "color": "blue"
+            },
+            {
+              "from": "bb1:f10",
+              "to": "bb1:bus-bot-minus-10",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "La sirena adesso sale. Come facciamo a farla anche scendere? Serve un secondo ciclo for che parte da 800 e torna a 400. Cosa cambia rispetto al primo?",
-      "teacher_tip": "Far ragionare sulla simmetria: il secondo for deve sottrarre invece di aggiungere. i++ diventa i--, e il confronto cambia verso.",
-      "provocative_question": "Se cambio il passo da 10 a 50, la sirena suona piu fluida o a scatti? Perche?",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito e' pronto. Domanda importante: cosa vuol dire INPUT_PULLUP? Perche' il pulsante legge LOW quando e' premuto? Non dovrebbe essere il contrario?",
+      "teacher_tip": "Spiega con calma: 'PULLUP significa che c'e' un resistore interno che TIRA SU il pin a HIGH quando il pulsante non e' premuto. Quando premi, colleghi il pin direttamente a GND, che e' LOW. Quindi premuto = LOW, rilasciato = HIGH. Sembra al contrario, ma e' il modo piu' semplice per collegare un pulsante!'",
+      "provocative_question": "Cosa vuol dire INPUT_PULLUP? Perche' il pulsante legge LOW quando e' premuto e HIGH quando e' rilasciato? Non e' al contrario?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED cambia stato da solo senza premere il pulsante",
+          "teacher_response": "Il pin potrebbe non essere configurato come INPUT_PULLUP. Senza il PULLUP, il pin 'fluttua' e legge valori casuali. Controlla che il codice dica pinMode(10, INPUT_PULLUP).",
+          "analogy": "Senza PULLUP, il pin e' come un'antenna: cattura segnali casuali dall'aria e il LED impazzisce."
+        },
+        {
+          "mistake": "Il LED non cambia mai stato premendo il pulsante",
+          "teacher_response": "Controlla che il pulsante sia collegato tra il pin 10 e GND. Verifica anche che il codice legga digitalRead(10) e che la condizione if controlli LOW (non HIGH).",
+          "analogy": null
+        },
+        {
+          "mistake": "Il LED cambia stato in modo irregolare, a volte non risponde",
+          "teacher_response": "Questo e' il 'rimbalzo' del pulsante (bounce)! I contatti meccanici rimbalzano e generano falsi segnali. Lo risolveremo nel prossimo esperimento con il debounce!",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play. Sentite la sirena che sale e poi scende. Provate a cambiare la frequenza minima, la massima e il passo per creare sirene diverse.",
-      "teacher_tip": "Suggerire di provare: ambulanza (passo 5, delay 20), pompieri (range 600-1200), allarme (range 1000-2000). Ogni combinazione da un effetto diverso.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Ora prova a premere il pulsante. Ogni pressione dovrebbe cambiare lo stato del LED: se era spento si accende, se era acceso si spegne. Questo si chiama TOGGLE!",
+      "teacher_tip": "Fai premere il pulsante varie volte. Probabilmente noteranno che a volte il toggle non funziona bene: a volte salta, a volte conta doppio. Questo e' PERFETTO: e' il problema del 'rimbalzo' che risolveremo nell'esperimento successivo. Non correggerlo ora, lascia che lo sperimentino!",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:btn1]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Provate 3 combinazioni diverse di frequenza minima, massima e passo. Quale suona piu come una sirena vera?"
+      "observation_prompt": "Ogni pressione del pulsante cambia lo stato del LED (toggle). Pero' a volte il pulsante 'conta doppio': questo e' il problema del rimbalzo meccanico che risolveremo nel prossimo esperimento!",
+      "analogies": [
+        {
+          "concept": "input_pullup",
+          "text": "INPUT_PULLUP e' come un palloncino legato a un filo che lo tiene in alto (HIGH). Quando premi il pulsante, tiri il palloncino verso il basso (LOW). Quando lasci, il filo lo riporta su (HIGH). Il 'filo' e' il resistore interno di Arduino!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        },
+        {
+          "concept": "toggle",
+          "text": "Il toggle e' come un interruttore della luce: ogni volta che lo premi cambia stato. Se la luce e' accesa, si spegne. Se e' spenta, si accende. Il programma usa una variabile che 'ricorda' lo stato attuale.",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Il ciclo for ci permette di ripetere un'azione cambiando un numero ogni volta. Con 3 righe facciamo il lavoro di 40. E il superpotere della programmazione: la ripetizione automatica.",
-      "teacher_tip": "Il concetto di ciclo e fondamentale. Assicurarsi che tutti abbiano capito l'idea, anche se la sintassi esatta non e chiara.",
-      "summary_for_class": "Il ciclo for ripete le istruzioni cambiando una variabile ogni giro. Con due cicli for creiamo una sirena che sale e scende di frequenza.",
-      "concepts_learned": ["ciclo for base", "variabile contatore", "incremento e decremento", "sirena con frequenza variabile", "efficienza del codice"],
-      "next_preview": "Nella prossima lezione costruiamo un semaforo completo con 3 LED: verde, giallo e rosso, con tempi realistici."
+      "duration_minutes": 5,
+      "teacher_message": "Ottimo lavoro! Avete usato per la prima volta un pin di INPUT! Con INPUT_PULLUP e digitalRead(), Arduino legge il pulsante. La variabile booleana ricorda lo stato del LED e il toggle lo cambia ad ogni pressione.",
+      "teacher_tip": "Recap: 'OUTPUT = Arduino comanda. INPUT = Arduino ascolta. INPUT_PULLUP = il pin e' HIGH di default, diventa LOW quando premi il pulsante. digitalRead() legge lo stato. La variabile booleana ricorda se il LED e' acceso o spento.' Anticipa: 'Avete notato che a volte il pulsante conta doppio? E' un problema meccanico che risolveremo nel prossimo esperimento!'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "I pin INPUT permettono ad Arduino di leggere segnali dall'esterno. Con INPUT_PULLUP non serve un resistore esterno per il pulsante. digitalRead() legge HIGH o LOW, e una variabile booleana permette di creare il toggle: ogni pressione cambia stato!",
+      "concepts_learned": [
+        "pin INPUT vs OUTPUT",
+        "INPUT_PULLUP e resistore interno",
+        "digitalRead() per leggere il pulsante",
+        "variabile booleana (vero/falso)",
+        "toggle: cambio stato ad ogni pressione"
+      ],
+      "next_preview": "Nel prossimo esperimento risolviamo il problema del 'rimbalzo': il pulsante a volte conta doppio a causa dei contatti meccanici. Impariamo il debounce!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega perche' INPUT_PULLUP legge LOW quando premuto → comprensione del pullup interno",
+    "Se nota il problema del rimbalzo (conteggio doppio) → osservazione attenta",
+    "Se collega INPUT/OUTPUT al concetto di comunicazione bidirezionale → pensiero sistemico"
+  ],
   "session_save": {
-    "concepts_covered": ["ciclo for", "variabile contatore", "frequenza variabile", "sirena"],
-    "next_suggested": "v3-cap6-semaforo",
-    "resume_message": "L'ultima volta avete creato una sirena con il ciclo for. Oggi costruiamo un semaforo a 3 LED."
+    "concepts_covered": [
+      "pin_INPUT",
+      "INPUT_PULLUP",
+      "digitalRead",
+      "variabile_booleana",
+      "toggle"
+    ],
+    "next_suggested": "v3-cap6-esp7",
+    "resume_message": "Avete usato il primo pin di INPUT con pulsante e toggle! Prossimo passo: risolvere il rimbalzo del pulsante con il debounce."
   }
 }

@@ -1,0 +1,331 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap8-esp5",
+  "volume": 3,
+  "chapter": 8,
+  "title": "Pot + 3 LED + Serial",
+  "chapter_title": "Comunicazione Seriale",
+  "difficulty": 3,
+  "duration_minutes": 45,
+  "target_age": "10-14 anni",
+  "objective": "Il PROGETTO FINALE del Volume 3! Combiniamo input analogico, output digitale e comunicazione seriale in un unico programma. Un potenziometro su A3 controlla 3 LED (rosso, giallo, verde) tramite soglie if/else, e il Serial Monitor mostra il valore letto e quale zona è attiva. È la sintesi di tutto il capitolo sulla comunicazione seriale.",
+  "components_needed": [
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Potenziometro 10kΩ",
+      "quantity": 1,
+      "icon": "🎛️"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 3,
+      "icon": "🔧"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "🔴"
+    },
+    {
+      "name": "LED giallo",
+      "quantity": 1,
+      "icon": "🟡"
+    },
+    {
+      "name": "LED verde",
+      "quantity": 1,
+      "icon": "🟢"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 10,
+      "icon": "🔌"
+    }
+  ],
+  "vocabulary": {
+    "allowed": [
+      "Arduino",
+      "analogRead",
+      "Serial",
+      "LED",
+      "potenziometro",
+      "intervallo",
+      "progetto",
+      "combinazione",
+      "pin",
+      "digitale",
+      "analogico",
+      "valore",
+      "0-1023",
+      "breadboard",
+      "codice",
+      "programma",
+      "GND",
+      "massa",
+      "resistore",
+      "if",
+      "else",
+      "soglia",
+      "zona",
+      "digitalWrite",
+      "baud",
+      "Monitor"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor"
+    ],
+    "note": "Cap 8 Vol 3 — Progetto finale: analogRead + digitalWrite + Serial, if/else con 3 zone, combinazione input/output/comunicazione."
+  },
+  "prerequisites": [
+    "v3-cap8-esp4"
+  ],
+  "next_experiment": {
+    "id": "v3-extra-lcd-hello",
+    "title": "Hello World su LCD",
+    "preview": "Prossima avventura: Arduino scrive su un DISPLAY!"
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi è il GRAN FINALE! Combiniamo TUTTO quello che abbiamo imparato in un unico progetto. Un potenziometro legge un valore analogico, tre LED si accendono in base alla zona (bassa=rosso, media=giallo, alta=verde), e il Serial Monitor ci racconta cosa succede in tempo reale. Input + output + comunicazione: tutto insieme!",
+      "teacher_tip": "Enfatizza che questo è un progetto di sintesi: mette insieme analogRead (Cap 8), digitalWrite (Cap 6), if/else (Cap 7) e Serial (tutto il Cap 8). È un momento di orgoglio per i ragazzi: stanno combinando più concetti in un programma complesso. Fai notare che i programmi professionali funzionano così: leggono sensori, controllano attuatori e comunicano.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4, 1 potenziometro 10kΩ, 3 resistori 470Ω, 3 LED (rosso, giallo, verde), fili di collegamento (10 fili).",
+      "class_hook": "Immaginate un semaforo intelligente che cambia colore in base al traffico e ci dice anche quante macchine sta contando. Oggi costruiamo qualcosa di simile: un sistema che legge, decide, agisce e comunica — tutto insieme!",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Un programma che legge un trimmer, controlla 3 LED, E stampa sul monitor. Tre cose insieme! Il circuito ha un potenziometro su A3 e tre LED con resistori da 470Ω sui pin D12 (rosso), D11 (giallo) e D10 (verde). Il codice legge analogRead(A3) e usa if/else per dividere il range 0-1023 in tre zone: sotto 300 accende il rosso, tra 300 e 700 il giallo, sopra 700 il verde. Ogni ciclo stampa il valore e la zona sul Serial Monitor con Serial.println.",
+      "teacher_tip": "Le soglie 300 e 700 dividono il range in tre zone chiare. Spiega la logica: è come un termometro a colori. Fai notare che prima di accendere un LED, il codice spegne tutti gli altri (solo uno alla volta). Il Serial.println mostra sia il numero che la zona, così si vede la corrispondenza tra posizione del trimmer e LED acceso.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap8-esp5]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta potenziometro su A3, 3 LED (R/Y/G) con resistori su D12/D11/D10",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot1",
+              "value": 10000
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "resistor",
+              "id": "r2",
+              "value": 470
+            },
+            {
+              "type": "resistor",
+              "id": "r3",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            },
+            {
+              "type": "led",
+              "id": "led2",
+              "color": "yellow"
+            },
+            {
+              "type": "led",
+              "id": "led3",
+              "color": "green"
+            }
+          ],
+          "wires": [
+            {
+              "from": "bb1:f15",
+              "to": "bb1:bus-bot-plus-15",
+              "color": "red"
+            },
+            {
+              "from": "nano1:W_A3",
+              "to": "bb1:f16",
+              "color": "yellow"
+            },
+            {
+              "from": "bb1:f17",
+              "to": "bb1:bus-bot-minus-17",
+              "color": "black"
+            },
+            {
+              "from": "nano1:D12",
+              "to": "bb1:a20",
+              "color": "red"
+            },
+            {
+              "from": "nano1:D11",
+              "to": "bb1:a23",
+              "color": "orange"
+            },
+            {
+              "from": "nano1:D10",
+              "to": "bb1:a26",
+              "color": "green"
+            },
+            {
+              "from": "bb1:e22",
+              "to": "bb1:bus-bot-minus-22",
+              "color": "black"
+            },
+            {
+              "from": "bb1:e25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            },
+            {
+              "from": "bb1:e28",
+              "to": "bb1:bus-bot-minus-28",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "Come facciamo a fare TRE cose diverse nello stesso programma? Servono tre blocchi nel loop: analogRead per leggere, if/else + digitalWrite per i LED, Serial.println per comunicare. In che ordine li mettiamo? Ha importanza l'ordine?",
+      "teacher_tip": "L'ordine è logico: prima leggi il sensore (analogRead), poi decidi cosa fare (if/else), poi agisci (digitalWrite) e infine comunica (Serial.println). Ma in realtà Arduino è così veloce che l'ordine non cambia il risultato visibile. Questa è una buona occasione per parlare di architettura del codice: Leggi-Decidi-Agisci-Comunica.",
+      "provocative_question": "Se volessimo aggiungere un quarto colore (blu) per una quarta zona, come cambieremmo le soglie? Con 4 LED e 4 zone, dove mettiamo i confini tra 0 e 1023?",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Più LED accesi contemporaneamente invece di uno solo",
+          "teacher_response": "Nel codice, prima di accendere il LED della zona giusta, devi SPEGNERE tutti gli altri. Aggiungi tre digitalWrite(..., LOW) all'inizio di ogni blocco if/else, oppure metti tre spegnimenti prima dell'if.",
+          "analogy": "È come un semaforo: non può essere rosso E verde contemporaneamente. Prima spegni tutto, poi accendi solo quello giusto."
+        },
+        {
+          "mistake": "I LED non corrispondono alla zona giusta (rosso si accende nella zona alta)",
+          "teacher_response": "Controlla l'ordine dei pin nel codice: pin 12 = rosso (zona bassa, <300), pin 11 = giallo (zona media, 300-700), pin 10 = verde (zona alta, >700). Se i LED sono scambiati sulla breadboard, inverti i fili o correggi i numeri dei pin nel codice.",
+          "analogy": null
+        },
+        {
+          "mistake": "Il Serial Monitor non mostra nulla",
+          "teacher_response": "Verifica che Serial.begin(9600) sia nel setup() e che il Serial Monitor sia aperto dopo aver premuto Play. Il baud rate deve corrispondere: 9600 nel codice e 9600 nel monitor.",
+          "analogy": null
+        }
+      ]
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 14,
+      "teacher_message": "Premi Play! Girate il trimmer e guardate: il potenziometro controlla sia i LED che il Serial Monitor — tutto insieme! Nella zona bassa si accende il rosso, nella media il giallo, nella alta il verde. E sul monitor vedete il numero e la zona attiva. Provate a trovare il punto ESATTO dove cambia colore!",
+      "teacher_tip": "Fai sperimentare i punti di transizione: dove esattamente il rosso diventa giallo? Il Serial Monitor aiuta a trovare il valore preciso (circa 300). Questo è il debug in azione: usiamo la comunicazione seriale per capire cosa fa il programma. Chiedi: 'È facile trovare il punto di cambio guardando solo i LED? O serve il Serial Monitor?'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:pot1,led1,led2,led3]"
+      ],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "Il potenziometro controlla sia i LED che il Serial Monitor — tutto insieme! Girando il trimmer: nella zona bassa (0-299) si accende il LED rosso, nella zona media (300-700) il giallo, nella zona alta (701-1023) il verde. Il Serial Monitor mostra il valore numerico e la zona attiva. Magia: input analogico + output digitale + comunicazione seriale in un unico programma!",
+      "analogies": [
+        {
+          "concept": "progetto_combinato",
+          "text": "Questo progetto è come un cruscotto dell'auto: il sensore del carburante (potenziometro) legge il livello, la spia del cruscotto (LED) cambia colore in base al livello, e il display (Serial Monitor) mostra il numero esatto. Tre sistemi diversi che lavorano insieme!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 8"
+        },
+        {
+          "concept": "if_else_zone",
+          "text": "Le zone if/else sono come le fasce di un termometro: sotto 300 è freddo (rosso), tra 300 e 700 è tiepido (giallo), sopra 700 è caldo (verde). Il potenziometro è la temperatura, e i LED sono le spie colorate del termometro!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 8"
+        }
+      ]
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "Avete combinato input analogico + output digitale + comunicazione seriale. Siete PROGRAMMATORI! Il Volume 3 è completo. Questo progetto dimostra il pattern fondamentale di ogni sistema embedded: LEGGI un sensore, DECIDI cosa fare, AGISCI sugli attuatori, COMUNICA i risultati. Dalla domotica ai robot, tutto funziona così!",
+      "teacher_tip": "Recap del capitolo intero: Serial.begin apre la comunicazione, Serial.println stampa testo e numeri, il Serial Monitor mostra i messaggi, il Serial Plotter fa grafici. La comunicazione seriale è lo strumento numero uno per il debug e il monitoraggio. Celebra i ragazzi: hanno completato il progetto finale! Anticipa le avventure Extra: LCD, servo, Simon Says.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il progetto finale combina tutto il capitolo: analogRead legge il potenziometro, if/else decide la zona, digitalWrite accende il LED giusto, e Serial.println racconta tutto al computer. Questo pattern Leggi-Decidi-Agisci-Comunica è la base di ogni sistema intelligente: dai termostati ai robot, tutti funzionano così! Avete completato il Volume 3!",
+      "concepts_learned": [
+        "combinazione analogRead + digitalWrite + Serial",
+        "if/else con soglie per dividere in 3 zone",
+        "pattern Leggi-Decidi-Agisci-Comunica",
+        "debug con Serial Monitor ai punti di transizione",
+        "progetto completo input/output/comunicazione"
+      ],
+      "next_preview": "Prossima avventura: Arduino scrive su un DISPLAY! Con il modulo LCD 16x2 potrete mostrare messaggi e valori direttamente su uno schermo, senza bisogno del computer."
+    }
+  ],
+  "assessment_invisible": [
+    "Se spiega che l'ordine nel loop è Leggi-Decidi-Agisci-Comunica → comprensione dell'architettura software",
+    "Se trova il punto di transizione esatto usando il Serial Monitor → comprensione del debug con comunicazione seriale",
+    "Se propone di aggiungere una quarta zona con calcolo delle soglie (1024/4 = 256) → comprensione della generalizzazione"
+  ],
+  "session_save": {
+    "concepts_covered": [
+      "progetto_combinato",
+      "input_output_serial",
+      "intervalli_multipli",
+      "pattern_leggi_decidi_agisci_comunica",
+      "debug_transizioni"
+    ],
+    "next_suggested": "v3-extra-lcd-hello",
+    "resume_message": "L'ultima volta avete completato il progetto finale del Volume 3! Pronti per le avventure Extra?"
+  }
+}

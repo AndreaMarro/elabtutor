@@ -1,8 +1,8 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap5-esp2",
   "volume": 3,
@@ -10,32 +10,76 @@
   "title": "Modifica tempi del Blink",
   "chapter_title": "Il nostro primo programma",
   "difficulty": 1,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Modificare i valori di delay nel programma Blink per sperimentare con tempi diversi. Capire che 1000 millisecondi = 1 secondo e creare ritmi personalizzati.",
+  "objective": "Cambiamo i tempi del Blink! Modificando i valori di delay() scopriamo il rapporto tra i numeri nel codice e il comportamento del LED. Cosa succede con delay(200)? E con delay(2000)? Impariamo il metodo scientifico: cambiare una cosa alla volta e osservare il risultato. Scopriamo che i millisecondi controllano il ritmo e che l'occhio umano non riesce a vedere lampeggi troppo veloci.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Cavo USB", "quantity": 1, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "LED", "delay", "millisecondi", "secondo", "HIGH", "LOW", "programma", "sketch", "compilare", "caricare", "veloce", "lento", "ritmo", "LED_BUILTIN"],
-    "forbidden": ["frequenza", "hertz", "duty cycle", "PWM", "variabile"],
-    "note": "Consolidamento del Blink: focus sul rapporto numeri nel codice e comportamento visibile"
+    "allowed": [
+      "Arduino",
+      "LED",
+      "delay",
+      "millisecondi",
+      "secondo",
+      "HIGH",
+      "LOW",
+      "programma",
+      "sketch",
+      "compilare",
+      "caricare",
+      "veloce",
+      "lento",
+      "ritmo",
+      "LED_BUILTIN",
+      "pin 13",
+      "setup",
+      "loop",
+      "codice",
+      "breadboard",
+      "breakout"
+    ],
+    "forbidden": [
+      "frequenza",
+      "hertz",
+      "duty cycle",
+      "PWM",
+      "variabile",
+      "tensione",
+      "corrente",
+      "condensatore",
+      "transistor",
+      "analogico"
+    ],
+    "note": "Cap 5 Vol 3 — consolidamento del Blink. Focus sul rapporto numeri nel codice e comportamento visibile. Introduzione informale al metodo scientifico."
   },
-  "prerequisites": ["v3-cap5-esp1"],
+  "prerequisites": [
+    "v3-cap5-esp1"
+  ],
   "next_experiment": {
     "id": "v3-cap6-esp1",
     "title": "Circuito AND/OR con pulsanti",
-    "preview": "Nel prossimo capitolo collegheremo pulsanti per creare circuiti logici senza codice."
+    "preview": "Prossimo: costruiamo un circuito logico con i pulsanti!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "L'ultima volta abbiamo fatto lampeggiare il LED ogni secondo. Oggi diventiamo registi del tempo: decidiamo noi quanto resta acceso e quanto spento.",
-      "teacher_tip": "Scrivere alla lavagna: 1000ms = 1 secondo. Chiedere alla classe quanto fanno 500ms, 2000ms, 100ms.",
-      "class_hook": "Se metto delay(1), il LED lampeggia cosi veloce che sembra sempre acceso. Ci credete?",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi diventiamo scienziati! L'ultima volta abbiamo fatto lampeggiare il LED ogni secondo. Ma chi ha deciso che doveva essere un secondo? Quel numero 1000 nel codice! Oggi cambiamo quel numero e osserviamo cosa succede. Come dei veri scienziati: cambiamo una cosa, osserviamo il risultato.",
+      "teacher_tip": "Scrivi alla lavagna la tabella di conversione: 1000 ms = 1 secondo, 500 ms = mezzo secondo, 200 ms = un quinto di secondo, 100 ms = un decimo di secondo. Chiedi alla classe: 'Quanto fanno 2000 ms?' e 'Quanto fanno 50 ms?' Questo aggancia la matematica al progetto. Sottolinea che oggi non costruiscono niente di nuovo: usano lo stesso circuito ma cambiano il PROGRAMMA.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing. Stesso setup dell'esperimento precedente: nessun componente esterno!",
+      "class_hook": "Se metto delay(1), il LED lampeggia cosi' veloce che sembra sempre acceso. Ci credete? Oggi lo scopriamo!",
       "action_tags": [],
       "auto_action": null
     },
@@ -43,45 +87,126 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il Blink e cambiamo il primo delay da 1000 a 200. Solo quel numero. Poi proviamo a cambiare anche il secondo delay a un valore diverso.",
-      "teacher_tip": "Far cambiare UN solo numero alla volta. Questo insegna il metodo scientifico: una variabile per volta.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap5-esp2]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Carichiamo l'esperimento nel simulatore. Guardate: il codice e' quasi identico al Blink di prima, ma i delay sono cambiati! Invece di delay(1000) troviamo delay(200). Solo quel numero e' diverso. Proviamo a leggerlo: accendi, aspetta 200 millisecondi, spegni, aspetta 200 millisecondi. Quanto veloce sara'?",
+      "teacher_tip": "Far cambiare UN solo numero alla volta. Questo insegna il metodo scientifico: una variabile per volta. Mostra come nel codice l'unica differenza e' il numero dentro delay(). Chiedi: '200 millisecondi sono piu' o meno di un secondo?' Fai fare il calcolo: 200 e' 5 volte meno di 1000, quindi lampeggia 5 volte al secondo.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap5-esp2]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta solo Arduino sulla breadboard (il LED e' gia' integrato nella scheda)",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            }
+          ],
+          "wires": []
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Se il primo delay e 200 e il secondo e 1000, il LED sta acceso poco e spento tanto. Come vi sembra? Assomiglia a qualcosa che conoscete nella vita reale?",
-      "teacher_tip": "Guidare verso analogie: lampeggiante auto (flash breve, pausa lunga), battito cardiaco, intermittenza frecce.",
-      "provocative_question": "Riuscite a inventare un ritmo che sembra un battito del cuore? Che numeri mettereste?",
+      "teacher_message": "Prima di premere Play, ragioniamo. Se il primo delay e' 200 e il secondo e' 1000, il LED sta acceso poco e spento tanto. Sembra un flash! E se facciamo il contrario, delay(1000) e poi delay(200)? Il LED sta acceso tanto e spento poco. Assomiglia a qualcosa che conoscete?",
+      "teacher_tip": "Guidare verso analogie dalla vita reale: il lampeggiante dell'ambulanza (flash breve, pausa lunga), il battito del cuore (tum-tum... tum-tum...), le frecce dell'auto. Se qualcuno propone 'il battito del cuore', chiedi: 'Che numeri mettereste per fare tum-tum?' Questo stimola il pensiero creativo e la connessione codice-mondo reale.",
+      "provocative_question": "Se metto delay(1), vedro' ancora il lampeggio? O il LED sembra sempre acceso? E se e' cosi'... perche'?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED sembra sempre acceso anche con delay bassi",
+          "teacher_response": "Non e' un errore! L'occhio umano non riesce a vedere lampeggi piu' veloci di circa 30 volte al secondo. Con delay(10) il LED lampeggia 50 volte al secondo: troppo veloce per noi, ma Arduino lo sta facendo davvero!",
+          "analogy": "E' come un ventilatore acceso: le pale girano cosi' veloce che sembrano un disco unico, ma in realta' sono pale separate che si muovono!"
+        },
+        {
+          "mistake": "Il ragazzo cambia entrambi i delay e non capisce quale ha causato l'effetto",
+          "teacher_response": "Ricorda la regola dello scienziato: cambia UNA cosa alla volta! Rimetti il secondo delay a 1000 e cambia solo il primo. Cosi' sai esattamente cosa ha causato il cambiamento.",
+          "analogy": "Se cambi sia lo zucchero che il sale nella ricetta della torta, come fai a sapere quale ha cambiato il sapore?"
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premiamo Play con i nuovi tempi. Guardate come cambia il comportamento del LED. Poi provate voi: scegliete due numeri e osservate il risultato.",
-      "teacher_tip": "Dare 3 minuti di esplorazione libera. I ragazzi che finiscono prima possono provare delay sotto 50ms per vedere l'effetto 'LED sempre acceso'.",
-      "action_tags": ["[AZIONE:play]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premi Play con delay(200)! Guardate come lampeggia veloce — 5 volte al secondo! Ora provate voi: scegliete dei numeri diversi e osservate il risultato. Provate delay(2000) per un lampeggio lento. Poi provate delay(50) e guardate cosa succede!",
+      "teacher_tip": "Dai 4-5 minuti di esplorazione libera. Suggerisci di provare questi valori in ordine: 2000 (lento), 500 (medio), 200 (veloce), 50 (molto veloce), 10 (sembra sempre acceso). Chiedi: 'A che punto non vedete piu' il lampeggio?' Questo introduce informalmente il concetto di persistenza retinica. I ragazzi che finiscono prima possono provare delay asimmetrici: delay(100) acceso e delay(900) spento per creare un 'flash'.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Con quali valori il LED sembra lampeggiare come una freccia dell'auto? Scriveteli sul quaderno."
+      "observation_prompt": "Con delay(200) il LED lampeggia 5 volte al secondo. Provate valori diversi: con quale valore non vedete piu' il lampeggio? Scrivetelo sul quaderno!",
+      "analogies": [
+        {
+          "concept": "millisecondi_e_tempo",
+          "text": "I millisecondi sono come le monetine del tempo: ne servono 1000 per fare un secondo. Dire delay(500) e' come dire 'aspetta mezzo secondo', e delay(2000) e' come dire 'aspetta due secondi'. Arduino conta le monetine e quando arriva al numero giusto, va avanti!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 5"
+        },
+        {
+          "concept": "persistenza_retinica",
+          "text": "Quando il LED lampeggia troppo veloce, il nostro occhio non riesce a stare al passo e ci sembra sempre acceso. E' lo stesso trucco del cinema: le immagini cambiano 24 volte al secondo, ma noi vediamo un movimento fluido perche' l'occhio 'ricorda' l'immagine precedente per un attimo!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 5"
+        },
+        {
+          "concept": "metodo_scientifico",
+          "text": "Oggi avete fatto come i veri scienziati: avete cambiato UN solo numero, osservato il risultato, e poi cambiato di nuovo. Questo si chiama metodo scientifico: cambia una variabile alla volta e osserva cosa succede. Funziona in laboratorio e funziona nel codice!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 5"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Cambiando un numero nel codice, cambia il comportamento. Questo e il bello della programmazione: ogni riga ha un effetto preciso e prevedibile.",
-      "teacher_tip": "Far condividere a 2-3 ragazzi i valori che hanno scelto e perche. Valorizzare la creativita nei ritmi.",
-      "summary_for_class": "I numeri dentro delay() controllano il tempo in millisecondi. Cambiando quei numeri creiamo ritmi diversi: veloci, lenti, asimmetrici.",
-      "concepts_learned": ["millisecondi e conversione in secondi", "delay asimmetrici acceso/spento", "modificare il codice e osservare il risultato", "metodo scientifico: una variabile alla volta"],
-      "next_preview": "Nel prossimo capitolo collegheremo componenti esterni alla breadboard e scopriremo i circuiti logici AND e OR."
+      "duration_minutes": 9,
+      "teacher_message": "Oggi abbiamo scoperto una cosa importantissima: cambiando un numero nel codice, cambia il comportamento di Arduino! I numeri dentro delay() controllano il tempo in millisecondi. Con numeri grandi il LED e' lento, con numeri piccoli e' veloce, e con numeri piccolissimi sembra sempre acceso!",
+      "teacher_tip": "Fai condividere a 2-3 ragazzi i valori che hanno scelto e perche'. Valorizza la creativita' nei ritmi. Fai un recap: 'Cosa abbiamo imparato? Che ogni numero nel codice ha un significato. Che possiamo SPERIMENTARE cambiando i numeri. Che il metodo scientifico funziona anche nel codice.' Anticipa che nel prossimo capitolo useranno componenti ESTERNI: LED colorati, resistori e pulsanti sulla breadboard.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "I numeri dentro delay() controllano il tempo in millisecondi. Cambiando quei numeri creiamo ritmi diversi: veloci, lenti, asimmetrici. Con delay diversi per acceso e spento creiamo effetti come il flash dell'ambulanza o il battito del cuore. E abbiamo scoperto che sotto un certo limite l'occhio non vede piu' il lampeggio!",
+      "concepts_learned": [
+        "millisecondi: 1000 ms = 1 secondo",
+        "delay() controlla la durata di acceso e spento",
+        "delay asimmetrici creano ritmi diversi",
+        "sotto ~30 lampeggi al secondo l'occhio non distingue piu'",
+        "modificare il codice e osservare il risultato",
+        "metodo scientifico: una variabile alla volta"
+      ],
+      "next_preview": "Nel prossimo capitolo collegheremo componenti esterni alla breadboard! LED colorati, resistori e pulsanti. Costruiremo circuiti logici AND e OR con i pulsanti!"
     }
   ],
+  "assessment_invisible": [
+    "Se sa prevedere l'effetto di un cambio di delay prima di premere Play → comprensione del rapporto codice-comportamento",
+    "Se scopre da solo che con delay molto bassi il LED sembra sempre acceso → capacita' di osservazione e ragionamento",
+    "Se propone spontaneamente ritmi creativi (battito cardiaco, SOS, etc.) → pensiero creativo applicato alla programmazione",
+    "Se cambia una sola variabile alla volta → comprensione del metodo scientifico"
+  ],
   "session_save": {
-    "concepts_covered": ["millisecondi", "delay asimmetrico", "modifica codice", "osservazione risultato"],
+    "concepts_covered": [
+      "millisecondi",
+      "conversione_ms_secondi",
+      "delay_asimmetrico",
+      "modifica_codice",
+      "osservazione_risultato",
+      "metodo_scientifico",
+      "persistenza_retinica"
+    ],
     "next_suggested": "v3-cap6-esp1",
-    "resume_message": "L'ultima volta avete modificato i tempi del Blink creando ritmi personalizzati. Oggi passiamo ai circuiti con pulsanti."
+    "resume_message": "L'ultima volta avete modificato i tempi del Blink creando ritmi personalizzati e scoperto che l'occhio non vede lampeggi troppo veloci. Oggi passiamo ai circuiti con pulsanti!"
   }
 }

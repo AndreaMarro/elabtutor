@@ -1,47 +1,45 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp7",
   "volume": 3,
   "chapter": 7,
-  "title": "Contatore con LED binario",
-  "chapter_title": "I pin di input",
-  "difficulty": 3,
-  "duration_minutes": 40,
+  "title": "Trimmer controlla luminosita",
+  "chapter_title": "I pin analogici",
+  "difficulty": 2,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Contare le pressioni del pulsante e mostrare il numero in binario usando i LED. Ogni LED rappresenta un bit: acceso = 1, spento = 0. Con 3 LED si contano fino a 7. Impariamo la base della rappresentazione binaria usata da tutti i computer.",
+  "objective": "Collegare analogRead e analogWrite usando la funzione map() per convertire il range 0-1023 del trimmer nel range 0-255 di analogWrite. Il trimmer diventa un controllo di luminosita in tempo reale per il LED.",
   "components_needed": [
     { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
     { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
+    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
     { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "LED giallo", "quantity": 1, "icon": "led" },
-    { "name": "LED verde", "quantity": 1, "icon": "led" },
-    { "name": "Resistore 470ohm", "quantity": 3, "icon": "resistor" },
-    { "name": "Fili di collegamento", "quantity": 10, "icon": "wire" }
+    { "name": "Fili di collegamento", "quantity": 6, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "pulsante", "digitalRead", "LED", "resistore", "breadboard", "codice", "programma", "GND", "binario", "bit", "contatore", "variabile", "int", "debounce"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico", "esadecimale"],
-    "note": "Cap 7 Vol 3 — contatore, sistema binario, operatore modulo, bitwise."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogRead", "analogWrite", "map", "conversione", "range", "0-1023", "0-255", "tempo reale", "controller", "Arduino"],
+    "forbidden": ["interrupt", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
+    "note": "Esperimento chiave che unisce lettura e scrittura analogica. map() e la funzione ponte tra i due mondi. Sottolineare che map() e riusabile per qualsiasi conversione di range."
   },
   "prerequisites": ["v3-cap7-esp6"],
   "next_experiment": {
     "id": "v3-cap7-esp8",
-    "title": "Anti-rimbalzo pulsante (debounce)",
-    "preview": "Nel prossimo esperimento scopriamo il debounce avanzato: non piu delay ma millis()! Un metodo professionale per gestire i rimbalzi del pulsante senza bloccare il programma."
+    "title": "DAC reale (10 bit)",
+    "preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC: un'uscita analogica VERA, non PWM. Arduino R4 ha qualcosa di speciale!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "I computer contano in binario: solo con 0 e 1. I nostri LED fanno la stessa cosa: acceso = 1, spento = 0. Con 3 LED possiamo contare da 0 a 7! Oggi costruiamo un contatore che mostra il numero di pressioni del pulsante in binario.",
-      "teacher_tip": "Scrivi alla lavagna i numeri da 0 a 7 in binario: 000, 001, 010, 011, 100, 101, 110, 111. Mostra che con 3 cifre binarie (3 bit = 3 LED) si possono rappresentare 8 numeri diversi (da 0 a 7). Il LED piu a destra vale 1, quello centrale vale 2, quello a sinistra vale 4.",
-      "class_hook": "Sapete come conta un computer? Non usa le dita (ne ha solo due: acceso e spento). Con 3 LED possiamo contare fino a 7. Sembra poco, ma con 8 LED arriviamo a 255, e con 32 LED a oltre 4 miliardi!",
+      "teacher_message": "Finora abbiamo letto il trimmer (analogRead, 0-1023) e scritto il LED (analogWrite, 0-255) separatamente. Oggi li colleghiamo! Il trimmer controllera la luminosita del LED in tempo reale. Ma c'e un problema: i range sono diversi. Come li traduciamo?",
+      "teacher_tip": "L'analogia della traduzione linguistica funziona bene: il trimmer parla in 0-1023, il LED capisce solo 0-255. Serve un traduttore: la funzione map().",
+      "class_hook": "Immaginate un mixer audio: girate la manopola e il volume cambia in tempo reale. Oggi costruiamo lo stesso, ma con la luce!",
       "action_tags": [],
       "auto_action": null
     },
@@ -49,51 +47,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il circuito ha un pulsante INPUT_PULLUP e 3 LED su pin OUTPUT. Una variabile int conta le pressioni da 0 a 7 e poi ricomincia. Il codice usa l'operatore modulo (%) per tornare a 0 dopo il 7, e operazioni sui bit per accendere i LED giusti.",
-      "teacher_tip": "L'operatore modulo e come un orologio: dopo le 12 torna a 1. Dopo il 7 il contatore torna a 0. Per i bit, spiega in modo semplice: il primo LED mostra se il numero e dispari (bit 0), il secondo mostra i 'due' (bit 1), il terzo mostra i 'quattro' (bit 2). Non serve andare nel dettaglio del bitwise AND.",
+      "teacher_message": "Il circuito combina trimmer su A0 e LED su pin 5 (PWM). Nel codice: leggiamo con analogRead(A0), convertiamo con map(valore, 0, 1023, 0, 255), scriviamo con analogWrite(5, risultato). Tre righe, un risultato magico.",
+      "teacher_tip": "Spiegare map() come una proporzione automatica: map(valore, daMin, daMax, aMin, aMax). Se il valore e a meta del primo range, il risultato sara a meta del secondo. Arduino fa la proporzione per noi.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp7]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Se premo il pulsante 5 volte, quali LED saranno accesi? Pensate: 5 in binario si scrive 101. Significa che il LED delle unita (vale 1) e acceso, quello dei due (vale 2) e spento, e quello dei quattro (vale 4) e acceso. 4 + 0 + 1 = 5!",
-      "teacher_tip": "Fai provare agli studenti a convertire mentalmente: 3 = 011 (due + uno), 6 = 110 (quattro + due), 7 = 111 (tutto acceso). Se qualcuno chiede 8: con 3 LED non si puo! Servirebbero 4 LED. Questo introduce naturalmente il concetto di overflow.",
-      "provocative_question": "Cosa succede se premo il pulsante 8 volte? 8 in binario e 1000, ma abbiamo solo 3 LED. Dove va il quarto bit?",
+      "duration_minutes": 10,
+      "teacher_message": "Il trimmer legge 0-1023 ma analogWrite vuole 0-255. Come traduciamo? Potremmo dividere per 4 (1023/255 e circa 4). Ma map() e piu precisa e funziona con qualsiasi range: map(valore, 0, 1023, 0, 255).",
+      "teacher_tip": "Mostrare che map() funziona con qualsiasi coppia di range: map(valore, 0, 1023, 0, 100) per le percentuali, map(valore, 0, 1023, 20, 200) per limitare il range. E uno strumento potentissimo.",
+      "provocative_question": "E se volessimo invertire? Trimmer tutto a destra = LED spento, tutto a sinistra = LED al massimo? Con map() basta invertire: map(valore, 0, 1023, 255, 0). Facile!",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! All'inizio tutti i LED sono spenti (numero 0). Premete il pulsante e contate: 1, 2, 3... Osservate come i LED si accendono e spengono seguendo lo schema binario. Dopo il 7 si torna a 0!",
-      "teacher_tip": "Fai tenere un foglio con la tabella binaria 0-7 e chiedi di verificare ad ogni pressione che i LED corrispondono. E un momento di scoperta potente: stanno vedendo come un computer rappresenta i numeri!",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:btn1]", "[AZIONE:highlight:led1]", "[AZIONE:highlight:led2]", "[AZIONE:highlight:led3]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Girate il trimmer: il LED segue in tempo reale! Tutto a sinistra e spento, tutto a destra e al massimo. Ogni posizione intermedia da una luminosita diversa. Il controllo e fluido e immediato.",
+      "teacher_tip": "Far notare la fluidita: non ci sono scatti visibili perche il loop gira migliaia di volte al secondo. Ogni piccolo movimento del trimmer aggiorna il LED istantaneamente.",
+      "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Premi 1: solo il LED destro si accende (001). Premi 2: solo il centrale (010). Premi 3: destro e centrale (011). Premi 4: solo il sinistro (100). Continua fino a 7 (111 = tutti accesi), poi torna a 0."
+      "observation_prompt": "Il trimmer controlla fluidamente la luminosita del LED. Provate a trovare esattamente meta luminosita. Poi provate il minimo visibile: qual e il valore piu basso in cui vedete ancora luce?"
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete appena visto come conta un computer! Il sistema binario e alla base di tutta l'informatica. Con 3 bit contiamo fino a 7, con 8 bit fino a 255, con 32 bit fino a 4 miliardi. Ogni LED del nostro circuito e esattamente un bit nella memoria di Arduino.",
-      "teacher_tip": "Recap: ogni LED e un bit. Il LED destro vale 1 (bit 0), il centrale vale 2 (bit 1), il sinistro vale 4 (bit 2). L'operatore modulo (%) fa tornare il contatore a 0 dopo il massimo. Collegamento con la vita reale: la RAM del computer ha miliardi di questi 'LED microscopici'.",
-      "summary_for_class": "Il sistema binario usa solo 0 e 1, proprio come i nostri LED (spento e acceso). Con 3 LED rappresentiamo numeri da 0 a 7. Il LED a destra vale 1, quello al centro vale 2, quello a sinistra vale 4. Per sapere il numero, sommiamo i valori dei LED accesi. Tutti i computer del mondo contano cosi!",
-      "concepts_learned": [
-        "sistema binario (base 2)",
-        "bit: acceso = 1, spento = 0",
-        "contatore con variabile int",
-        "operatore modulo (%)",
-        "rappresentazione binaria con LED"
-      ],
-      "next_preview": "Nel prossimo esperimento impariamo il debounce professionale: senza delay che blocca il programma, usando millis() per un anti-rimbalzo intelligente!"
+      "duration_minutes": 8,
+      "teacher_message": "Oggi avete unito input e output analogico con map(). Il trimmer legge, map() traduce, il LED risponde. Questo e il pattern fondamentale di tantissimi dispositivi: sensore → elaborazione → attuatore.",
+      "teacher_tip": "Sottolineare il pattern universale: LEGGI → ELABORA → SCRIVI. Funziona per luminosita, velocita motori, posizione servo, volume audio. map() e lo strumento che collega mondi con range diversi.",
+      "summary_for_class": "map(valore, 0, 1023, 0, 255) traduce il range del trimmer nel range del LED. Tre righe di codice: analogRead, map, analogWrite. Il trimmer controlla la luminosita in tempo reale, fluido e senza scatti.",
+      "concepts_learned": ["funzione map() per conversione range", "collegare analogRead e analogWrite", "pattern leggi-elabora-scrivi", "controllo in tempo reale", "trimmer come controller di luminosita"],
+      "next_preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC di Arduino R4: un'uscita analogica VERA che produce tensione reale, non PWM!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["sistema_binario", "bit", "contatore", "operatore_modulo", "LED_binari"],
+    "concepts_covered": ["map()", "collegamento input-output analogico", "controllo tempo reale", "pattern leggi-elabora-scrivi"],
     "next_suggested": "v3-cap7-esp8",
-    "resume_message": "Avete costruito un contatore binario con LED! Prossimo: debounce avanzato con millis()."
+    "resume_message": "L'ultima volta avete usato map() per collegare trimmer e LED. Oggi scopriamo il DAC: un'uscita analogica vera, non PWM!"
   }
 }

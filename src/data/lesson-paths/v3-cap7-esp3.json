@@ -1,45 +1,47 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp3",
   "volume": 3,
   "chapter": 7,
-  "title": "Pulsante con INPUT_PULLUP",
-  "chapter_title": "I pin di input",
+  "title": "Trimmer controlla 3 LED",
+  "chapter_title": "I pin analogici",
   "difficulty": 2,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Scoprire la resistenza di pullup interna di Arduino. Con INPUT_PULLUP non serve un resistore esterno per il pulsante. Il pin legge HIGH di default e LOW quando premiamo. Logica invertita!",
+  "objective": "Dividere il range analogico 0-1023 in tre intervalli e accendere un LED diverso per ciascuna zona. Introdurre if-else if-else per gestire intervalli multipli. Il trimmer diventa un selettore a tre posizioni.",
   "components_needed": [
     { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
     { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
+    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
+    { "name": "Resistore 470ohm", "quantity": 3, "icon": "resistor" },
     { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "Fili di collegamento", "quantity": 5, "icon": "wire" }
+    { "name": "LED giallo", "quantity": 1, "icon": "led" },
+    { "name": "LED verde", "quantity": 1, "icon": "led" },
+    { "name": "Fili di collegamento", "quantity": 10, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "INPUT_PULLUP", "pulsante", "digitalRead", "LED", "resistore", "breadboard", "codice", "programma", "GND", "HIGH", "LOW", "pullup", "resistenza interna"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico"],
-    "note": "Cap 7 Vol 3 — INPUT_PULLUP, resistenza interna, logica invertita."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogRead", "intervallo", "range", "zona", "if", "else if", "else", "soglia", "0-1023", "Arduino"],
+    "forbidden": ["interrupt", "map", "analogWrite", "float", "DAC", "risoluzione"],
+    "note": "Terzo esperimento analogico. Il focus e sulla divisione del range in intervalli. L'analogia del semaforo funziona bene: tre zone, tre colori."
   },
   "prerequisites": ["v3-cap7-esp2"],
   "next_experiment": {
     "id": "v3-cap7-esp4",
-    "title": "PWM: luminosita variabile",
-    "preview": "Nel prossimo esperimento il LED non sara solo acceso o spento: controlleremo la luminosita con valori da 0 a 255 usando il PWM!"
+    "title": "analogWrite (PWM fade)",
+    "preview": "Nella prossima lezione scopriamo analogWrite: invece di accendere/spegnere, facciamo brillare il LED gradualmente!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Nell'esperimento precedente il pulsante aveva bisogno di un resistore esterno. Arduino ha un trucco: una resistenza nascosta dentro al chip chiamata pullup. Oggi la attiviamo con INPUT_PULLUP e risparmiamo un componente!",
-      "teacher_tip": "Usa l'analogia dell'elastico: immagina un muretto (il pin) tenuto su da un elastico (la resistenza interna). Di default il muretto sta su (HIGH). Quando premi il pulsante, lo abbatti (LOW). Senza elastico il muretto potrebbe cadere da solo (valore casuale).",
-      "class_hook": "Sapete che dentro Arduino ci sono delle resistenze nascoste? Come un paracadute di emergenza: se non c'e nient'altro collegato al pin, la resistenza interna lo tiene a un valore sicuro. Oggi la usiamo!",
+      "teacher_message": "Finora il trimmer controllava un solo LED con una soglia. Ma 1024 valori sono tanti! Possiamo dividerli in zone: zona bassa, media e alta. Ogni zona accende un LED diverso, come un semaforo controllato dalla manopola.",
+      "teacher_tip": "L'analogia del semaforo e perfetta: rosso nella zona bassa, giallo in mezzo, verde in alto. Chiedere alla classe: come dividereste 1023 in tre parti uguali?",
+      "class_hook": "Immaginate di avere un termometro: freddo (blu), tiepido (giallo), caldo (rosso). Oggi il trimmer fa la stessa cosa con tre LED!",
       "action_tags": [],
       "auto_action": null
     },
@@ -47,50 +49,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il circuito e quasi uguale al precedente, ma il pulsante va da un pin di Arduino direttamente a GND, senza resistore esterno. Con pinMode(pin, INPUT_PULLUP) Arduino attiva la resistenza interna da 20k ohm. Il pin legge HIGH quando rilasciato, LOW quando premuto.",
-      "teacher_tip": "Disegna alla lavagna il circuito equivalente: pin --- [R interna 20k] --- 5V e pin --- [pulsante] --- GND. Quando il pulsante e aperto, la resistenza tira il pin verso 5V (HIGH). Quando e chiuso, la corrente va a GND (LOW). La logica e invertita rispetto all'intuizione.",
+      "teacher_message": "Il circuito ha tre LED con tre resistori, piu il trimmer su A0. Nel codice dividiamo 0-1023 in tre zone: 0-340 accende il rosso, 341-681 accende il giallo, 682-1023 accende il verde. Usiamo if, else if, else.",
+      "teacher_tip": "Mostrare come si calcolano le soglie: 1023 / 3 = circa 341. Quindi zona 1 e 0-340, zona 2 e 341-681, zona 3 e 682-1023. Non devono essere perfettamente uguali, l'importante e coprire tutto il range.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp3]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Attenzione: con INPUT_PULLUP quando il pulsante NON e premuto, il pin legge HIGH. Quando lo premiamo, legge LOW. E il contrario di quello che ci aspetteremmo! Perche la logica e invertita?",
-      "teacher_tip": "Questa e la domanda chiave. Spiega che la resistenza interna 'tira su' il pin verso 5V (HIGH). Il pulsante, quando premuto, collega il pin direttamente a GND (0V = LOW). GND vince sempre sulla resistenza perche e un collegamento diretto. E come un braccio di ferro dove GND e piu forte.",
-      "provocative_question": "Se scriviamo if(digitalRead(pin) == HIGH) per accendere il LED, il LED si accende quando premiamo o quando rilasciamo il pulsante? Attenzione, non e intuitivo!",
+      "duration_minutes": 10,
+      "teacher_message": "Come dividiamo 1023 in tre parti uguali? 1023 diviso 3 fa 341. Quindi le soglie sono 341 e 682. Ma se volessimo 4 zone? O 5? Come cambierebbe il codice?",
+      "teacher_tip": "Far ragionare sulla generalizzazione: con N zone, ogni zona e larga 1023/N. Con 4 zone servono 3 soglie. Con 10 zone, 9 soglie. Far capire che il pattern si ripete.",
+      "provocative_question": "Se aggiungiamo un quarto LED, dove mettiamo le soglie? E se ne vogliamo 10? A un certo punto diventa scomodo scrivere tanti if... ci sara un modo piu furbo?",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! Il LED si comporta come prima, ma il circuito e piu semplice. Notate: non c'e piu il resistore esterno per il pulsante. Arduino fa tutto da solo con INPUT_PULLUP. Premete e rilasciate il pulsante.",
-      "teacher_tip": "Fai confrontare mentalmente i due circuiti: quello precedente (resistore esterno) e questo (INPUT_PULLUP). Il risultato e lo stesso, ma il circuito e piu pulito. Nella pratica, quasi tutti usano INPUT_PULLUP per i pulsanti perche e piu comodo e affidabile.",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:btn1]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Girate il trimmer lentamente: un LED alla volta si accende in base alla posizione. Nella zona bassa si accende il rosso, in mezzo il giallo, in alto il verde. Solo un LED alla volta!",
+      "teacher_tip": "Far notare che nei punti di confine (intorno a 341 e 682) il LED potrebbe sfarfallare. Questo e normale: piccole variazioni del trimmer fanno saltare tra due zone. Si puo risolvere con l'isteresi (concetto avanzato, solo accennare).",
+      "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il LED si accende e si spegne come prima, ma il circuito ha un componente in meno. Il pulsante va direttamente dal pin a GND. La resistenza interna INPUT_PULLUP fa il lavoro del resistore esterno."
+      "observation_prompt": "Un LED alla volta si accende in base alla posizione del trimmer. Riuscite a trovare i punti esatti dove si cambia colore? Provate a stare sul confine."
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "INPUT_PULLUP e un trucco fondamentale di Arduino. Da oggi in poi, ogni volta che usate un pulsante, potete usare INPUT_PULLUP e risparmiare un resistore. Ricordate solo che la logica e invertita: premuto = LOW!",
-      "teacher_tip": "Recap: INPUT_PULLUP attiva una resistenza interna da 20k ohm. Il pin legge HIGH di default. Premendo il pulsante (collegato a GND) il pin va a LOW. Nella pratica e lo standard per collegare pulsanti ad Arduino.",
-      "summary_for_class": "INPUT_PULLUP e una resistenza nascosta dentro Arduino che tiene il pin a HIGH quando il pulsante non e premuto. Premendo si va a LOW. Vantaggio: un componente in meno nel circuito! Lo svantaggio e che la logica e invertita: bisogna ricordarselo nel codice.",
-      "concepts_learned": [
-        "INPUT_PULLUP e resistenza interna",
-        "logica invertita: premuto = LOW",
-        "collegamento pulsante senza resistore esterno",
-        "confronto INPUT vs INPUT_PULLUP"
-      ],
-      "next_preview": "Nel prossimo esperimento abbandoniamo il mondo digitale (0 o 1) e scopriamo il PWM: 256 livelli di luminosita per il LED!"
+      "duration_minutes": 8,
+      "teacher_message": "Oggi avete diviso il range analogico in tre zone con if-else if-else. Ogni zona controlla un LED diverso. Il trimmer e diventato un selettore a tre posizioni. Questo principio si usa ovunque: indicatori di livello, barre di progresso, allarmi graduali.",
+      "teacher_tip": "Collegare al mondo reale: gli indicatori del carburante in auto funzionano cosi. Un sensore analogico, zone con colori diversi (verde, giallo, rosso). La prossima lezione e un salto: da leggere analogico a SCRIVERE analogico.",
+      "summary_for_class": "Dividendo il range 0-1023 in tre intervalli (0-340, 341-681, 682-1023) controlliamo tre LED con if-else if-else. Un solo LED alla volta si accende, come un semaforo controllato dal trimmer.",
+      "concepts_learned": ["if-else if-else per intervalli", "divisione range analogico in zone", "soglie multiple (341, 682)", "un output alla volta", "trimmer come selettore"],
+      "next_preview": "Nella prossima lezione facciamo qualcosa di nuovo: invece di accendere o spegnere, facciamo brillare il LED gradualmente con analogWrite e il PWM!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["INPUT_PULLUP", "resistenza_pullup_interna", "logica_invertita", "pulsante_senza_resistore"],
+    "concepts_covered": ["if-else if-else", "intervalli analogici", "soglie multiple", "trimmer selettore"],
     "next_suggested": "v3-cap7-esp4",
-    "resume_message": "Avete scoperto INPUT_PULLUP e la logica invertita! Prossimo: PWM e luminosita variabile."
+    "resume_message": "L'ultima volta avete diviso il range del trimmer in tre zone per controllare tre LED. Oggi scopriamo analogWrite per far brillare un LED gradualmente."
   }
 }

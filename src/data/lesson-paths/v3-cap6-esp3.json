@@ -1,45 +1,97 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap6-esp3",
   "volume": 3,
   "chapter": 6,
-  "title": "2 LED alternati",
+  "title": "Cambia il numero di pin",
   "chapter_title": "I pin digitali",
-  "difficulty": 2,
-  "duration_minutes": 40,
+  "difficulty": 1,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Controllare due LED su pin diversi in modo alternato: quando uno e acceso l'altro e spento. Capire come Arduino esegue le istruzioni in sequenza, una dopo l'altra.",
+  "objective": "Spostare il LED dal pin 13 al pin 5 per scoprire che i pin digitali di Arduino sono intercambiabili. Basta cambiare il numero nel codice e spostare il filo. Impariamo quanti pin ha Arduino e come scegliere quale usare.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
-    { "name": "LED verde", "quantity": 1, "icon": "💚" },
-    { "name": "Resistore 470ohm", "quantity": 2, "icon": "⚡" },
-    { "name": "Fili di collegamento", "quantity": 6, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED verde",
+      "quantity": 1,
+      "icon": "💚"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 4,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "digitale", "OUTPUT", "HIGH", "LOW", "LED", "alternato", "sequenza", "delay", "pinMode", "digitalWrite"],
-    "forbidden": ["array", "for", "while", "variabile", "funzione", "millis"],
-    "note": "Due pin OUTPUT gestiti in sequenza. Non introdurre cicli o variabili: solo istruzioni in fila"
+    "allowed": [
+      "Arduino",
+      "pin",
+      "digitale",
+      "OUTPUT",
+      "HIGH",
+      "LOW",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "setup",
+      "loop",
+      "programma",
+      "codice",
+      "Blink",
+      "pinMode",
+      "digitalWrite",
+      "GND",
+      "massa",
+      "D5",
+      "D13"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "analogico"
+    ],
+    "note": "Cap 6 Vol 3 — pin digitali intercambiabili, Blink su pin 5 invece di pin 13."
   },
-  "prerequisites": ["v3-cap6-esp2"],
+  "prerequisites": [
+    "v3-cap6-esp2"
+  ],
   "next_experiment": {
     "id": "v3-cap6-esp4",
-    "title": "LED + Buzzer",
-    "preview": "Nella prossima lezione aggiungiamo il suono: un buzzer che suona insieme al LED."
+    "title": "Due LED: effetto polizia",
+    "preview": "Nel prossimo esperimento usiamo 3 LED e 3 pin per costruire un semaforo! Impariamo a controllare piu' pin contemporaneamente."
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Un passaggio a livello ha due luci che si alternano: rossa accesa e bianca spenta, poi il contrario. Oggi costruiamo lo stesso effetto con due LED e Arduino.",
-      "teacher_tip": "Il riferimento al passaggio a livello e molto efficace per questa eta. Se possibile, mostrare un video di 5 secondi.",
-      "class_hook": "Le luci del passaggio a livello sono mai accese tutte e due insieme? O sono sempre una accesa e una spenta?",
+      "teacher_message": "Nell'esperimento precedente il LED era sul pin 13. Ma Arduino ha tanti pin digitali! Oggi spostiamo il LED sul pin 5 e scopriamo che basta cambiare UN numero nel codice per farlo funzionare su qualsiasi pin.",
+      "teacher_tip": "Chiedi: 'Ricordate su quale pin era il LED la volta scorsa? Il pin 13. Oggi lo mettiamo sul 5. Secondo voi, cosa dobbiamo cambiare nel codice?' La risposta e' semplice: solo il numero del pin. Questo concetto di flessibilita' e' fondamentale.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 resistore 470Ω, 1 LED verde, fili di collegamento.",
+      "class_hook": "Il LED lampeggiava sul pin 13. Ma Arduino ha TANTI pin! Possiamo scegliere quale usare? Certo! Basta cambiare un numero. Vediamo come.",
       "action_tags": [],
       "auto_action": null
     },
@@ -47,45 +99,153 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il circuito: LED rosso sul pin 7, LED verde sul pin 8. Nel codice, accendiamo il rosso e spegniamo il verde, aspettiamo, poi il contrario.",
-      "teacher_tip": "Scrivere lo schema alla lavagna: HIGH-LOW-delay-LOW-HIGH-delay. Far notare che le istruzioni sono in coppia: quando uno sale, l'altro scende.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp3]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Il circuito e' identico al precedente, ma il filo parte dal pin 5 invece che dal pin 13. Il codice cambia solo in due punti: pinMode(5, OUTPUT) invece di pinMode(13, OUTPUT), e digitalWrite(5, HIGH/LOW) invece di digitalWrite(13, HIGH/LOW).",
+      "teacher_tip": "Fai confrontare i due codici fianco a fianco: l'unica differenza e' il numero 5 al posto di 13. Questo e' potentissimo: Arduino tratta tutti i pin digitali allo stesso modo! Mostra sulla scheda dove si trova il pin 5 rispetto al 13.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap6-esp3]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito Blink con LED verde su pin 5",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "green"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a16",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d23",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il codice ha 6 righe nel loop. Cosa succede se metto entrambi i LED su HIGH contemporaneamente? Si accendono tutti e due?",
-      "teacher_tip": "Questa domanda porta a capire che Arduino puo accendere piu pin insieme. L'alternanza e una scelta del programmatore, non un limite.",
-      "provocative_question": "Riuscite a far lampeggiare i due LED insieme, come luci di Natale? Cosa dovete cambiare nel codice?",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito e' pronto sul pin 5. Prima di accenderlo, pensiamo: quanti pin ha Arduino? Possiamo usarli tutti per i LED?",
+      "teacher_tip": "Arduino Nano ha 14 pin digitali (D0-D13) e 6 analogici (A0-A5). In teoria possiamo usarli quasi tutti per i LED! Pero' D0 e D1 sono speciali (comunicazione seriale), quindi in pratica ne abbiamo 12 digitali + 6 analogici. Non serve entrare nei dettagli tecnici, basta dire 'Arduino ha circa 20 pin utilizzabili'.",
+      "provocative_question": "Quanti pin ha Arduino? Possiamo usarli tutti per i LED? E se volessimo accendere 20 LED, basterebbero i pin?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED non lampeggia: il codice usa ancora il pin 13",
+          "teacher_response": "Hai cambiato il numero del pin nel codice? Deve essere 5, non 13! Controlla sia nel pinMode() che nei digitalWrite().",
+          "analogy": "E' come scrivere l'indirizzo sbagliato su una lettera: la lettera parte, ma arriva alla casa sbagliata!"
+        },
+        {
+          "mistake": "Il filo e' sul pin 5 ma il codice dice pin 6",
+          "teacher_response": "Il numero nel codice deve corrispondere ESATTAMENTE al pin fisico dove hai collegato il filo. Se il filo e' sul pin 5, il codice deve dire 5.",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play. Rosso acceso, verde spento. Pausa. Verde acceso, rosso spento. Pausa. Si ripete all'infinito. Provate a cambiare i delay.",
-      "teacher_tip": "Sfidare i piu veloci: 'Riuscite a fare 3 LED alternati?' (serve un terzo LED e pin). Non e richiesto ma stimola i migliori.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Il LED verde lampeggia sul pin 5 esattamente come il LED rosso lampeggiava sul pin 13. Il comportamento e' identico perche' tutti i pin digitali funzionano allo stesso modo!",
+      "teacher_tip": "Chiedi: 'Vedete differenze rispetto all'esperimento precedente? Il LED lampeggia alla stessa velocita'?' La risposta e' si': il programma e' lo stesso, solo il pin e' diverso. Questo dimostra che i pin sono intercambiabili.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "I due LED si accendono mai insieme? Cambiate i delay e osservate cosa succede con tempi diversi."
+      "observation_prompt": "Il LED verde lampeggia sul pin 5 come faceva il LED rosso sul pin 13. I pin digitali di Arduino sono intercambiabili: cambiando un numero nel codice, il LED funziona su qualsiasi pin!",
+      "analogies": [
+        {
+          "concept": "pin_intercambiabili",
+          "text": "I pin digitali di Arduino sono come le prese di corrente di casa: puoi collegare la lampada a QUALSIASI presa, funziona sempre. L'importante e' che il filo e il codice puntino allo stesso pin!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        },
+        {
+          "concept": "numero_pin_nel_codice",
+          "text": "Il numero del pin nel codice e' come l'indirizzo di una lettera: se scrivi l'indirizzo giusto, il postino sa dove consegnare. Se sbagli numero, il segnale va al pin sbagliato!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Arduino esegue le istruzioni una dopo l'altra, nell'ordine esatto in cui le scriviamo. Controllando piu pin in sequenza creiamo effetti luminosi coordinati.",
-      "teacher_tip": "Collegare al concetto di esecuzione sequenziale: il computer non 'pensa', esegue riga per riga. L'ordine conta.",
-      "summary_for_class": "Con due pin OUTPUT e istruzioni in sequenza, creiamo LED alternati. Arduino esegue le righe una alla volta, nell'ordine in cui le scriviamo.",
-      "concepts_learned": ["due pin OUTPUT contemporanei", "alternanza HIGH/LOW coordinata", "esecuzione sequenziale del codice", "effetti luminosi con timing"],
-      "next_preview": "Nella prossima lezione aggiungiamo un buzzer: il LED lampeggia e il buzzer suona. Luce e suono insieme."
+      "duration_minutes": 5,
+      "teacher_message": "Perfetto! Ora sapete che i pin digitali di Arduino sono intercambiabili. Basta cambiare il numero nel codice e spostare il filo. Arduino Nano ha circa 20 pin utilizzabili: nel prossimo esperimento ne useremo 3 insieme!",
+      "teacher_tip": "Recap: 'Tutti i pin digitali funzionano allo stesso modo. Per spostare un componente su un altro pin: 1) sposta il filo fisico, 2) cambia il numero nel codice. Tutto qui!' Anticipa il prossimo esperimento: 'Se un pin puo' controllare un LED, tre pin possono controllare tre LED!'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "I pin digitali di Arduino sono intercambiabili: funzionano tutti allo stesso modo. Per spostare un LED su un altro pin basta cambiare il numero nel codice e il filo sul circuito. Arduino Nano ha circa 20 pin utilizzabili!",
+      "concepts_learned": [
+        "pin digitali intercambiabili",
+        "corrispondenza pin fisico e codice",
+        "numero di pin disponibili",
+        "flessibilita' della configurazione",
+        "cambio pin nel codice"
+      ],
+      "next_preview": "Nel prossimo esperimento usiamo TRE pin e TRE LED per costruire un semaforo con effetto polizia! La sequenza verde-giallo-rosso sara' controllata dal nostro programma."
     }
   ],
+  "assessment_invisible": [
+    "Se cambia autonomamente il numero del pin nel codice → comprensione della corrispondenza pin-codice",
+    "Se chiede quanti LED si possono collegare → pensiero estensivo",
+    "Se nota che il LED integrato non lampeggia piu' → attenzione ai dettagli (pin 13 non e' piu' usato)"
+  ],
   "session_save": {
-    "concepts_covered": ["due LED alternati", "pin multipli", "esecuzione sequenziale", "timing coordinato"],
+    "concepts_covered": [
+      "pin_intercambiabili",
+      "cambio_pin_codice",
+      "pin_disponibili",
+      "blink_pin5"
+    ],
     "next_suggested": "v3-cap6-esp4",
-    "resume_message": "L'ultima volta avete alternato due LED come un passaggio a livello. Oggi aggiungiamo il suono con un buzzer."
+    "resume_message": "Avete scoperto che i pin digitali sono intercambiabili! Prossimo passo: usare 3 pin insieme per un semaforo."
   }
 }

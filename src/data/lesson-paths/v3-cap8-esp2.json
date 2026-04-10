@@ -1,26 +1,26 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap8-esp2",
   "volume": 3,
   "chapter": 8,
   "title": "Serial.println in loop",
-  "chapter_title": "Comunicazione seriale",
+  "chapter_title": "Comunicazione Seriale",
   "difficulty": 1,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Spostare Serial.println nel loop per stampare messaggi continuamente. Aggiungiamo una variabile contatore che si incrementa ad ogni ciclo. Scopriamo l'importanza del delay per rallentare l'output e renderlo leggibile. Il Serial Monitor diventa uno strumento di monitoraggio in tempo reale.",
+  "objective": "Spostare Serial.println nel loop per stampare messaggi continuamente. Senza delay il Serial Monitor si riempie a velocita pazzesca: migliaia di righe al secondo! Scopriamo la differenza tra setup e loop e quanto e veloce Arduino quando non lo freniamo.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Cavo USB", "quantity": 1, "icon": "cable" }
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "Serial", "println", "begin", "baud", "rate", "monitor", "seriale", "loop", "contatore", "variabile", "int", "delay", "incremento", "++", "9600"],
+    "allowed": ["Arduino", "Serial", "monitor", "baud", "USB", "println", "plotter", "begin", "rate", "seriale", "loop", "setup", "velocita", "delay", "migliaia", "righe", "9600"],
     "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "I2C", "SPI"],
-    "note": "Cap 8 Vol 3 — Serial.println nel loop, contatore, delay per leggibilita, variabile globale."
+    "note": "Cap 8 Vol 3 — Serial.println nel loop senza delay, flusso continuo, velocita seriale."
   },
   "prerequisites": ["v3-cap8-esp1"],
   "next_experiment": {
@@ -32,10 +32,10 @@
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Nell'esperimento precedente il messaggio appariva una sola volta perche era nel setup. Oggi lo mettiamo nel loop: si ripetera all'infinito! E aggiungiamo un contatore che numera ogni messaggio. Vedrete i numeri scorrere sul Serial Monitor.",
-      "teacher_tip": "Prepara gli studenti a un possibile problema: senza delay il loop gira cosi veloce che il Serial Monitor si riempe di migliaia di righe al secondo e diventa illeggibile. Questo e un ottimo momento per far capire quanto e veloce Arduino (16 milioni di operazioni al secondo).",
-      "class_hook": "Immaginate una stampante impazzita che stampa pagine senza fermarsi. Ecco cosa succede se mettiamo Serial.println nel loop senza delay! Oggi impariamo a controllare la velocita dei messaggi di Arduino.",
+      "duration_minutes": 7,
+      "teacher_message": "Nell'esperimento precedente il messaggio appariva una sola volta perche era nel setup. Oggi lo mettiamo nel loop senza nessun delay! Immaginate una stampante impazzita che stampa pagine senza fermarsi: ecco cosa succede quando Arduino scrive nel loop a tutta velocita.",
+      "teacher_tip": "Prepara gli studenti a un effetto sorprendente: senza delay il loop gira cosi veloce che il Serial Monitor si riempe di migliaia di righe al secondo. Questo e un ottimo momento per far capire quanto e veloce Arduino (16 milioni di operazioni al secondo).",
+      "class_hook": "Immaginate una stampante impazzita che stampa pagine senza fermarsi. Ecco cosa succede se mettiamo Serial.println nel loop senza delay! Oggi scopriamo quanto e veloce Arduino quando non lo freniamo.",
       "action_tags": [],
       "auto_action": null
     },
@@ -43,8 +43,8 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il codice ha Serial.begin(9600) nel setup e Serial.println nel loop. Una variabile contatore parte da 0 e si incrementa con contatore++ ad ogni ciclo. Il delay(500) tra un messaggio e l'altro rende l'output leggibile: un messaggio ogni mezzo secondo.",
-      "teacher_tip": "Mostra cosa succede concettualmente: ciclo 1 stampa 'Conteggio: 0', ciclo 2 stampa 'Conteggio: 1', ciclo 3 stampa 'Conteggio: 2'... all'infinito. La variabile contatore e dichiarata FUORI dal loop (variabile globale) altrimenti ripartirebbe da 0 ogni ciclo. Fai notare la differenza tra variabile locale e globale.",
+      "teacher_message": "Il codice e semplicissimo: Serial.begin(9600) nel setup e Serial.println nel loop. Nessun delay! Arduino ripete il loop migliaia di volte al secondo e ogni volta scrive un messaggio sul Serial Monitor. Vedrete il monitor impazzire di righe.",
+      "teacher_tip": "Fai notare l'assenza del delay: e intenzionale! Vogliamo mostrare la velocita reale di Arduino. A 9600 baud, ogni carattere richiede circa 1ms, quindi una riga corta viene inviata in pochi millisecondi. Ma il loop gira ancora piu veloce di cosi, creando una coda di messaggi.",
       "action_tags": ["[AZIONE:loadexp:v3-cap8-esp2]"],
       "auto_action": "load_experiment"
     },
@@ -52,42 +52,42 @@
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Il contatore si incrementa di 1 a ogni ciclo con contatore++. Se togliamo il delay(500), quanti messaggi vedremmo in un secondo? Arduino gira il loop migliaia di volte al secondo! E se mettiamo delay(1000), quanti messaggi al secondo?",
-      "teacher_tip": "Guida il calcolo: con delay(500) = 2 messaggi al secondo (1000ms / 500ms). Con delay(1000) = 1 al secondo. Senza delay = migliaia al secondo, il monitor non riesce a star dietro. Questo introduce il concetto di frequenza di campionamento, che tornera utile con i sensori.",
-      "provocative_question": "Se la variabile contatore e un int (che va da -32768 a 32767 su Arduino), cosa succede quando il contatore supera 32767? Si blocca? Va in errore? Fa qualcosa di strano?",
+      "teacher_message": "Quanti messaggi al secondo pensate che Arduino riesca a scrivere? 10? 100? 1000? Il loop gira senza sosta e ogni ciclo scrive una riga. Se aggiungiamo delay(1000) quanti messaggi al secondo avremo? E con delay(100)?",
+      "teacher_tip": "Guida il calcolo: senza delay Arduino e limitato solo dal baud rate (9600 bit/secondo = circa 960 caratteri/secondo). Con delay(1000) = 1 messaggio al secondo. Con delay(100) = 10 al secondo. Questo introduce il concetto di frequenza, che tornera utile con i sensori.",
+      "provocative_question": "Se il Serial Monitor si riempie troppo velocemente e non riusciamo a leggere nulla, e utile o inutile? Quando serve andare veloce e quando serve andare piano?",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play e apri il Serial Monitor! Vedete i numeri che scorrono: 0, 1, 2, 3... uno ogni mezzo secondo. Il contatore non si ferma mai. Osservate la velocita costante dei messaggi grazie al delay.",
-      "teacher_tip": "Fai osservare tre cose: la regolarita del timing (un messaggio ogni 500ms), il contatore che cresce senza fermarsi, e cosa succede se si preme Reset (il contatore riparte da 0 perche la variabile si reinizializza). Chiedi: e possibile far partire il contatore da 100 invece che da 0?",
+      "duration_minutes": 12,
+      "teacher_message": "Premi Play e apri il Serial Monitor! Guardate le righe che scorrono a tutta velocita. Il monitor si riempie cosi velocemente che non riuscite a leggere nulla! Arduino scrive senza sosta perche non c'e nessun delay nel loop.",
+      "teacher_tip": "Fai osservare tre cose: la velocita impressionante dello scrolling, l'impossibilita di leggere i singoli messaggi, e cosa succede se si preme Reset (ricomincia daccapo). Chiedi: e utile stampare cosi velocemente? Quando si e quando no?",
       "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Sul Serial Monitor scorrono righe numerate: Conteggio 0, Conteggio 1, Conteggio 2... La velocita e costante grazie al delay(500). Il contatore cresce all'infinito senza fermarsi."
+      "observation_prompt": "Il Serial Monitor si riempie a velocita pazzesca: centinaia di righe al secondo scorrono sullo schermo. E impossibile leggere i singoli messaggi. Arduino ripete il loop senza sosta e ogni ciclo manda un messaggio."
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Ora Arduino sa mandare messaggi continui al computer! Con un contatore e il Serial Monitor possiamo monitorare qualsiasi cosa: quante volte gira il loop, quante volte viene premuto un pulsante, che valore legge un sensore. Il Serial Monitor e lo strumento numero uno per il debug!",
-      "teacher_tip": "Recap: Serial.println nel loop stampa all'infinito. Il contatore con ++ si incrementa a ogni ciclo. Il delay controlla la frequenza dei messaggi. La variabile deve essere globale (fuori dal loop) per non resettarsi. Nella pratica reale, Serial.println e la prima cosa che aggiungi quando qualcosa non funziona: stampi i valori per capire il problema.",
-      "summary_for_class": "Mettendo Serial.println nel loop, Arduino stampa messaggi all'infinito. Con un contatore vediamo quanti cicli ha fatto. Il delay controlla la velocita: senza delay il monitor si riempe troppo velocemente. Il Serial Monitor e lo strumento piu importante per capire cosa fa Arduino: quando qualcosa non funziona, stampate i valori!",
+      "duration_minutes": 8,
+      "teacher_message": "Senza delay, Arduino stampa MIGLIAIA di righe al secondo! Ora capite perche il delay e importante: senza di esso il Serial Monitor diventa illeggibile. Ma in certi casi la velocita e utile, per esempio quando si campiona un sensore veloce. La prossima volta aggiungeremo un potenziometro per leggere valori analogici!",
+      "teacher_tip": "Recap: Serial.println nel loop stampa all'infinito. Senza delay il loop gira alla massima velocita. Il baud rate 9600 limita la velocita di trasmissione. Nella pratica si usa delay() o millis() per controllare la frequenza dei messaggi. Questo esperimento insegna che la velocita di Arduino e impressionante ma va controllata.",
+      "summary_for_class": "Mettendo Serial.println nel loop senza delay, Arduino stampa messaggi a velocita pazzesca. Il Serial Monitor si riempe di migliaia di righe al secondo! Questo ci insegna due cose: Arduino e incredibilmente veloce, e il delay serve a rendere i messaggi leggibili. La velocita seriale dipende dal baud rate (9600).",
       "concepts_learned": [
         "Serial.println nel loop (messaggi continui)",
-        "variabile contatore con ++",
-        "delay per controllare la frequenza",
-        "variabile globale vs locale",
-        "Serial Monitor come strumento di debug"
+        "velocita del loop senza delay",
+        "baud rate come limite di trasmissione",
+        "importanza del delay per la leggibilita",
+        "differenza setup (una volta) vs loop (infinito)"
       ],
       "next_preview": "Nel prossimo esperimento colleghiamo un potenziometro e vediamo i valori analogici (0-1023) scorrere in tempo reale sul Serial Monitor. Arduino legge il mondo fisico e ce lo racconta!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["Serial_println_loop", "contatore", "delay_frequenza", "variabile_globale", "debug_seriale"],
+    "concepts_covered": ["Serial_println_loop", "velocita_loop", "baud_rate_limite", "delay_leggibilita", "flusso_continuo"],
     "next_suggested": "v3-cap8-esp3",
-    "resume_message": "Avete fatto stampare messaggi continui con contatore! Prossimo: analogRead + Serial Monitor."
+    "resume_message": "Avete visto Arduino stampare migliaia di righe al secondo! Prossimo: analogRead + Serial Monitor con potenziometro."
   }
 }

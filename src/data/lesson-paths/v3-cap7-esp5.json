@@ -1,44 +1,44 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp5",
   "volume": 3,
   "chapter": 7,
-  "title": "Fade LED su e giu",
-  "chapter_title": "I pin di input",
-  "difficulty": 2,
-  "duration_minutes": 40,
+  "title": "PWM con valori manuali",
+  "chapter_title": "I pin analogici",
+  "difficulty": 1,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Creare un effetto fade continuo: il LED si accende gradualmente da 0 a 255 e poi si spegne gradualmente da 255 a 0, all'infinito. Usiamo due cicli for consecutivi e analogWrite per un effetto respiro di luce.",
+  "objective": "Sperimentare valori PWM discreti (0, 64, 128, 255) per osservare la relazione tra il numero scritto con analogWrite e la luminosita percepita del LED. Consolidare il concetto di PWM con esempi concreti e visibili.",
   "components_needed": [
     { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
     { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
     { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
+    { "name": "LED rosso", "quantity": 1, "icon": "led" },
     { "name": "Fili di collegamento", "quantity": 4, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "PWM", "analogWrite", "LED", "resistore", "breadboard", "codice", "programma", "for", "ciclo", "fade", "luminosita", "incremento", "decremento"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "DAC"],
-    "note": "Cap 7 Vol 3 — doppio for loop, fade up/down, analogWrite continuo."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogWrite", "valore", "livello", "0-255", "duty cycle", "percentuale", "spento", "massimo", "Arduino"],
+    "forbidden": ["interrupt", "map", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
+    "note": "Esperimento di consolidamento. Difficolta bassa perche il concetto e gia stato introdotto. Qui si osserva e si sperimenta con valori specifici per costruire intuizione."
   },
   "prerequisites": ["v3-cap7-esp4"],
   "next_experiment": {
     "id": "v3-cap7-esp6",
-    "title": "2 LED con pulsante (toggle)",
-    "preview": "Nel prossimo esperimento combiniamo pulsante e LED: ogni pressione alterna quale dei due LED e acceso. Serve una variabile di stato!"
+    "title": "Fade up/down con for",
+    "preview": "Nella prossima lezione creiamo un effetto respiro: il LED si accende e si spegne gradualmente, come se respirasse!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Nell'esperimento precedente il LED si accendeva gradualmente ma poi ripartiva da zero. Oggi lo facciamo anche spegnere gradualmente! Due cicli for: uno che sale e uno che scende. L'effetto e come il respiro: inspira (si accende) ed espira (si spegne).",
-      "teacher_tip": "L'analogia del respiro funziona benissimo: inspira = luce che cresce, espira = luce che cala. Chiedi a un volontario di respirare lentamente e fai notare che e un ciclo continuo, come il nostro programma nel loop().",
-      "class_hook": "Avete mai visto il LED di standby di un MacBook? Pulsa lentamente, come se respirasse. Oggi costruiamo esattamente quell'effetto! Il segreto sono due cicli for: uno che sale e uno che scende.",
+      "teacher_message": "L'ultima volta abbiamo visto il fade continuo. Oggi facciamo il contrario: scegliamo 4 valori precisi e osserviamo la luminosita corrispondente. E come impostare il volume a 0%, 25%, 50% e 100%.",
+      "teacher_tip": "L'analogia del volume e perfetta: 0 e muto, 64 e basso, 128 e medio, 255 e al massimo. Chiedere alla classe di predire la luminosita prima di vedere il risultato.",
+      "class_hook": "Se il LED ha 256 livelli di luminosita, quanti riuscite davvero a distinguere a occhio? Scommettiamo che sono molti meno di 256!",
       "action_tags": [],
       "auto_action": null
     },
@@ -46,50 +46,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il circuito e identico al precedente: un LED con resistore su un pin PWM. La differenza e nel codice: il primo for va da 0 a 255 (fade up), il secondo for va da 255 a 0 (fade down). Nel loop() si ripetono all'infinito.",
-      "teacher_tip": "Spiega la struttura dei due for: for(int i=0; i<=255; i+=5) sale, for(int i=255; i>=0; i-=5) scende. Il passo di 5 rende il fade visibile (51 passaggi invece di 256). Il delay(10) tra ogni passo controlla la velocita dell'effetto.",
+      "teacher_message": "Stesso circuito di prima: LED con resistore sul pin 5 (PWM). Il codice mostra quattro valori in sequenza: analogWrite(5, 0), poi 64, poi 128, poi 255, con delay(1000) tra uno e l'altro per osservare bene.",
+      "teacher_tip": "Far notare le percentuali: 0/255 = 0%, 64/255 = 25%, 128/255 = 50%, 255/255 = 100%. Il duty cycle e la percentuale di tempo in cui il pin e HIGH. Piu alta la percentuale, piu luminoso il LED.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp5]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il primo for sale da 0 a 255 con passi di 5. Il secondo scende da 255 a 0 con passi di 5. Se cambio il delay da 10 a 50, cosa succede all'effetto? E se cambio il passo da 5 a 1?",
-      "teacher_tip": "Guida il ragionamento: delay piu lungo = fade piu lento e morbido. Passo piu piccolo = piu passaggi = transizione piu fluida ma piu lunga. Con passo 1 e delay 10 servono 255 x 10ms = 2.55 secondi per salire. Con passo 5 servono 51 x 10ms = 0.51 secondi.",
-      "provocative_question": "Se il LED fa 256 livelli di luminosita, quanti ne distingue davvero il vostro occhio? Provate a immaginare: vedreste la differenza tra il livello 100 e il livello 101?",
+      "duration_minutes": 10,
+      "teacher_message": "0 e spento, 255 e massimo. Che luminosita ha 128? Esattamente meta? I nostri occhi percepiscono la luce in modo logaritmico, non lineare. Quindi 128 ci sembra piu di meta — e un trucco del nostro cervello!",
+      "teacher_tip": "La percezione logaritmica e un concetto avanzato: non insistere se i ragazzi non capiscono. L'importante e che osservino: 128 non sembra esattamente meta. La scienza della percezione e affascinante ma complessa.",
+      "provocative_question": "Se 128 sembra piu di meta luminosita, quale valore darebbe DAVVERO meta luminosita percepita? Provate a indovinare: 64? 50? 30?",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! Osservate il LED che si accende lentamente e poi si spegne lentamente, come un respiro. Il ciclo si ripete all'infinito. Provate a contare quanti secondi dura un ciclo completo.",
-      "teacher_tip": "Fai misurare il tempo di un ciclo completo (up + down). Con delay(10) e passo 5, ogni fase dura circa 0.5 secondi, quindi un ciclo completo e circa 1 secondo. Chiedi: come lo rallenterei a 3 secondi per fase?",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:led1]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Osservate i 4 livelli di luminosita: spento, basso, medio, massimo. Ogni livello dura un secondo. Riuscite a vedere chiaramente la differenza tra 64 e 128?",
+      "teacher_tip": "Sfida: chiedere ai ragazzi di chiudere gli occhi e riaprirli su ogni cambio di livello. La differenza tra 0 e 64 e molto piu evidente di quella tra 128 e 255, a causa della percezione logaritmica.",
+      "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il LED si accende gradualmente fino al massimo, poi si spegne gradualmente fino a zero. Il ciclo si ripete all'infinito. L'effetto ricorda il LED di standby di un computer portatile."
+      "observation_prompt": "Quattro livelli di luminosita chiaramente diversi. La differenza tra spento e 64 e enorme. Quella tra 128 e 255 sembra minore. Perche?"
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete creato un effetto di luce professionale con solo due cicli for! Questo tipo di animazione si usa in prodotti reali: LED di notifica, luci di standby, indicatori di ricarica. Il principio e sempre lo stesso: PWM + ciclo.",
-      "teacher_tip": "Recap: due for loop consecutivi nel loop() creano un ciclo infinito di fade up e fade down. Il delay controlla la velocita, il passo controlla la fluidita. Sfida per casa: provate a fare il fade solo nella direzione up, fermandosi a 128 invece di 255.",
-      "summary_for_class": "Due cicli for consecutivi creano l'effetto respiro: il primo sale da 0 a 255, il secondo scende da 255 a 0. Il delay tra ogni passo controlla la velocita. Nel loop() il ciclo si ripete all'infinito. Questo effetto si usa nei LED di standby di tutti i dispositivi elettronici!",
-      "concepts_learned": [
-        "doppio ciclo for (up e down)",
-        "fade continuo con analogWrite",
-        "controllo velocita con delay",
-        "passo di incremento/decremento"
-      ],
-      "next_preview": "Nel prossimo esperimento aggiungiamo un pulsante e due LED: ogni pressione alterna quale LED e acceso. Serve il concetto di toggle e variabile di stato!"
+      "duration_minutes": 8,
+      "teacher_message": "Oggi avete visto che analogWrite controlla la luminosita con precisione: 0 e spento, 255 e massimo, e in mezzo ci sono 254 livelli. Il PWM inganna l'occhio: sembra luce continua ma e un lampeggio velocissimo.",
+      "teacher_tip": "Collegare alla vita reale: i dimmer delle luci di casa usano lo stesso principio. Anche gli schermi dei telefoni regolano la luminosita con PWM. I ragazzi usano il PWM ogni giorno senza saperlo!",
+      "summary_for_class": "analogWrite con 0 = spento, 64 = basso, 128 = medio, 255 = massimo. Il PWM crea livelli di luminosita accendendo e spegnendo il pin velocissimo. I nostri occhi vedono una luce continua.",
+      "concepts_learned": ["valori PWM discreti (0, 64, 128, 255)", "relazione numero-luminosita", "percezione non lineare dell'occhio", "duty cycle percentuale", "PWM nella vita quotidiana"],
+      "next_preview": "Nella prossima lezione creiamo un effetto spettacolare: il LED che respira! Si accende piano e si spegne piano, in un ciclo continuo."
     }
   ],
   "session_save": {
-    "concepts_covered": ["fade_up_down", "doppio_for_loop", "delay_controllo_velocita", "passo_incremento"],
+    "concepts_covered": ["valori PWM discreti", "relazione numero-luminosita", "percezione logaritmica", "duty cycle"],
     "next_suggested": "v3-cap7-esp6",
-    "resume_message": "Avete creato l'effetto respiro con il LED! Prossimo: toggle con pulsante e due LED."
+    "resume_message": "L'ultima volta avete testato 4 livelli di PWM. Oggi creiamo l'effetto respiro: il LED si accende e si spegne gradualmente!"
   }
 }

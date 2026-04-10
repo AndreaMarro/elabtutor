@@ -1,96 +1,272 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp2",
   "volume": 3,
   "chapter": 7,
-  "title": "Pulsante spegne LED",
-  "chapter_title": "I pin di input",
-  "difficulty": 1,
-  "duration_minutes": 40,
+  "title": "analogRead con tensione",
+  "chapter_title": "I pin analogici",
+  "difficulty": 2,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Capire come un pulsante puo spegnere un LED normalmente acceso. Il LED parte acceso e si spegne solo quando teniamo premuto il pulsante. Introduciamo digitalRead e la logica invertita: premere = LOW.",
+  "objective": "Leggere il valore analogico del trimmer e convertirlo in Volt! Usando la formula float tensione = (valoreLetto * 5.0) / 1023, scopriamo come Arduino trasforma un numero tra 0 e 1023 in una tensione reale tra 0 e 5 Volt. Un LED si accende solo quando la tensione supera 2.5V.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "Fili di collegamento", "quantity": 5, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Potenziometro 10kΩ",
+      "quantity": 1,
+      "icon": "🎛️"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "❤️"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 6,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "INPUT_PULLUP", "pulsante", "digitalRead", "LED", "resistore", "breadboard", "codice", "programma", "GND", "HIGH", "LOW", "OUTPUT"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico"],
-    "note": "Cap 7 Vol 3 — primo esperimento con pulsante, digitalRead, logica invertita."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "analogico",
+      "analogRead",
+      "ADC",
+      "tensione",
+      "Volt",
+      "float",
+      "formula",
+      "conversione",
+      "trimmer",
+      "potenziometro",
+      "LED",
+      "resistore",
+      "breadboard",
+      "Serial",
+      "Monitor",
+      "soglia",
+      "setup",
+      "loop",
+      "GND",
+      "5V",
+      "PWM",
+      "luminosità"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "DAC",
+      "PWM"
+    ],
+    "note": "Cap 7 Vol 3 — conversione ADC a Volt, tipo float, formula proporzionale."
   },
-  "prerequisites": ["v3-cap6-esp6"],
+  "prerequisites": [
+    "v3-cap7-esp1"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp3",
-    "title": "Pulsante con INPUT_PULLUP",
-    "preview": "Nel prossimo esperimento scopriamo la resistenza interna di Arduino: INPUT_PULLUP! Non servira piu un resistore esterno per il pulsante."
+    "title": "Trimmer controlla 3 LED",
+    "preview": "Nel prossimo esperimento dividiamo il range analogico in tre zone per controllare tre LED diversi!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Finora Arduino ha solo comandato i LED: acceso o spento. Oggi facciamo il contrario! Il LED parte acceso e si spegne quando premiamo un pulsante. Arduino impara ad ASCOLTARE il mondo esterno.",
-      "teacher_tip": "Inizia chiedendo alla classe: chi ha mai usato un pulsante per spegnere qualcosa? Il telecomando della TV, il campanello di casa. Ogni volta che premi, mandi un segnale. Oggi Arduino riceve quel segnale.",
-      "class_hook": "Immaginate un campanello: quando lo premete, suona. Quando lo lasciate, smette. Oggi il nostro pulsante fa il contrario: quando lo premete, il LED si spegne!",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi impariamo a convertire il numero che Arduino legge dal trimmer in una tensione reale in Volt! Il trimmer ci darà un numero tra 0 e 1023, e noi lo trasformeremo in Volt con una formula semplice.",
+      "teacher_tip": "Chiedi ai ragazzi: 'Se Arduino legge 512, quanti Volt sono?' Lasciali ragionare: 512 è circa metà di 1023, quindi circa 2.5V. Questo aggancia l'intuizione alla formula matematica.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 potenziometro 10kΩ, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Arduino legge un numero misterioso tra 0 e 1023. Come facciamo a sapere quanti Volt ci sono davvero? Oggi scopriamo la formula magica per tradurre i numeri in Volt!",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Il circuito ha due parti: il LED su un pin OUTPUT e il pulsante su un pin INPUT. Quando il pulsante non e premuto, digitalRead legge HIGH e il LED resta acceso. Quando lo premiamo, legge LOW e il LED si spegne.",
-      "teacher_tip": "Spiega il concetto di INPUT vs OUTPUT con un paragone semplice: OUTPUT e come parlare (Arduino comanda), INPUT e come ascoltare (Arduino riceve). Fino ad ora abbiamo solo parlato, oggi impariamo ad ascoltare.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp2]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito ha un trimmer collegato al pin A0 che fornisce una tensione variabile. Un LED rosso con resistore 470Ω è collegato al pin D5. Il codice legge il valore analogico, lo converte in Volt con la formula float tensione = (valoreLetto * 5.0) / 1023, e accende il LED se la tensione supera 2.5V.",
+      "teacher_tip": "Spiega la formula passo passo: 'valoreLetto va da 0 a 1023. Moltiplicando per 5.0 e dividendo per 1023 otteniamo i Volt. Il tipo float ci permette di avere numeri con la virgola come 2.51 Volt.' Mostra che il Serial Monitor stampa il valore in Volt in tempo reale.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp2]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con trimmer, LED e Arduino per leggere la tensione",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot1",
+              "value": 10000
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_A0",
+              "to": "bb1:a10",
+              "color": "blue"
+            },
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a20",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d22",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a23",
+              "to": "bb1:bus-bot-minus-23",
+              "color": "black"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Il LED e acceso. Il pulsante e collegato. Cosa pensate che succeda quando lo premiamo? E perche quando rilasciamo il pulsante, il LED torna ad accendersi? Arduino ha memoria di cosa e successo?",
-      "teacher_tip": "Guida la riflessione: Arduino non ricorda nulla tra un ciclo e l'altro del loop. Ogni volta legge il pulsante e decide. Se il pulsante e premuto, spegne il LED. Se non e premuto, lo accende. Non c'e memoria, solo lettura istantanea.",
-      "provocative_question": "Se il loop di Arduino gira migliaia di volte al secondo, perche non vediamo il LED che lampeggia? Come fa Arduino a sembrare cosi veloce?",
+      "teacher_message": "Il circuito è pronto! Prima di avviare, ragioniamo sulla conversione. Il ADC di Arduino legge valori da 0 a 1023. Come li trasformiamo in Volt?",
+      "teacher_tip": "Guida i ragazzi con un esempio concreto: 'Se leggo 512, quanto vale in Volt? 512 * 5.0 / 1023 = circa 2.50V.' Poi chiedi: 'E se leggo 0? E se leggo 1023?' Questo cementa la comprensione della proporzione lineare.",
+      "provocative_question": "Come convertiamo il numero 512 in Volt? Se Arduino legge 1023 sono 5 Volt, se legge 0 sono 0 Volt. Ma 512? Serve una formula o basta indovinare?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Usare int invece di float per la tensione",
+          "teacher_response": "Con int la divisione 512/1023 dà 0! Serve float per avere i decimali: 2.50 Volt non si può scrivere con un intero.",
+          "analogy": "È come misurare la tua altezza: se usi solo i metri interi, sei 1 metro. Ma con i decimali sei 1 metro e 45 centimetri — molto più preciso!"
+        },
+        {
+          "mistake": "Dimenticare il 5.0 nella formula (scrivere 5 invece di 5.0)",
+          "teacher_response": "Se scrivi 5 invece di 5.0, Arduino fa una divisione intera e perde i decimali. Il .0 dice ad Arduino di usare i numeri con la virgola!",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! Il LED rosso si accende. Ora cliccate sul pulsante nel simulatore e tenetelo premuto: il LED si spegne. Rilasciate: torna acceso. E un comportamento momentaneo, non un toggle.",
-      "teacher_tip": "Fai notare la differenza con un interruttore di casa: quello resta nella posizione in cui lo metti. Il pulsante invece torna su da solo quando lo lasci. Chiedi: servirebbe una variabile per farlo restare spento?",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:led1]", "[AZIONE:highlight:btn1]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premi Play! Gira il trimmer lentamente e guarda il Serial Monitor: vedrai la tensione cambiare in tempo reale da 0.00V a 5.00V. Quando superi 2.5V il LED rosso si accende!",
+      "teacher_tip": "Fai girare il trimmer lentamente e chiedi: 'A che punto si accende il LED?' I ragazzi devono collegare il valore sul Monitor (2.50+) con l'accensione del LED. Evidenzia che il float mostra i decimali.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:pot1]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "LED acceso normalmente. Premi il pulsante: si spegne. Rilascia: torna acceso. Il comportamento e immediato perche il loop legge il pulsante migliaia di volte al secondo."
+      "observation_prompt": "Girando il trimmer, la tensione cambia da 0.00V a 5.00V sul Serial Monitor. Quando supera 2.5V, il LED rosso si accende. Sotto 2.5V si spegne. La formula funziona!",
+      "analogies": [
+        {
+          "concept": "conversione_adc_volt",
+          "text": "La conversione ADC-Volt è come un termometro: il mercurio sale da 0 a 100 gradi, ma noi vogliamo sapere la temperatura esatta. La formula traduce l'altezza del mercurio (il numero 0-1023) nella temperatura reale (i Volt 0-5)!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "float_decimali",
+          "text": "Il tipo float è come una bilancia di precisione: non dice solo '2 chili' ma '2 chili e 503 grammi'. Così la tensione non è solo '2 Volt' ma '2.50 Volt' — molto più utile!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
       "duration_minutes": 7,
-      "teacher_message": "Avete costruito il primo circuito interattivo! Arduino ora sa ascoltare un pulsante con digitalRead. INPUT e OUTPUT sono le due direzioni della comunicazione tra Arduino e il mondo.",
-      "teacher_tip": "Recap: pinMode(pin, INPUT) configura un pin per ascoltare. digitalRead(pin) legge il valore: HIGH o LOW. Il pulsante e momentaneo: funziona solo mentre lo tieni premuto. Per un toggle serve una variabile, che vedremo presto.",
-      "summary_for_class": "Arduino puo sia comandare (OUTPUT) che ascoltare (INPUT). Con digitalRead leggiamo il pulsante: HIGH quando rilasciato, LOW quando premuto. Il LED si spegne solo finche teniamo premuto. Per farlo restare spento servira una variabile di stato!",
+      "teacher_message": "Ottimo lavoro! Avete imparato a convertire il valore ADC in Volt reali. La formula tensione = (valoreLetto * 5.0) / 1023 è uno strumento fondamentale per lavorare con i sensori analogici.",
+      "teacher_tip": "Recap: 'analogRead restituisce 0-1023. La formula converte in 0-5V. float ci dà i decimali. Con un if possiamo creare una soglia.' Questi concetti servono per tutti i sensori analogici!",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "La formula float tensione = (valoreLetto * 5.0) / 1023 converte il numero ADC (0-1023) in Volt reali (0-5V). Con un if e una soglia a 2.5V controlliamo quando accendere il LED. Questo è il modo in cui Arduino interpreta il mondo analogico!",
       "concepts_learned": [
-        "digitalRead() per leggere un pin",
-        "pin INPUT vs OUTPUT",
-        "pulsante momentaneo",
-        "logica HIGH/LOW"
+        "conversione ADC a Volt",
+        "tipo float per numeri decimali",
+        "formula proporzionale",
+        "soglia con if",
+        "Serial.println con float"
       ],
-      "next_preview": "Nel prossimo esperimento scopriamo INPUT_PULLUP: una resistenza nascosta dentro Arduino che semplifica il circuito del pulsante!"
+      "next_preview": "Nel prossimo esperimento dividiamo il range analogico in tre zone: ogni zona accende un LED diverso. Tre LED, tre intervalli, un solo trimmer!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega la formula con parole sue → comprensione della conversione ADC-Volt",
+    "Se prevede il valore in Volt dato un numero ADC → padronanza della proporzione",
+    "Se capisce perché serve float e non int → comprensione dei tipi di dato"
+  ],
   "session_save": {
-    "concepts_covered": ["digitalRead", "pin_INPUT", "pulsante_momentaneo", "HIGH_LOW"],
+    "concepts_covered": [
+      "conversione_adc_volt",
+      "float",
+      "formula_proporzionale",
+      "soglia_if",
+      "serial_monitor"
+    ],
     "next_suggested": "v3-cap7-esp3",
-    "resume_message": "Avete imparato a leggere un pulsante con digitalRead! Prossimo: INPUT_PULLUP e la resistenza interna."
+    "resume_message": "Avete convertito il valore ADC in Volt con la formula! Prossimo passo: dividere il range in tre zone per controllare tre LED."
   }
 }

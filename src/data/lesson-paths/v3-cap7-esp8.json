@@ -1,45 +1,43 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp8",
   "volume": 3,
   "chapter": 7,
-  "title": "Anti-rimbalzo pulsante (debounce)",
-  "chapter_title": "I pin di input",
+  "title": "DAC reale (10 bit)",
+  "chapter_title": "I pin analogici",
   "difficulty": 3,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Imparare il debounce software con millis() per gestire i rimbalzi meccanici del pulsante senza bloccare il programma. Il delay() ferma tutto il codice, mentre millis() permette di continuare a fare altro. E la tecnica usata dai professionisti.",
+  "objective": "Scoprire il DAC (Digital to Analog Converter) di Arduino R4: un'uscita analogica vera che produce tensione reale, non PWM. Usare analogWriteResolution(10) per scrivere con 1024 livelli e analogWrite su A0 per generare una tensione misurabile con un multimetro.",
   "components_needed": [
     { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
     { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Pulsante (push button)", "quantity": 1, "icon": "button" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
+    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
     { "name": "Fili di collegamento", "quantity": 5, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "pulsante", "digitalRead", "LED", "resistore", "breadboard", "codice", "programma", "GND", "debounce", "millis", "delay", "rimbalzo", "tempo", "variabile", "unsigned long"],
-    "forbidden": ["condensatore", "transistor", "MOSFET", "motore", "diodo", "fototransistor", "analogico", "interrupt"],
-    "note": "Cap 7 Vol 3 — debounce con millis(), confronto con delay(), unsigned long."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "DAC", "Digital to Analog Converter", "analogWriteResolution", "10 bit", "1024 livelli", "tensione reale", "Volt", "multimetro", "Arduino R4"],
+    "forbidden": ["interrupt", "oscilloscopio", "frequenza", "Fourier", "filtro"],
+    "note": "Esperimento avanzato (difficolta 3). Il DAC e una feature speciale di Arduino R4 che i classici Uno/Nano non hanno. Sottolineare la differenza fondamentale: PWM finge, DAC produce tensione vera."
   },
-  "prerequisites": ["v3-cap7-esp6"],
+  "prerequisites": ["v3-cap7-esp7"],
   "next_experiment": {
     "id": "v3-cap8-esp1",
-    "title": "Serial.println in setup",
-    "preview": "Nel Capitolo 8 impariamo a far parlare Arduino col computer! Il primo passo e stampare un messaggio con Serial.println nel setup."
+    "title": "Serial Monitor base",
+    "preview": "Nel prossimo capitolo Arduino impara a parlare con il computer: il Serial Monitor ci mostra messaggi e numeri in tempo reale!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Negli esperimenti precedenti abbiamo usato delay(50) per evitare i rimbalzi del pulsante. Ma delay ha un problema: blocca TUTTO il programma per 50 millisecondi! Oggi impariamo un metodo migliore: millis() che permette al programma di continuare a lavorare.",
-      "teacher_tip": "Spiega il problema del delay con un esempio: e come se per evitare di guardare il telefono mentre cammini, ti fermassi completamente ogni volta. Con millis() invece cammini e ogni tanto dai un'occhiata al telefono: non ti fermi mai. Questo e fondamentale quando il programma deve fare piu cose contemporaneamente.",
-      "class_hook": "Immaginate di cucinare la pasta e il sugo insieme. Se usate delay, dovete fermarvi 10 minuti a guardare la pasta bollire e poi 10 minuti il sugo. Con millis() potete controllare entrambi alternando lo sguardo! Oggi Arduino impara a fare multitasking.",
+      "teacher_message": "In tutte le lezioni precedenti, analogWrite usava il PWM: accende e spegne velocissimo per ingannare l'occhio. Ma Arduino R4 ha un superpotere che gli altri Arduino non hanno: il DAC, un convertitore Digitale-Analogico vero. Produce una tensione REALE, non un trucco.",
+      "teacher_tip": "L'analogia: PWM e come una lampadina che lampeggia cosi veloce che sembra dimmerata. DAC e come un vero dimmer che regola davvero la corrente. Con un multimetro la differenza si vede chiaramente.",
+      "class_hook": "Il PWM e un impostore: finge di essere analogico ma in realta e digitale velocissimo. Oggi scopriamo l'uscita analogica VERA di Arduino R4!",
       "action_tags": [],
       "auto_action": null
     },
@@ -47,51 +45,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Il circuito e uguale al toggle: pulsante INPUT_PULLUP e LED. La differenza e nel codice: usiamo millis() per registrare il tempo dell'ultima pressione. Se sono passati almeno 50ms dalla pressione precedente, accettiamo la nuova pressione. Altrimenti la ignoriamo.",
-      "teacher_tip": "Spiega millis() come un cronometro che parte quando Arduino si accende e non si ferma mai. Restituisce il numero di millisecondi trascorsi dall'accensione. Il tipo unsigned long serve perche dopo 50 giorni il numero diventa enorme (4 miliardi). La logica e: tempo_attuale - tempo_ultima_pressione > 50.",
+      "teacher_message": "Il circuito e semplice: trimmer su un pin analogico di ingresso, uscita DAC su A0. Nel codice: analogWriteResolution(10) nel setup imposta la risoluzione a 10 bit (1024 livelli invece di 256). Poi analogWrite(A0, valoreLetto) copia il valore letto direttamente sull'uscita.",
+      "teacher_tip": "Spiegare che analogWriteResolution(10) e necessario per sfruttare tutti i 1024 livelli del DAC. Senza, Arduino usa solo 8 bit (256 livelli). Il pin A0 su Arduino R4 ha il DAC integrato — non tutti i pin lo supportano.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp8]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il codice confronta millis() con il tempo dell'ultima pressione. Se la differenza e maggiore di 50ms, accetta la pressione. Perche 50ms? E tanto o poco? Cosa succede se mettiamo 500ms invece? E se mettiamo 5ms?",
-      "teacher_tip": "50ms e un buon compromesso: abbastanza lungo per ignorare tutti i rimbalzi (che durano 5-20ms), abbastanza corto per non perdere pressioni veloci. Con 500ms perderemmo le pressioni rapide. Con 5ms potremmo ancora avere rimbalzi. Fai provare diversi valori nel simulatore.",
-      "provocative_question": "Se due studenti premono lo stesso pulsante a 30ms di distanza, il debounce ignora la seconda pressione. E giusto o sbagliato? Quando il debounce diventa un problema invece di una soluzione?",
+      "duration_minutes": 10,
+      "teacher_message": "Il PWM spegne e accende velocissimo. Ma un vero segnale analogico? Il DAC produce una tensione stabile e continua. Se scrivi 512, l'uscita e esattamente 2.5V — non un'onda quadra che fa la media di 2.5V, ma 2.5V costanti e lisci.",
+      "teacher_tip": "Se possibile, mostrare la differenza con un disegno: il PWM e un'onda quadra (su-giu-su-giu), il DAC e una linea piatta alla tensione desiderata. Con un oscilloscopio si vedrebbe chiaramente.",
+      "provocative_question": "Con 8 bit abbiamo 256 livelli: ogni livello e 5V/256 = circa 0.02V. Con 10 bit ne abbiamo 1024: ogni livello e 5V/1024 = circa 0.005V. Quattro volte piu preciso! Quando serve tutta questa precisione?",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premi Play! Provate a premere il pulsante velocemente tante volte. Con il debounce millis() ogni pressione viene registrata correttamente, senza salti o doppie letture. Il LED fa toggle pulito ad ogni pressione.",
-      "teacher_tip": "Fai confrontare mentalmente con il debounce a delay: il risultato sembra lo stesso, ma con delay il LED non puo fare nient'altro durante quei 50ms. Con millis() Arduino e libero di controllare sensori, muovere motori, aggiornare display. Nella pratica professionale non si usa mai delay per il debounce.",
-      "action_tags": ["[AZIONE:play]", "[AZIONE:highlight:btn1]", "[AZIONE:highlight:led1]"],
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Girate il trimmer: il valore letto viene copiato sull'uscita DAC. Con un multimetro sull'uscita A0 vedreste una tensione vera che cambia da 0V a circa 5V. Non e PWM, e tensione reale e stabile!",
+      "teacher_tip": "Nel simulatore l'effetto DAC vs PWM non e facilmente visibile. Spiegare che nel mondo reale la differenza si misura con un multimetro: il PWM da letture instabili, il DAC da una tensione ferma e precisa.",
+      "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il toggle funziona in modo pulito: ogni pressione alterna il LED. La differenza dal debounce con delay non si vede a occhio, ma il programma non si blocca mai. Arduino resta libero di fare altro tra una pressione e l'altra."
+      "observation_prompt": "Con un multimetro sull'uscita si misura tensione vera. Girando il trimmer da 0 a max, la tensione sale da 0V a 5V in modo fluido e stabile. Ogni posizione del trimmer corrisponde a una tensione precisa."
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete imparato la tecnica professionale per gestire i pulsanti! millis() e uno strumento potentissimo: serve per il debounce, per i timer, per far lampeggiare LED senza delay, per il multitasking. E la base della programmazione non-bloccante.",
-      "teacher_tip": "Recap: millis() restituisce i millisecondi dall'accensione. Confrontando il tempo attuale con quello dell'ultimo evento, decidiamo se e passato abbastanza tempo. Nessun delay, nessun blocco. Pattern: if(millis() - ultimoTempo > intervallo). Questo pattern si usa ovunque nella programmazione Arduino professionale.",
-      "summary_for_class": "Il debounce con millis() e la versione professionale dell'anti-rimbalzo: invece di bloccare il programma con delay, confrontiamo i tempi. Se sono passati almeno 50ms dall'ultima pressione, accettiamo quella nuova. Il programma non si ferma mai e Arduino puo fare piu cose contemporaneamente!",
-      "concepts_learned": [
-        "millis() per misurare il tempo",
-        "debounce non-bloccante",
-        "unsigned long per tempi grandi",
-        "confronto delay vs millis",
-        "programmazione non-bloccante"
-      ],
-      "next_preview": "Nel Capitolo 8 Arduino impara a parlare col computer! Serial.println scrive messaggi nel Serial Monitor. E il primo passo per il debug e la comunicazione."
+      "duration_minutes": 8,
+      "teacher_message": "Oggi avete scoperto il DAC di Arduino R4: un'uscita analogica vera che produce tensione reale. Con analogWriteResolution(10) sfruttiamo 1024 livelli di precisione. Il DAC e il complemento perfetto dell'ADC: uno legge tensione, l'altro la produce.",
+      "teacher_tip": "Ricapitolare tutto il capitolo: analogRead (ADC, ingresso, 10 bit, 0-1023), analogWrite PWM (uscita, 8 bit, 0-255, trucco digitale), analogWrite DAC (uscita, 10 bit, 0-1023, tensione vera). Arduino R4 ha tutti e tre!",
+      "summary_for_class": "Il DAC produce tensione vera, non PWM. Con analogWriteResolution(10) abbiamo 1024 livelli di precisione. ADC legge tensione (input), DAC la produce (output). Arduino R4 ha il DAC integrato sul pin A0.",
+      "concepts_learned": ["DAC (Digital to Analog Converter)", "analogWriteResolution(10)", "differenza PWM vs DAC", "10 bit = 1024 livelli", "ADC e DAC come complementi", "feature speciale di Arduino R4"],
+      "next_preview": "Nel prossimo capitolo Arduino impara a comunicare: con il Serial Monitor vedrete messaggi e numeri sullo schermo in tempo reale!"
     }
   ],
   "session_save": {
-    "concepts_covered": ["millis", "debounce_non_bloccante", "unsigned_long", "programmazione_non_bloccante"],
+    "concepts_covered": ["DAC", "analogWriteResolution", "10 bit", "differenza PWM vs DAC", "ADC e DAC"],
     "next_suggested": "v3-cap8-esp1",
-    "resume_message": "Avete imparato il debounce professionale con millis()! Prossimo capitolo: comunicazione seriale."
+    "resume_message": "L'ultima volta avete scoperto il DAC di Arduino R4. Nel nuovo capitolo impariamo il Serial Monitor per comunicare con Arduino!"
   }
 }

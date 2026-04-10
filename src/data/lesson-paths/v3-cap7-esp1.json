@@ -1,46 +1,45 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
+    "generated": "2026-04-10",
     "source": "PDR auto-generated from experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp1",
   "volume": 3,
   "chapter": 7,
-  "title": "Pulsante accende LED",
-  "chapter_title": "I pin di input",
-  "difficulty": 1,
-  "duration_minutes": 40,
+  "title": "analogRead base",
+  "chapter_title": "I pin analogici",
+  "difficulty": 2,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Usare digitalRead per leggere lo stato di un pulsante e accendere un LED quando e premuto. Primo esperimento con un pin configurato come INPUT: Arduino riceve informazioni dal mondo esterno.",
+  "objective": "Usare analogRead per leggere il valore di un trimmer (potenziometro) e accendere un LED quando il valore supera meta scala. Primo esperimento con i pin analogici: Arduino legge valori da 0 a 1023, non solo HIGH e LOW.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
-    { "name": "Resistore 10kohm", "quantity": 1, "icon": "⚡" },
-    { "name": "Pulsante", "quantity": 1, "icon": "🔘" },
-    { "name": "Fili di collegamento", "quantity": 7, "icon": "🔌" }
+    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
+    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
+    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
+    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
+    { "name": "LED rosso", "quantity": 1, "icon": "led" },
+    { "name": "Fili di collegamento", "quantity": 6, "icon": "wire" }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "pin", "INPUT", "OUTPUT", "digitalRead", "digitalWrite", "pulsante", "premuto", "rilasciato", "HIGH", "LOW", "if", "resistore pull-down", "condizione"],
-    "forbidden": ["interrupt", "debounce", "pull-up interno", "INPUT_PULLUP", "volatile", "millis"],
-    "note": "Primo INPUT e primo if. Spiegare il pull-down come necessita pratica: senza resistore il pin 'fluttua' e legge valori a caso."
+    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogRead", "pin analogico", "A0", "valore", "soglia", "0-1023", "confronto", "if", "Arduino"],
+    "forbidden": ["interrupt", "map", "analogWrite", "float", "tensione", "ADC", "risoluzione"],
+    "note": "Primo contatto con analogRead. Sottolineare la differenza con digitalRead: non solo 0/1 ma 1024 valori possibili. Il trimmer e il componente perfetto per esplorare."
   },
-  "prerequisites": ["v3-cap6-esp2"],
+  "prerequisites": ["v3-cap6-esp7"],
   "next_experiment": {
     "id": "v3-cap7-esp2",
-    "title": "Pulsante con conteggio",
-    "preview": "Nella prossima lezione il pulsante contera quante volte viene premuto e mostrera il numero."
+    "title": "analogRead con tensione",
+    "preview": "Nella prossima lezione convertiamo il numero letto dal trimmer in Volt reali con una formula."
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Finora Arduino ha solo parlato: accendi LED, suona buzzer. Ma non ha mai ascoltato. Oggi gli diamo un orecchio: un pulsante collegato a un pin di INPUT. Quando lo premiamo, Arduino lo sa.",
-      "teacher_tip": "L'analogia parlare/ascoltare e potente. OUTPUT = Arduino parla al mondo. INPUT = Arduino ascolta il mondo. Oggi e la prima volta che ascolta.",
-      "class_hook": "Fino ad oggi Arduino era come un robot che parla ma non sente. Oggi gli diamo il primo senso: il tatto.",
+      "teacher_message": "Finora Arduino leggeva solo acceso/spento con digitalRead. Ma il mondo reale non e solo bianco o nero: ci sono sfumature. Oggi Arduino impara a leggere QUANTA tensione c'e, non solo SE c'e. Lo strumento? Un trimmer, una manopola che da valori da 0 a 1023.",
+      "teacher_tip": "L'analogia del volume della radio e perfetta: non e solo acceso/spento, puoi regolarlo a qualsiasi livello. Il trimmer funziona cosi.",
+      "class_hook": "Il pulsante e come un interruttore della luce: acceso o spento. Il trimmer e come la manopola del volume: infiniti livelli.",
       "action_tags": [],
       "auto_action": null
     },
@@ -48,45 +47,45 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il circuito: pulsante collegato al pin 2 con resistore pull-down, LED sul pin 7. Nel codice, il pin 2 e INPUT e il pin 7 e OUTPUT. Con if leggiamo il pulsante e decidiamo.",
-      "teacher_tip": "Spiegare il resistore pull-down in modo semplice: senza di lui, quando il pulsante non e premuto, il pin non sa se e HIGH o LOW. Il resistore lo tiene a LOW finche non premiamo.",
+      "teacher_message": "Carichiamo il circuito: trimmer collegato al pin A0, LED sul pin 7 con resistore. Nel codice usiamo analogRead(A0) per leggere un valore tra 0 e 1023. Se il valore supera 511 (meta scala), accendiamo il LED.",
+      "teacher_tip": "Mostrare che A0 e diverso dai pin digitali: e un pin analogico, capace di misurare non solo 0 e 5V ma tutto quello che c'e in mezzo. 511 e meta di 1023.",
       "action_tags": ["[AZIONE:loadexp:v3-cap7-esp1]"],
       "auto_action": "load_experiment"
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Il codice dice: se il pulsante e premuto, accendi il LED. Altrimenti, spegnilo. Cosa succede se tolgo la parte 'altrimenti'? Il LED resta acceso per sempre dopo la prima pressione?",
-      "teacher_tip": "Lasciare provare. Senza l'else, il LED si accende quando premi ma si spegne al giro di loop successivo se non premi. Il loop e cosi veloce che sembra funzionare comunque.",
-      "provocative_question": "Se il loop gira migliaia di volte al secondo, Arduino controlla il pulsante migliaia di volte al secondo. Spreca energia o e utile?",
+      "duration_minutes": 10,
+      "teacher_message": "A differenza del pulsante (acceso/spento), il trimmer da TANTI valori. Quanti? Se digitalRead da solo 0 o 1, analogRead da valori da 0 a 1023. Perche proprio 1023? Perche Arduino ha un convertitore a 10 bit: 2 elevato alla 10 fa 1024 livelli.",
+      "teacher_tip": "Non insistere sui bit se la classe non e pronta. L'importante e che capiscano: tanti valori, non solo due. 1024 livelli di precisione.",
+      "provocative_question": "Se il trimmer e a meta, il valore e circa 512. Ma se lo giro solo un pochino, cambia di 1? Di 10? Proviamo a scoprirlo.",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
-      "duration_minutes": 10,
-      "teacher_message": "Premiamo Play. Ora premete il pulsante nel simulatore: il LED si accende. Rilasciate: si spegne. Arduino legge il pulsante e reagisce in tempo reale.",
-      "teacher_tip": "Far notare la reattivita: non c'e ritardo visibile. Il loop e cosi veloce che la risposta sembra istantanea. Questo e il polling.",
+      "duration_minutes": 12,
+      "teacher_message": "Premiamo Play. Girate il trimmer lentamente: quando superate la meta, il LED si accende. Tornate indietro: si spegne. La soglia e 511 — il punto di mezzo tra 0 e 1023.",
+      "teacher_tip": "Far notare che il comportamento e ancora digitale (LED acceso/spento) anche se la lettura e analogica. Questo prepara la domanda: e se volessimo una risposta graduale?",
       "action_tags": ["[AZIONE:play]"],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il LED si accende solo quando tenete premuto o resta acceso anche dopo che rilasciate? Perche?"
+      "observation_prompt": "Girando il trimmer lentamente, riuscite a trovare il punto esatto dove il LED si accende? Provate a stare proprio sul confine."
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Oggi Arduino ha imparato ad ascoltare. Con digitalRead legge HIGH o LOW dal pulsante. Con if decide cosa fare. Questa e la base di ogni programma interattivo: leggere, decidere, agire.",
-      "teacher_tip": "Il pattern INPUT-DECISIONE-OUTPUT e il cuore di quasi tutti i programmi. Sottolinearlo: sensore legge, codice decide, attuatore agisce.",
-      "summary_for_class": "Con digitalRead Arduino legge lo stato del pulsante. Con if decide se accendere il LED. Il pattern e: leggi l'ingresso, prendi una decisione, controlla l'uscita.",
-      "concepts_learned": ["pin INPUT e digitalRead", "istruzione if-else", "resistore pull-down", "interazione utente-Arduino", "pattern lettura-decisione-azione"],
-      "next_preview": "Nella prossima lezione il pulsante contera le pressioni. Ogni volta che premete, il conteggio sale."
+      "duration_minutes": 8,
+      "teacher_message": "Oggi Arduino ha imparato a misurare, non solo sentire. Con analogRead legge valori da 0 a 1023 dal trimmer. Con un if e una soglia decide quando accendere il LED. E il primo passo verso il controllo analogico.",
+      "teacher_tip": "Sottolineare il salto concettuale: da digitale (2 stati) ad analogico (1024 stati). Nelle prossime lezioni useremo questi valori in modi sempre piu interessanti.",
+      "summary_for_class": "analogRead legge valori da 0 a 1023 dal trimmer. Con una soglia (511) decidiamo quando accendere il LED. A differenza del pulsante, il trimmer ci da un controllo graduale.",
+      "concepts_learned": ["analogRead e pin analogici", "valori 0-1023", "soglia e confronto", "differenza digitale vs analogico", "potenziometro/trimmer come sensore"],
+      "next_preview": "Nella prossima lezione convertiamo il valore letto in Volt reali. Quanti Volt corrispondono a 512?"
     }
   ],
   "session_save": {
-    "concepts_covered": ["digitalRead", "pin INPUT", "if-else", "pull-down", "interazione"],
+    "concepts_covered": ["analogRead", "pin analogici", "valori 0-1023", "soglia", "trimmer"],
     "next_suggested": "v3-cap7-esp2",
-    "resume_message": "L'ultima volta avete usato il pulsante per accendere un LED con digitalRead e if. Oggi aggiungiamo il conteggio delle pressioni."
+    "resume_message": "L'ultima volta avete usato analogRead per leggere il trimmer e accendere un LED con una soglia. Oggi convertiamo quei numeri in Volt."
   }
 }

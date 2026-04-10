@@ -1,0 +1,261 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
+  },
+  "experiment_id": "v3-cap8-esp4",
+  "volume": 3,
+  "chapter": 8,
+  "title": "Serial Plotter con 2 pot",
+  "chapter_title": "Comunicazione Seriale",
+  "difficulty": 2,
+  "duration_minutes": 45,
+  "target_age": "10-14 anni",
+  "objective": "Usare il Serial Plotter per visualizzare GRAFICI in tempo reale da 2 potenziometri collegati ai pin A3 e A4. Scopriamo come il formato label:valore permette di tracciare 2 canali contemporaneamente e come ingegneri e scienziati usano strumenti simili per monitorare i dati.",
+  "components_needed": [
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Potenziometro 10kΩ",
+      "quantity": 2,
+      "icon": "🎛️"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 8,
+      "icon": "🔌"
+    }
+  ],
+  "vocabulary": {
+    "allowed": [
+      "Arduino",
+      "Serial",
+      "Plotter",
+      "grafico",
+      "analogRead",
+      "stampa",
+      "canale",
+      "tempo reale",
+      "baud",
+      "potenziometro",
+      "pin",
+      "analogico",
+      "valore",
+      "0-1023",
+      "breadboard",
+      "codice",
+      "programma",
+      "GND",
+      "massa",
+      "formato",
+      "label"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor"
+    ],
+    "note": "Cap 8 Vol 3 — Serial Plotter, formato label:valore, 2 canali analogici, grafici in tempo reale."
+  },
+  "prerequisites": [
+    "v3-cap8-esp3"
+  ],
+  "next_experiment": {
+    "id": "v3-cap8-esp5",
+    "title": "Pot + 3 LED + Serial",
+    "preview": "Prossimo: il progetto finale che combina TUTTO!"
+  },
+  "phases": [
+    {
+      "name": "PREPARA",
+      "icon": "📋",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi Arduino diventa un oscilloscopio! Vedremo i dati come GRAFICI che si muovono. Finora abbiamo letto numeri sul Serial Monitor, ma i numeri che scorrono sono difficili da interpretare. Il Serial Plotter li trasforma in linee colorate che si muovono in tempo reale — come le onde su uno schermo da laboratorio! E con DUE potenziometri vedremo DUE linee colorate diverse.",
+      "teacher_tip": "Fai il paragone visivo: 'Immaginate di leggere 100 numeri di temperatura uno dopo l'altro... oppure di vedere una curva che sale e scende. Il grafico è molto più chiaro!' Mostra con le mani il movimento di un'onda per rendere l'idea del Plotter. L'analogia dell'oscilloscopio è perfetta per i ragazzi.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4, 2 potenziometri 10kΩ, fili di collegamento (8 fili).",
+      "class_hook": "Avete mai visto il monitor del battito cardiaco in un film? Quella linea verde che va su e giù? Oggi creiamo qualcosa di simile con Arduino e due manopole! Due grafici colorati che si muovono quando girate i potenziometri.",
+      "action_tags": [],
+      "auto_action": null
+    },
+    {
+      "name": "MOSTRA",
+      "icon": "🔧",
+      "duration_minutes": 10,
+      "teacher_message": "Carica l'esperimento. Due potenziometri collegati ad A3 e A4. Il codice legge entrambi con analogRead e li stampa nel formato speciale: 'A3:valore A4:valore\\n'. Questo formato con i due punti dice al Plotter di disegnare una linea per A3 e una per A4. Lo spazio separa i canali, il newline chiude il campione. Apri il Serial Plotter e vedrai due assi!",
+      "teacher_tip": "Spiega il formato dati con cura: 'Il Serial Plotter capisce il formato label:valore. Ogni label diventa una linea colorata nel grafico. Lo spazio separa i canali, e il \\n (a capo) dice al Plotter che il campione è finito.' Sottolinea che il delay(100) fa 10 letture al secondo — abbastanza veloce per un grafico fluido.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap8-esp4]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta 2 potenziometri su A3 e A4 con Arduino Nano R4",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot1",
+              "value": 10000
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot2",
+              "value": 10000
+            }
+          ],
+          "wires": [
+            {
+              "from": "bb1:f15",
+              "to": "bb1:bus-bot-plus-15",
+              "color": "red"
+            },
+            {
+              "from": "nano1:W_A3",
+              "to": "bb1:f16",
+              "color": "yellow"
+            },
+            {
+              "from": "bb1:f17",
+              "to": "bb1:bus-bot-minus-17",
+              "color": "black"
+            },
+            {
+              "from": "bb1:f22",
+              "to": "bb1:bus-bot-plus-22",
+              "color": "red"
+            },
+            {
+              "from": "nano1:W_A4",
+              "to": "bb1:f23",
+              "color": "orange"
+            },
+            {
+              "from": "bb1:f24",
+              "to": "bb1:bus-bot-minus-24",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "CHIEDI",
+      "icon": "❓",
+      "duration_minutes": 8,
+      "teacher_message": "Perché il formato è 'A3:valore spazio A4:valore'? Cosa succede se cambiamo l'ordine? Se togliamo lo spazio tra i due valori, il Plotter li vede come un solo canale o due? E se aggiungiamo un terzo potenziometro, come modifichiamo il formato?",
+      "teacher_tip": "Guida: 'Il formato label:valore è una convenzione del Serial Plotter. La label diventa il nome nella legenda, il valore è il punto sul grafico. Lo spazio separa i canali. Se togliamo la label, il Plotter usa nomi generici. Se invertiamo l'ordine, i colori si scambiano!' Fai ragionare sulla scalabilità: con N sensori, N linee sul grafico.",
+      "provocative_question": "Se colleghiamo 5 sensori diversi (temperatura, luce, suono, distanza, umidità), quante linee avrà il grafico? E il formato di stampa come sarà? Provate a scriverlo!",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il Serial Plotter mostra una sola linea invece di due",
+          "teacher_response": "Controlla il formato di stampa: deve essere 'A3:val A4:val\\n' con uno SPAZIO tra i due valori. Se manca lo spazio o manca il nome prima dei due punti, il Plotter non riesce a separare i canali.",
+          "analogy": "È come scrivere una tabella senza le colonne: se metti tutto attaccato, non riesci a capire dove finisce un dato e dove inizia l'altro."
+        },
+        {
+          "mistake": "I grafici sono troppo veloci o troppo lenti",
+          "teacher_response": "Cambia il delay nel codice: delay(100) = 10 punti al secondo (fluido), delay(1000) = 1 punto al secondo (lento), delay(10) = 100 punti al secondo (troppo veloce, il grafico scorre rapidissimo).",
+          "analogy": null
+        }
+      ]
+    },
+    {
+      "name": "OSSERVA",
+      "icon": "👀",
+      "duration_minutes": 14,
+      "teacher_message": "Premi Play e apri il Serial Plotter! Due grafici colorati si muovono in tempo reale quando giri i potenziometri! Gira un solo trimmer: la sua linea si muove, l'altra resta piatta. Poi gira entrambi contemporaneamente e guarda le linee danzare insieme!",
+      "teacher_tip": "Evidenzia entrambi i potenziometri e il Serial Plotter. Sfida: 'Riuscite a far INCROCIARE le due linee? Una deve salire mentre l'altra scende!' Fai notare che il Plotter aggiorna automaticamente la scala verticale. Chiedi: 'Se giro veloce, la linea è ripida. Se giro piano, è dolce. Perché?'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:pot1,pot2]"
+      ],
+      "auto_action": "play_and_highlight",
+      "observation_prompt": "Due grafici colorati si muovono in tempo reale quando giri i potenziometri! Una linea per A3, una per A4. Gira un solo trimmer: la sua linea si muove, l'altra resta piatta. Gira entrambi: le linee danzano insieme! Prova a farle incrociare.",
+      "analogies": [
+        {
+          "concept": "serial_plotter",
+          "text": "Il Serial Plotter è come un sismografo: registra i movimenti nel tempo. Ogni volta che giri un potenziometro, è come un piccolo terremoto che fa oscillare la linea sul grafico. Due potenziometri = due sismografi che registrano contemporaneamente!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 8"
+        },
+        {
+          "concept": "formato_multicanale",
+          "text": "Il formato 'A3:valore A4:valore' è come un bollettino meteo che dice 'Roma:25° Milano:18°'. Ogni città ha il suo numero, e il Plotter disegna una linea per ciascuna. Più sensori aggiungi, più linee hai — come monitorare il meteo di 10 città contemporaneamente!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 8"
+        }
+      ]
+    },
+    {
+      "name": "CONCLUDI",
+      "icon": "✅",
+      "duration_minutes": 7,
+      "teacher_message": "Il Serial Plotter è uno strumento potente per VEDERE i dati. Ingegneri e scienziati lo usano ogni giorno per monitorare sensori, testare motori e analizzare segnali. Oggi avete imparato a visualizzare 2 canali contemporaneamente — la base di qualsiasi sistema di monitoraggio!",
+      "teacher_tip": "Recap: 'Il Serial Plotter trasforma i numeri in grafici. Il formato label:valore crea linee con nomi. Lo spazio separa i canali. delay(100) dà 10 campioni al secondo. Con questo strumento potete visualizzare qualsiasi sensore!' Anticipa il prossimo esperimento: combineremo TUTTO — lettura analogica + LED + Serial.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il Serial Plotter trasforma i numeri di Arduino in grafici che si muovono in tempo reale. Con il formato 'label:valore' possiamo visualizzare più canali contemporaneamente, ognuno con la sua linea colorata. Due potenziometri su A3 e A4 diventano due onde che danzano sullo schermo — lo stesso principio usato nei laboratori di tutto il mondo!",
+      "concepts_learned": [
+        "Serial Plotter vs Serial Monitor",
+        "formato label:valore per multi-canale",
+        "visualizzazione dati in tempo reale",
+        "2 canali analogici contemporanei",
+        "delay e frequenza di campionamento"
+      ],
+      "next_preview": "Prossimo: il progetto finale che combina TUTTO — potenziometro + 3 LED + Serial Monitor in un unico programma!"
+    }
+  ],
+  "assessment_invisible": [
+    "Se spiega perché servono le label nel formato (per distinguere i canali) → comprensione del protocollo dati",
+    "Se prevede correttamente che 5 sensori = 5 linee sul grafico → comprensione della scalabilità del formato",
+    "Se nota che girare veloce crea linee ripide e girare piano crea curve dolci → comprensione della relazione tempo-valore"
+  ],
+  "session_save": {
+    "concepts_covered": [
+      "serial_plotter",
+      "formato_dati",
+      "visualizzazione_tempo_reale",
+      "multi_canale",
+      "label_valore"
+    ],
+    "next_suggested": "v3-cap8-esp5",
+    "resume_message": "L'ultima volta avete usato il Serial Plotter per visualizzare grafici da 2 potenziometri! Prossimo: il progetto finale."
+  }
+}

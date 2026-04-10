@@ -1,8 +1,8 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap5-esp1",
   "volume": 3,
@@ -10,78 +10,193 @@
   "title": "Blink con LED_BUILTIN",
   "chapter_title": "Il nostro primo programma",
   "difficulty": 1,
-  "duration_minutes": 40,
+  "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Scrivere il primo programma Arduino in assoluto: far lampeggiare il LED integrato sulla scheda usando digitalWrite e delay. Nessun componente esterno necessario.",
+  "objective": "Il primo programma in assoluto! Facciamo lampeggiare il LED integrato sulla scheda Arduino (pin 13). Scopriamo che un programma e' fatto di istruzioni che Arduino esegue in ordine, all'infinito. Impariamo setup(), loop(), pinMode, digitalWrite e delay.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Cavo USB", "quantity": 1, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "LED", "programma", "sketch", "void setup", "void loop", "pinMode", "digitalWrite", "delay", "HIGH", "LOW", "OUTPUT", "LED_BUILTIN", "pin 13", "compilare", "caricare"],
-    "forbidden": ["tensione", "corrente", "resistenza", "variabile", "funzione", "libreria"],
-    "note": "Primo contatto con la programmazione: usare solo i concetti strettamente necessari"
+    "allowed": [
+      "Arduino",
+      "LED",
+      "programma",
+      "sketch",
+      "void setup",
+      "void loop",
+      "pinMode",
+      "digitalWrite",
+      "delay",
+      "HIGH",
+      "LOW",
+      "OUTPUT",
+      "LED_BUILTIN",
+      "pin 13",
+      "compilare",
+      "caricare",
+      "codice",
+      "breadboard",
+      "breakout"
+    ],
+    "forbidden": [
+      "tensione",
+      "corrente",
+      "resistenza",
+      "variabile",
+      "funzione",
+      "libreria",
+      "condensatore",
+      "transistor",
+      "analogico"
+    ],
+    "note": "Cap 5 Vol 3 — primo contatto con la programmazione Arduino. Usare solo i concetti strettamente necessari."
   },
   "prerequisites": [],
   "next_experiment": {
     "id": "v3-cap5-esp2",
     "title": "Modifica tempi del Blink",
-    "preview": "Nella prossima lezione cambieremo i tempi di accensione e spegnimento per creare ritmi diversi."
+    "preview": "Prossimo: cambiamo la velocita' del lampeggio!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Ragazzi, oggi Arduino fara esattamente quello che gli diciamo noi. Guardate la scheda: vedete quel piccolo LED vicino al pin 13? Tra poco lo faremo lampeggiare con un programma scritto da voi.",
-      "teacher_tip": "Mostrare fisicamente il LED_BUILTIN sulla scheda. Questo momento e fondamentale: e la prima volta che comandano un computer con codice.",
-      "class_hook": "Chi riesce a trovare il LED sulla scheda senza che io lo indichi?",
+      "duration_minutes": 7,
+      "teacher_message": "Ragazzi, oggi Arduino impara a parlare! Vedete quella piccola lucina sulla scheda, vicino al pin 13? Si chiama LED_BUILTIN. Tra poco gli daremo degli ordini con un programma, e lui fara' esattamente quello che gli diciamo noi!",
+      "teacher_tip": "Questo e' il momento piu' importante del corso: il PRIMO programma. Crea aspettativa ed emozione. Mostra fisicamente il LED_BUILTIN sulla scheda Arduino. Spiega che fino ad ora hanno costruito circuiti che funzionano da soli, ma adesso LORO scrivono le istruzioni. Chiedi: 'Chi ha mai dato ordini a un computer?' — tutti lo fanno ogni giorno col telefono, ma qui lo fanno con CODICE.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing. Nessun componente esterno: usiamo solo il LED gia' presente sulla scheda!",
+      "class_hook": "Chi riesce a trovare il LED sulla scheda Arduino senza che io lo indichi? E' piccolo, ma e' li'! Oggi gli insegniamo ad accendersi e spegnersi a comando.",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Apriamo il simulatore e carichiamo il programma Blink. Guardate: ci sono solo 5 righe di codice. Leggiamole insieme ad alta voce, riga per riga.",
-      "teacher_tip": "Leggere il codice come fosse una ricetta. Ogni riga e un ordine: accendi, aspetta, spegni, aspetta. Non serve spiegare la sintassi a fondo.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap5-esp1]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Apriamo il simulatore e carichiamo l'esperimento Blink. Guardate il codice: sono solo 5 righe! Leggiamole insieme come se fosse una ricetta di cucina. La prima parte, setup(), dice ad Arduino: 'Il pin 13 e' un'uscita'. La seconda parte, loop(), dice: 'Accendi, aspetta un secondo, spegni, aspetta un secondo, e ricomincia!'",
+      "teacher_tip": "Leggere il codice ad alta voce come fosse una ricetta. NON entrare nella sintassi C++ (parentesi graffe, punto e virgola). Concentrati sul SIGNIFICATO: 'pinMode dice ad Arduino COME usare il pin. digitalWrite dice COSA fare. delay dice QUANTO aspettare.' Fai notare che setup() si esegue UNA sola volta all'accensione, mentre loop() si ripete per sempre.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap5-esp1]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta solo Arduino sulla breadboard (il LED e' gia' integrato nella scheda)",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            }
+          ],
+          "wires": []
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Secondo voi, cosa succede se togliamo una delle righe delay? Il LED resta acceso per sempre, resta spento, o fa qualcosa di strano?",
-      "teacher_tip": "Lasciare che la classe discuta liberamente. L'obiettivo non e la risposta giusta ma il ragionamento. Se qualcuno dice 'lampeggia troppo veloce per vederlo' e perfetto.",
-      "provocative_question": "Se il LED lampeggia 1000 volte al secondo, lo vedreste? O vi sembrerebbe sempre acceso?",
+      "teacher_message": "Prima di premere Play, facciamo un gioco! Il programma dice: accendi, aspetta 1000, spegni, aspetta 1000. Quel numero 1000 sono millisecondi. Mille millisecondi fanno un secondo. Secondo voi, cosa succede se cambio il 1000 con un numero piu' piccolo, tipo 100?",
+      "teacher_tip": "Lascia che la classe discuta liberamente. Non correggere subito le risposte sbagliate — il bello e' il ragionamento. Se qualcuno dice 'lampeggia piu' veloce' e' perfetto. Se qualcuno dice 'lampeggia cosi' veloce che non si vede' e' ancora meglio! Scrivi alla lavagna: 1000 ms = 1 secondo, 500 ms = mezzo secondo, 100 ms = un decimo di secondo.",
+      "provocative_question": "Se il LED lampeggia 1000 volte al secondo, lo vedreste ancora lampeggiare? O vi sembrerebbe sempre acceso?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED non lampeggia, resta sempre acceso",
+          "teacher_response": "Controlla il codice: servono ENTRAMBI i delay — uno dopo HIGH e uno dopo LOW. Se manca il delay dopo LOW, Arduino spegne e riaccende cosi' veloce che sembra sempre acceso.",
+          "analogy": "E' come spegnere la luce di una stanza e riaccenderla in un millesimo di secondo: non te ne accorgi nemmeno!"
+        },
+        {
+          "mistake": "Il LED non si accende per niente",
+          "teacher_response": "Controlla che il pin nel codice sia 13 (o LED_BUILTIN). Se scrivi un pin diverso, Arduino manda il segnale a un altro posto e il LED integrato non si accende.",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play e osserviamo. Il LED sulla scheda si accende per un secondo, poi si spegne per un secondo. Provate a contare insieme: acceso... spento... acceso...",
-      "teacher_tip": "Far contare la classe ad alta voce sincronizzandosi col LED. Questo crea un legame fisico tra il codice e il comportamento reale.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Guardate il LED sulla scheda Arduino. Si accende per un secondo e si spegne per un secondo. Contiamo insieme: acceso... spento... acceso... spento... Il programma va avanti all'infinito!",
+      "teacher_tip": "Fai contare la classe ad alta voce sincronizzandosi col LED: 'uno... due... uno... due...' Questo crea un legame fisico tra il codice e il comportamento reale. Poi evidenzia nel codice quale riga accende (HIGH) e quale spegne (LOW). Fai notare che il LED fa ESATTAMENTE quello che il codice dice: niente di piu', niente di meno.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Contate quanti secondi resta acceso e quanti resta spento. Sono uguali o diversi?"
+      "observation_prompt": "Il LED si accende per 1 secondo e si spegne per 1 secondo, all'infinito. Contate quanti lampeggi fa in 10 secondi!",
+      "analogies": [
+        {
+          "concept": "loop_infinito",
+          "text": "Il loop() e' come un nastro musicale che riparte da capo ogni volta che finisce: accendi-aspetta-spegni-aspetta, accendi-aspetta-spegni-aspetta, per sempre! Arduino non si stanca mai e non sbaglia mai l'ordine.",
+          "evidence": "Curriculum ELAB Vol 3 Cap 5"
+        },
+        {
+          "concept": "programma_come_ricetta",
+          "text": "Un programma e' come una ricetta di cucina: ci sono istruzioni scritte in ordine, e Arduino le esegue una per una, dall'alto verso il basso. Se cambi l'ordine delle istruzioni, cambia il risultato!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 5"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Avete appena scritto e eseguito il vostro primo programma. Arduino ha fatto esattamente quello che il codice gli ha detto: accendi, aspetta, spegni, aspetta, ripeti.",
-      "teacher_tip": "Sottolineare il concetto di loop infinito: il programma non si ferma mai finche non togliamo la corrente. E una differenza fondamentale rispetto a un circuito passivo.",
-      "summary_for_class": "Il programma Blink e il primo passo nella programmazione Arduino. Con 5 righe di codice controlliamo il LED integrato al pin 13.",
-      "concepts_learned": ["void setup e void loop", "pinMode OUTPUT", "digitalWrite HIGH e LOW", "delay in millisecondi", "LED_BUILTIN e pin 13"],
-      "next_preview": "Nella prossima lezione modificheremo i tempi del delay per creare lampeggi veloci, lenti e ritmi personalizzati."
+      "duration_minutes": 8,
+      "teacher_message": "Complimenti! Avete scritto e eseguito il vostro primo programma! Arduino ha fatto esattamente quello che il codice gli ha detto: accendi, aspetta, spegni, aspetta, ripeti. Questo e' programmare: dare istruzioni precise a una macchina.",
+      "teacher_tip": "Fai un recap veloce: 'setup() = si esegue una volta sola, all'accensione. loop() = si ripete per sempre. pinMode dice COME usare il pin. digitalWrite dice COSA fare (HIGH = acceso, LOW = spento). delay dice QUANTO aspettare (in millisecondi).' Questi sono i mattoncini base di TUTTI i programmi Arduino! Sottolinea il concetto di loop infinito: il programma non si ferma mai finche' non togliamo la corrente.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Abbiamo scritto il nostro primo programma Arduino! Con sole 5 righe di codice controlliamo il LED integrato al pin 13. Il segreto e' semplice: setup() prepara, loop() ripete. Con digitalWrite accendiamo e spegniamo, con delay controlliamo il tempo.",
+      "concepts_learned": [
+        "void setup() si esegue una volta sola",
+        "void loop() si ripete all'infinito",
+        "pinMode(13, OUTPUT) configura il pin",
+        "digitalWrite(13, HIGH) accende il LED",
+        "digitalWrite(13, LOW) spegne il LED",
+        "delay(1000) aspetta 1000 millisecondi = 1 secondo",
+        "LED_BUILTIN e' il LED integrato al pin 13"
+      ],
+      "next_preview": "Nella prossima lezione diventiamo scienziati: cambieremo i numeri del delay per creare lampeggi veloci, lenti e ritmi personalizzati!"
     }
   ],
+  "assessment_invisible": [
+    "Se sa spiegare la differenza tra setup() e loop() con parole sue → comprensione della struttura del programma",
+    "Se prevede correttamente che un delay piu' piccolo fa lampeggiare piu' veloce → comprensione del rapporto codice-comportamento",
+    "Se chiede spontaneamente 'posso cambiare il numero?' → curiosita' e voglia di sperimentare"
+  ],
   "session_save": {
-    "concepts_covered": ["primo programma", "struttura sketch", "digitalWrite", "delay", "LED_BUILTIN"],
+    "concepts_covered": [
+      "primo_programma",
+      "struttura_sketch",
+      "setup_loop",
+      "pinMode_OUTPUT",
+      "digitalWrite_HIGH_LOW",
+      "delay_millisecondi",
+      "LED_BUILTIN"
+    ],
     "next_suggested": "v3-cap5-esp2",
-    "resume_message": "L'ultima volta avete fatto lampeggiare il LED integrato con il programma Blink. Oggi cambieremo i tempi per creare ritmi diversi."
+    "resume_message": "L'ultima volta avete fatto lampeggiare il LED integrato con il vostro primo programma! Oggi cambieremo i tempi per creare ritmi diversi."
   }
 }
