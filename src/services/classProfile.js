@@ -198,6 +198,7 @@ export function getNextLessonSuggestion() {
   if (profile.isFirstTime) {
     const firstPath = getLessonPath('v1-cap6-esp1');
     return {
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       experimentId: 'v1-cap6-esp1',
       title: firstPath?.title || 'Accendi il tuo primo LED',
       message: 'Iniziamo dal primo esperimento: accendiamo un LED! Premi per iniziare.',
@@ -207,7 +208,6 @@ export function getNextLessonSuggestion() {
   if (!profile.nextSuggested) return null;
 
   const nextPath = getLessonPath(profile.nextSuggested);
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
   if (!nextPath) return null;
 
   return {
