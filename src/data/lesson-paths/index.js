@@ -198,6 +198,7 @@ export function getLessonPath(experimentId) {
 
 /**
  * Controlla se un percorso lezione è disponibile
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * @param {string} experimentId
  * @returns {boolean}
  */

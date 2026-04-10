@@ -1,8 +1,8 @@
 {
   "_meta": {
     "version": "1.0",
-    "generated": "2026-04-04",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "generated": "2026-04-10",
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap6-esp7",
   "volume": 3,
@@ -12,33 +12,99 @@
   "difficulty": 2,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Risolvere il problema del rimbalzo meccanico del pulsante! Con while(digitalRead(10)==LOW) aspettiamo che il pulsante venga rilasciato prima di cambiare stato. Il toggle diventa molto piu pulito.",
+  "objective": "Risolvere il problema del rimbalzo meccanico del pulsante con una tecnica di debounce: un ciclo while che aspetta il rilascio del pulsante prima di procedere. Il toggle diventa pulito e affidabile. Impariamo perche' i contatti meccanici 'rimbalzano' e come il software puo' correggere un problema hardware.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "🤖" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "🔲" },
-    { "name": "LED rosso", "quantity": 1, "icon": "❤️" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "⚡" },
-    { "name": "Fili di collegamento", "quantity": 4, "icon": "🔌" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Pulsante",
+      "quantity": 1,
+      "icon": "🔘"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED verde",
+      "quantity": 1,
+      "icon": "💚"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 6,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["Arduino", "LED", "Morse", "SOS", "punto", "linea", "delay", "timing", "messaggio", "codice", "segnale", "breve", "lungo", "pausa"],
-    "forbidden": ["array", "string", "char", "funzione", "switch case", "ASCII"],
-    "note": "Focus sul timing e sulle sequenze. SOS e perfetto: 3 punti, 3 linee, 3 punti. Simmetrico e memorizzabile."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "digitale",
+      "OUTPUT",
+      "INPUT",
+      "INPUT_PULLUP",
+      "HIGH",
+      "LOW",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "setup",
+      "loop",
+      "programma",
+      "codice",
+      "pulsante",
+      "digitalRead",
+      "digitalWrite",
+      "pinMode",
+      "variabile",
+      "booleano",
+      "toggle",
+      "debounce",
+      "rimbalzo",
+      "while",
+      "if",
+      "GND",
+      "massa"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "analogico"
+    ],
+    "note": "Cap 6 Vol 3 — debounce con while, rimbalzo meccanico, attesa rilascio pulsante."
   },
-  "prerequisites": ["v3-cap6-esp3"],
+  "prerequisites": [
+    "v3-cap6-esp5"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp1",
-    "title": "Pulsante accende LED",
-    "preview": "Nel prossimo capitolo Arduino impara a leggere: un pulsante gli dice se e premuto o no."
+    "title": "Primo esperimento Capitolo 7",
+    "preview": "Nel Capitolo 7 scoprirete i pin analogici! Arduino puo' leggere valori intermedi, non solo ON e OFF. Potenziometri, sensori di luce e tanto altro!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 5,
-      "teacher_message": "Il codice Morse e stato inventato nel 1836 per comunicare con il telegrafo. Ogni lettera e fatta di punti (brevi) e linee (lunghe). SOS, il segnale di emergenza, e tre punti, tre linee, tre punti.",
-      "teacher_tip": "Scrivere SOS alla lavagna in Morse: ... --- ... Far battere le mani alla classe: tre colpi veloci, tre lenti, tre veloci.",
-      "class_hook": "SOS non significa 'Save Our Souls'. E stato scelto perche e facile da trasmettere e riconoscere. Tre corti, tre lunghi, tre corti.",
+      "teacher_message": "Nell'esperimento precedente il pulsante a volte contava doppio. Perche'? I contatti meccanici del pulsante 'rimbalzano' come una pallina da ping-pong: quando premi, il contatto si chiude e si apre rapidissimamente piu' volte prima di stabilizzarsi. Arduino e' cosi' veloce che legge tutti questi rimbalzi!",
+      "teacher_tip": "Dimostra il concetto fisicamente: fai rimbalzare una pallina o batti la mano sul tavolo — il suono non e' un singolo 'TAC' ma un 'ta-ta-ta-tac' rapido. I contatti del pulsante fanno la stessa cosa, ma in millisecondi. Arduino, che controlla il loop migliaia di volte al secondo, li legge tutti!",
+      "components_list": "Ti servono: gli stessi componenti dell'esperimento precedente: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 pulsante, 1 resistore 470Ω, 1 LED verde, fili di collegamento.",
+      "class_hook": "Ricordate che il pulsante a volte contava doppio? Non e' un bug del nostro codice: e' un problema FISICO! I contatti del pulsante rimbalzano come una pallina. Oggi lo risolviamo con un trucco software.",
       "action_tags": [],
       "auto_action": null
     },
@@ -46,45 +112,169 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 10,
-      "teacher_message": "Carichiamo il programma. Un punto e un flash breve di 200ms. Una linea e un flash lungo di 600ms. Tra un simbolo e l'altro, pausa di 200ms. Tra le lettere, pausa di 600ms.",
-      "teacher_tip": "Le regole standard Morse: linea = 3x punto, pausa tra simboli = 1x punto, pausa tra lettere = 3x punto, pausa tra parole = 7x punto. Semplificare per i ragazzi.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap6-esp7]"],
-      "auto_action": "load_experiment"
+      "teacher_message": "Il circuito e' identico all'esperimento precedente: pulsante su pin 10 con INPUT_PULLUP, LED verde su pin 5. La differenza e' nel CODICE: dopo aver letto la pressione, aggiungiamo un ciclo while che aspetta finche' il pulsante non viene rilasciato, piu' un piccolo delay di sicurezza.",
+      "teacher_tip": "Spiega il debounce cosi': 'Quando il codice vede che il pulsante e' premuto (LOW), fa il toggle del LED e poi ASPETTA con while(digitalRead(10)==LOW) finche' il dito non si alza. Poi aggiunge delay(50) per essere sicuro che i rimbalzi siano finiti. Solo dopo ricomincia a controllare.' Non serve spiegare while in dettaglio, basta l'idea di 'aspetta finche'.'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap6-esp7]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito pulsante + LED (identico a esp5)",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "pushbutton",
+              "id": "btn1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "green"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a16",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d23",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D10",
+              "to": "bb1:f5",
+              "color": "blue"
+            },
+            {
+              "from": "bb1:f10",
+              "to": "bb1:bus-bot-minus-10",
+              "color": "black"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 8,
-      "teacher_message": "Se raddoppio tutti i tempi, il messaggio cambia o resta lo stesso SOS ma piu lento? E se dimezziamo solo i punti ma non le linee?",
-      "teacher_tip": "Far capire che nel Morse conta il rapporto tra breve e lungo, non il tempo assoluto. Se cambio le proporzioni, il messaggio diventa illeggibile.",
-      "provocative_question": "Se qualcuno vi manda un messaggio Morse con il LED ma voi non conoscete il codice, come fate a capire almeno quante lettere ci sono?",
+      "duration_minutes": 10,
+      "teacher_message": "Il circuito e' lo stesso di prima, ma il codice ha un trucco in piu'. Domanda: perche' il pulsante a volte conta doppio? Come possiamo evitarlo?",
+      "teacher_tip": "Guida la discussione: 'Arduino controlla il pulsante migliaia di volte al secondo. Se i contatti rimbalzano per 5 millisecondi, Arduino puo' leggere 50 cambiamenti! La soluzione e': dopo aver visto la pressione, ASPETTA che il dito si alzi completamente prima di controllare di nuovo. Questo si chiama debounce.'",
+      "provocative_question": "Perche' il pulsante a volte conta doppio? Arduino e' rotto? Il pulsante e' difettoso? O c'e' una spiegazione fisica? E come possiamo evitarlo con il codice?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il toggle continua a contare doppio anche con il debounce",
+          "teacher_response": "Controlla che il while() aspetti che il pin torni HIGH (pulsante rilasciato). E che ci sia un delay(50) dopo il while per assorbire gli ultimi rimbalzi. Se manca uno dei due, il debounce non funziona bene.",
+          "analogy": null
+        },
+        {
+          "mistake": "Il programma si blocca e non risponde piu'",
+          "teacher_response": "Il while potrebbe non uscire mai: controlla che la condizione sia while(digitalRead(10)==LOW) e che il pulsante sia collegato correttamente. Se il pin e' sempre LOW, il while non finisce mai!",
+          "analogy": "Il while e' come dire 'aspetta in fila finche' non ti chiamano'. Se nessuno ti chiama, aspetti per sempre!"
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 10,
-      "teacher_message": "Premiamo Play e osserviamo il LED. Tre flash brevi, tre lunghi, tre brevi, pausa lunga, e ricomincia. Provate a decodificarlo contando la durata dei flash.",
-      "teacher_tip": "Sfida avanzata: chi vuole provare a scrivere il proprio nome in Morse? Fornire la tabella Morse per le lettere piu comuni (A-Z).",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Ora prova il pulsante: ogni pressione cambia stato del LED in modo PULITO. Niente piu' conteggi doppi! Confronta con l'esperimento precedente: il debounce ha risolto il problema del rimbalzo.",
+      "teacher_tip": "Fai premere il pulsante molte volte, anche velocemente. Il toggle dovrebbe essere sempre preciso: una pressione = un cambio di stato. Chiedi: 'Notate la differenza rispetto a prima? Prima a volte saltava, ora funziona sempre!' Questo e' un esempio perfetto di come il SOFTWARE risolve un problema HARDWARE.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:btn1]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Riuscite a riconoscere dove finisce una lettera e inizia la successiva guardando le pause?"
+      "observation_prompt": "Il toggle ora funziona perfettamente! Ogni pressione cambia stato una sola volta. Il debounce (while + delay) aspetta il rilascio completo del pulsante prima di ricominciare a leggere.",
+      "analogies": [
+        {
+          "concept": "rimbalzo_meccanico",
+          "text": "Il rimbalzo del pulsante e' come far rimbalzare una pallina da ping-pong sul tavolo: non fa un solo 'tac' ma 'ta-ta-ta-tac'. I contatti metallici dentro il pulsante fanno la stessa cosa, e Arduino e' cosi' veloce che sente ogni singolo rimbalzo!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        },
+        {
+          "concept": "debounce_software",
+          "text": "Il debounce e' come dire: 'Aspetto che la pallina si fermi completamente prima di contare il rimbalzo.' Il while aspetta che il dito si alzi, il delay aspetta che i contatti si stabilizzino. Solo dopo il programma e' pronto per la prossima pressione.",
+          "evidence": "Curriculum ELAB Vol 3 Cap 6"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 7,
-      "teacher_message": "Con il timing preciso di Arduino possiamo trasmettere messaggi in codice Morse. Il segreto e il rapporto tra punti brevi e linee lunghe. Lo stesso principio del telegrafo del 1836.",
-      "teacher_tip": "Collegare alla storia della comunicazione: dal telegrafo al WiFi, il concetto di codificare informazioni in segnali on/off e lo stesso.",
-      "summary_for_class": "Il codice Morse usa flash brevi (punti) e lunghi (linee) per codificare lettere. SOS e tre punti, tre linee, tre punti. Il timing preciso di delay() lo rende possibile.",
-      "concepts_learned": ["codice Morse base", "timing preciso con delay", "rapporto punto/linea", "pause tra simboli e lettere", "codifica dell'informazione"],
-      "next_preview": "Nel prossimo capitolo Arduino impara a leggere: useremo un pulsante per mandare segnali ad Arduino tramite i pin di input."
+      "duration_minutes": 5,
+      "teacher_message": "Eccellente! Avete risolto un problema reale dell'elettronica: il rimbalzo meccanico. Con while e delay, il software corregge un difetto dell'hardware. Questo concetto di debounce si usa in TUTTI i dispositivi con pulsanti: telecomandi, tastiere, controller di videogiochi!",
+      "teacher_tip": "Recap: 'Il rimbalzo e' un problema fisico dei contatti meccanici. Il debounce e' la soluzione software: while aspetta il rilascio, delay assorbe gli ultimi rimbalzi. Ogni dispositivo con pulsanti usa il debounce!' Sfida finale: 'Secondo voi, la tastiera del computer ha il debounce?'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il rimbalzo meccanico fa 'contare doppio' i pulsanti. Il debounce e' la soluzione: un ciclo while aspetta il rilascio completo e un delay di sicurezza assorbe gli ultimi rimbalzi. Tutti i dispositivi elettronici con pulsanti usano il debounce!",
+      "concepts_learned": [
+        "rimbalzo meccanico dei contatti",
+        "debounce con while e delay",
+        "software che corregge problemi hardware",
+        "while come ciclo di attesa",
+        "toggle pulito e affidabile"
+      ],
+      "next_preview": "Nel Capitolo 7 scoprirete i pin analogici! Arduino potra' leggere valori intermedi, non solo ON e OFF. Potenziometri, sensori di luce e tante nuove possibilita'!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega il rimbalzo con parole proprie → comprensione del problema fisico",
+    "Se capisce il ruolo del while (aspettare il rilascio) → comprensione del debounce",
+    "Se collega il debounce ad altri dispositivi (tastiera, telecomando) → trasferimento di conoscenza"
+  ],
   "session_save": {
-    "concepts_covered": ["codice Morse", "SOS", "timing delay", "codifica informazione"],
+    "concepts_covered": [
+      "rimbalzo_meccanico",
+      "debounce_while",
+      "delay_sicurezza",
+      "software_corregge_hardware",
+      "toggle_pulito"
+    ],
     "next_suggested": "v3-cap7-esp1",
-    "resume_message": "L'ultima volta avete trasmesso SOS in Morse con il LED. Oggi Arduino impara a leggere un pulsante."
+    "resume_message": "Avete risolto il rimbalzo con il debounce! Prossimo capitolo: i pin analogici e i sensori."
   }
 }
