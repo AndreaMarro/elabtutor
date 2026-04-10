@@ -4,26 +4,10 @@
  * (c) Andrea Marro — 02/04/2026
  */
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import EXPERIMENTS_VOL1 from '../../data/experiments-vol1';
-import EXPERIMENTS_VOL2 from '../../data/experiments-vol2';
-import EXPERIMENTS_VOL3 from '../../data/experiments-vol3';
+import { getChapterMap, getChapterGroups } from '../../data/chapter-map';
 import css from './ExperimentPicker.module.css';
 
-const VOLUMES = [
-  { key: 1, data: EXPERIMENTS_VOL1, color: '#4A7A25', label: 'Volume 1', sub: 'Le Basi' },
-  { key: 2, data: EXPERIMENTS_VOL2, color: '#E8941C', label: 'Volume 2', sub: 'Approfondiamo' },
-  { key: 3, data: EXPERIMENTS_VOL3, color: '#E54B3D', label: 'Volume 3', sub: 'Arduino' },
-];
-
-function getChapterGroups(experiments) {
-  const groups = {};
-  for (const exp of experiments) {
-    const ch = exp.chapter || 'Altro';
-    if (!groups[ch]) groups[ch] = [];
-    groups[ch].push(exp);
-  }
-  return Object.entries(groups);
-}
+const VOLUMES = getChapterMap();
 
 export default function ExperimentPicker({ open, onClose, onSelect, completedIds = [], onAskUnlim }) {
   const [activeVol, setActiveVol] = useState(1);
@@ -47,7 +31,10 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
   }, [open, onClose]);
 
   const vol = VOLUMES.find(v => v.key === activeVol);
-  const experiments = vol?.data?.experiments || [];
+  const experiments = useMemo(() => {
+    if (!vol) return [];
+    return vol.chapters.flatMap(c => c.experiments);
+  }, [vol]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return experiments;
