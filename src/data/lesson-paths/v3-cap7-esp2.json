@@ -12,7 +12,7 @@
   "difficulty": 2,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Leggere il valore analogico del trimmer e convertirlo in Volt! Usando la formula float tensione = (valoreLetto * 5.0) / 1023, scopriamo come Arduino trasforma un numero tra 0 e 1023 in una tensione reale tra 0 e 5 Volt. Un LED si accende solo quando la tensione supera 2.5V.",
+  "objective": "Imparare a convertire il valore letto da analogRead (0-1023) in una tensione reale in Volt usando la formula proporzionale. Colleghiamo un potenziometro al pin A0, leggiamo il valore e calcoliamo la tensione con float e la formula: tensione = (valoreLetto * 5.0) / 1023. Il LED si accende solo se la tensione supera 2.5V!",
   "components_needed": [
     {
       "name": "Arduino Nano R4 (breakout wing)",
@@ -37,7 +37,7 @@
     {
       "name": "LED rosso",
       "quantity": 1,
-      "icon": "❤️"
+      "icon": "🔴"
     },
     {
       "name": "Fili di collegamento",
@@ -51,26 +51,27 @@
       "pin",
       "analogico",
       "analogRead",
-      "ADC",
       "tensione",
       "Volt",
       "float",
       "formula",
+      "ADC",
       "conversione",
-      "trimmer",
       "potenziometro",
+      "trimmer",
       "LED",
       "resistore",
       "breadboard",
-      "Serial",
-      "Monitor",
-      "soglia",
+      "A0",
       "setup",
       "loop",
+      "Serial",
+      "monitor",
+      "OUTPUT",
+      "HIGH",
+      "LOW",
       "GND",
-      "5V",
-      "PWM",
-      "luminosità"
+      "5V"
     ],
     "forbidden": [
       "condensatore",
@@ -82,7 +83,7 @@
       "DAC",
       "PWM"
     ],
-    "note": "Cap 7 Vol 3 — conversione ADC a Volt, tipo float, formula proporzionale."
+    "note": "Cap 7 Vol 3 — conversione ADC-Volt, float, formula proporzionale."
   },
   "prerequisites": [
     "v3-cap7-esp1"
@@ -90,17 +91,17 @@
   "next_experiment": {
     "id": "v3-cap7-esp3",
     "title": "Trimmer controlla 3 LED",
-    "preview": "Nel prossimo esperimento dividiamo il range analogico in tre zone per controllare tre LED diversi!"
+    "preview": "Nel prossimo esperimento dividiamo il range analogico in tre zone per controllare 3 LED diversi con un solo trimmer!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
       "duration_minutes": 6,
-      "teacher_message": "Oggi impariamo a convertire il numero che Arduino legge dal trimmer in una tensione reale in Volt! Il trimmer ci darà un numero tra 0 e 1023, e noi lo trasformeremo in Volt con una formula semplice.",
-      "teacher_tip": "Chiedi ai ragazzi: 'Se Arduino legge 512, quanti Volt sono?' Lasciali ragionare: 512 è circa metà di 1023, quindi circa 2.5V. Questo aggancia l'intuizione alla formula matematica.",
+      "teacher_message": "Oggi impariamo a trasformare i numeri che Arduino legge in una tensione vera in Volt! Useremo una formula matematica semplice e un potenziometro per variare la tensione. Il LED si accenderà solo quando superiamo i 2.5 Volt.",
+      "teacher_tip": "Chiedi ai ragazzi: 'Se analogRead restituisce un numero da 0 a 1023, come facciamo a sapere quanti Volt sono?' Spiega che serve una proporzione: 1023 corrisponde a 5V, quindi basta moltiplicare e dividere. Introduci il concetto di float come numero con la virgola.",
       "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 potenziometro 10kΩ, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
-      "class_hook": "Arduino legge un numero misterioso tra 0 e 1023. Come facciamo a sapere quanti Volt ci sono davvero? Oggi scopriamo la formula magica per tradurre i numeri in Volt!",
+      "class_hook": "Se Arduino legge il numero 512, quanti Volt sono? E se legge 0? E 1023? Oggi scopriamo la formula magica per convertire i numeri in Volt!",
       "action_tags": [],
       "auto_action": null
     },
@@ -108,8 +109,8 @@
       "name": "MOSTRA",
       "icon": "🔧",
       "duration_minutes": 12,
-      "teacher_message": "Il circuito ha un trimmer collegato al pin A0 che fornisce una tensione variabile. Un LED rosso con resistore 470Ω è collegato al pin D5. Il codice legge il valore analogico, lo converte in Volt con la formula float tensione = (valoreLetto * 5.0) / 1023, e accende il LED se la tensione supera 2.5V.",
-      "teacher_tip": "Spiega la formula passo passo: 'valoreLetto va da 0 a 1023. Moltiplicando per 5.0 e dividendo per 1023 otteniamo i Volt. Il tipo float ci permette di avere numeri con la virgola come 2.51 Volt.' Mostra che il Serial Monitor stampa il valore in Volt in tempo reale.",
+      "teacher_message": "Il circuito collega il potenziometro tra 5V e GND, con il cursore sul pin A0. Il LED rosso è collegato al pin D3 tramite un resistore da 470Ω. Il codice legge il valore analogico, lo converte in Volt con la formula float tensione = (valoreLetto * 5.0) / 1023, e accende il LED se la tensione supera 2.5V.",
+      "teacher_tip": "Mostra la formula passo per passo: 'valoreLetto è il numero da 0 a 1023. Moltiplichiamo per 5.0 (con il punto!) perché il massimo è 5 Volt. Dividiamo per 1023 perché quello è il valore massimo che Arduino può leggere. Il risultato è un float, un numero con la virgola.' Fai notare che 5.0 ha il punto decimale — questo è fondamentale per avere un risultato preciso.",
       "components_list": null,
       "class_hook": null,
       "action_tags": [
@@ -117,7 +118,7 @@
       ],
       "auto_action": "load_experiment",
       "build_circuit": {
-        "description": "Monta il circuito con trimmer, LED e Arduino per leggere la tensione",
+        "description": "Monta il circuito con potenziometro su A0 e LED su D3",
         "button_label": "Monta il circuito per me",
         "intent": {
           "components": [
@@ -157,12 +158,22 @@
               "color": "black"
             },
             {
-              "from": "nano1:W_A0",
-              "to": "bb1:a10",
+              "from": "pot1:pin1",
+              "to": "bb1:bus-bot-plus-5",
+              "color": "red"
+            },
+            {
+              "from": "pot1:pin3",
+              "to": "bb1:bus-bot-minus-5",
+              "color": "black"
+            },
+            {
+              "from": "pot1:wiper",
+              "to": "nano1:W_A0",
               "color": "blue"
             },
             {
-              "from": "nano1:W_D5",
+              "from": "nano1:W_D3",
               "to": "bb1:a20",
               "color": "green"
             },
@@ -184,22 +195,22 @@
       "name": "CHIEDI",
       "icon": "❓",
       "duration_minutes": 8,
-      "teacher_message": "Il circuito è pronto! Prima di avviare, ragioniamo sulla conversione. Il ADC di Arduino legge valori da 0 a 1023. Come li trasformiamo in Volt?",
-      "teacher_tip": "Guida i ragazzi con un esempio concreto: 'Se leggo 512, quanto vale in Volt? 512 * 5.0 / 1023 = circa 2.50V.' Poi chiedi: 'E se leggo 0? E se leggo 1023?' Questo cementa la comprensione della proporzione lineare.",
-      "provocative_question": "Come convertiamo il numero 512 in Volt? Se Arduino legge 1023 sono 5 Volt, se legge 0 sono 0 Volt. Ma 512? Serve una formula o basta indovinare?",
+      "teacher_message": "Il circuito è pronto! Prima di far partire il programma, ragioniamo insieme sulla conversione. Arduino legge numeri da 0 a 1023, ma noi vogliamo sapere i Volt!",
+      "teacher_tip": "Guida i ragazzi attraverso un esempio concreto: 'Se analogRead restituisce 512, quanto fa 512 * 5.0 / 1023? Circa 2.5 Volt! Esattamente a metà.' Fai provare altri valori a mente: 0 → 0V, 1023 → 5V, 256 → circa 1.25V.",
+      "provocative_question": "Come convertiamo il numero 512 in Volt? Se analogRead legge 1023 quando ci sono 5 Volt, che proporzione usiamo per scoprire quanti Volt corrispondono a 512?",
       "components_list": null,
       "class_hook": null,
       "action_tags": [],
       "auto_action": null,
       "common_mistakes": [
         {
-          "mistake": "Usare int invece di float per la tensione",
-          "teacher_response": "Con int la divisione 512/1023 dà 0! Serve float per avere i decimali: 2.50 Volt non si può scrivere con un intero.",
-          "analogy": "È come misurare la tua altezza: se usi solo i metri interi, sei 1 metro. Ma con i decimali sei 1 metro e 45 centimetri — molto più preciso!"
+          "mistake": "La tensione calcolata è sempre 0 o un numero intero senza decimali",
+          "teacher_response": "Hai usato 5 invece di 5.0 nella formula? Senza il punto decimale, Arduino fa una divisione intera e butta via i decimali! Scrivi sempre 5.0 per ottenere un float.",
+          "analogy": "È come dividere una pizza in 3: se dici '1 diviso 3' a un computer senza decimali, risponde 0! Ma '1.0 diviso 3.0' dà 0.333 — molto più preciso."
         },
         {
-          "mistake": "Dimenticare il 5.0 nella formula (scrivere 5 invece di 5.0)",
-          "teacher_response": "Se scrivi 5 invece di 5.0, Arduino fa una divisione intera e perde i decimali. Il .0 dice ad Arduino di usare i numeri con la virgola!",
+          "mistake": "Il LED non si accende anche girando il potenziometro al massimo",
+          "teacher_response": "Controlla che il pin del LED sia configurato come OUTPUT nel setup() e che il confronto nel codice sia corretto: if (tensione > 2.5). Verifica anche i collegamenti del potenziometro.",
           "analogy": null
         }
       ]
@@ -208,8 +219,8 @@
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premi Play! Gira il trimmer lentamente e guarda il Serial Monitor: vedrai la tensione cambiare in tempo reale da 0.00V a 5.00V. Quando superi 2.5V il LED rosso si accende!",
-      "teacher_tip": "Fai girare il trimmer lentamente e chiedi: 'A che punto si accende il LED?' I ragazzi devono collegare il valore sul Monitor (2.50+) con l'accensione del LED. Evidenzia che il float mostra i decimali.",
+      "teacher_message": "Premi Play! Gira lentamente il potenziometro e osserva il Serial Monitor: vedrai la tensione cambiare da 0.00V a 5.00V. Quando supera 2.5V il LED si accende!",
+      "teacher_tip": "Evidenzia il potenziometro e il LED. Fai girare lentamente il trimmer e chiedi ai ragazzi di osservare il momento esatto in cui il LED si accende. 'A quanti Volt si è acceso? Corrisponde alla soglia 2.5V nel codice?' Fai notare che i numeri sul Serial Monitor hanno i decimali — questo è il float in azione!",
       "components_list": null,
       "class_hook": null,
       "action_tags": [
@@ -218,16 +229,16 @@
         "[AZIONE:highlight:led1]"
       ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Girando il trimmer, la tensione cambia da 0.00V a 5.00V sul Serial Monitor. Quando supera 2.5V, il LED rosso si accende. Sotto 2.5V si spegne. La formula funziona!",
+      "observation_prompt": "Girando il potenziometro, la tensione sul Serial Monitor cambia gradualmente. Quando supera 2.5V, il LED si accende. Il float permette di leggere valori precisi come 2.49V o 3.71V, non solo numeri interi!",
       "analogies": [
         {
           "concept": "conversione_adc_volt",
-          "text": "La conversione ADC-Volt è come un termometro: il mercurio sale da 0 a 100 gradi, ma noi vogliamo sapere la temperatura esatta. La formula traduce l'altezza del mercurio (il numero 0-1023) nella temperatura reale (i Volt 0-5)!",
+          "text": "La formula è come un traduttore: Arduino parla in 'numeri da 0 a 1023' ma noi capiamo i Volt. La formula traduce dal linguaggio di Arduino al nostro!",
           "evidence": "Curriculum ELAB Vol 3 Cap 7"
         },
         {
-          "concept": "float_decimali",
-          "text": "Il tipo float è come una bilancia di precisione: non dice solo '2 chili' ma '2 chili e 503 grammi'. Così la tensione non è solo '2 Volt' ma '2.50 Volt' — molto più utile!",
+          "concept": "float",
+          "text": "Un float è come un righello con i millimetri: non misura solo 1, 2, 3 centimetri, ma anche 2.5 o 3.7. Senza float, Arduino vedrebbe solo numeri interi come un righello senza tacchette!",
           "evidence": "Curriculum ELAB Vol 3 Cap 7"
         }
       ]
@@ -236,37 +247,37 @@
       "name": "CONCLUDI",
       "icon": "✅",
       "duration_minutes": 7,
-      "teacher_message": "Ottimo lavoro! Avete imparato a convertire il valore ADC in Volt reali. La formula tensione = (valoreLetto * 5.0) / 1023 è uno strumento fondamentale per lavorare con i sensori analogici.",
-      "teacher_tip": "Recap: 'analogRead restituisce 0-1023. La formula converte in 0-5V. float ci dà i decimali. Con un if possiamo creare una soglia.' Questi concetti servono per tutti i sensori analogici!",
+      "teacher_message": "Ottimo lavoro! Oggi avete imparato a convertire il valore di analogRead in una tensione reale usando la formula float tensione = (valoreLetto * 5.0) / 1023. Sapete che 0 corrisponde a 0V e 1023 a 5V, e potete calcolare qualsiasi valore intermedio!",
+      "teacher_tip": "Recap veloce: 'analogRead restituisce 0-1023. Per ottenere i Volt moltiplichiamo per 5.0 e dividiamo per 1023. Il float ci dà i decimali. Possiamo usare la tensione per prendere decisioni, come accendere un LED oltre una soglia.' Questi concetti sono fondamentali per tutti i sensori analogici!",
       "components_list": null,
       "class_hook": null,
       "action_tags": [],
       "auto_action": null,
-      "summary_for_class": "La formula float tensione = (valoreLetto * 5.0) / 1023 converte il numero ADC (0-1023) in Volt reali (0-5V). Con un if e una soglia a 2.5V controlliamo quando accendere il LED. Questo è il modo in cui Arduino interpreta il mondo analogico!",
+      "summary_for_class": "La formula tensione = (valoreLetto * 5.0) / 1023 converte i numeri di Arduino in Volt reali. Il float permette di avere decimali precisi. Con questa conversione possiamo capire esattamente quanta tensione c'è su un pin e prendere decisioni precise nel codice!",
       "concepts_learned": [
-        "conversione ADC a Volt",
-        "tipo float per numeri decimali",
+        "conversione ADC-Volt",
+        "tipo float (numeri decimali)",
         "formula proporzionale",
-        "soglia con if",
+        "soglia di tensione per decisioni",
         "Serial.println con float"
       ],
-      "next_preview": "Nel prossimo esperimento dividiamo il range analogico in tre zone: ogni zona accende un LED diverso. Tre LED, tre intervalli, un solo trimmer!"
+      "next_preview": "Nel prossimo esperimento useremo il trimmer per controllare non uno, ma TRE LED diversi! Divideremo il range in tre zone con if-else if-else."
     }
   ],
   "assessment_invisible": [
-    "Se spiega la formula con parole sue → comprensione della conversione ADC-Volt",
-    "Se prevede il valore in Volt dato un numero ADC → padronanza della proporzione",
-    "Se capisce perché serve float e non int → comprensione dei tipi di dato"
+    "Se calcola correttamente 512 * 5.0 / 1023 ≈ 2.5V → comprensione della formula proporzionale",
+    "Se spiega perché serve 5.0 e non 5 → comprensione del tipo float",
+    "Se propone di cambiare la soglia da 2.5 a un altro valore → pensiero creativo applicato"
   ],
   "session_save": {
     "concepts_covered": [
       "conversione_adc_volt",
       "float",
       "formula_proporzionale",
-      "soglia_if",
+      "soglia_tensione",
       "serial_monitor"
     ],
     "next_suggested": "v3-cap7-esp3",
-    "resume_message": "Avete convertito il valore ADC in Volt con la formula! Prossimo passo: dividere il range in tre zone per controllare tre LED."
+    "resume_message": "Avete imparato a convertire i numeri di analogRead in Volt! Prossimo passo: controllare 3 LED con un solo trimmer."
   }
 }

@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "generated": "2026-04-10",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp5",
   "volume": 3,
@@ -12,79 +12,236 @@
   "difficulty": 1,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Sperimentare valori PWM discreti (0, 64, 128, 255) per osservare la relazione tra il numero scritto con analogWrite e la luminosita percepita del LED. Consolidare il concetto di PWM con esempi concreti e visibili.",
+  "objective": "Esplorare la relazione tra valori PWM e luminosità del LED usando quattro valori manuali: 0 (spento), 64 (un quarto), 128 (metà), 255 (massimo). Il programma imposta ciascun valore con analogWrite(5, valore) e attende un secondo, così i ragazzi possono osservare chiaramente i quattro livelli di luminosità e capire come il numero si traduce in luce.",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Fili di collegamento", "quantity": 4, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "🔴"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 4,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogWrite", "valore", "livello", "0-255", "duty cycle", "percentuale", "spento", "massimo", "Arduino"],
-    "forbidden": ["interrupt", "map", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
-    "note": "Esperimento di consolidamento. Difficolta bassa perche il concetto e gia stato introdotto. Qui si osserva e si sperimenta con valori specifici per costruire intuizione."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "analogWrite",
+      "PWM",
+      "luminosità",
+      "valore",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "0",
+      "64",
+      "128",
+      "255",
+      "setup",
+      "loop",
+      "OUTPUT",
+      "GND"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "DAC",
+      "analogRead",
+      "potenziometro",
+      "for"
+    ],
+    "note": "Cap 7 Vol 3 — valori PWM discreti, relazione numero-luminosità."
   },
-  "prerequisites": ["v3-cap7-esp4"],
+  "prerequisites": [
+    "v3-cap7-esp4"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp6",
     "title": "Fade up/down con for",
-    "preview": "Nella prossima lezione creiamo un effetto respiro: il LED si accende e si spegne gradualmente, come se respirasse!"
+    "preview": "Nel prossimo esperimento creiamo un effetto 'respiro': il LED sale e scende di luminosità con due cicli for, uno che sale e uno che scende!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "L'ultima volta abbiamo visto il fade continuo. Oggi facciamo il contrario: scegliamo 4 valori precisi e osserviamo la luminosita corrispondente. E come impostare il volume a 0%, 25%, 50% e 100%.",
-      "teacher_tip": "L'analogia del volume e perfetta: 0 e muto, 64 e basso, 128 e medio, 255 e al massimo. Chiedere alla classe di predire la luminosita prima di vedere il risultato.",
-      "class_hook": "Se il LED ha 256 livelli di luminosita, quanti riuscite davvero a distinguere a occhio? Scommettiamo che sono molti meno di 256!",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi esploriamo quattro valori PWM precisi per capire come il numero si traduce in luminosità. Invece di un fade continuo, impostiamo 0, 64, 128 e 255 uno alla volta e osserviamo la differenza!",
+      "teacher_tip": "Chiedi ai ragazzi: 'Se 0 è buio completo e 255 è massimo, che luminosità vi aspettate con 128? E con 64?' Fai prevedere prima di osservare — questo attiva il ragionamento scientifico. Spiega che oggi il circuito è identico al precedente, ma il codice è diverso.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Se il volume della TV va da 0 a 255, quanto forte sarà 128? Esattamente metà! E 64? Un quarto. Oggi vediamo la stessa cosa con la luce del LED!",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Stesso circuito di prima: LED con resistore sul pin 5 (PWM). Il codice mostra quattro valori in sequenza: analogWrite(5, 0), poi 64, poi 128, poi 255, con delay(1000) tra uno e l'altro per osservare bene.",
-      "teacher_tip": "Far notare le percentuali: 0/255 = 0%, 64/255 = 25%, 128/255 = 50%, 255/255 = 100%. Il duty cycle e la percentuale di tempo in cui il pin e HIGH. Piu alta la percentuale, piu luminoso il LED.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp5]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito è lo stesso dell'esperimento precedente: LED rosso sul pin 5 con resistore 470Ω. Il codice nel loop() fa quattro passi: analogWrite(5, 0) poi delay(1000), analogWrite(5, 64) poi delay(1000), analogWrite(5, 128) poi delay(1000), analogWrite(5, 255) poi delay(1000). Quattro livelli di luminosità, un secondo ciascuno!",
+      "teacher_tip": "Mostra il codice e fai notare la semplicità: sono solo quattro righe di analogWrite, ciascuna seguita da un delay. Spiega: '0 è 0% di luminosità, 64 è circa 25%, 128 è 50%, 255 è 100%. I quattro gradini sono ben distinti e facili da vedere.'",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp5]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con LED su pin PWM 5",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a20",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d22",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a23",
+              "to": "bb1:bus-bot-minus-23",
+              "color": "black"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 10,
-      "teacher_message": "0 e spento, 255 e massimo. Che luminosita ha 128? Esattamente meta? I nostri occhi percepiscono la luce in modo logaritmico, non lineare. Quindi 128 ci sembra piu di meta — e un trucco del nostro cervello!",
-      "teacher_tip": "La percezione logaritmica e un concetto avanzato: non insistere se i ragazzi non capiscono. L'importante e che osservino: 128 non sembra esattamente meta. La scienza della percezione e affascinante ma complessa.",
-      "provocative_question": "Se 128 sembra piu di meta luminosita, quale valore darebbe DAVVERO meta luminosita percepita? Provate a indovinare: 64? 50? 30?",
+      "duration_minutes": 8,
+      "teacher_message": "Prima di avviare, facciamo una previsione. Conosciamo i quattro valori: 0, 64, 128, 255. Riuscite a immaginare la luminosità di ciascuno?",
+      "teacher_tip": "Guida i ragazzi a ragionare in percentuali: '0 su 255 è 0%. 64 su 255 è circa 25%. 128 su 255 è circa 50%. 255 su 255 è 100%.' Chiedi: 'La differenza tra 0 e 64 sarà grande quanto quella tra 128 e 255?' Questo introduce l'idea di linearità.",
+      "provocative_question": "0 è spento, 255 è massimo. Che luminosità avrà 128? Sarà esattamente metà? E 64 sarà esattamente un quarto? Guardiamo se i nostri occhi sono d'accordo con la matematica!",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED sembra passare direttamente da spento a acceso senza livelli intermedi",
+          "teacher_response": "Controlla di aver usato analogWrite e non digitalWrite. Con digitalWrite hai solo HIGH e LOW (acceso/spento). analogWrite ti dà 256 livelli!",
+          "analogy": "È come la differenza tra un interruttore (on/off) e un dimmer (regolabile). Se usi l'interruttore sbagliato, non puoi regolare!"
+        },
+        {
+          "mistake": "Il valore 64 sembra quasi uguale a 0 (quasi invisibile)",
+          "teacher_response": "È normale! I LED non sono perfettamente lineari: a bassi valori di PWM la luce è molto debole. L'occhio umano non percepisce le differenze di luminosità in modo lineare.",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premiamo Play. Osservate i 4 livelli di luminosita: spento, basso, medio, massimo. Ogni livello dura un secondo. Riuscite a vedere chiaramente la differenza tra 64 e 128?",
-      "teacher_tip": "Sfida: chiedere ai ragazzi di chiudere gli occhi e riaprirli su ogni cambio di livello. La differenza tra 0 e 64 e molto piu evidente di quella tra 128 e 255, a causa della percezione logaritmica.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Osserva i quattro livelli: spento, debole, medio, massimo. Ogni livello dura un secondo. Riesci a distinguere chiaramente tutti e quattro i gradini?",
+      "teacher_tip": "Evidenzia il LED e fai contare i passaggi. Chiedi: 'Il salto da 0 a 64 vi sembra grande quanto quello da 128 a 255? Sono entrambi 64 unità di differenza, ma l'occhio li percepisce diversamente!' Questo apre una discussione sulla percezione non-lineare, perfetta per ragazzi curiosi.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Quattro livelli di luminosita chiaramente diversi. La differenza tra spento e 64 e enorme. Quella tra 128 e 255 sembra minore. Perche?"
+      "observation_prompt": "Il LED mostra quattro livelli distinti di luminosità: spento (0), debole (64), medio (128), massimo (255). Ogni livello dura un secondo. I gradini sono chiaramente visibili, soprattutto il passaggio da spento a debole e da medio a massimo.",
+      "analogies": [
+        {
+          "concept": "valori_discreti",
+          "text": "I quattro valori PWM sono come i quattro livelli di volume di una radio vecchia: spento, basso, medio, alto. Invece di girare una manopola gradualmente, saltiamo direttamente da un livello all'altro!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "relazione_numero_luminosita",
+          "text": "Il numero che diamo ad analogWrite è come il punteggio di una pagella: 0 è il minimo, 255 è il massimo. Più alto il numero, più luminoso il LED — una relazione diretta e proporzionale!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 8,
-      "teacher_message": "Oggi avete visto che analogWrite controlla la luminosita con precisione: 0 e spento, 255 e massimo, e in mezzo ci sono 254 livelli. Il PWM inganna l'occhio: sembra luce continua ma e un lampeggio velocissimo.",
-      "teacher_tip": "Collegare alla vita reale: i dimmer delle luci di casa usano lo stesso principio. Anche gli schermi dei telefoni regolano la luminosita con PWM. I ragazzi usano il PWM ogni giorno senza saperlo!",
-      "summary_for_class": "analogWrite con 0 = spento, 64 = basso, 128 = medio, 255 = massimo. Il PWM crea livelli di luminosita accendendo e spegnendo il pin velocissimo. I nostri occhi vedono una luce continua.",
-      "concepts_learned": ["valori PWM discreti (0, 64, 128, 255)", "relazione numero-luminosita", "percezione non lineare dell'occhio", "duty cycle percentuale", "PWM nella vita quotidiana"],
-      "next_preview": "Nella prossima lezione creiamo un effetto spettacolare: il LED che respira! Si accende piano e si spegne piano, in un ciclo continuo."
+      "duration_minutes": 7,
+      "teacher_message": "Ottimo lavoro! Ora sapete che analogWrite traduce i numeri in luminosità: 0 = spento, 64 = un quarto, 128 = metà, 255 = massimo. La relazione è diretta: più grande il numero, più forte la luce!",
+      "teacher_tip": "Recap: 'analogWrite accetta valori da 0 a 255. Ogni numero corrisponde a un livello di luminosità. Possiamo scegliere qualsiasi valore intermedio: 10, 50, 100, 200... tutti producono una luminosità diversa!' Chiedi: 'Se volessimo 10 livelli invece di 4, che numeri useremmo?' (circa 0, 28, 56, 85, 113, 141, 170, 198, 226, 255).",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Ogni valore da 0 a 255 corrisponde a un livello di luminosità preciso. 0 è spento, 128 è metà, 255 è massimo. analogWrite ci dà 256 livelli di controllo sulla luminosità del LED, molto più preciso di un semplice ON/OFF!",
+      "concepts_learned": [
+        "valori PWM discreti (0, 64, 128, 255)",
+        "relazione numero-luminosità",
+        "256 livelli di luminosità (0-255)",
+        "confronto visivo dei livelli",
+        "percezione non-lineare dell'occhio"
+      ],
+      "next_preview": "Nel prossimo esperimento combiniamo due cicli for per creare un effetto 'respiro': il LED si accende gradualmente E poi si spegne gradualmente, avanti e indietro come se respirasse!"
     }
   ],
+  "assessment_invisible": [
+    "Se prevede correttamente che 128 sarà circa metà luminosità → comprensione della relazione lineare",
+    "Se nota che i salti non sembrano uguali all'occhio → osservazione scientifica avanzata",
+    "Se propone altri valori intermedi da provare → curiosità sperimentale"
+  ],
   "session_save": {
-    "concepts_covered": ["valori PWM discreti", "relazione numero-luminosita", "percezione logaritmica", "duty cycle"],
+    "concepts_covered": [
+      "valori_pwm_discreti",
+      "relazione_numero_luminosita",
+      "256_livelli",
+      "percezione_visiva",
+      "confronto_livelli"
+    ],
     "next_suggested": "v3-cap7-esp6",
-    "resume_message": "L'ultima volta avete testato 4 livelli di PWM. Oggi creiamo l'effetto respiro: il LED si accende e si spegne gradualmente!"
+    "resume_message": "Avete esplorato i livelli PWM discreti! Prossimo passo: fade up e down con due cicli for."
   }
 }

@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "generated": "2026-04-10",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp8",
   "volume": 3,
@@ -12,78 +12,232 @@
   "difficulty": 3,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Scoprire il DAC (Digital to Analog Converter) di Arduino R4: un'uscita analogica vera che produce tensione reale, non PWM. Usare analogWriteResolution(10) per scrivere con 1024 livelli e analogWrite su A0 per generare una tensione misurabile con un multimetro.",
+  "objective": "Scoprire il DAC (Digital-to-Analog Converter) del Nano R4, che a differenza del PWM produce una tensione analogica VERA sul pin A0. Usando analogWriteResolution(10) impostiamo la risoluzione a 10 bit (0-1023 valori) e con analogWrite(A0, valoreLetto) copiamo direttamente il valore del potenziometro sull'uscita DAC. Impariamo la differenza fondamentale tra PWM (trucco di velocità) e DAC (tensione reale)!",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
-    { "name": "Fili di collegamento", "quantity": 5, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Potenziometro 10kΩ",
+      "quantity": 1,
+      "icon": "🎛️"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 5,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "DAC", "Digital to Analog Converter", "analogWriteResolution", "10 bit", "1024 livelli", "tensione reale", "Volt", "multimetro", "Arduino R4"],
-    "forbidden": ["interrupt", "oscilloscopio", "frequenza", "Fourier", "filtro"],
-    "note": "Esperimento avanzato (difficolta 3). Il DAC e una feature speciale di Arduino R4 che i classici Uno/Nano non hanno. Sottolineare la differenza fondamentale: PWM finge, DAC produce tensione vera."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "DAC",
+      "digitale-analogico",
+      "conversione",
+      "analogWrite",
+      "analogWriteResolution",
+      "analogRead",
+      "10 bit",
+      "8 bit",
+      "1024 livelli",
+      "256 livelli",
+      "tensione",
+      "Volt",
+      "potenziometro",
+      "trimmer",
+      "breadboard",
+      "PWM",
+      "A0",
+      "setup",
+      "loop",
+      "GND",
+      "5V"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor"
+    ],
+    "note": "Cap 7 Vol 3 — DAC, analogWriteResolution, 10 bit vs 8 bit, tensione reale."
   },
-  "prerequisites": ["v3-cap7-esp7"],
+  "prerequisites": [
+    "v3-cap7-esp7"
+  ],
   "next_experiment": {
     "id": "v3-cap8-esp1",
-    "title": "Serial Monitor base",
-    "preview": "Nel prossimo capitolo Arduino impara a parlare con il computer: il Serial Monitor ci mostra messaggi e numeri in tempo reale!"
+    "title": "Primo esperimento Cap 8",
+    "preview": "Nel capitolo 8 esploreremo nuovi sensori e attuatori, usando tutto quello che abbiamo imparato sui pin analogici!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "In tutte le lezioni precedenti, analogWrite usava il PWM: accende e spegne velocissimo per ingannare l'occhio. Ma Arduino R4 ha un superpotere che gli altri Arduino non hanno: il DAC, un convertitore Digitale-Analogico vero. Produce una tensione REALE, non un trucco.",
-      "teacher_tip": "L'analogia: PWM e come una lampadina che lampeggia cosi veloce che sembra dimmerata. DAC e come un vero dimmer che regola davvero la corrente. Con un multimetro la differenza si vede chiaramente.",
-      "class_hook": "Il PWM e un impostore: finge di essere analogico ma in realta e digitale velocissimo. Oggi scopriamo l'uscita analogica VERA di Arduino R4!",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi scopriamo qualcosa di speciale del Nano R4: ha un vero DAC (Digital-to-Analog Converter)! Finora analogWrite usava il PWM, che accende e spegne velocissimo. Il DAC invece produce una tensione VERA, stabile, come una pila! E possiamo usare 10 bit invece di 8, cioè 1024 livelli invece di 256!",
+      "teacher_tip": "Chiedi: 'Ricordate il PWM? Accende e spegne velocissimo per simulare una tensione intermedia. Ma se colleghiamo un oscilloscopio, vediamo i lampeggi! Il DAC invece produce una tensione liscia e stabile, come uscisse da una pila regolabile.' Spiega che non tutti gli Arduino hanno il DAC: il Nano R4 è speciale!",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 potenziometro 10kΩ, fili di collegamento.",
+      "class_hook": "Avete presente il PWM? È come accendere e spegnere la luce velocissimo per far sembrare che sia a metà. Ma il DAC è diverso: produce una tensione VERA, come una pila che può cambiare voltaggio. Oggi proviamo la differenza!",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Il circuito e semplice: trimmer su un pin analogico di ingresso, uscita DAC su A0. Nel codice: analogWriteResolution(10) nel setup imposta la risoluzione a 10 bit (1024 livelli invece di 256). Poi analogWrite(A0, valoreLetto) copia il valore letto direttamente sull'uscita.",
-      "teacher_tip": "Spiegare che analogWriteResolution(10) e necessario per sfruttare tutti i 1024 livelli del DAC. Senza, Arduino usa solo 8 bit (256 livelli). Il pin A0 su Arduino R4 ha il DAC integrato — non tutti i pin lo supportano.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp8]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito è semplice: il potenziometro su A1 per leggere la posizione, e l'uscita DAC su A0. Nel setup() chiamiamo analogWriteResolution(10) per usare 10 bit. Nel loop(), leggiamo il valore dal trimmer con analogRead(A1) e lo scriviamo direttamente sull'uscita DAC con analogWrite(A0, valoreLetto). Il trimmer controlla la tensione reale su A0!",
+      "teacher_tip": "Spiega analogWriteResolution(10): 'Di default, analogWrite usa 8 bit, cioè valori da 0 a 255. Con analogWriteResolution(10) passiamo a 10 bit: valori da 0 a 1023! Questo è perfetto perché analogRead restituisce già 0-1023, quindi possiamo copiare direttamente il valore senza bisogno di map().' Fai notare che questo funziona solo sul pin DAC (A0), non sui pin PWM normali.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp8]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con trimmer su A1 e uscita DAC su A0",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot1",
+              "value": 10000
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "pot1:pin1",
+              "to": "bb1:bus-bot-plus-5",
+              "color": "red"
+            },
+            {
+              "from": "pot1:pin3",
+              "to": "bb1:bus-bot-minus-5",
+              "color": "black"
+            },
+            {
+              "from": "pot1:wiper",
+              "to": "nano1:W_A1",
+              "color": "blue"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 10,
-      "teacher_message": "Il PWM spegne e accende velocissimo. Ma un vero segnale analogico? Il DAC produce una tensione stabile e continua. Se scrivi 512, l'uscita e esattamente 2.5V — non un'onda quadra che fa la media di 2.5V, ma 2.5V costanti e lisci.",
-      "teacher_tip": "Se possibile, mostrare la differenza con un disegno: il PWM e un'onda quadra (su-giu-su-giu), il DAC e una linea piatta alla tensione desiderata. Con un oscilloscopio si vedrebbe chiaramente.",
-      "provocative_question": "Con 8 bit abbiamo 256 livelli: ogni livello e 5V/256 = circa 0.02V. Con 10 bit ne abbiamo 1024: ogni livello e 5V/1024 = circa 0.005V. Quattro volte piu preciso! Quando serve tutta questa precisione?",
+      "duration_minutes": 8,
+      "teacher_message": "Il circuito è pronto! Pensiamo alla grande differenza: il PWM accende e spegne velocissimo per ingannare l'occhio. Ma il DAC produce una tensione VERA. Qual è meglio?",
+      "teacher_tip": "Guida la discussione: 'Per un LED il PWM va benissimo perché l'occhio non vede i lampeggi. Ma se volessimo generare un suono preciso, o controllare un circuito sensibile, serve una tensione stabile e VERA. Ecco perché il DAC è importante!' Spiega anche la risoluzione: '8 bit = 256 gradini, 10 bit = 1024 gradini. Più gradini = più precisione.'",
+      "provocative_question": "PWM accende e spegne velocissimo. Ma il DAC produce una tensione VERA? Se misurassimo con un voltmetro, vedremmo una differenza tra PWM e DAC?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "analogWrite su A0 si comporta come PWM normale, non come DAC",
+          "teacher_response": "Hai chiamato analogWriteResolution(10) nel setup()? Senza questa riga, Arduino usa la risoluzione a 8 bit di default. Inoltre, verifica che stai usando il pin A0 che è il pin DAC del Nano R4.",
+          "analogy": null
+        },
+        {
+          "mistake": "I valori letti e scritti non corrispondono",
+          "teacher_response": "Se leggi da A0 e scrivi su A0, stai leggendo la tua stessa uscita! Usa pin diversi: leggi il trimmer da A1 e scrivi il DAC su A0.",
+          "analogy": "È come parlare in un microfono collegato alla tua stessa cuffia: senti solo te stesso! Usa un ingresso e un'uscita diversi."
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premiamo Play. Girate il trimmer: il valore letto viene copiato sull'uscita DAC. Con un multimetro sull'uscita A0 vedreste una tensione vera che cambia da 0V a circa 5V. Non e PWM, e tensione reale e stabile!",
-      "teacher_tip": "Nel simulatore l'effetto DAC vs PWM non e facilmente visibile. Spiegare che nel mondo reale la differenza si misura con un multimetro: il PWM da letture instabili, il DAC da una tensione ferma e precisa.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play e gira il trimmer! Sul Serial Monitor vedrai il valore letto e la tensione DAC corrispondente. A differenza del PWM, il DAC produce una tensione stabile e liscia, perfetta per circuiti sensibili!",
+      "teacher_tip": "Evidenzia il potenziometro. Fai osservare i valori sul Serial Monitor: 'Quando il trimmer è a metà, il valore è circa 512 e la tensione DAC è circa 2.5V. A tutto, il valore è 1023 e la tensione è 5V.' Se possibile, mostra la differenza con un'immagine: il PWM è un'onda quadra che lampeggia, il DAC è una linea piatta e stabile.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:pot1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Con un multimetro sull'uscita si misura tensione vera. Girando il trimmer da 0 a max, la tensione sale da 0V a 5V in modo fluido e stabile. Ogni posizione del trimmer corrisponde a una tensione precisa."
+      "observation_prompt": "Il trimmer controlla direttamente la tensione sul pin DAC. Il Serial Monitor mostra il valore letto (0-1023) e la tensione corrispondente. La risposta è istantanea e la tensione è stabile, non lampeggiante come il PWM. Con 1024 livelli la precisione è quattro volte superiore rispetto agli 8 bit!",
+      "analogies": [
+        {
+          "concept": "dac_vs_pwm",
+          "text": "Il PWM è come sbattere le palpebre velocissimo per far sembrare la luce più debole. Il DAC è come abbassare davvero la luce con un dimmer analogico: la luce è REALMENTE più debole, non sta lampeggiando!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "risoluzione_10bit",
+          "text": "8 bit danno 256 gradini, come una scala con gradini alti. 10 bit danno 1024 gradini, come una scala con gradini bassi e comodi. Più gradini = transizioni più fluide e precise!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 8,
-      "teacher_message": "Oggi avete scoperto il DAC di Arduino R4: un'uscita analogica vera che produce tensione reale. Con analogWriteResolution(10) sfruttiamo 1024 livelli di precisione. Il DAC e il complemento perfetto dell'ADC: uno legge tensione, l'altro la produce.",
-      "teacher_tip": "Ricapitolare tutto il capitolo: analogRead (ADC, ingresso, 10 bit, 0-1023), analogWrite PWM (uscita, 8 bit, 0-255, trucco digitale), analogWrite DAC (uscita, 10 bit, 0-1023, tensione vera). Arduino R4 ha tutti e tre!",
-      "summary_for_class": "Il DAC produce tensione vera, non PWM. Con analogWriteResolution(10) abbiamo 1024 livelli di precisione. ADC legge tensione (input), DAC la produce (output). Arduino R4 ha il DAC integrato sul pin A0.",
-      "concepts_learned": ["DAC (Digital to Analog Converter)", "analogWriteResolution(10)", "differenza PWM vs DAC", "10 bit = 1024 livelli", "ADC e DAC come complementi", "feature speciale di Arduino R4"],
-      "next_preview": "Nel prossimo capitolo Arduino impara a comunicare: con il Serial Monitor vedrete messaggi e numeri sullo schermo in tempo reale!"
+      "duration_minutes": 7,
+      "teacher_message": "Eccellente! Oggi avete scoperto il DAC del Nano R4: un vero convertitore digitale-analogico che produce tensioni reali. Con analogWriteResolution(10) abbiamo 1024 livelli di precisione. La differenza tra PWM e DAC è fondamentale: uno trucca, l'altro produce davvero!",
+      "teacher_tip": "Recap finale del capitolo 7: 'Abbiamo imparato analogRead (leggere tensioni), analogWrite con PWM (simulare tensioni), map() (convertire range), e DAC (tensioni reali). Questi strumenti sono la base per lavorare con sensori e attuatori analogici!' Celebra il completamento del capitolo!",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Il DAC (Digital-to-Analog Converter) produce tensioni reali, a differenza del PWM che accende e spegne velocemente. Con analogWriteResolution(10) abbiamo 1024 livelli di precisione (4 volte gli 8 bit). Il Nano R4 ha il DAC sul pin A0, che lo rende perfetto per applicazioni che richiedono tensioni stabili e precise!",
+      "concepts_learned": [
+        "DAC (Digital-to-Analog Converter)",
+        "analogWriteResolution(10)",
+        "10 bit vs 8 bit (1024 vs 256 livelli)",
+        "differenza PWM vs DAC",
+        "tensione reale vs simulata"
+      ],
+      "next_preview": "Nel capitolo 8 useremo tutto quello che abbiamo imparato sui pin analogici per collegare nuovi sensori e attuatori. Il mondo analogico è pieno di possibilità!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega la differenza tra PWM (lampeggio veloce) e DAC (tensione reale) → comprensione concettuale fondamentale",
+    "Se capisce che 10 bit = 1024 livelli è più preciso di 8 bit = 256 → comprensione della risoluzione",
+    "Se propone applicazioni dove il DAC è meglio del PWM (audio, sensori) → pensiero applicato avanzato"
+  ],
   "session_save": {
-    "concepts_covered": ["DAC", "analogWriteResolution", "10 bit", "differenza PWM vs DAC", "ADC e DAC"],
+    "concepts_covered": [
+      "DAC",
+      "analogWriteResolution",
+      "10_bit_risoluzione",
+      "pwm_vs_dac",
+      "tensione_reale"
+    ],
     "next_suggested": "v3-cap8-esp1",
-    "resume_message": "L'ultima volta avete scoperto il DAC di Arduino R4. Nel nuovo capitolo impariamo il Serial Monitor per comunicare con Arduino!"
+    "resume_message": "Avete completato il capitolo 7 sui pin analogici! Avete imparato analogRead, analogWrite, PWM, map() e DAC. Prossimo: capitolo 8!"
   }
 }

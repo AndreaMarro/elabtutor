@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "generated": "2026-04-10",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp7",
   "volume": 3,
@@ -12,80 +12,269 @@
   "difficulty": 2,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Collegare analogRead e analogWrite usando la funzione map() per convertire il range 0-1023 del trimmer nel range 0-255 di analogWrite. Il trimmer diventa un controllo di luminosita in tempo reale per il LED.",
+  "objective": "Usare la funzione map() per convertire il range di analogRead (0-1023) nel range di analogWrite (0-255) e controllare la luminosità di un LED in tempo reale con un potenziometro. Il trimmer diventa un dimmer: girando la manopola, il LED cambia luminosità istantaneamente. Impariamo che map() è un traduttore tra due scale diverse!",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Potenziometro 10kohm", "quantity": 1, "icon": "potentiometer" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Fili di collegamento", "quantity": 6, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Potenziometro 10kΩ",
+      "quantity": 1,
+      "icon": "🎛️"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "🔴"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 6,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogRead", "analogWrite", "map", "conversione", "range", "0-1023", "0-255", "tempo reale", "controller", "Arduino"],
-    "forbidden": ["interrupt", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
-    "note": "Esperimento chiave che unisce lettura e scrittura analogica. map() e la funzione ponte tra i due mondi. Sottolineare che map() e riusabile per qualsiasi conversione di range."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "analogRead",
+      "analogWrite",
+      "map",
+      "range",
+      "conversione",
+      "0-1023",
+      "0-255",
+      "potenziometro",
+      "trimmer",
+      "dimmer",
+      "luminosità",
+      "PWM",
+      "LED",
+      "resistore",
+      "breadboard",
+      "A0",
+      "setup",
+      "loop",
+      "OUTPUT",
+      "GND",
+      "5V"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "DAC"
+    ],
+    "note": "Cap 7 Vol 3 — map(), conversione range, trimmer come controller di luminosità."
   },
-  "prerequisites": ["v3-cap7-esp6"],
+  "prerequisites": [
+    "v3-cap7-esp6"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp8",
     "title": "DAC reale (10 bit)",
-    "preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC: un'uscita analogica VERA, non PWM. Arduino R4 ha qualcosa di speciale!"
+    "preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC: un convertitore che produce una tensione VERA, non il trucco del PWM!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Finora abbiamo letto il trimmer (analogRead, 0-1023) e scritto il LED (analogWrite, 0-255) separatamente. Oggi li colleghiamo! Il trimmer controllera la luminosita del LED in tempo reale. Ma c'e un problema: i range sono diversi. Come li traduciamo?",
-      "teacher_tip": "L'analogia della traduzione linguistica funziona bene: il trimmer parla in 0-1023, il LED capisce solo 0-255. Serve un traduttore: la funzione map().",
-      "class_hook": "Immaginate un mixer audio: girate la manopola e il volume cambia in tempo reale. Oggi costruiamo lo stesso, ma con la luce!",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi uniamo analogRead e analogWrite! Il trimmer legge una posizione (0-1023) e noi la trasformiamo in luminosità per il LED (0-255). Ma i due range sono diversi... come li colleghiamo? Con la funzione map()!",
+      "teacher_tip": "Chiedi: 'analogRead dà numeri da 0 a 1023. analogWrite vuole numeri da 0 a 255. Come facciamo a tradurre? Se dividiamo per 4 funziona, ma Arduino ha una funzione ancora più comoda: map()!' Spiega che map() è come un traduttore che converte da una scala all'altra.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 potenziometro 10kΩ, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Immaginate di avere un termometro in gradi Celsius e voler sapere i Fahrenheit. Serve una formula di conversione! Oggi facciamo la stessa cosa tra il range del trimmer e quello del LED, con la funzione map().",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Il circuito combina trimmer su A0 e LED su pin 5 (PWM). Nel codice: leggiamo con analogRead(A0), convertiamo con map(valore, 0, 1023, 0, 255), scriviamo con analogWrite(5, risultato). Tre righe, un risultato magico.",
-      "teacher_tip": "Spiegare map() come una proporzione automatica: map(valore, daMin, daMax, aMin, aMax). Se il valore e a meta del primo range, il risultato sara a meta del secondo. Arduino fa la proporzione per noi.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp7]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito combina il potenziometro su A0 e il LED sul pin 5 (PWM). Il codice nel loop() fa tre cose: legge il trimmer con analogRead(A0), converte il valore con map(valore, 0, 1023, 0, 255), e imposta la luminosità con analogWrite(5, luminosita). Tre righe per un dimmer perfetto!",
+      "teacher_tip": "Spiega map() passo per passo: 'map(valore, 0, 1023, 0, 255) significa: prendi il valore, sapendo che va da 0 a 1023, e traducilo in un numero da 0 a 255. Se il trimmer è a metà (512), map restituisce 128 — metà luminosità!' Fai notare che map() funziona con qualsiasi coppia di range, non solo questi.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp7]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con trimmer su A0 e LED su pin PWM 5",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "potentiometer",
+              "id": "pot1",
+              "value": 10000
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:5V",
+              "to": "bb1:bus-bot-plus-1",
+              "color": "red"
+            },
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "pot1:pin1",
+              "to": "bb1:bus-bot-plus-5",
+              "color": "red"
+            },
+            {
+              "from": "pot1:pin3",
+              "to": "bb1:bus-bot-minus-5",
+              "color": "black"
+            },
+            {
+              "from": "pot1:wiper",
+              "to": "nano1:W_A0",
+              "color": "blue"
+            },
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a22",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d22",
+              "to": "bb1:d24",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a25",
+              "to": "bb1:bus-bot-minus-25",
+              "color": "black"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 10,
-      "teacher_message": "Il trimmer legge 0-1023 ma analogWrite vuole 0-255. Come traduciamo? Potremmo dividere per 4 (1023/255 e circa 4). Ma map() e piu precisa e funziona con qualsiasi range: map(valore, 0, 1023, 0, 255).",
-      "teacher_tip": "Mostrare che map() funziona con qualsiasi coppia di range: map(valore, 0, 1023, 0, 100) per le percentuali, map(valore, 0, 1023, 20, 200) per limitare il range. E uno strumento potentissimo.",
-      "provocative_question": "E se volessimo invertire? Trimmer tutto a destra = LED spento, tutto a sinistra = LED al massimo? Con map() basta invertire: map(valore, 0, 1023, 255, 0). Facile!",
+      "duration_minutes": 8,
+      "teacher_message": "Il circuito è montato! Pensiamo al problema: analogRead legge 0-1023, ma analogWrite vuole 0-255. Come traduciamo da una scala all'altra?",
+      "teacher_tip": "Fai ragionare i ragazzi: 'Potremmo dividere per 4: 1023/4 ≈ 255. Ma cosa succede con numeri che non sono divisibili per 4? map() è più preciso perché fa una proporzione esatta.' Fai provare a calcolare a mente: 'Se leggiamo 512, map restituisce 128. Se leggiamo 256, map restituisce circa 64. Vedete il pattern?'",
+      "provocative_question": "analogRead legge 0-1023, analogWrite vuole 0-255. Come traduciamo? Potremmo dividere per 4, ma c'è un modo più elegante e flessibile?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "La luminosità non cambia girando il trimmer",
+          "teacher_response": "Controlla che il LED sia su un pin PWM (~) e che il valore mappato venga passato ad analogWrite. Verifica anche che il potenziometro sia collegato correttamente ad A0 con 5V e GND.",
+          "analogy": null
+        },
+        {
+          "mistake": "La luminosità va al contrario: massima quando il trimmer è a zero",
+          "teacher_response": "I parametri di map() sono invertiti? map(valore, 0, 1023, 0, 255) dà 0 quando il trimmer è a 0. Se ottieni il contrario, i pin 5V e GND del potenziometro potrebbero essere scambiati!",
+          "analogy": "È come montare un rubinetto al contrario: giri a destra per aprire invece che per chiudere!"
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premiamo Play. Girate il trimmer: il LED segue in tempo reale! Tutto a sinistra e spento, tutto a destra e al massimo. Ogni posizione intermedia da una luminosita diversa. Il controllo e fluido e immediato.",
-      "teacher_tip": "Far notare la fluidita: non ci sono scatti visibili perche il loop gira migliaia di volte al secondo. Ogni piccolo movimento del trimmer aggiorna il LED istantaneamente.",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play e gira il trimmer! Il LED risponde in tempo reale: trimmer a zero = LED spento, trimmer al massimo = LED alla massima luminosità. Hai costruito un dimmer vero!",
+      "teacher_tip": "Evidenzia il potenziometro e il LED. Fai girare il trimmer lentamente e chiedi: 'La risposta è istantanea o c'è ritardo? Quanto è fluido il cambio di luminosità?' Fai notare che a differenza dei for dei due esperimenti precedenti, qui il controllo è MANUALE e in tempo reale. Il trimmer è diventato un controller!",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:pot1]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il trimmer controlla fluidamente la luminosita del LED. Provate a trovare esattamente meta luminosita. Poi provate il minimo visibile: qual e il valore piu basso in cui vedete ancora luce?"
+      "observation_prompt": "Il trimmer controlla direttamente la luminosità del LED in tempo reale. La risposta è istantanea: ogni minimo movimento della manopola si traduce in un cambio di luminosità. map() converte perfettamente il range 0-1023 nel range 0-255.",
+      "analogies": [
+        {
+          "concept": "map",
+          "text": "map() è come un cambio di valuta: se hai 1023 Yen e vuoi Euro, serve un tasso di cambio. map() fa esattamente questo: converte da una 'valuta' (0-1023) a un'altra (0-255) mantenendo la proporzione!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "dimmer",
+          "text": "Il trimmer + map() + analogWrite è come il dimmer delle luci in sala: giri la manopola e la luce cambia gradualmente. Solo che il nostro dimmer funziona con tre righe di codice!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 8,
-      "teacher_message": "Oggi avete unito input e output analogico con map(). Il trimmer legge, map() traduce, il LED risponde. Questo e il pattern fondamentale di tantissimi dispositivi: sensore → elaborazione → attuatore.",
-      "teacher_tip": "Sottolineare il pattern universale: LEGGI → ELABORA → SCRIVI. Funziona per luminosita, velocita motori, posizione servo, volume audio. map() e lo strumento che collega mondi con range diversi.",
-      "summary_for_class": "map(valore, 0, 1023, 0, 255) traduce il range del trimmer nel range del LED. Tre righe di codice: analogRead, map, analogWrite. Il trimmer controlla la luminosita in tempo reale, fluido e senza scatti.",
-      "concepts_learned": ["funzione map() per conversione range", "collegare analogRead e analogWrite", "pattern leggi-elabora-scrivi", "controllo in tempo reale", "trimmer come controller di luminosita"],
-      "next_preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC di Arduino R4: un'uscita analogica VERA che produce tensione reale, non PWM!"
+      "duration_minutes": 7,
+      "teacher_message": "Perfetto! Oggi avete combinato analogRead, map() e analogWrite per costruire un dimmer. map() è il traduttore che converte 0-1023 in 0-255, collegando input e output analogici in modo elegante!",
+      "teacher_tip": "Recap: 'analogRead legge il trimmer (0-1023). map() traduce in 0-255. analogWrite imposta la luminosità. Tre funzioni, tre righe, un dimmer perfetto!' Sfida: 'E se volessimo che il LED vada solo da spento a metà luminosità? Come cambieremmo map()?' (map(valore, 0, 1023, 0, 128)). Questo mostra la flessibilità di map().",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "La funzione map() converte valori da un range a un altro. Combinata con analogRead e analogWrite, permette di creare controller in tempo reale. Il trimmer diventa un dimmer preciso con solo tre righe di codice!",
+      "concepts_learned": [
+        "funzione map()",
+        "conversione tra range diversi",
+        "combinare analogRead e analogWrite",
+        "controllo in tempo reale",
+        "trimmer come controller (dimmer)"
+      ],
+      "next_preview": "Nell'ultimo esperimento del capitolo scopriamo il DAC: un convertitore digitale-analogico VERO che produce tensioni reali, non il trucco del PWM!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega che map() fa una proporzione tra due range → comprensione della funzione map",
+    "Se calcola correttamente che 512 mappa a 128 → comprensione pratica della conversione",
+    "Se propone di cambiare il range di map() per limitare la luminosità → pensiero creativo"
+  ],
   "session_save": {
-    "concepts_covered": ["map()", "collegamento input-output analogico", "controllo tempo reale", "pattern leggi-elabora-scrivi"],
+    "concepts_covered": [
+      "funzione_map",
+      "conversione_range",
+      "analogRead_analogWrite_combo",
+      "controllo_tempo_reale",
+      "trimmer_dimmer"
+    ],
     "next_suggested": "v3-cap7-esp8",
-    "resume_message": "L'ultima volta avete usato map() per collegare trimmer e LED. Oggi scopriamo il DAC: un'uscita analogica vera, non PWM!"
+    "resume_message": "Avete costruito un dimmer con map()! Prossimo passo: il DAC reale a 10 bit."
   }
 }

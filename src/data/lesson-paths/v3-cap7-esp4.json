@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "generated": "2026-04-10",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp4",
   "volume": 3,
@@ -12,79 +12,235 @@
   "difficulty": 2,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Usare analogWrite per far accendere gradualmente un LED da spento a piena luminosita con un ciclo for. Introdurre il concetto di PWM: Arduino non produce una vera tensione analogica, ma accende e spegne velocissimo il pin.",
+  "objective": "Scoprire analogWrite e il PWM (Pulse Width Modulation) per far variare gradualmente la luminosità di un LED. Usando un ciclo for da 0 a 255 con analogWrite(5, i) e un piccolo delay(10), il LED si accende lentamente dal buio alla massima luminosità. Impariamo che il PWM non è un vero segnale analogico, ma un trucco geniale di accensione e spegnimento rapidissimo!",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Fili di collegamento", "quantity": 4, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "🔴"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 4,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogWrite", "fade", "graduale", "for", "ciclo", "0-255", "duty cycle", "pin PWM", "Arduino"],
-    "forbidden": ["interrupt", "map", "DAC", "risoluzione", "10 bit", "analogWriteResolution"],
-    "note": "Primo esperimento con analogWrite. Il concetto di PWM va introdotto con delicatezza: non e una vera tensione variabile, e un trucco velocissimo. L'occhio non vede lo sfarfallio."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "analogWrite",
+      "PWM",
+      "fade",
+      "luminosità",
+      "for",
+      "ciclo",
+      "loop",
+      "graduale",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "0-255",
+      "setup",
+      "OUTPUT",
+      "GND"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "DAC",
+      "analogRead",
+      "potenziometro"
+    ],
+    "note": "Cap 7 Vol 3 — analogWrite, PWM, for loop, luminosità graduale."
   },
-  "prerequisites": ["v3-cap7-esp3"],
+  "prerequisites": [
+    "v3-cap7-esp3"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp5",
     "title": "PWM con valori manuali",
-    "preview": "Nella prossima lezione testiamo valori specifici di PWM per capire la relazione tra numero e luminosita."
+    "preview": "Nel prossimo esperimento proviamo valori PWM specifici (0, 64, 128, 255) per capire la relazione tra numero e luminosità!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Finora il LED era solo acceso o spento. Ma avete mai visto una luce che si accende piano piano, come l'alba? Oggi insegniamo ad Arduino a controllare QUANTA luce emette il LED, non solo se e acceso o spento.",
-      "teacher_tip": "Chiedere: come fate a dimezzare la luminosita di una torcia? Non potete darle meta corrente facilmente. Ma se la accendete e spegnete 1000 volte al secondo, l'occhio vede meta luminosita! Questo e il PWM.",
-      "class_hook": "Se accendo e spengo una luce 1000 volte al secondo, voi vedete una luce a meta! L'occhio non riesce a seguire. Arduino usa questo trucco.",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi scopriamo analogWrite! Finora abbiamo acceso e spento i LED come un interruttore: ON o OFF. Ma cosa succede se vogliamo una luce soffusa, come un dimmer? analogWrite ci permette di regolare la luminosità con valori da 0 (spento) a 255 (massimo)!",
+      "teacher_tip": "Chiedi: 'A casa avete un dimmer per regolare le luci? Oggi facciamo la stessa cosa con Arduino!' Spiega che analogWrite funziona solo su alcuni pin speciali (contrassegnati con ~ sulla scheda). Il pin 5 è uno di questi.",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Avete presente quando al cinema si abbassano le luci lentamente prima del film? Oggi facciamo la stessa cosa con un LED e Arduino! La luce salirà piano piano dal buio al massimo.",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Il circuito e semplice: un LED con resistore sul pin 5 (che e un pin PWM, segnato con la tilde ~). Il codice usa un ciclo for da 0 a 255: ad ogni passo, analogWrite(5, i) cambia la luminosita. delay(10) rallenta per vedere l'effetto.",
-      "teacher_tip": "Sottolineare che non tutti i pin supportano analogWrite: solo quelli con la ~ (tilde). Sul Nano sono i pin 3, 5, 6, 9, 10, 11. Il range e 0-255 (8 bit), diverso da analogRead che e 0-1023 (10 bit).",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp4]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito è semplicissimo: un LED rosso collegato al pin 5 (pin PWM!) tramite un resistore da 470Ω. Il codice usa un ciclo for che va da 0 a 255: ad ogni passo chiama analogWrite(5, i) e aspetta 10 millisecondi. Il LED si accende gradualmente in circa 2.5 secondi!",
+      "teacher_tip": "Spiega il for loop in modo semplice: 'Il programma conta da 0 a 255, un numero alla volta. Ad ogni numero, dice al LED quanto deve brillare. 0 = spento, 128 = metà, 255 = massimo. Con il delay(10) tra un numero e l'altro, il cambio è graduale e visibile.' Non entrare nei dettagli tecnici del PWM — basta dire che Arduino accende e spegne il LED velocissimo per simulare la luminosità intermedia.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp4]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con LED su pin PWM 5",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a20",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d22",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a23",
+              "to": "bb1:bus-bot-minus-23",
+              "color": "black"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 10,
-      "teacher_message": "analogWrite non e veramente analogico — cosa fa di diverso? Non produce una tensione vera tra 0 e 5V. Invece accende e spegne il pin velocissimo. Se e acceso meta del tempo, il LED brilla a meta. Questo si chiama PWM: Pulse Width Modulation.",
-      "teacher_tip": "Il duty cycle e la percentuale di tempo in cui il pin e HIGH. analogWrite(5, 127) = duty cycle 50% = LED a meta luminosita. analogWrite(5, 255) = 100% = sempre acceso. analogWrite(5, 0) = 0% = sempre spento.",
-      "provocative_question": "Se analogWrite(5, 127) fa un LED a meta luminosita, analogWrite(5, 64) fa un quarto? La relazione e davvero cosi lineare per i nostri occhi?",
+      "duration_minutes": 8,
+      "teacher_message": "Il circuito è pronto! Ma prima di avviare, una domanda importante: analogWrite non è DAVVERO analogico. Non produce una tensione intermedia. Allora come fa il LED a sembrare meno luminoso?",
+      "teacher_tip": "Questa è la domanda chiave del PWM! Guida verso la risposta: 'Arduino accende e spegne il LED migliaia di volte al secondo. Se lo tiene acceso per metà del tempo, il nostro occhio vede metà luminosità! È troppo veloce per vedere il lampeggio.' Usa l'analogia della ventola: se giri veloce una torcia, sembra un cerchio di luce continuo.",
+      "provocative_question": "analogWrite non è DAVVERO analogico. Cosa fa di speciale? Se il LED può solo essere acceso o spento, come fa Arduino a farlo sembrare a metà luminosità?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED non cambia luminosità, resta sempre alla stessa intensità",
+          "teacher_response": "Hai collegato il LED a un pin PWM (con la ~)? I pin 3, 5, 6, 9, 10, 11 supportano analogWrite. Se usi un pin diverso, funziona solo ON/OFF!",
+          "analogy": "È come provare a usare il dimmer su una presa normale: il dimmer funziona solo sulle prese speciali predisposte."
+        },
+        {
+          "mistake": "Il fade è troppo veloce e non si vede il cambiamento graduale",
+          "teacher_response": "Aumenta il delay! Con delay(10) il fade dura circa 2.5 secondi. Con delay(20) dura 5 secondi. Prova diversi valori per trovare la velocità perfetta.",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premiamo Play. Il LED si accende gradualmente da completamente spento a piena luminosita. Il ciclo for percorre tutti i 256 livelli. Con delay(10), il fade completo dura circa 2.5 secondi.",
-      "teacher_tip": "Far notare che la transizione sembra fluida ma in realta sono 256 passi discreti. L'occhio non distingue i singoli passi. Chiedere: se togliamo il delay, il fade e istantaneo — perche?",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Osserva il LED che si accende gradualmente dal buio alla massima luminosità. Il ciclo for sta contando da 0 a 255, e ad ogni passo il LED diventa un po' più luminoso!",
+      "teacher_tip": "Evidenzia il LED e fai notare la transizione graduale. Chiedi: 'Riuscite a vedere i singoli passaggi o sembra un cambiamento fluido?' Con 256 livelli e delay(10), l'occhio umano non percepisce i singoli step. Fai notare che quando il for finisce, il LED resta acceso al massimo fino al prossimo giro di loop().",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Il LED si accende gradualmente da spento a piena luminosita. Riuscite a contare quanti livelli diversi vedete? L'occhio ne distingue molti meno di 256!"
+      "observation_prompt": "Il LED si accende gradualmente dal buio completo alla massima luminosità. La transizione è fluida grazie ai 256 livelli di PWM. Ogni passo del ciclo for aumenta leggermente la luminosità, e il delay(10) rende il cambiamento visibile all'occhio umano.",
+      "analogies": [
+        {
+          "concept": "PWM",
+          "text": "Il PWM è come sbattere le palpebre velocissimo: se tieni gli occhi aperti per metà del tempo, vedi metà della luce. Arduino fa la stessa cosa con il LED, ma migliaia di volte al secondo — troppo veloce per accorgersene!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "for_loop_graduale",
+          "text": "Il ciclo for è come salire una scala: un gradino alla volta, da 0 a 255. Ogni gradino è un livello di luminosità. Con 256 gradini la salita sembra una rampa liscia!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 8,
-      "teacher_message": "Oggi avete imparato analogWrite e il PWM. Arduino non produce una vera tensione analogica: accende e spegne velocissimo e l'occhio vede una luminosita intermedia. Con un for da 0 a 255 creiamo un fade graduale.",
-      "teacher_tip": "Riepilogare le differenze: analogRead legge 0-1023, analogWrite scrive 0-255. Read usa pin analogici (A0-A5), Write usa pin PWM (~). Read misura tensione reale, Write simula con il PWM.",
-      "summary_for_class": "analogWrite(pin, valore) controlla la luminosita del LED da 0 (spento) a 255 (massimo). Non e una vera tensione analogica: e PWM, un trucco velocissimo di accendi-e-spegni. Con un ciclo for creiamo un fade graduale.",
-      "concepts_learned": ["analogWrite e valori 0-255", "PWM (Pulse Width Modulation)", "duty cycle", "ciclo for per fade graduale", "pin PWM con tilde (~)"],
-      "next_preview": "Nella prossima lezione testiamo valori specifici: 0, 64, 128, 255. Quattro livelli ben distinti per capire la relazione tra numero e luminosita."
+      "duration_minutes": 7,
+      "teacher_message": "Fantastico! Oggi avete scoperto analogWrite e il PWM. Con un ciclo for da 0 a 255 e delay(10), il LED si accende gradualmente. Il PWM simula la luminosità intermedia accendendo e spegnendo il LED velocissimo!",
+      "teacher_tip": "Recap: 'analogWrite(pin, valore) con valore da 0 a 255. Funziona solo sui pin PWM (~). Il for loop ci permette di cambiare il valore gradualmente. Il PWM non è analogico vero, ma un trucco di velocità che inganna l'occhio!' Anticipate: nel prossimo esperimento proviamo valori specifici per capire meglio la relazione numero-luminosità.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "analogWrite permette di regolare la luminosità del LED con valori da 0 (spento) a 255 (massimo). Il PWM accende e spegne velocissimo per simulare livelli intermedi. Con un ciclo for possiamo creare effetti di fade graduali e fluidi!",
+      "concepts_learned": [
+        "analogWrite (0-255)",
+        "PWM (Pulse Width Modulation)",
+        "pin PWM (~)",
+        "ciclo for per fade graduale",
+        "delay nel loop per velocità transizione"
+      ],
+      "next_preview": "Nel prossimo esperimento proviamo singoli valori PWM come 0, 64, 128 e 255 per vedere esattamente che luminosità corrispondono a ciascun numero!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega che il PWM accende e spegne velocemente → comprensione del meccanismo PWM",
+    "Se capisce che 128 è circa metà luminosità → comprensione della relazione valore-luminosità",
+    "Se propone di cambiare il delay per velocizzare o rallentare il fade → pensiero sperimentale"
+  ],
   "session_save": {
-    "concepts_covered": ["analogWrite", "PWM", "duty cycle", "fade con for", "pin PWM"],
+    "concepts_covered": [
+      "analogWrite",
+      "PWM",
+      "for_loop_fade",
+      "pin_pwm",
+      "delay_transizione"
+    ],
     "next_suggested": "v3-cap7-esp5",
-    "resume_message": "L'ultima volta avete fatto un fade graduale con analogWrite e un ciclo for. Oggi testiamo valori specifici per capire meglio il PWM."
+    "resume_message": "Avete scoperto analogWrite e il fade PWM! Prossimo passo: esplorare valori PWM specifici."
   }
 }

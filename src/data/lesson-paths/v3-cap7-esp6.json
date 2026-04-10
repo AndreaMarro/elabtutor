@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "generated": "2026-04-10",
-    "source": "PDR auto-generated from experiments-vol3.js"
+    "source": "curriculum YAML + experiments-vol3.js"
   },
   "experiment_id": "v3-cap7-esp6",
   "volume": 3,
@@ -12,79 +12,239 @@
   "difficulty": 2,
   "duration_minutes": 45,
   "target_age": "10-14 anni",
-  "objective": "Creare un effetto respiro (breathing LED) usando due cicli for: uno crescente da 0 a 255 e uno decrescente da 255 a 0. Il LED pulsa continuamente come se respirasse, combinando fade up e fade down in loop.",
+  "objective": "Creare un effetto 'respiro' (breathing) con il LED usando due cicli for consecutivi: il primo sale da 0 a 255 (fade up) e il secondo scende da 255 a 0 (fade down). Il LED si accende gradualmente e poi si spegne gradualmente, in un ciclo continuo che ricorda il respiro. Impariamo che un for può anche contare all'indietro con i-- !",
   "components_needed": [
-    { "name": "Arduino Nano R4 (breakout wing)", "quantity": 1, "icon": "board" },
-    { "name": "Breadboard half-size", "quantity": 1, "icon": "breadboard" },
-    { "name": "Resistore 470ohm", "quantity": 1, "icon": "resistor" },
-    { "name": "LED rosso", "quantity": 1, "icon": "led" },
-    { "name": "Fili di collegamento", "quantity": 4, "icon": "wire" }
+    {
+      "name": "Arduino Nano R4 (breakout wing)",
+      "quantity": 1,
+      "icon": "🤖"
+    },
+    {
+      "name": "Breadboard half-size",
+      "quantity": 1,
+      "icon": "🔲"
+    },
+    {
+      "name": "Resistore 470Ω",
+      "quantity": 1,
+      "icon": "⚡"
+    },
+    {
+      "name": "LED rosso",
+      "quantity": 1,
+      "icon": "🔴"
+    },
+    {
+      "name": "Fili di collegamento",
+      "quantity": 4,
+      "icon": "🔌"
+    }
   ],
   "vocabulary": {
-    "allowed": ["analogico", "potenziometro", "trimmer", "PWM", "luminosità", "analogWrite", "fade", "respiro", "breathing", "for", "ciclo", "crescente", "decrescente", "0-255", "Arduino"],
-    "forbidden": ["interrupt", "map", "DAC", "risoluzione", "10 bit", "analogWriteResolution", "float"],
-    "note": "Esperimento estetico e coinvolgente. L'effetto breathing e molto soddisfacente e motiva i ragazzi. Preparare il terreno per il concetto di combinare due cicli in sequenza."
+    "allowed": [
+      "Arduino",
+      "pin",
+      "analogWrite",
+      "PWM",
+      "fade",
+      "respiro",
+      "breathing",
+      "for",
+      "ciclo",
+      "loop",
+      "i++",
+      "i--",
+      "crescente",
+      "decrescente",
+      "LED",
+      "resistore",
+      "breadboard",
+      "delay",
+      "0-255",
+      "setup",
+      "OUTPUT",
+      "GND"
+    ],
+    "forbidden": [
+      "condensatore",
+      "transistor",
+      "MOSFET",
+      "motore",
+      "diodo",
+      "fototransistor",
+      "DAC",
+      "analogRead",
+      "potenziometro"
+    ],
+    "note": "Cap 7 Vol 3 — due cicli for, fade up e down, effetto breathing."
   },
-  "prerequisites": ["v3-cap7-esp5"],
+  "prerequisites": [
+    "v3-cap7-esp5"
+  ],
   "next_experiment": {
     "id": "v3-cap7-esp7",
     "title": "Trimmer controlla luminosita",
-    "preview": "Nella prossima lezione colleghiamo il trimmer alla luminosita del LED: giri la manopola e il LED segue in tempo reale!"
+    "preview": "Nel prossimo esperimento colleghiamo un trimmer per controllare la luminosità del LED in tempo reale con la funzione map()!"
   },
   "phases": [
     {
       "name": "PREPARA",
       "icon": "📋",
-      "duration_minutes": 5,
-      "teacher_message": "Avete visto il LED accendersi gradualmente. Ma poi? Resta acceso al massimo e basta. Oggi aggiungiamo il viaggio di ritorno: dopo essere salito a 255, il LED ridiscende a 0. E un respiro: inspira (su) ed espira (giu), all'infinito.",
-      "teacher_tip": "L'effetto breathing e usato ovunque: il LED di standby dei MacBook, le luci notturne, le console in sleep mode. Cattura l'attenzione perche e organico, non meccanico.",
-      "class_hook": "Avete presente la luce del computer quando dorme? Pulsa piano, come se respirasse. Oggi la costruiamo noi!",
+      "duration_minutes": 6,
+      "teacher_message": "Oggi creiamo l'effetto 'respiro': il LED si accende piano piano e poi si spegne piano piano, come se respirasse! Servono due cicli for: uno che sale (0→255) e uno che scende (255→0).",
+      "teacher_tip": "Chiedi: 'Nel for dell'esperimento scorso, i andava da 0 a 255 con i++. Come facciamo a farlo andare al contrario, da 255 a 0?' Introduci i-- come il fratello gemello di i++: uno conta in su, l'altro in giù. È un concetto semplice ma potente!",
+      "components_list": "Ti servono: 1 breadboard half-size, 1 Arduino Nano R4 con breakout wing, 1 resistore 470Ω, 1 LED rosso, fili di collegamento.",
+      "class_hook": "Avete mai osservato il LED di standby su un Mac o su un telefono in carica? Pulsa lentamente, come se respirasse! Oggi costruiamo esattamente quell'effetto!",
       "action_tags": [],
       "auto_action": null
     },
     {
       "name": "MOSTRA",
       "icon": "🔧",
-      "duration_minutes": 10,
-      "teacher_message": "Il circuito e identico: LED con resistore sul pin 5. La novita e nel codice: due cicli for nel loop. Il primo sale da 0 a 255, il secondo scende da 255 a 0. Insieme creano l'effetto respiro che si ripete all'infinito.",
-      "teacher_tip": "Il for decrescente e la novita: for(int i=255; i>=0; i--). Spiegare i-- come il contrario di i++. Confrontare i due for fianco a fianco per mostrare la simmetria.",
-      "action_tags": ["[AZIONE:loadexp:v3-cap7-esp6]"],
-      "auto_action": "load_experiment"
+      "duration_minutes": 12,
+      "teacher_message": "Il circuito è identico ai due esperimenti precedenti. La novità è nel codice: nel loop() ci sono DUE cicli for. Il primo parte da 0, sale fino a 255 con i++ (fade up). Il secondo parte da 255, scende fino a 0 con i-- (fade down). Entrambi usano analogWrite(5, i) e delay(10).",
+      "teacher_tip": "Mostra i due for affiancati e fai notare le differenze: 'Il primo inizia da 0 e va a 255 con i++. Il secondo inizia da 255 e va a 0 con i--. La condizione del primo è i <= 255, quella del secondo è i >= 0. Tutto il resto è uguale!' Spiega che i due for si eseguono uno dopo l'altro, prima sale tutto, poi scende tutto.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:loadexp:v3-cap7-esp6]"
+      ],
+      "auto_action": "load_experiment",
+      "build_circuit": {
+        "description": "Monta il circuito con LED su pin PWM 5",
+        "button_label": "Monta il circuito per me",
+        "intent": {
+          "components": [
+            {
+              "type": "breadboard-half",
+              "id": "bb1"
+            },
+            {
+              "type": "nano-r4",
+              "id": "nano1"
+            },
+            {
+              "type": "resistor",
+              "id": "r1",
+              "value": 470
+            },
+            {
+              "type": "led",
+              "id": "led1",
+              "color": "red"
+            }
+          ],
+          "wires": [
+            {
+              "from": "nano1:GND_R",
+              "to": "bb1:bus-bot-minus-1",
+              "color": "black"
+            },
+            {
+              "from": "nano1:W_D5",
+              "to": "bb1:a20",
+              "color": "green"
+            },
+            {
+              "from": "bb1:d20",
+              "to": "bb1:d22",
+              "color": "green"
+            },
+            {
+              "from": "bb1:a23",
+              "to": "bb1:bus-bot-minus-23",
+              "color": "black"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "CHIEDI",
       "icon": "❓",
-      "duration_minutes": 10,
-      "teacher_message": "Come facciamo a far SCENDERE la luminosita gradualmente? Il primo for va da 0 a 255 con i++. Per scendere, partiamo da 255 e arriviamo a 0 con i--. Due cicli opposti, uno dopo l'altro, creano il respiro.",
-      "teacher_tip": "Chiedere: cosa succede se cambiamo il delay? Con delay(5) il respiro e veloce e agitato. Con delay(20) e lento e rilassante. Il delay controlla la velocita del respiro. Far provare diversi valori.",
-      "provocative_question": "Se cambio delay(10) con delay(5), il LED respira il doppio piu veloce. E se metto delay(0)? Il fade sarebbe istantaneo e vedreste solo il LED lampeggiare. Perche?",
+      "duration_minutes": 8,
+      "teacher_message": "Il circuito è pronto! Pensiamo al secondo ciclo for, quello che scende. Come facciamo SCENDERE la luminosità?",
+      "teacher_tip": "Guida verso la soluzione: 'Per salire usiamo i++, che aggiunge 1 ogni volta. Per scendere usiamo i--, che toglie 1 ogni volta. Non servono numeri negativi! Partiamo da 255 e togliamo 1 alla volta: 255, 254, 253... fino a 0.' Fai l'analogia con le scale: si sale un gradino alla volta con i++ e si scende un gradino alla volta con i--.",
+      "provocative_question": "Come facciamo SCENDERE la luminosità? Servono numeri negativi? O c'è un modo più semplice per contare all'indietro?",
+      "components_list": null,
+      "class_hook": null,
       "action_tags": [],
-      "auto_action": null
+      "auto_action": null,
+      "common_mistakes": [
+        {
+          "mistake": "Il LED sale ma non scende, oppure scende ma non sale",
+          "teacher_response": "Controlla che ci siano ENTRAMBI i cicli for nel loop(). Il primo deve avere i++ e il secondo i--. Se ne manca uno, il LED fa solo metà dell'animazione!",
+          "analogy": "È come respirare: se inspiri ma non espiri, non funziona! Servono entrambi i movimenti."
+        },
+        {
+          "mistake": "Il for che scende non funziona o va in loop infinito",
+          "teacher_response": "Controlla la condizione del for decrescente: deve essere for(int i = 255; i >= 0; i--). Se scrivi i <= 0 invece di i >= 0, il for non parte mai perché 255 non è <= 0!",
+          "analogy": null
+        }
+      ]
     },
     {
       "name": "OSSERVA",
       "icon": "👀",
       "duration_minutes": 12,
-      "teacher_message": "Premiamo Play. Osservate l'effetto respiro: il LED si accende lentamente, raggiunge il massimo, poi si spegne lentamente. E ricomincia. Un ciclo continuo, ipnotico e rilassante.",
-      "teacher_tip": "Far osservare che la discesa sembra piu veloce della salita (percezione logaritmica). Sfida creativa: come fare un respiro asimmetrico? Salita lenta (delay 15) e discesa veloce (delay 5)?",
-      "action_tags": ["[AZIONE:play]"],
+      "teacher_message": "Premi Play! Osserva l'effetto respiro: il LED si accende lentamente, raggiunge il massimo, poi si spegne lentamente. E poi ricomincia, all'infinito. Proprio come respirare!",
+      "teacher_tip": "Evidenzia il LED e fai osservare la simmetria: 'Il tempo per salire è uguale al tempo per scendere? Sì, perché entrambi i for hanno 256 passi e lo stesso delay!' Chiedi: 'Come fareste il respiro più veloce? E più lento?' (Cambiando il delay). Fai notare che il loop() ripete i due for all'infinito.",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [
+        "[AZIONE:play]",
+        "[AZIONE:highlight:led1]"
+      ],
       "auto_action": "play_and_highlight",
-      "observation_prompt": "Effetto respiro: il LED pulsa come se respirasse. Salita graduale, massimo, discesa graduale, spento, e ricomincia. Riuscite a contare quanti respiri fa in 30 secondi?"
+      "observation_prompt": "Il LED pulsa come un respiro: sale gradualmente al massimo e poi scende gradualmente a zero. L'effetto è continuo e fluido grazie ai due cicli for (uno crescente, uno decrescente) che si ripetono all'infinito nel loop().",
+      "analogies": [
+        {
+          "concept": "breathing",
+          "text": "L'effetto è identico al LED di standby del Mac: una pulsazione lenta e rilassante. I designer Apple hanno usato lo stesso trucco — due rampe, una su e una giù, ripetute all'infinito!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        },
+        {
+          "concept": "for_decrescente",
+          "text": "Il for con i-- è come scendere le scale: parti dall'ultimo gradino (255) e scendi uno alla volta fino a piano terra (0). i++ sale, i-- scende. Semplice!",
+          "evidence": "Curriculum ELAB Vol 3 Cap 7"
+        }
+      ]
     },
     {
       "name": "CONCLUDI",
       "icon": "✅",
-      "duration_minutes": 8,
-      "teacher_message": "Oggi avete combinato due cicli for per creare l'effetto breathing: salita con i++ e discesa con i--. Il delay controlla la velocita del respiro. Questo effetto si usa in tantissimi dispositivi elettronici.",
-      "teacher_tip": "Ricapitolare: due for opposti creano un ciclo su-giu. Cambiando il delay si cambia la velocita. Cambiando il range si cambia l'intensita. Tante variazioni con un concetto semplice.",
-      "summary_for_class": "Due cicli for creano l'effetto respiro: il primo sale da 0 a 255 (i++), il secondo scende da 255 a 0 (i--). Con delay(10) il respiro dura circa 5 secondi. Il loop ripete il ciclo all'infinito.",
-      "concepts_learned": ["ciclo for decrescente (i--)", "effetto breathing/respiro", "combinare due cicli for", "delay controlla la velocita", "pattern su-giu ripetibile"],
-      "next_preview": "Nella prossima lezione colleghiamo trimmer e LED: girando la manopola controllerete la luminosita in tempo reale con la funzione map()!"
+      "duration_minutes": 7,
+      "teacher_message": "Bellissimo effetto! Oggi avete imparato a combinare due cicli for per creare l'effetto breathing. Il primo sale con i++ e il secondo scende con i--. Non servono numeri negativi, basta contare al contrario!",
+      "teacher_tip": "Recap: 'Due for nel loop(): il primo da 0 a 255 (sale), il secondo da 255 a 0 (scende). i++ aggiunge 1, i-- toglie 1. Il delay controlla la velocità del respiro.' Sfida: 'Come fareste un respiro che sale veloce ma scende lento?' (delay diversi nei due for!).",
+      "components_list": null,
+      "class_hook": null,
+      "action_tags": [],
+      "auto_action": null,
+      "summary_for_class": "Combinando un for crescente (i++) e un for decrescente (i--) otteniamo l'effetto breathing. Il LED sale e scende di luminosità in modo fluido, come il respiro. Cambiando il delay possiamo regolare la velocità della pulsazione!",
+      "concepts_learned": [
+        "for decrescente con i--",
+        "combinare due cicli for",
+        "effetto breathing (respiro)",
+        "simmetria salita/discesa",
+        "delay per controllare velocità"
+      ],
+      "next_preview": "Nel prossimo esperimento colleghiamo un trimmer al LED e usiamo la funzione map() per controllare la luminosità in tempo reale girando la manopola!"
     }
   ],
+  "assessment_invisible": [
+    "Se spiega che i-- toglie 1 ogni volta senza numeri negativi → comprensione del for decrescente",
+    "Se nota la simmetria dei due for → comprensione della struttura del codice",
+    "Se propone delay diversi per salita e discesa → pensiero creativo applicato"
+  ],
   "session_save": {
-    "concepts_covered": ["for decrescente", "effetto breathing", "due cicli combinati", "velocita con delay"],
+    "concepts_covered": [
+      "for_decrescente",
+      "i_meno_meno",
+      "breathing_effect",
+      "due_cicli_for",
+      "velocita_delay"
+    ],
     "next_suggested": "v3-cap7-esp7",
-    "resume_message": "L'ultima volta avete creato l'effetto respiro con due cicli for. Oggi il trimmer controllera la luminosita del LED in tempo reale!"
+    "resume_message": "Avete creato l'effetto breathing con due cicli for! Prossimo passo: controllare la luminosità con un trimmer e map()."
   }
 }
