@@ -50,6 +50,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Usiamo il multimetro per misurare quanti Volt ha la nostra batteria da 9V. Scopriamo se e carica!",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{1F50B}",
       simulationMode: "circuit",
       components: [
@@ -116,6 +118,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Misuriamo la batteria ogni giorno e segniamo il valore. Quanto dura davvero una batteria 9V?",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{1F4D3}",
       simulationMode: "circuit",
       components: [
@@ -181,6 +185,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Impariamo a misurare il valore di una resistenza con il multimetro. Le bande colorate dicono la verita?",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{1F3A8}",
       simulationMode: "circuit",
       components: [
@@ -192,13 +198,13 @@ const EXPERIMENTS_VOL2 = {
         "r1": { x: 15, y: 60 },
         "mm1": { x: 120, y: 40 }
       },
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       code: null,
       hexFile: null,
       concept: "Ohmmetro, bande colorate, tolleranza resistenza, verifica pratica",
       layer: "schema",
       steps: [
         "Prendi un resistore da 330 Ohm e leggi le bande colorate.",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Imposta il multimetro su Ohm (simbolo omega).",
         "Tocca i terminali del resistore con i puntali.",
         "Confronta il valore misurato con quello delle bande: sono uguali?"
@@ -248,6 +254,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Colleghiamo il multimetro IN SERIE per misurare quanta corrente passa. La Legge di Ohm funziona davvero?",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 2,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{26A1}",
       simulationMode: "circuit",
       components: [
@@ -391,6 +399,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Sulla breadboard i fori della stessa colonna (a-e) sono collegati tra loro."
         },
         {
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 2,
           text: "Inserisci il primo resistore da 1k\u03A9 nei fori A6 e A13 della breadboard (fila A).",
           componentId: "r1",
@@ -399,7 +408,6 @@ const EXPERIMENTS_VOL2 = {
           hint: "1k\u03A9 = 1000\u03A9. Bande colorate: marrone-nero-rosso. Terminali in A6 e A13."
         },
         {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 3,
           text: "Inserisci il secondo resistore da 1k\u03A9 nei fori C6 e C13 — IN PARALLELO al primo (stesse colonne 6 e 13)!",
           componentId: "r2",
@@ -592,6 +600,7 @@ const EXPERIMENTS_VOL2 = {
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "Il partitore di tensione divide la tensione in parti proporzionali."
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 2,
@@ -600,7 +609,6 @@ const EXPERIMENTS_VOL2 = {
           componentType: "battery9v",
           hint: "I 9V verranno divisi equamente tra i 3 resistori: 3V ciascuno!"
         },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 3,
           text: "Inserisci il primo resistore da 1k\u03A9 nei fori A4 e A11 della breadboard.",
@@ -664,6 +672,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Colleghiamo piu batterie in serie: le tensioni si sommano! Come le pile di una torcia.",
       chapter: "Capitolo 5 - Approfondiamo le Batterie",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{1F50B}",
       simulationMode: "circuit",
       components: [
@@ -747,6 +757,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Cosa succede se colleghiamo due batterie al contrario? Le tensioni si sottraggono!",
       chapter: "Capitolo 5 - Approfondiamo le Batterie",
       difficulty: 2,
+      simulable: false,
+      simulableReason: "Richiede multimetro fisico",
       icon: "\u{1F504}",
       simulationMode: "circuit",
       components: [
@@ -789,6 +801,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 3,
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il multimetro e impostalo su V (Volt).",
           componentId: "mm1",
           componentType: "multimeter",
@@ -801,7 +814,6 @@ const EXPERIMENTS_VOL2 = {
           wireTo: "bat2:positive",
           wireColor: "orange",
           hint: "Antiserie: + con +. Le due batterie si oppongono!"
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 5,
@@ -990,6 +1002,7 @@ const EXPERIMENTS_VOL2 = {
     // v2-cap6-esp2: LED in serie colori diversi
     // Same layout pattern as esp1 — R on e5-e12, LED1 on f14, LED2 on f20
     // -----------------------------------------------
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     {
       id: "v2-cap6-esp2",
       title: "Cap. 6 Esp. 2 - LED in serie colori diversi",
@@ -1002,7 +1015,6 @@ const EXPERIMENTS_VOL2 = {
         { type: "battery9v", id: "bat1" },
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 330 },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "led", id: "led1", color: "red" },
         { type: "led", id: "led2", color: "green" }
       ],
@@ -1191,6 +1203,7 @@ const EXPERIMENTS_VOL2 = {
       },
       steps: [
         "Posiziona il resistore da 330\u03A9 tra i fori e3 e e10.",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Inserisci il primo LED rosso con l'anodo in d10 e il catodo in d11.",
         "Inserisci il secondo LED rosso con l'anodo in d17 e il catodo in d18.",
         "Inserisci il terzo LED rosso con l'anodo in d22 e il catodo in d23.",
@@ -1203,7 +1216,6 @@ const EXPERIMENTS_VOL2 = {
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Tre LED in serie'. Con tre LED in serie, la somma delle tensioni forward \u00E8 circa 5.4V (3 x 1.8V). La batteria da 9V deve fornire tensione per tutti e tre pi\u00F9 il resistore. Cambiando il resistore da 330\u03A9 a 220\u03A9 passa pi\u00F9 corrente e i LED brillano di pi\u00F9! \u00C8 come aprire di pi\u00F9 il rubinetto dell'acqua. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       concept: "3 LED in serie, limite tensione 9V, swap resistore 330\u03A9\u2192220\u03A9",
       layer: "terra",
       note: "Prova a cambiare il resistore da 330\u03A9 a 220\u03A9: pi\u00F9 corrente = pi\u00F9 luce!",
@@ -1392,6 +1404,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 3,
           text: "Prendi il LED rosso e posizionalo sui fori F9 (anodo) e F10 (catodo).",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "led1",
           componentType: "led",
           targetPins: { "led1:anode": "bb1:f9", "led1:cathode": "bb1:f10" },
@@ -1404,7 +1417,6 @@ const EXPERIMENTS_VOL2 = {
           componentType: "multimeter",
           hint: "Il multimetro misura tensione, corrente e resistenza."
         },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 5,
           text: "Collega un filo ROSSO dal polo + della batteria al bus + (colonna 1).",
@@ -1593,6 +1605,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Posiziona il multimetro accanto al circuito. Ti servirà per misurare!",
           componentId: "mm1",
           componentType: "multimeter",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il multimetro misura tensione, corrente e resistenza."
         },
         {
@@ -1605,7 +1618,6 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 8,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ROSSO dal foro bus + superiore (col. 10) al foro A10 (ingresso pulsante).",
           wireFrom: "bb1:bus-top-plus-10",
           wireTo: "bb1:a10",
@@ -1794,6 +1806,7 @@ const EXPERIMENTS_VOL2 = {
           step: 6,
           text: "Prendi il resistore da 1kΩ dalla palette e posizionalo nei fori E15 e E22.",
           componentId: "r1",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e15", "r1:pin2": "bb1:e22" },
           hint: "Il resistore limita la corrente nel circuito."
@@ -1806,7 +1819,6 @@ const EXPERIMENTS_VOL2 = {
           hint: "Il multimetro misura tensione, corrente e resistenza."
         },
         {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 8,
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
           wireFrom: "bat1:positive",
@@ -1995,6 +2007,7 @@ const EXPERIMENTS_VOL2 = {
           step: 3,
           text: "Prendi il condensatore da 1000µF dalla palette e posizionalo nei fori E3 e E4.",
           componentId: "c1",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "capacitor",
           targetPins: { "c1:positive": "bb1:e3", "c1:negative": "bb1:e4" },
           hint: "Il polo + in E3, il polo − in E4. Attenzione alla polarità!"
@@ -2007,7 +2020,6 @@ const EXPERIMENTS_VOL2 = {
           targetPins: { "c2:positive": "bb1:e7", "c2:negative": "bb1:e8" },
           hint: "Il polo + in E7, il polo − in E8. Attenzione alla polarità!"
         },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 5,
           text: "Prendi il condensatore da 1000µF dalla palette e posizionalo nei fori E10 e E11.",
@@ -2196,6 +2208,7 @@ const EXPERIMENTS_VOL2 = {
         "r1": { x: 249, y: 73.75 },
         "led1": { x: 286.5, y: 43.75 },
         "mm1": { x: 340, y: 20 }
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       },
       steps: [
         "Costruisci il circuito come nell'esperimento precedente (Cap.7 Esp.2).",
@@ -2208,7 +2221,6 @@ const EXPERIMENTS_VOL2 = {
       ],
       observe: "Con R=470\u03A9 la scarica \u00E8 rapida (Tau\u22480.5s). Con R=1k\u03A9 Tau=1s. Con R=4.7k\u03A9 Tau=4.7s. Con R=10k\u03A9 Tau=10s! Pi\u00F9 grande il resistore, pi\u00F9 lentamente il condensatore si scarica. Tau = R \u00D7 C.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Variare R nella scarica RC'. La costante di tempo Tau = R x C determina quanto velocemente si scarica il condensatore. Aumentando la resistenza \u00E8 come stringere un tubo: l'acqua (corrente) esce pi\u00F9 lentamente e il condensatore si scarica pi\u00F9 piano. Prova diversi resistori e osserva la differenza! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       code: null,
       hexFile: null,
       concept: "Costante di tempo Tau = R\u00D7C, variare R cambia velocit\u00E0 di scarica",
@@ -2397,6 +2409,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-5", to: "bb1:a5", color: "red" },
         { from: "bb1:a12", to: "bb1:a14", color: "orange" },
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:a15", to: "bb1:g18", color: "yellow" },
         { from: "bb1:g19", to: "bb1:bus-top-minus-19", color: "black" },
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" },
@@ -2409,7 +2422,6 @@ const EXPERIMENTS_VOL2 = {
         "led1": { x: 219, y: 43.75 },
         "mos1": { x: 245.25, y: 91.25 }
       },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       steps: [
         "Posiziona il resistore da 470\u03A9 tra i fori e5 e e12.",
         "Inserisci il LED rosso con l'anodo in d14 e il catodo in d15.",
@@ -2598,6 +2610,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
@@ -2610,7 +2623,6 @@ const EXPERIMENTS_VOL2 = {
           componentType: "battery9v",
           hint: "La batteria 9V alimenta il circuito."
         },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 3,
           text: "Prendi il MOSFET dalla palette e posizionalo nei fori F18, F19 e F20.",
@@ -2799,6 +2811,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Il resistore limita la corrente nel circuito."
         },
         {
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 6,
           text: "Prendi il LED rosso dalla palette e posizionalo nei fori D12 e D13.",
           componentId: "led1",
@@ -2811,7 +2824,6 @@ const EXPERIMENTS_VOL2 = {
           text: "Posiziona il multimetro accanto al circuito. Ti servirà per misurare!",
           componentId: "mm1",
           componentType: "multimeter",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il multimetro misura tensione, corrente e resistenza."
         },
         {
@@ -3000,6 +3012,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il multimetro accanto al circuito. Ti servirà per misurare!",
           componentId: "mm1",
           componentType: "multimeter",
@@ -3012,7 +3025,6 @@ const EXPERIMENTS_VOL2 = {
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 7,
@@ -3201,6 +3213,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Il resistore limita la corrente nel circuito."
         },
         {
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 6,
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori F11 e F18.",
           componentId: "r2",
@@ -3213,7 +3226,6 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori F3 e F10.",
           componentId: "r3",
           componentType: "resistor",
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "r3:pin1": "bb1:f3", "r3:pin2": "bb1:f10" },
           hint: "Il resistore limita la corrente nel circuito."
         },
@@ -3367,6 +3379,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Collegamento diretto: batteria 9V al motore DC. Gira!",
       chapter: "Capitolo 10 - Il motore a corrente continua",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede motore DC fisico",
       icon: "\u2699\uFE0F",
       simulationMode: "circuit",
       components: [
@@ -3400,6 +3414,7 @@ const EXPERIMENTS_VOL2 = {
       hexFile: null,
       concept: "Motore DC, collegamento diretto, conversione energia elettrica in meccanica",
       layer: "terra",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -3414,7 +3429,6 @@ const EXPERIMENTS_VOL2 = {
           componentId: "mot1",
           componentType: "motor-dc",
           targetPins: { "mot1:positive": "bb1:a5", "mot1:negative": "bb1:a10" },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il motore DC trasforma l'energia elettrica in movimento!"
         },
         {
@@ -3475,6 +3489,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Inverti i fili della batteria: il motore gira al contrario! La polarit\u00E0 conta.",
       chapter: "Capitolo 10 - Il motore a corrente continua",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede motore DC fisico",
       icon: "\u{1F504}",
       simulationMode: "circuit",
       components: [
@@ -3580,6 +3596,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Aggiungi un pulsante: il motore gira solo quando premi!",
       chapter: "Capitolo 10 - Il motore a corrente continua",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede motore DC fisico",
       icon: "\u{1F518}",
       simulationMode: "circuit",
       components: [
@@ -3597,6 +3615,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bb1:bus-top-plus-10", to: "bb1:a10", color: "red" },
         { from: "bb1:g12", to: "mot1:positive", color: "yellow" },
         { from: "mot1:negative", to: "bb1:bus-top-minus-12", color: "black" },
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" }
       ],
       layout: {
@@ -3615,7 +3634,6 @@ const EXPERIMENTS_VOL2 = {
       observe: "Il motore gira SOLO quando tieni premuto il pulsante! Il pulsante apre e chiude il circuito: premuto = circuito chiuso = corrente passa = motore gira. Rilasciato = circuito aperto = niente corrente.",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Motore con pulsante'. Aggiungendo un pulsante, il circuito si apre e si chiude come un interruttore: premi e il motore gira, rilasci e si ferma! \u00C8 il concetto di circuito aperto (corrente non passa) e circuito chiuso (corrente passa). Ogni interruttore di casa tua funziona cos\u00EC! Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
       hexFile: null,
       concept: "Controllo manuale motore con pulsante, circuito aperto/chiuso",
       layer: "terra",
@@ -3712,6 +3730,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Un LED si accende quando il motore gira: indicatore visivo di funzionamento!",
       chapter: "Capitolo 10 - Il motore a corrente continua",
       difficulty: 2,
+      simulable: false,
+      simulableReason: "Richiede motore DC fisico",
       icon: "\u{1F4A1}",
       simulationMode: "circuit",
       components: [
@@ -3796,6 +3816,7 @@ const EXPERIMENTS_VOL2 = {
           step: 5,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E16 e E23.",
           componentId: "r1",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e16", "r1:pin2": "bb1:e23" },
           hint: "Il resistore limita la corrente nel circuito."
@@ -3816,7 +3837,6 @@ const EXPERIMENTS_VOL2 = {
           wireColor: "red",
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
         },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 8,
           text: "Collega un filo ROSSO dal foro bus + superiore (col. 10) al foro A10.",
@@ -3897,6 +3917,8 @@ const EXPERIMENTS_VOL2 = {
       desc: "Il progetto finale! Due fototransistor controllano due motori incrociati: il robot segue la luce!",
       chapter: "Capitolo 12 - Robot Segui Luce",
       difficulty: 3,
+      simulable: false,
+      simulableReason: "Richiede kit robot fisico",
       icon: "\u{1F916}",
       simulationMode: "circuit",
       components: [
@@ -3995,6 +4017,7 @@ const EXPERIMENTS_VOL2 = {
       concept: "Robot analogico: cross-connection fototransistor\u2192MOSFET\u2192motore, diodi flyback di protezione",
       layer: "cielo",
       note: "Cross-connection: fototransistor DX pilota motore SX e viceversa. I diodi proteggono i MOSFET dalla forza controelettromotrice dei motori.",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -4017,7 +4040,6 @@ const EXPERIMENTS_VOL2 = {
           componentType: "phototransistor",
           targetPins: { "pt1:collector": "bb1:e5", "pt1:emitter": "bb1:e6" },
           hint: "Collettore in E5, emettitore in E6."
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 4,
@@ -4196,6 +4218,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 26,
           text: "Collega un filo VIOLA dal foro G12 al foro G8.",
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:g12",
           wireTo: "bb1:g8",
           wireColor: "purple",
@@ -4218,7 +4241,6 @@ const EXPERIMENTS_VOL2 = {
           hint: "Questo filo porta la corrente dal bus positivo al componente."
         },
         {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 29,
           text: "Collega un filo ARANCIONE dal polo negativo (-) del motore al foro G22.",
           wireFrom: "mot2:negative",
