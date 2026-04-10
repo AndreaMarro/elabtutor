@@ -1,110 +1,268 @@
-# ISTRUZIONI PER CLAUDE CODE WEB — Sprint 2
+# CLAUDE CODE WEB — Sprint 2 Session
 
-> Leggi PRIMA di fare qualsiasi cosa.
-> Questa sessione lavora IN PARALLELO con Claude Code Terminal.
-> I due si comunicano via docs/sprint/S2-PROGRESS.md
+> LEGGI TUTTO PRIMA DI FARE QUALSIASI COSA.
+> Riunione LUNEDÌ con Omaric + Giovanni Fagherazzi.
+> NO DEMO. Tutto deve funzionare con dati REALI.
 
-## CHI SEI
+---
 
-Sei Claude Code Web, sessione di Andrea Marro per ELAB Tutor.
-Lavori in parallelo con Claude Code Terminal che gestisce agenti su worktree.
+## CREDENZIALI E ENDPOINT
 
-## COME COMUNICARE
+```
+# Sito live
+https://www.elabtutor.school
 
-1. **PRIMA di iniziare**: fai `git pull origin main` e leggi `docs/sprint/S2-PROGRESS.md`
-2. **DURANTE**: aggiorna S2-PROGRESS.md con il tuo stato ogni 30 minuti
-3. **PRIMA di ogni commit**: fai `git pull origin main` per integrare il lavoro dell'altro
-4. **SEMPRE su branch**: `sprint/web-s2-[nome-task]`, MAI su main
+# Nanobot Render (AI chat)
+POST https://elab-galileo.onrender.com/tutor-chat
+POST https://elab-galileo.onrender.com/chat (con immagini)
+GET  https://elab-galileo.onrender.com/health
 
-## I TUOI TASK (in ordine di priorità)
+# Supabase Edge Functions (nanobot V2)
+POST https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1/unlim-chat
+POST https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1/unlim-diagnose
+POST https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1/unlim-hints
+POST https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1/unlim-tts
 
-### TASK A: Flusso "Bentornati" — Principio Zero (IL PIÙ IMPORTANTE)
+# Supabase DB (progetto sessioni)
+URL: https://vxvqalmxqtezvgiboxyv.supabase.co
+Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4dnFhbG14cXRlenZnaWJveHl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4Njk1NjAsImV4cCI6MjA4MzQ0NTU2MH0.FDBSCTOajfu0C3wWWfAQoM8qLQcmodxI5k6H_pkJOhQ
 
-Il docente apre ELAB sulla LIM. OGGI non succede niente — deve scegliere da solo.
-DOMANI (lunedì riunione!) UNLIM deve dire: "Bentornati! L'ultima volta avete fatto [X]. Oggi vi propongo [Y]."
+# Compiler
+POST https://n8n.srv1022317.hstgr.cloud/webhook/elab-compile
+Body: {"code": "void setup(){} void loop(){}"}
 
-**File da modificare**: `src/components/lavagna/LavagnaShell.jsx`
-**Come funziona**:
-1. Al mount, LavagnaShell legge unlimMemory per ottenere l'ultimo esperimento fatto
-2. Legge lesson-paths/index.js per trovare il next_experiment
-3. Mostra un overlay UNLIM con: "Bentornati! Oggi facciamo [titolo]"
-4. Il docente può accettare o scegliere altro
+# Brain VPS (Ollama)
+http://72.60.129.50:11434
 
-**NON toccare**: ExperimentPicker.jsx (lo sta facendo Terminal), experiments-vol*.js, api.js
+# Admin ELAB
+Accesso: #admin → password ELAB2026-Andrea!
 
-### TASK B: Verifica ScratchXml in Blockly Runtime
+# Deploy
+npx vercel --prod --yes
 
-29 scratchXml generati da AI. NESSUNO testato.
-
-**Come testare**:
-1. Apri elabtutor.school su Chrome (usa Control Chrome MCP se disponibile)
-2. Seleziona un esperimento Vol3 con scratchXml (es. v3-cap5-esp1 Blink)
-3. Apri la modalità Scratch
-4. Verifica che i blocchi si caricano correttamente
-5. Se non funzionano: documenta COSA non funziona in S2-PROGRESS.md
-
-### TASK C: Test UNLIM Onniscienza (20 domande)
-
-Testa se UNLIM sa rispondere su esperimenti specifici:
-
-```bash
-curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Cosa serve per l esperimento Accendi il tuo primo LED?","experimentId":"v1-cap6-esp1","sessionId":"test-web"}'
+# Supabase CLI
+SUPABASE_ACCESS_TOKEN=sbp_86f... (chiedere ad Andrea se serve)
+Project ref nanobot: euqpdueopmlllqjmqnyb
+Project ref sessioni: vxvqalmxqtezvgiboxyv
 ```
 
-Fai 20 domande diverse su esperimenti diversi. Verifica che UNLIM:
-- Conosca i componenti necessari
-- Sappia spiegare il concetto
-- Usi linguaggio 10-14 anni
-- Non inventi cose che non ci sono
+---
 
-**Output**: docs/sprint/AUDIT-UNLIM-20-DOMANDE.md
+## REGOLA SUPREMA
 
-### TASK D: Audit UX su Chrome Reale
+**SE UNA COSA SEMBRA FINITA, NON LO È.**
+Verifica SEMPRE con prova oggettiva. Mai dare per scontato.
 
-Apri https://www.elabtutor.school e fai il percorso del docente:
-1. Homepage → cosa vede?
-2. Sceglie Vol 1 → esperimenti visibili?
-3. Apre esperimento → buildSteps funzionano?
-4. Scratch → si apre?
-5. Voce → funziona? (se possibile testare)
-6. Report → si genera?
+---
 
-**Output**: docs/sprint/AUDIT-UX-REALE.md con screenshot se possibile
+## PRINCIPIO ZERO
 
-## REGOLE
+"Rendere facilissimo per CHIUNQUE spiegare i concetti dei manuali ELAB e spiegarne gli esperimenti SENZA ALCUNA CONOSCENZA PREGRESSA. Arrivi e magicamente insegni."
 
-- **NO push su main** — sempre branch
-- **git pull prima di ogni commit** — evita conflitti
-- **Prova oggettiva per ogni task** — output curl, screenshot, o test pass
-- **Aggiorna S2-PROGRESS.md** — così Terminal sa cosa stai facendo
-- **Se trovi un bug**: documentalo in S2-PROGRESS.md, NON fixarlo se tocca file che Terminal sta modificando
+NON è ELAB che insegna. Il DOCENTE insegna. ELAB e UNLIM sono gli strumenti che rendono il docente immediatamente capace.
 
-## FILE CHE NON DEVI TOCCARE (Terminal li sta usando)
+---
 
-- src/components/lavagna/ExperimentPicker.jsx (Terminal: chapter-map UI)
-- src/components/VetrinaSimulatore.jsx (Terminal: chapter-map UI)
-- src/data/experiments-vol*.js (Terminal: worktree)
-- src/data/chapter-map.js (Terminal: worktree)
+## COMUNICAZIONE CON TERMINAL
 
-## FILE CHE PUOI TOCCARE
+- Terminal sta facendo: **chapter-map UI** (ExperimentPicker.jsx, VetrinaSimulatore.jsx)
+- Terminal sta facendo: **audit parità volumi** (legge TRES JOLIE)
+- **NON TOCCARE**: ExperimentPicker.jsx, VetrinaSimulatore.jsx, VetrinaSimulatore.module.css, chapter-map.js
+- **TUO FILE ESCLUSIVO**: LavagnaShell.jsx, LavagnaShell.module.css
+- Aggiorna `docs/sprint/S2-PROGRESS.md` ogni 30 min
+- `git pull origin main` prima di ogni commit
 
-- src/components/lavagna/LavagnaShell.jsx (flusso bentornati — SOLO TU)
-- src/components/lavagna/LavagnaShell.module.css
-- docs/sprint/*.md (report)
-- tests/ (nuovi test)
+---
 
-## CONTESTO TECNICO
+## I TUOI TASK (8 task, in ordine)
 
-- Build: `npm run build` (Vite 7, React 19)
-- Test: `npx vitest run` (2110 pass)
-- Deploy: `npx vercel --prod --yes`
-- Nanobot chat: POST https://elab-galileo.onrender.com/tutor-chat
-- Supabase Edge: POST https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1/unlim-chat
+### TASK 1: Flusso "Bentornati" (P0 — il più critico per lunedì)
 
-## MESSAGGIO PER INIZIARE
+**Obiettivo**: Il docente apre ELAB → UNLIM dice "Bentornati! Oggi facciamo [esperimento]"
 
-Copia questo nella prima riga quando apri Claude Code Web:
+**File**: `src/components/lavagna/LavagnaShell.jsx`
 
-"Leggi docs/sprint/CLAUDE-WEB-SESSION-2.md e docs/sprint/DIRETTIVE-CLAUDE-WEB.md. Poi fai git pull origin main e inizia dal TASK A (flusso bentornati). Aggiorna docs/sprint/S2-PROGRESS.md con il tuo stato."
+**Implementazione**:
+1. Al mount di LavagnaShell, leggi `unlimMemory.getProfile()` per l'ultimo esperimento
+2. Leggi il lesson path dell'esperimento successivo: `getLessonPath(nextExpId)`
+3. Usa `getDisplayInfo(nextExpId)` da chapter-map.js per il titolo
+4. Mostra overlay UNLIM con messaggio tipo: "Bentornati! L'ultima volta avete fatto [titolo]. Oggi vi propongo: [prossimo titolo]"
+5. Due bottoni: "Iniziamo!" (carica esperimento) e "Scegli altro" (apre picker)
+
+**Test** (SEVERISSIMI):
+```javascript
+// tests/unit/lavagna/Bentornati.test.jsx
+describe('Flusso Bentornati', () => {
+  test('mostra messaggio bentornati quando ci sono sessioni precedenti');
+  test('propone il prossimo esperimento basato su lesson-path next_experiment');
+  test('NON mostra bentornati alla prima visita (nessuna sessione)');
+  test('il bottone "Iniziamo" carica l esperimento proposto');
+  test('il bottone "Scegli altro" apre ExperimentPicker');
+  test('il messaggio usa il titolo Tea da chapter-map, non l ID interno');
+  test('gestisce gracefully se unlimMemory è vuoto');
+  test('gestisce gracefully se il prossimo esperimento non esiste');
+});
+```
+
+**Verifica LIVE**: Apri elabtutor.school su Chrome → al caricamento deve apparire il messaggio.
+
+### TASK 2: Test ScratchXml in Blockly Runtime (P1)
+
+**Obiettivo**: Verificare che i 29 scratchXml funzionino DAVVERO nel Blockly runtime.
+
+**Come**:
+1. Leggi `src/data/experiments-vol3.js` — trova tutti gli esperimenti con scratchXml
+2. Per ciascuno, verifica che l'XML sia Blockly-valido:
+   - Ogni `<block type="...">` usa un tipo registrato in scratchBlocks.js
+   - Ogni `<field>` ha un nome valido
+   - Le connessioni `<next>`, `<value>`, `<statement>` sono corrette
+3. Scrivi test che validano la struttura XML
+
+**Test** (SEVERISSIMI):
+```javascript
+// tests/unit/scratchXmlValidation.test.js
+describe('ScratchXml Validation', () => {
+  test('ogni scratchXml è XML valido (parseable)');
+  test('ogni block type esiste nei blocchi registrati');
+  test('nessun block type sconosciuto');
+  test('i pin numbers corrispondono ai componenti dell esperimento');
+  test('i delay values sono ragionevoli (non 0, non > 60000)');
+  test('gli analog values sono nel range 0-1023');
+  test('i pin modes sono validi (INPUT, OUTPUT, INPUT_PULLUP)');
+});
+```
+
+### TASK 3: Test UNLIM Onniscienza — 30 Domande Reali (P1)
+
+**Obiettivo**: UNLIM deve rispondere correttamente su OGNI esperimento.
+
+**30 domande** (10 per volume):
+
+```bash
+# Vol 1 — Le Basi
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cosa serve per accendere il primo LED?","experimentId":"v1-cap6-esp1","sessionId":"test-30q-1"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona il LED RGB? Posso fare il bianco?","experimentId":"v1-cap7-esp3","sessionId":"test-30q-2"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"A cosa serve la resistenza in un circuito LED?","experimentId":"v1-cap6-esp1","sessionId":"test-30q-3"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona un pulsante?","experimentId":"v1-cap8-esp1","sessionId":"test-30q-4"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cos è un potenziometro?","experimentId":"v1-cap9-esp1","sessionId":"test-30q-5"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona il fotoresistore?","experimentId":"v1-cap10-esp1","sessionId":"test-30q-6"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come faccio suonare il cicalino?","experimentId":"v1-cap11-esp1","sessionId":"test-30q-7"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cos è un reed switch?","experimentId":"v1-cap12-esp1","sessionId":"test-30q-8"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cosa succede se metto il LED al contrario?","experimentId":"v1-cap6-esp1","sessionId":"test-30q-9"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Perché servono 3 resistenze diverse per cambiare luminosità?","experimentId":"v1-cap6-esp3","sessionId":"test-30q-10"}'
+
+# Vol 2 — Approfondiamo
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come si usa il multimetro per misurare la tensione?","experimentId":"v2-cap3-esp1","sessionId":"test-30q-11"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cosa sono i resistori in parallelo?","experimentId":"v2-cap4-esp1","sessionId":"test-30q-12"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cosa succede se metto 2 batterie in serie?","experimentId":"v2-cap5-esp1","sessionId":"test-30q-13"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona un condensatore?","experimentId":"v2-cap7-esp1","sessionId":"test-30q-14"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cos è un transistor MOSFET?","experimentId":"v2-cap8-esp1","sessionId":"test-30q-15"}'
+# ... +5 domande Vol2
+
+# Vol 3 — Arduino
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona il Blink?","experimentId":"v3-cap5-esp1","sessionId":"test-30q-21"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cosa fa digitalWrite?","experimentId":"v3-cap6-esp2","sessionId":"test-30q-22"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come faccio il codice Morse con Arduino?","experimentId":"v3-cap6-morse","sessionId":"test-30q-23"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Cos è analogRead?","experimentId":"v3-cap7-esp1","sessionId":"test-30q-24"}'
+curl -s -X POST "https://elab-galileo.onrender.com/tutor-chat" -H "Content-Type: application/json" -d '{"message":"Come funziona il PWM?","experimentId":"v3-cap7-esp4","sessionId":"test-30q-25"}'
+# ... +5 domande Vol3
+```
+
+**Per ogni risposta valuta**:
+- Risponde alla domanda? (SI/NO)
+- Linguaggio 10-14 anni? (SI/NO)
+- Usa analogie quotidiane? (SI/NO)
+- Inventa cose false? (SI/NO — GRAVE)
+- Cita componenti corretti? (SI/NO)
+
+**Output**: `docs/sprint/AUDIT-UNLIM-30-DOMANDE.md`
+
+### TASK 4: Audit UX su Chrome Reale (P1)
+
+Apri https://www.elabtutor.school e testa TUTTO il flusso docente.
+Usa Control Chrome MCP o screenshot.
+
+**Checklist severissima**:
+- [ ] Homepage carica in < 3s
+- [ ] Si vedono i 3 volumi
+- [ ] Scegliere Vol1 mostra gli esperimenti
+- [ ] Aprire v1-cap6-esp1 carica il simulatore
+- [ ] La breadboard è visibile e componenti posizionati
+- [ ] "Monta passo passo" (voce o UI) → buildSteps partono
+- [ ] Ogni buildStep aggiunge un componente nella posizione corretta
+- [ ] Compilazione funziona (se c'è codice)
+- [ ] Scratch si apre per Vol3
+- [ ] UNLIM risponde a domande via chat
+- [ ] Report fumetto si genera
+- [ ] Il sito funziona su iPad (responsive)
+
+**Output**: `docs/sprint/AUDIT-UX-CHROME.md` con screenshot per ogni step
+
+### TASK 5: BuildSteps Qualità — Confronto con Volumi (P1)
+
+Leggi i volumi nella cartella TRES JOLIE e confronta con i buildSteps nel codice:
+- `/Users/andreamarro/VOLUME 3/ELAB - TRES JOLIE/1 ELAB VOLUME UNO/`
+- `/Users/andreamarro/VOLUME 3/ELAB - TRES JOLIE/2 ELAB VOLUME DUE/`
+- `/Users/andreamarro/VOLUME 3/ELAB - TRES JOLIE/3 ELAB VOLUME TRE/`
+
+Per ALMENO 10 esperimenti: il buildStep dice la stessa cosa del volume?
+
+**Output**: `docs/sprint/AUDIT-BUILDSTEPS-VS-VOLUMI.md`
+
+### TASK 6: Compiler + Arduino E2E Test (P2)
+
+```bash
+# Test compilazione reale
+curl -s -X POST "https://n8n.srv1022317.hstgr.cloud/webhook/elab-compile" \
+  -H "Content-Type: application/json" \
+  -d '{"code":"void setup(){pinMode(13,OUTPUT);}void loop(){digitalWrite(13,HIGH);delay(1000);digitalWrite(13,LOW);delay(1000);}"}'
+```
+
+Verifica che la compilazione produca HEX valido per ALMENO 5 sketch diversi (blink, fade, serial, pulsante, potenziometro).
+
+### TASK 7: Scrivi 200+ test nuovi (P2)
+
+Target: da 2110 a 2300+ test. Concentrati su:
+- Test per il flusso "bentornati" (task 1)
+- Test per validazione scratchXml (task 2)
+- Test E2E Playwright aggiuntivi
+- Test per ogni voiceCommand (36 comandi, serve test per ognuno)
+
+### TASK 8: Regression Gate Finale (P0)
+
+DOPO ogni task, esegui:
+```bash
+npx vitest run                    # >= 2110 test, 0 fail
+npm run build                     # PASS, no errori
+gh run list --limit 1             # CI verde
+```
+
+Se QUALSIASI gate fallisce: **FERMA TUTTO** e fixa.
+
+---
+
+## LINGUAGGIO DI UNLIM
+
+UNLIM parla come un amico esperto che spiega le cose a un ragazzino di 10-14 anni:
+- Analogie quotidiane: "il resistore è come un tubo stretto per l'acqua"
+- Mai pedante, mai professorale
+- "Non lo so" quando non sa
+- Incoraggiante ma onesto
+- ITALIANO semplice
+- Mai termini tecnici senza spiegazione
+
+---
+
+## VERIFICA FINE SESSIONE
+
+Prima di dichiarare "finito":
+```
+## Prova Oggettiva Sessione
+- Test: npx vitest run → [N] pass, 0 fail
+- Build: npm run build → PASS
+- CI: gh run list → [status]
+- Flusso bentornati: [funziona? screenshot]
+- Scratch testato: [quanti XML validati]
+- UNLIM 30 domande: [score X/30]
+- Chrome audit: [screenshot flusso completo]
+```
