@@ -198,7 +198,7 @@ export function useSessionTracker() {
         const s = sessionRef.current;
         s.endTime = new Date().toISOString();
         s.summary = buildSessionSummary(s);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         const sessions = loadSessions();
         // Replace or append
         const idx = sessions.findIndex(x => x.id === s.id);
