@@ -198,7 +198,7 @@ async function saveContext(classId, experimentId, context) {
     _saveContextLocal(classId, experimentId, context);
 
     if (!isSupabaseConfigured()) return;
-// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
     try {
         const userId = _getCurrentUserId();
@@ -399,7 +399,7 @@ const AUTOSAVE_INTERVAL = 30_000;
 
 function _getSessionId() {
     const KEY = 'elab_tutor_session';
-// © Andrea Marro — 06/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
     try {
         return localStorage.getItem(KEY) || '';
     } catch { return ''; }

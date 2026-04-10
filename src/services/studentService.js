@@ -198,7 +198,7 @@ async function _syncToServer(userId, studentData) {
         try {
             const resp = await fetch(url, {
                 method: 'POST',
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -399,7 +399,7 @@ const studentService = {
         };
         data.sessioni.push(sessione);
         saveStudentData(userId, data);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return sessione.id;
     },
 
@@ -600,7 +600,7 @@ const studentService = {
 
         // Concetti con più confusione
         const concettiConfusione = {};
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
         studenti.forEach(s => {
             s.confusione.forEach(c => {
                 if (c.concettoId) {

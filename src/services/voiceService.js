@@ -198,7 +198,7 @@ export function cancelRecording() {
  * @param {AbortSignal} signal - abort signal
  * @returns {Promise<Object>}
  */
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
 export async function sendVoiceChat(audioBlob, options = {}, signal = null) {
     if (!NANOBOT_URL) {
         throw new Error('Nanobot URL non configurato');

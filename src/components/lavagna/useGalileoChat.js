@@ -198,7 +198,7 @@ function detectImplicitActions(userMessage, aiResponse) {
   if (/\[azione:/i.test(aiResponse) || /\[INTENT:\{/.test(aiResponse)) return [];
 
   const combined = (userMessage + ' ' + aiResponse).toLowerCase();
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
   const executed = [];
 
   // Play / run simulation
@@ -399,7 +399,7 @@ export default function useGalileoChat() {
         // Fast local summary first
         const summary = getLessonSummary(expId);
         if (summary) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           const introMsg = summary.isFirstTime
             ? `Preparo la lezione "${summary.title}"! Prima volta con questo esperimento.`
             : summary.needsReview

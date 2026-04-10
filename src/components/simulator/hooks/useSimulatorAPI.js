@@ -198,7 +198,7 @@ export default function useSimulatorAPI({
       if (solverRef.current) {
         try {
           const diag = solverRef.current.getDiagnostics?.() || {};
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           if (diag.shortCircuit) healthSummary += 'CORTOCIRCUITO RILEVATO — simulazione in pausa\n';
           const burned = comps.filter(c => (states[c.id] || {}).burned);
           if (burned.length > 0) healthSummary += 'COMPONENTI BRUCIATI: ' + burned.map(c => c.id).join(', ') + '\n';
@@ -399,7 +399,7 @@ export default function useSimulatorAPI({
         setBuildStepIndex(prev => {
           const next = steps.length > 0 ? Math.min(prev + 1, steps.length - 1) : prev;
           if (next !== prev) pushActivity('build_step_next', `step ${next + 1}/${steps.length}`);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
           return next;
         });
       },
