@@ -198,7 +198,7 @@ function _endCurrentExperiment() {
 
 /**
  * Log a chat interaction with Galileo AI.
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
  */
 function logChatInteraction(question, responseQuality) {
     if (!_userId || !_sessionId) return;

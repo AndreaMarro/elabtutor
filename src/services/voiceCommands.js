@@ -198,7 +198,7 @@ const VOICE_COMMANDS = [
       if (match) window.__ELAB_API?.mountExperiment?.(match.id);
     },
     feedback: 'Sto montando il semaforo!',
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
   },
 
   // ── UNLIM ONNIPOTENTE: Modalità costruzione ──

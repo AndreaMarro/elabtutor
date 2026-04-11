@@ -198,7 +198,7 @@ export const MYSTERY_CIRCUITS = [
     solution: 'È un **Termistore NTC** (Negative Temperature Coefficient)! La sua resistenza diminuisce quando la temperatura sale. Con un partitore di tensione, Arduino può leggere la temperatura ambiente!',
     connectionToVolume: 'Il termistore funziona come la fotoresistenza del Capitolo 10 del Volume 1, ma reagisce alla temperatura invece che alla luce'
   },
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
   {
     id: 'mystery-diode',
     title: 'Il Guardiano del Circuito',

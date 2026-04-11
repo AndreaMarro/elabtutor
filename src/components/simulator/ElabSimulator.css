@@ -198,7 +198,7 @@
   text-align: left;
   font-family: var(--font-sans, 'Open Sans', sans-serif);
 }
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 .sim-welcome__step:hover:not(:disabled) {
   border-color: var(--color-accent, #4A7A25);
@@ -399,7 +399,7 @@
   .elab-simulator__sidebar {
     width: 100%;
     max-width: none;
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
     max-height: 45vh;
     border-right: none;
     border-bottom: 1px solid var(--color-sim-border, #E8E4DB);
@@ -600,7 +600,7 @@
   touch-action: manipulation; /* S74: prevent 300ms tap delay on iOS toolbar buttons */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 }
 
 .toolbar::-webkit-scrollbar {
@@ -801,7 +801,7 @@
   background: var(--color-btn-active-danger, #FCCFCF);
   color: var(--color-btn-danger, #B91C1C);
   transform: scale(0.95);
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 }
 
 /* Error (Compile failed) */
@@ -1002,7 +1002,7 @@
 
 @keyframes toolbar-compile-success-flash {
   0% {
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
     background: var(--color-accent, #4A7A25);
     color: var(--color-text-inverse, #FFFFFF);
     border-color: var(--color-unlim-gradient-end, #4A7A25);
@@ -1203,7 +1203,7 @@
   opacity: 0;
   animation: elab-pin-tooltip-in 120ms ease-out forwards;
 }
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 .elab-pin-tooltip::after {
   content: '';
@@ -1404,7 +1404,7 @@
   box-shadow: 0 4px 12px rgba(74, 122, 37, 0.4);
 }
 
-/* © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 .minimal-toolbar__btn--play:active:not(:disabled) {
   transform: scale(0.95);
   box-shadow: 0 1px 4px rgba(74, 122, 37, 0.3);

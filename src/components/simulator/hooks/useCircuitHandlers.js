@@ -198,7 +198,7 @@ export default function useCircuitHandlers({
         setIsRunning(true);
       }
     }
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setSimulationTime(0);
     try { sendAnalyticsEvent(EVENTS.SIMULATION_RESET, { experimentId: currentExperiment?.id }); } catch { }
     try { emitSimulatorEvent('stateChange', { state: 'reset', experimentId: currentExperiment?.id }); } catch { }
@@ -399,7 +399,7 @@ export default function useCircuitHandlers({
   }, [pushSnapshot, getCurrentSnapshot]);
 
   const handleComponentValueChange = useCallback((componentId, newValue) => {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setComponentStates(prev => ({ ...prev, [componentId]: { ...(prev[componentId] || {}), ...newValue } }));
     if (solverRef.current) {
       for (const [key, val] of Object.entries(newValue)) {
@@ -600,7 +600,7 @@ export default function useCircuitHandlers({
           return changed ? next : prev;
         });
       }
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     } else if (mergedExperiment && comp && !isContainer && !noSnapTypes.includes(comp.type)) {
       const originalPos = currentExperiment?.layout?.[componentId];
       const SNAP_BACK_THRESHOLD = 3;
@@ -801,7 +801,7 @@ export default function useCircuitHandlers({
   /* ═══════════════════════════════════════════════════════════════
      Reset experiment to original state
      ═══════════════════════════════════════════════════════════════ */
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
   const handleResetExperiment = useCallback(() => {
     if (!currentExperiment) return;
     pushSnapshot(getCurrentSnapshot());
@@ -1002,7 +1002,7 @@ export default function useCircuitHandlers({
     try { localStorage.setItem(`elab_notes_${currentExperiment.id}`, JSON.stringify(newAnnotations)); } catch { }
   }, [currentExperiment?.id]);
 
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
   useEffect(() => {
     if (!currentExperiment?.id) return;
     try {

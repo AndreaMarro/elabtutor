@@ -198,7 +198,7 @@ export function transformToLegacyFormat(students, sessions, moods) {
           nome: s.experiment_id,
           completato: s.completed,
           durata: s.duration_seconds,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           timestamp: s.started_at,
         })),
       sessioni: mySessions.map(s => ({

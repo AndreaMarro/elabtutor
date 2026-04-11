@@ -198,7 +198,7 @@ export async function compileArduinoCode(code, options = {}) {
       if (hex) {
         lastCompileSource = 'precompiled';
         const size = Math.floor(hex.replace(/[^0-9a-fA-F]/g, '').length / 2);
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         setCachedResult(codeHash, hex, size);
         return {
           success: true,

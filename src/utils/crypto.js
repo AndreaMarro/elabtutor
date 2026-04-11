@@ -198,7 +198,7 @@ async function decrypt(encryptedData, password) {
         // Deriva la chiave
         const key = await deriveKey(password, salt);
 
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         // Ricostruisci il ciphertext con il tag
         const ciphertext = new Uint8Array(encrypted.length + authTag.length);
         ciphertext.set(encrypted);
@@ -399,7 +399,7 @@ export default {
     saveStudentProgress,
     loadStudentProgress,
     saveSessionData,
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     loadSessionData,
     saveProjectHistory,
     loadProjectHistory,

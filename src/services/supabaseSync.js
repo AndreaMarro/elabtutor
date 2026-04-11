@@ -198,7 +198,7 @@ export async function loadProgress(studentId) {
 
 /**
  * Salva un report di confusione.
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * @param {object} report — {studentId, experimentId, conceptId, level, context}
  */
 export async function saveConfusionReport(report) {
@@ -399,7 +399,7 @@ if (isSupabaseConfigured() && supabase?.auth) {
   supabase.auth.onAuthStateChange((_event, session) => {
     _cachedSupabaseUserId = session?.user?.id || null;
   });
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
 }
 
 function _getCurrentUserId() {

@@ -198,7 +198,7 @@ Blockly.Blocks['arduino_pulse_in'] = {
         this.setOutput(true, "Number");
         this.setStyle(STYLES.IO);
         this.setTooltip("Misura la durata di un impulso su un pin (in microsecondi). Utile per sensori a ultrasuoni!");
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 };
 
@@ -399,7 +399,7 @@ Blockly.Blocks['arduino_random'] = {
 // 18. map(value, fromLow, fromHigh, toLow, toHigh)
 Blockly.Blocks['arduino_map'] = {
     init: function () {
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         this.appendValueInput("VALUE").setCheck("Number").appendField("map(");
         this.appendValueInput("FROM_LOW").setCheck("Number").appendField(", da");
         this.appendValueInput("FROM_HIGH").setCheck("Number").appendField("~");
