@@ -1,86 +1,85 @@
-# Session Report: Bentornati Flow — 11/04/2026
+# CLAUDE WEB — Session Report: Bentornati Flow
 
-> Brutalmente onesto. Niente fuffa.
+> **Autore**: Claude web (Claude Code web session)
+> **Committente**: Andrea Marro
+> **Data**: 11/04/2026
+> **Branch**: `claude/bentornati-flow-VEhLp`
+> **Sessione**: https://claude.ai/code/session_01RsEbdGwSMe3DcwJqncnTmh
+
+---
+
+> Tutto il codice in questo branch e' stato scritto da **Claude web**
+> (Claude Code in modalita' web) su indicazione di Andrea Marro.
+> Report brutalmente onesto. Niente fuffa.
+
+---
+
+## File creati/modificati da Claude web
+
+| File | Azione | Righe |
+|------|--------|-------|
+| `src/components/lavagna/LavagnaShell.jsx` | Modificato | +150 |
+| `src/components/lavagna/LavagnaShell.module.css` | Modificato | +141 |
+| `tests/unit/lavagna/BentornatiFlow.test.js` | **Nuovo** | 180 |
+| `scripts/test-nanobot-200.sh` | **Nuovo** | 280 |
+| `docs/sprint/SESSION-BENTORNATI-REPORT.md` | **Nuovo** | questo file |
 
 ## Cosa e' stato fatto
 
-### Bentornati Flow (LavagnaShell.jsx) — FATTO
+### Bentornati Flow (LavagnaShell.jsx)
 - `BentornatiOverlay` component con 3 flussi:
-  - Prima volta: "Benvenuti!" + auto-load `v1-cap6-esp1` dopo 2s
-  - Ritorno con suggerimento: mostra ultimo esp + propone il prossimo + bottone "Inizia"
-  - Ritorno senza suggerimento: apre il picker
-- `handleBentornatiStart`: carica esperimento via `__ELAB_API`, apre UNLIM, detecta volume
+  - **Prima volta**: "Benvenuti!" con HandWaveIcon + auto-load `v1-cap6-esp1` dopo 2s
+  - **Ritorno con suggerimento**: mostra ultimo esperimento + propone il prossimo + bottone "Inizia"
+  - **Ritorno senza suggerimento**: bottone che apre il picker
+- `handleBentornatiStart`: carica esperimento via `__ELAB_API` con **retry polling** (300ms x 10 = max 3s), apre UNLIM, detecta volume
 - `handleBentornatiPickExperiment`: chiude overlay, apre picker
-- CSS: overlay blur, card animata, responsive, palette ELAB, touch target 52px
-- Usa `buildClassProfile()` e `getNextLessonSuggestion()` gia' esistenti
-- Usa ElabIcons (no emoji — regola CLAUDE.md rispettata)
+- CSS: overlay con backdrop blur, card animata (fadeIn + scaleUp), responsive, palette ELAB (Navy #1E4D8C, Lime #4A7A25), touch target 52px (sopra i 44px WCAG)
+- Usa `buildClassProfile()` e `getNextLessonSuggestion()` gia' esistenti in `classProfile.js`
+- Usa ElabIcons (`HandWaveIcon`, `PartyIcon`, `FlaskIcon`) — no emoji, come da regola CLAUDE.md
 
-### File modificati
-- `src/components/lavagna/LavagnaShell.jsx` (+142 righe logica)
-- `src/components/lavagna/LavagnaShell.module.css` (+141 righe stile)
+### Test (12 nuovi)
+- `tests/unit/lavagna/BentornatiFlow.test.js`
+- Coprono: first-time user, returning user, dedup esperimenti, error tracking, total messages, volume extraction, API retry logic
+- Tecnica: mock di `getSavedSessions` + cache bust via `Date.now` override per aggirare il TTL 2s di `buildClassProfile`
+
+### Script test nanobot (200 domande)
+- `scripts/test-nanobot-200.sh` — 200 domande reali in 8 categorie
+- Categorie: basi elettronica, Arduino, componenti, esperimenti ELAB, errori comuni, pedagogia docente, Scratch/Blockly, avanzate/creative
+- Output: JSON con timing, source, success rate per ogni domanda
+- **Da eseguire localmente** — il sandbox Claude Code blocca `onrender.com`
+
+### Bug risolti
+- **Race condition `__ELAB_API`**: se il teacher cliccava "Inizia" prima che il simulatore montasse `window.__ELAB_API`, `loadExperiment` falliva silenziosamente. Fix: retry con polling.
+- **lightningcss build**: risolto installando `lightningcss-linux-x64-gnu` + `@tailwindcss/oxide-linux-x64-gnu` nel sandbox
 
 ## Cosa NON e' stato fatto (e perche')
 
-### Test 200 domande al nanobot — NON FATTO
-- **Causa**: sandbox Claude Code blocca `onrender.com` (proxy egress 403 `host_not_allowed`)
-- **Soluzione**: script di test preparato in `scripts/test-nanobot-200.sh`, pronto da lanciare localmente
-- **Azione lunedi'**: Giovanni o Andrea lo eseguono dalla loro macchina
+| Task | Motivo | Azione |
+|------|--------|--------|
+| Test 200 domande nanobot | Sandbox blocca `onrender.com` (proxy 403) | Script pronto, eseguire localmente |
+| Verifica Chrome visiva | Nessun browser nel sandbox | Test lunedi' |
+| Test iPad | Nessun dispositivo nel sandbox | Test lunedi' |
 
-### Verifica Chrome — NON POSSIBILE
-- **Causa**: nessun browser disponibile nel sandbox
-- **Rischio**: il BentornatiOverlay potrebbe avere bug visuai non visibili dal codice
-- **Azione lunedi'**: primo test visivo su Chrome con DevTools aperto
+## Verifiche eseguite da Claude web
 
-### Build completo — FALLISCE IN SANDBOX
-- **Causa**: `lightningcss.linux-x64-gnu.node` binary nativo mancante
-- **Impatto**: `npx vite build` fallisce, 5 test CSS falliscono
-- **Non impatta**: 1674/1674 test di logica passano
-- **Soluzione**: `npm rebuild lightningcss` (tentato in sessione)
-- **Su CI/Vercel**: dovrebbe funzionare (binary corretto per la piattaforma)
+| Verifica | Risultato |
+|----------|-----------|
+| `npx vitest run` (full suite) | **1726/1726 PASS** (56/56 file) |
+| `npx vitest run tests/unit/lavagna/` | **84/84 PASS** (7/7 file) |
+| `npx vite build` | **PASSA** (63s) |
+| JSX structure checks (15 punti) | **15/15 PASS** |
+| CSS module checks (17 punti) | **17/17 PASS** |
+| Bundle contiene classi bentornati | **SI** |
+| Zero regressioni | **SI** |
 
-## Bug noti nel codice scritto
+## Commit history
 
-### Race condition `__ELAB_API` (CORRETTO in sessione)
-- Se il teacher clicca "Inizia" prima che il simulatore monti `__ELAB_API`,
-  `loadExperiment` fallisce silenziosamente
-- **Fix**: aggiunto retry con polling che aspetta l'API
-
-### Dipendenza `useEffect` lint warning (potenziale)
-- L'effect per auto-load prima volta ha deps `[visible, profile.isFirstTime, suggestion, onStart]`
-- `profile.isFirstTime` e' un valore primitivo letto da ref, stabile — OK
-
-## Problemi risolti in sessione 2
-
-### lightningcss — RISOLTO
-- `npm install lightningcss-linux-x64-gnu@1.30.2` installa il binary nativo
-- `npm install @tailwindcss/oxide-linux-x64-gnu` installa il binding Tailwind
-- Build passa: `npx vite build` completato in 62s
-
-### Race condition __ELAB_API — RISOLTO
-- `handleBentornatiStart` ora fa retry con polling (300ms x 10 = max 3s)
-- L'UI si aggiorna subito, l'API viene chiamata quando pronta
-
-### Test BentornatiFlow — SCRITTI
-- 12 test in `tests/unit/lavagna/BentornatiFlow.test.js`
-- Coprono: first-time, returning, error tracking, volume extraction, API retry
-
-### Script 200 domande — PREPARATO
-- `scripts/test-nanobot-200.sh` pronto con 200 domande reali categorizzate
-- 8 categorie: basi, Arduino, componenti, esperimenti ELAB, errori, pedagogia, Scratch, avanzate
-- Output JSON con timing, source, success rate
-- Da eseguire localmente (sandbox blocca onrender.com)
-
-## Metriche
-
-| Metrica | Valore |
-|---------|--------|
-| Test passati | 1726/1726 |
-| Test nuovi aggiunti | +12 (BentornatiFlow) |
-| Build | PASSA |
-| Righe aggiunte | ~550 |
-| File toccati | 4 |
-| Regressioni | 0 |
-| Domande nanobot testate | 0/200 (sandbox blocca onrender.com) |
+```
+73083fe chore: update copyright signatures to 11/04/2026
+97f8d7a fix(lavagna): API race condition + 12 tests + nanobot test script + report
+d14e4df chore: update copyright signatures to 10/04/2026
+1a95936 feat(lavagna): implement Bentornati flow in LavagnaShell
+```
 
 ## Per lunedi' (Omaric + Giovanni)
 
@@ -91,3 +90,8 @@
 5. [ ] Testare flusso ritorno (fare un esperimento, chiudere, riaprire)
 6. [ ] Testare "Scegli altro" → deve aprire il picker
 7. [ ] Testare su iPad in landscape (touch target, overlay centrato)
+
+---
+
+*Tutto il codice in questo report e' stato scritto da Claude web (Claude Code web) per Andrea Marro.*
+*Claude web andrea marro — 11/04/2026*

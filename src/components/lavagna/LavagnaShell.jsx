@@ -241,6 +241,7 @@ function QuickComponentPanel({ volumeNumber = 3 }) {
  * BentornatiOverlay — Principio Zero welcome screen.
  * When the teacher opens ELAB, UNLIM proposes the next experiment
  * based on past sessions. No choices needed. 30 seconds to teaching.
+ * Claude web andrea marro — 11/04/2026
  */
 function BentornatiOverlay({ visible, onStart, onPickExperiment }) {
   const dataRef = useRef(null);
