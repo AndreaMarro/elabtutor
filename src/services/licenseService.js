@@ -82,6 +82,7 @@ class LicenseService {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                signal: AbortSignal.timeout(10000),
                 body: JSON.stringify({
                     action: 'verify',
                     code: licenseCode,
@@ -157,6 +158,7 @@ class LicenseService {
             await fetch(NOTION_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: AbortSignal.timeout(10000),
                 body: JSON.stringify({
                     action: 'release',
                     code: parsed.code,
@@ -196,9 +198,9 @@ class LicenseService {
     }
 
     // Logout con rilascio device
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
     async logout() {
         await this.releaseLicense();
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         this.cachedLicense = null;
         this.cacheExpiry = null;
         sessionStorage.removeItem('elab_license');

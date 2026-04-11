@@ -1,32 +1,43 @@
-<<<<<<< HEAD
-# Audit Report — 2026-04-09 02:07 (Ciclo 2)
-## Sito: 200 OK (1.17s) — stabile
-## Nanobot: 200 OK — stabile
-## Build: PASS
-## Test: 1442 pass
-## Regressioni: ZERO
-## Confronto: identico a ciclo 1 (01:15). Sistema stabile.
-=======
-# Audit Report — 2026-04-09 01:15
+# Audit Report — 2026-04-09 17:12 (Ciclo 18 — AI CHAT VERIFIED)
 
 ## Servizi Live
-| Servizio | Status | Tempo | Note |
-|----------|:------:|:-----:|------|
-| elabtutor.school | 200 OK | 1.28s | Funziona |
-| Nanobot (Supabase Edge) | 200 OK | - | Funziona |
-| Supabase REST | 401 | - | Normale (richiede auth) |
 
-## Build & Test (locale)
-- Build: PASS
-- Test: 1442 pass, 0 fail
-- Bundle: ~2400KB precache
+| # | Servizio | Status | Verificato |
+|---|----------|--------|-----------|
+| 1 | Frontend | **200 OK** (0.99s) | HTML serves |
+| 2 | **Nanobot AI /tutor-chat** | **200 OK** | **CHAT VERIFIED** — risposta 423 chars |
+| 3 | Compiler | **200 OK** | E2E verified (ciclo precedente) |
+| 4 | Brain VPS | **200 OK** | Ollama active |
+| 5 | Supabase Edge | **200 OK** | Responds |
+| 6 | Render /health | **v5.5.0** | 5 providers, primary deepseek |
 
-## Problemi
-- Nessuna regressione rilevata sui servizi live
-- I 5 fetch senza timeout (Scout finding) sono un rischio per reti lente scolastiche
+## Nanobot AI Chat — PRIMA VERIFICA END-TO-END
 
-## Confronto vs Audit Precedente
-- Sito: stabile (200 OK, <2s)
-- Nanobot: stabile (200 OK)
-- Test: stabile (1442)
->>>>>>> work/main
+**Prompt**: "Come collego un LED?"
+**Endpoint**: POST /tutor-chat (non /chat come tentato prima)
+**Risposta** (423 chars): "Per collegare un LED, devi connettere l'anodo (il lato positivo) del LED a un potenziale più alto rispetto al catodo..."
+
+**Valutazione risposta**: CORRETTA — spiega polarita' LED, resistore in serie, concetti appropriati per target 8-14. Nessun contenuto inappropriato.
+
+**Nota**: L'endpoint corretto e' `/tutor-chat` (text) o `/chat` (con immagini). Root `/` restituisce 404 — non un errore, semplicemente no route.
+
+## Build & Test
+
+| Metrica | Valore |
+|---------|--------|
+| Test | 1578 passed, 35 files |
+| Build | 50.05s |
+| Bundle | 2411 KiB precache |
+| Failures | 0 |
+
+## Problemi Aperti (da cicli precedenti)
+1. **Supabase DB key 401** — non ritestato (serve Andrea)
+2. **P1+P2 fix non live** — serve `npx vercel --prod` per deploy
+3. **Safety filter live** — NON verificabile senza deploy (il JS bundle in produzione potrebbe essere vecchio)
+
+## Regressioni: ZERO
+Tutti i servizi stabili. Build+test clean. AI chat funzionante.
+
+## Novita' questo ciclo
+- **Prima verifica AI chat end-to-end** — risposta educativa corretta
+- **Endpoint corretto scoperto**: /tutor-chat (non /chat per testo)

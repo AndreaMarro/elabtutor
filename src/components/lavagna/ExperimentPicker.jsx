@@ -7,6 +7,7 @@ import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import EXPERIMENTS_VOL1 from '../../data/experiments-vol1';
 import EXPERIMENTS_VOL2 from '../../data/experiments-vol2';
 import EXPERIMENTS_VOL3 from '../../data/experiments-vol3';
+import { getDisplayInfo } from '../../data/chapter-map';
 import css from './ExperimentPicker.module.css';
 
 const VOLUMES = [
@@ -17,12 +18,24 @@ const VOLUMES = [
 
 function getChapterGroups(experiments) {
   const groups = {};
+  const groupKeys = {}; // maps display label -> sort key for ordering
   for (const exp of experiments) {
-    const ch = exp.chapter || 'Altro';
-    if (!groups[ch]) groups[ch] = [];
-    groups[ch].push(exp);
+    // Use Tea's chapter-map display info when available
+    const info = getDisplayInfo(exp.id);
+    let label;
+    if (info) {
+      label = `Cap. ${info.displayChapter} — ${info.title}`;
+    } else {
+      label = exp.chapter || 'Altro';
+    }
+    if (!groups[label]) {
+      groups[label] = [];
+      groupKeys[label] = info ? info.displayChapter : 999;
+    }
+    groups[label].push(exp);
   }
-  return Object.entries(groups);
+  // Sort by Tea's display chapter number
+  return Object.entries(groups).sort((a, b) => (groupKeys[a[0]] || 999) - (groupKeys[b[0]] || 999));
 }
 
 export default function ExperimentPicker({ open, onClose, onSelect, completedIds = [], onAskUnlim }) {
@@ -192,7 +205,19 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
                       aria-label={`${exp.title}${done ? ' — completato' : ''}`}
                     >
                       <div className={css.cardTop} style={{ borderLeftColor: vol.color }}>
-                        <span className={css.cardTitle}>{exp.title?.replace(/Cap\.\s*\d+\s*Esp\.\s*\d+\s*-\s*/, '')}</span>
+                        <span className={css.cardTitle}>{(() => {
+                          // Strip old prefix "Cap. N Esp. N - " to get experiment name
+                          const name = exp.title?.replace(/Cap\.\s*\d+\s*Esp\.\s*\d+\s*-\s*/, '') || exp.title;
+                          // Add Tea's chapter numbering as experiment label
+                          const info = getDisplayInfo(exp.id);
+                          if (info) {
+                            // Extract esp number from id (e.g. v1-cap6-esp1 -> 1)
+                            const espMatch = exp.id?.match(/-esp(\d+)/);
+                            const espNum = espMatch ? espMatch[1] : null;
+                            return espNum ? `Esp. ${espNum} — ${name}` : name;
+                          }
+                          return name;
+                        })()}</span>
                         {done && (
                           <svg className={css.checkIcon} width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Completato">
                             <circle cx="10" cy="10" r="8" fill="#4A7A25" />

@@ -123,6 +123,7 @@ async function apiCall(endpoint, options = {}) {
         ...options,
         headers,
         credentials: 'include',
+        signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {
@@ -197,8 +198,8 @@ export async function register(data) {
             success: false,
             error: `Troppi tentativi. Riprova tra ${Math.ceil(rateCheck.waitSec / 60)} minuti.`,
         };
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
     try {
         const passwordValidation = validatePassword(data.password);
@@ -360,7 +361,8 @@ export function startAutoRefresh(callback) {
             const currentToken = getToken();
             if (!currentToken) { if (callback) callback(); return; }
             const response = await fetch(`${API_BASE_URL}/.netlify/functions/auth-me`, {
-                headers: { Authorization: `Bearer ${currentToken}` }
+                headers: { Authorization: `Bearer ${currentToken}` },
+                signal: AbortSignal.timeout(10000),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -397,9 +399,9 @@ export function stopAutoRefresh() {
  * @returns {Promise<{success: boolean, classCode?: string, className?: string, volumes?: string[], error?: string}>}
  */
 export async function createClass(name) {
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
     try {
         const result = await apiCall('/auth-create-class', {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
             method: 'POST',
             body: JSON.stringify({ name }),
         });

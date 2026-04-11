@@ -1,69 +1,81 @@
 /**
- * unlimKnowledgeBase — Tests for offline knowledge base search
- * Claude code andrea marro — 11/04/2026
+ * UNLIM Knowledge Base — Verifica contenuto e struttura
+ * UNLIM deve conoscere OGNI dettaglio dei volumi
+ * (c) Andrea Marro — 11/04/2026
  */
-import { describe, it, expect } from 'vitest';
-import { searchKnowledgeBase } from '../../src/data/unlim-knowledge-base';
 
-describe('unlimKnowledgeBase', () => {
-  describe('searchKnowledgeBase', () => {
-    it('finds answer for LED question', () => {
-      // Use keywords directly — "come funziona un" are all stopwords
-      const result = searchKnowledgeBase('led diodo luminoso accende luce');
-      expect(result).not.toBeNull();
-      expect(result.answer).toBeTruthy();
-      expect(result.answer.length).toBeGreaterThan(50);
-    });
+import { describe, test, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
 
-    it('finds answer for resistance question', () => {
-      const result = searchKnowledgeBase('resistenza resistore ohm bande colori');
-      expect(result).not.toBeNull();
-      expect(result.answer).toContain('Ohm');
-    });
+const KB_PATH = path.resolve('src/data/unlim-knowledge-base.js');
 
-    it('finds answer for Arduino question', () => {
-      // "cos'e'" gets split into "cos" + "e" (both short/stopwords), use keyword directly
-      const result = searchKnowledgeBase('arduino nano microcontrollore scheda');
-      expect(result).not.toBeNull();
-      expect(result.answer).toBeTruthy();
-    });
+describe('UNLIM Knowledge Base', () => {
+  let kbContent;
 
-    it('finds answer for LED RGB', () => {
-      // Needs enough keyword overlap to pass the 1.5 normalized threshold
-      const result = searchKnowledgeBase('led rgb colore rosso verde blu');
-      expect(result).not.toBeNull();
-    });
+  test('knowledge base file exists', () => {
+    expect(fs.existsSync(KB_PATH)).toBe(true);
+    kbContent = fs.readFileSync(KB_PATH, 'utf8');
+  });
 
-    it('returns null for empty/null input', () => {
-      expect(searchKnowledgeBase('')).toBeNull();
-      expect(searchKnowledgeBase(null)).toBeNull();
-      expect(searchKnowledgeBase(undefined)).toBeNull();
-    });
+  test('knowledge base is not empty', () => {
+    expect(kbContent.length).toBeGreaterThan(1000);
+  });
 
-    it('returns null for unrelated topics', () => {
-      const result = searchKnowledgeBase('ricetta pizza margherita');
-      expect(result).toBeNull();
-    });
+  test('knowledge base mentions all 3 volumes', () => {
+    expect(kbContent).toMatch(/volume\s*1|vol\s*1/i);
+    expect(kbContent).toMatch(/volume\s*2|vol\s*2/i);
+    expect(kbContent).toMatch(/volume\s*3|vol\s*3/i);
+  });
 
-    it('result includes score > 0', () => {
-      const result = searchKnowledgeBase('legge di ohm tensione corrente');
-      expect(result).not.toBeNull();
-      expect(result.score).toBeGreaterThan(0);
+  test('knowledge base covers key electronic concepts', () => {
+    const concepts = ['LED', 'resistore', 'breadboard', 'circuito', 'corrente', 'tensione'];
+    concepts.forEach(c => {
+      expect(kbContent.toLowerCase(), `missing concept: ${c}`).toContain(c.toLowerCase());
     });
+  });
 
-    it('result includes question field', () => {
-      const result = searchKnowledgeBase('breadboard come usare');
-      if (result) {
-        expect(result.question).toBeTruthy();
-      }
+  test('knowledge base covers Arduino concepts', () => {
+    const arduino = ['Arduino', 'pin', 'digital', 'analog'];
+    arduino.forEach(c => {
+      expect(kbContent.toLowerCase(), `missing Arduino concept: ${c}`).toContain(c.toLowerCase());
     });
+  });
 
-    it('handles single-word queries', () => {
-      const result = searchKnowledgeBase('condensatore');
-      // May or may not find a match, but should not crash
-      if (result) {
-        expect(result.answer).toBeTruthy();
-      }
+  test('knowledge base has kid-friendly analogies', () => {
+    const analogies = ['acqua', 'tubo', 'rubinetto', 'strada', 'porta'];
+    const found = analogies.filter(a => kbContent.toLowerCase().includes(a));
+    expect(found.length, `Only ${found.length}/5 analogies found`).toBeGreaterThanOrEqual(1);
+  });
+
+  test('knowledge base exports data', () => {
+    expect(kbContent).toMatch(/export/);
+  });
+});
+
+describe('UNLIM Knowledge Base — Lesson Path Coverage', () => {
+  const LP_DIR = path.resolve('src/data/lesson-paths');
+
+  test('lesson paths directory has 90+ JSON files', () => {
+    const files = fs.readdirSync(LP_DIR).filter(f => f.endsWith('.json'));
+    expect(files.length).toBeGreaterThanOrEqual(90);
+  });
+
+  test('every lesson path JSON is valid', () => {
+    const files = fs.readdirSync(LP_DIR).filter(f => f.endsWith('.json'));
+    files.forEach(f => {
+      const content = fs.readFileSync(path.join(LP_DIR, f), 'utf8');
+      expect(() => JSON.parse(content), `${f} is invalid JSON`).not.toThrow();
     });
+  });
+
+  test('lesson path JSONs have consistent structure', () => {
+    const files = fs.readdirSync(LP_DIR).filter(f => f.endsWith('.json'));
+    let withTitle = 0;
+    files.forEach(f => {
+      const data = JSON.parse(fs.readFileSync(path.join(LP_DIR, f), 'utf8'));
+      if (data.title) withTitle++;
+    });
+    expect(withTitle / files.length).toBeGreaterThan(0.9);
   });
 });

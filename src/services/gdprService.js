@@ -54,6 +54,7 @@ async function callGdprWebhook(action, data) {
             },
             signal: AbortSignal.timeout(10000),
             body: JSON.stringify({ action, ...data }),
+            signal: AbortSignal.timeout(10000),
         });
 
         if (!response.ok) {

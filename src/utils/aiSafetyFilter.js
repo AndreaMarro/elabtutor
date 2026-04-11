@@ -10,10 +10,12 @@
 // che lasciar passare contenuto inappropriato.
 const BLOCKED_PATTERNS = {
     // Contenuti sessuali/violenti
+    // NOTA: \b iniziale mantiene word boundary, ma il finale usa \w* per catturare
+    // suffissi italiani (pornografia, ammazzare, uccidere, torturare, etc.)
     explicit: [
-        /\b(porn|sesso|sessual|nud[oi]|erotic|masturb|orgasm|genitali)\b/i,
-        /\b(droga|cocaina|eroina|marijuana|cannabis|stupefacent)\b/i,
-        /\b(suicid|ammazzar|uccider|tortura|decapita)\b/i,
+        /\b(porn|sesso|sessual|nud[oi]|erotic|masturb|orgasm|genitali)\w*/i,
+        /\b(droga|cocaina|eroina|marijuana|cannabis|stupefacent)\w*/i,
+        /\b(suicid|ammazzar|uccider|tortura|decapita)\w*/i,
     ],
 
     // Istruzioni pericolose per elettronica
@@ -24,8 +26,8 @@ const BLOCKED_PATTERNS = {
         /\b(inserir[eio]\s+(?:nella?|in)\s*(?:presa|rete)\s*(?:elettrica|di\s*casa)?)\b/i,
         /\b(tocca(?:re)?\s+(?:i\s+)?(?:fili|cavi)\s+(?:della?\s+)?(?:rete|corrente|220|230|presa))\b/i,
         /\b(cortocircuit(?:o|a)(?:re)?\s+(?:la|il|una?)?\s*(?:rete|presa|casa|220|230))\b/i,
-        /\b(esplosiv|detonat|bomba|incendi(?:o|are))\b/i,
-        /\b(hackerare|craccare|virus|malware|ransomware)\b/i,
+        /\b(esplosiv|detonat|bomba|incendi(?:o|are))\w*/i,
+        /\b(hackerare|craccare|virus|malware|ransomware)\w*/i,
     ],
 
     // Link/URL sospetti
@@ -35,7 +37,7 @@ const BLOCKED_PATTERNS = {
 
     // Prompt injection attempts
     promptInjection: [
-        /\b(ignora\s+(?:le|tutte|ogni)\s+(?:istruzioni|regole|limitazioni))\b/i,
+        /\b(ignora\s+(?:le|tutte\s+le|ogni)\s+(?:istruzioni|regole|limitazioni))\b/i,
         /\b(ignore\s+(?:all|your|previous|the)\s+(?:instructions|rules|constraints))\b/i,
         /\b(system\s*prompt|jailbreak|DAN\s*mode)\b/i,
         /\b(pretend\s+(?:you\s+are|to\s+be)|fai\s+finta\s+di)\b/i,

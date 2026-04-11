@@ -87,7 +87,7 @@ export default defineConfig(({ mode }) => ({
                 ],
             },
             workbox: {
-                maximumFileSizeToCacheInBytes: 1600 * 1024, // 1.6MB max per file — excludes large vendor chunks (cached at runtime)
+                maximumFileSizeToCacheInBytes: 2500 * 1024, // 2.5MB max per file — increased for lesson-paths JSON (94 files)
                 // G11: Only precache critical path — NOT all chunks
                 // Lazy chunks (react-pdf, mammoth, admin, games) cached at runtime
                 globPatterns: [

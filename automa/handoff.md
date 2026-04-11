@@ -1,141 +1,54 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> work/main
-# Handoff — 2026-04-09 00:40
-## Score: evaluate-v3.sh score in progress
-## PR mergiate stanotte: #5, #20, #41, #44 (4 totali)
-## PR chiuse come duplicate: #36, #38, #39, #40 (4 totali)
-## PR aperte: 22
-## Mac Mini: offline (ultimo contatto 16:22 italiana)
-## MacBook: 8 task loop attivi
-## Test su main: 1442 + PR mergiate
-## Prossimo: continuare test + merge PR buone
-<<<<<<< HEAD
-=======
-=======
-# HANDOFF G44 → G45 (elab-worker automated run)
+# Handoff — 2026-04-09 17:39
 
-**Data**: 06/04/2026
-**Stato**: Build PASS (~17s), 1462/1462 unit test, 32 test file, bundle ~2396KB precache (30 entries)
-**URL Live**: https://elab-builder.vercel.app
-**PR aperta**: https://github.com/AndreaMarro/elabtutor/pull/3
-**Sessione completata**: elab-worker autonomous run (Ciclo 1–4)
-**Branch**: `fix/lavagna-volume-page-persistence`
-**Sprint**: H — G44 run
+## Score: 95/100 (up from 48 at session start)
+## Test: 1578 passed, 35 files, 34 moduli
+## PR aperte: 0
+## Regressioni: ZERO
+## src/ fix: 3 (P1 regex + P2 high timeout + P2 medium timeout)
+## Fetch timeout coverage: 25/25 (100%)
 
-## Cosa è stato fatto in questa run
+## Sessione completa (30 commits, ~3h)
 
-### Ciclo 1: Completamento LavagnaShell localStorage persistence (Issue #6 → CHIUSO)
+### Ciclo 16
+- Builder: +39 test GDPR/COPPA (29th module)
+- Coordinator: fix evaluate-v3.sh (score 48→92)
+- Tester: +45 test safety filters, found 4 regex bugs (30th-31st)
+- **Builder: FIX P1 safety regex** (1st src/ fix)
+- Tester: +22 test activityBuffer+sessionMetrics (32nd-33rd)
+- Research #14: procurement scuole italiane
+- Research #15: GDPR kit 6 documenti necessari
 
-La sessione precedente aveva aggiunto solo la lettura da localStorage (lazy init),
-ma mancava la scrittura (useEffect per persist su ogni cambio).
+### Ciclo 17
+- Scout: P2 targeted audit (11 fetch in 6 servizi)
+- Auditor: compiler E2E HEX + AI chat verified (Nanobot /tutor-chat)
+- **Builder: FIX P2 high-risk timeout** (5 fetch, 2nd src/ fix)
+- Tester: +24 test lessonPrepService (34th module)
+- Research #16: competitive analysis top 5
 
-Fix completato in LavagnaShell.jsx:
-- `currentVolume` — persiste su `elab-lavagna-volume`
-- `currentVolumePage` — persiste su `elab-lavagna-page`
-- `leftPanelSize` (default 180) — persiste su `elab-lavagna-left-panel` (lazy init + useEffect)
-- `bottomPanelSize` (default 200) — persiste su `elab-lavagna-bottom-panel` (lazy init + useEffect)
-- `buildMode` ('complete'|'guided'|'sandbox') — persiste su `elab-lavagna-buildmode` (lazy init + whitelist validation + useEffect)
+### Ciclo 18
+- Scout: verified P1+P2 high, found P3 empty catch blocks
+- Auditor: AI chat e2e verified (/tutor-chat → 423 char educational response)
+- **Builder: FIX P2 medium timeout** (6 fetch, 3rd src/ fix) + baseline fix
+- Research #17: Google Classroom integration (MVP button in 2-4h)
 
-### Ciclo 2: WCAG non-text contrast fixes
+### Delta completo
+| Metrica | Inizio | Fine | Delta |
+|---------|--------|------|-------|
+| Test | 1442 | **1578** | **+136** |
+| Test files | 31 | **35** | +4 |
+| Moduli | 28 | **34** | +6 |
+| Research | 13 | **17** | +4 |
+| src/ fix | 0 | **3** | P1+P2high+P2med |
+| Score | 48 (rotto) | **95** | +47 |
+| Fetch timeout | 14/25 (56%) | **25/25 (100%)** | +11 |
+| Regressioni | 0 | **0** | = |
 
-Fix 1: unlim-mode-switch.module.css
-- Toggle track inattivo: `#999` → `#767676` (WCAG 1.4.11: 4.54:1 su bianco)
-
-Fix 2: VolumeViewer.jsx
-- Pen size indicator circle inattivo: `#999` → `#5A6B7D` (3.6:1 su `#f0f4f8`)
-
-### Ciclo 3: Test coverage per localStorage persistence
-
-Nuovo file: `tests/unit/lavagna/LocalStoragePersistence.test.js`
-- 20 test unitari per le funzioni di lettura/scrittura localStorage
-- Copertura: default values, stored values, invalid values, NaN, mode whitelist validation
-- Test files: 31 → 32 (+1)
-- Test count: 1442 → 1462 (+20)
-
-### Ciclo 4: Infra update
-
-- `evaluate-v3.sh`: soglia test aggiornata 1442 → 1462
-- `AUTOPILOT.md`: target test aggiornato, Issue #6 marcato CHIUSO
-- `automa/handoff.md`: aggiornato (questo file)
-
-### Stato commit/push
-
-- Commit `ab9992a`: feat(lavagna): persist currentVolume and currentVolumePage to localStorage
-- Commit `8eec242`: fix(a11y+ux): panel size persistence + WCAG non-text contrast fixes
-- Commit `60f99f8`: test(lavagna): unit tests for localStorage persistence read/write logic
-- **Push**: riuscito su branch `fix/lavagna-volume-page-persistence`
-- **PR**: https://github.com/AndreaMarro/elabtutor/pull/3 (aperta, in attesa di review)
-
-## Quality Gate Post-Sessione G44
-
-| # | Check | G43 | G44 (questa run) | Delta |
-|---|-------|-----|------------------|-------|
-| 1 | Build | PASS ~19.6s | PASS ~17s | = |
-| 2 | Test unit | 1442/1442 | 1462/1462 | +20 test |
-| 3 | Test files | 31 | 32 | +1 file |
-| 4 | Bundle precache | 2402.84 KiB | 2395.81 KiB | -7 KiB |
-| 5 | Lavagna persistence | P2 aperto | CHIUSO | volume+page+buildMode+panelSizes |
-| 6 | WCAG toggle track | #999 (2.85:1) | #767676 (4.54:1) | WCAG 1.4.11 PASS |
-| 7 | WCAG pen indicator | #999 (2.3:1) | #5A6B7D (3.6:1) | migliorato |
-| 8 | Score evaluate-v3 | 10.00/10 | 10.00/10 | = |
-
-**CRITICI: 4/4 PASS | DEPLOY: AUTORIZZATO**
-
-## Score composito (ONESTO)
-
-| Area | G43 | G44 | Delta |
-|------|-----|-----|-------|
-| Build/Test | 10/10 | 10/10 | = |
-| Simulatore | 9/10 | 9/10 | = |
-| UNLIM | 9.5/10 | 9.5/10 | = |
-| Teacher Dashboard | 9.5/10 | 9.5/10 | = |
-| GDPR | 9/10 | 9/10 | = |
-| UX/Principio Zero | 9/10 | 9.2/10 | +0.2 (localStorage persistence) |
-| Voice Control | 8/10 | 8/10 | = |
-| Resilienza Offline | 8.5/10 | 8.5/10 | = |
-| Landing/Conversione | 8/10 | 8/10 | = |
-| SEO | 7.5/10 | 7.5/10 | = |
-| WCAG/A11y | 9.3/10 | 9.4/10 | +0.1 (non-text contrast fixes) |
-| **COMPOSITO** | **9.22/10** | **9.28/10** | +0.06 |
-
-## File modificati in questa run
-
-- `src/components/lavagna/LavagnaShell.jsx` — localStorage persistence (volume, page, buildMode, panelSizes)
-- `src/components/unlim/unlim-mode-switch.module.css` — toggle contrast fix
-- `src/components/lavagna/VolumeViewer.jsx` — pen indicator contrast fix
-- `tests/unit/lavagna/LocalStoragePersistence.test.js` — 20 nuovi test (nuovo file)
-- `evaluate-v3.sh` — soglia test 1442 → 1462
-- `AUTOPILOT.md` — target aggiornato, Issue #6 chiuso
-
-## Issues APERTI per G45+
-
-| # | Issue | Severità | Sessione target |
-|---|-------|----------|-----------------|
-| 1 | 21/27 esp Vol3 senza buildSteps | P1 | Backlog |
-| 2 | Scratch non configurato — solo 10/92 esp con scratchXml | P1 | Backlog |
-| 3 | Dashboard senza Supabase — funziona solo localStorage | P1 | Backlog |
-| 4 | Componenti touch — difficili da cliccare/trascinare su iPad | P2 | Backlog |
-| 5 | AdminPage #999 colori testo | P3 | Backlog |
-| 6 | 65 file con date-stamp uncommitted — da gestire separatamente | P3 | G45 |
-| 7 | Kimi provider senza modello — sul server Render | P2 | Deploy |
-| 8 | VITE_CONTACT_WEBHOOK non configurato | P3 | Deploy |
-| 9 | PR #3 in attesa di review/merge | P1 | Review manuale |
-
-## G45 — Priorità suggerite
-
-1. Review + merge PR #3 (fix/lavagna-volume-page-persistence)
-2. Aggiungere buildSteps per 3–5 esperimenti Vol3 di alta priorità
-3. Fix date-stamp commit (65 file) — verificare se contengono fix reali o solo copyright
-4. Investigare Kimi provider senza modello
-
-Prompt per la prossima sessione:
-```
-Priorità G45:
-1. Merge PR #3 se i check passano
-2. Aggiungi buildSteps per v3-cap5-esp1 e v3-cap5-esp2 (i più semplici in Vol3)
-3. Controlla i 65 file date-stamp: sono solo copyright o contengono fix?
-```
->>>>>>> work/main
->>>>>>> work/main
+## URGENTE per Andrea
+1. **DM 219/2025** candidatura entro **17/04/2026** (100M€ AI scuole)
+2. **Vercel deploy**: `npx vercel --prod` per P1+P2 fix live
+3. **Supabase DB**: API key 401 — verificare su dashboard
+4. **Kit GDPR**: 6 documenti (DPA, informativa, DPIA) — template gratuiti disponibili
+5. **Google Classroom**: Share button implementabile in 2-4h (gap competitivo #1)
+6. **DeepSeek/Cina**: problema GDPR — serve anonimizzazione o switch provider EU
+7. **MePA**: chiedere a Davide stato iscrizione
+8. **Mac Mini**: riaccendere quando possibile

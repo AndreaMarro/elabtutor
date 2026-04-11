@@ -198,7 +198,7 @@ export async function compileArduinoCode(code, options = {}) {
       if (hex) {
         lastCompileSource = 'precompiled';
         const size = Math.floor(hex.replace(/[^0-9a-fA-F]/g, '').length / 2);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
         setCachedResult(codeHash, hex, size);
         return {
           success: true,
@@ -292,7 +292,7 @@ export async function compileArduinoCode(code, options = {}) {
 
 async function fetchHexFile(hexPath) {
   const url = hexPath.startsWith('/') ? hexPath : `/hex/${hexPath}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
   if (!response.ok) return null;
   const text = await response.text();
   // Validate it looks like Intel HEX

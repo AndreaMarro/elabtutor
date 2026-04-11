@@ -1,185 +1,365 @@
-/**
- * voiceCommands.test.js — Test per il sistema comandi vocali ELAB
- * Target: matchVoiceCommand, executeVoiceCommand, getAvailableCommands
- * 40+ test: exact match, normalization, edge cases, execute, mount, build mode
- */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { matchVoiceCommand, executeVoiceCommand, getAvailableCommands } from '../../src/services/voiceCommands';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { matchVoiceCommand, executeVoiceCommand, getAvailableCommands } from '../../src/services/voiceCommands.js';
 
-const mockAPI = {
-  play: vi.fn(), pause: vi.fn(), reset: vi.fn(),
-  nextStep: vi.fn(), prevStep: vi.fn(),
-  showEditor: vi.fn(), showSerialMonitor: vi.fn(),
-  getEditorCode: vi.fn(() => 'void setup(){}'), compile: vi.fn(),
-  addComponent: vi.fn(), clearCircuit: vi.fn(),
-  getCircuitDescription: vi.fn(() => '2 LED, 1 resistore'),
-  undo: vi.fn(), redo: vi.fn(),
-  getExperimentList: vi.fn(() => ({
-    vol1: [{ id: 'v1-cap1-esp1', title: 'Il primo LED' }],
-    vol2: [{ id: 'v2-cap1-esp1', title: 'Semaforo base' }],
-    vol3: [],
-  })),
-  mountExperiment: vi.fn(), setBuildMode: vi.fn(),
-};
+describe('voiceCommands', () => {
+  beforeEach(() => {
+    // Mock __ELAB_API
+    window.__ELAB_API = {
+      play: vi.fn(),
+      pause: vi.fn(),
+      reset: vi.fn(),
+      nextStep: vi.fn(),
+      prevStep: vi.fn(),
+      showPanel: vi.fn(),
+      showEditor: vi.fn(),
+      hideEditor: vi.fn(),
+      compile: vi.fn(),
+      getEditorCode: vi.fn(() => 'void setup() {} void loop() {}'),
+      mountExperiment: vi.fn(),
+      setBuildMode: vi.fn(),
+      getCurrentExperiment: vi.fn(() => ({ id: 'v1-cap6-esp1', title: 'LED' })),
+      getExperimentList: vi.fn(() => ({
+        vol1: [
+          { id: 'v1-cap6-esp1', title: 'LED' },
+          { id: 'v1-cap6-esp2', title: 'LED RGB' },
+          { id: 'v1-cap7-esp1', title: 'RGB Mix' },
+        ],
+        vol2: [{ id: 'v2-cap3-esp1', title: 'Multimetro' }],
+        vol3: [{ id: 'v3-cap5-esp1', title: 'Primo Programma' }],
+      })),
+    };
+  });
 
-beforeEach(() => { window.__ELAB_API = mockAPI; vi.clearAllMocks(); });
-afterEach(() => { delete window.__ELAB_API; });
+  describe('matchVoiceCommand', () => {
+    it('matches exact Italian commands', () => {
+      expect(matchVoiceCommand('avvia')).toBeTruthy();
+      expect(matchVoiceCommand('avvia').command.action).toBe('play');
 
-describe('matchVoiceCommand — exact match', () => {
-  it('matches "play"', () => expect(matchVoiceCommand('play')?.command.action).toBe('play'));
-  it('matches "stop"', () => expect(matchVoiceCommand('stop')?.command.action).toBe('stop'));
-  it('matches "compila"', () => expect(matchVoiceCommand('compila')?.command.action).toBe('compile'));
-  it('matches "reset"', () => expect(matchVoiceCommand('reset')?.command.action).toBe('reset'));
-  it('matches "annulla"', () => expect(matchVoiceCommand('annulla')?.command.action).toBe('undo'));
-  it('matches "ripeti"', () => expect(matchVoiceCommand('ripeti')?.command.action).toBe('redo'));
-  it('matches all commands via first pattern', () => {
-    const cmds = getAvailableCommands();
-    expect(cmds.length).toBeGreaterThanOrEqual(24);
-    for (const cmd of cmds) {
-      const r = matchVoiceCommand(cmd.patterns[0]);
-      expect(r).not.toBeNull();
-      expect(r.command.action).toBe(cmd.action);
-    }
-  });
-});
+      expect(matchVoiceCommand('ferma')).toBeTruthy();
+      expect(matchVoiceCommand('ferma').command.action).toBe('stop');
 
-describe('matchVoiceCommand — normalization', () => {
-  it('ignores case', () => expect(matchVoiceCommand('PLAY')?.command.action).toBe('play'));
-  it('strips accents', () => expect(matchVoiceCommand('modalità guidata')?.command.action).toBe('setBuildGuided'));
-  it('strips punctuation', () => expect(matchVoiceCommand('compila!')?.command.action).toBe('compile'));
-  it('collapses whitespace', () => expect(matchVoiceCommand('aggiungi   led')?.command.action).toBe('addLed'));
-  it('trims', () => expect(matchVoiceCommand('  stop  ')?.command.action).toBe('stop'));
-  it('handles mixed', () => expect(matchVoiceCommand('  AVVIA, Simulazione!  ')?.command.action).toBe('play'));
-});
+      expect(matchVoiceCommand('prossimo')).toBeTruthy();
+      expect(matchVoiceCommand('prossimo').command.action).toBe('nextStep');
+    });
 
-describe('matchVoiceCommand — edge cases', () => {
-  it('null → null', () => expect(matchVoiceCommand(null)).toBeNull());
-  it('undefined → null', () => expect(matchVoiceCommand(undefined)).toBeNull());
-  it('empty → null', () => expect(matchVoiceCommand('')).toBeNull());
-  it('single char → null', () => expect(matchVoiceCommand('a')).toBeNull());
-  it('nonsense → null', () => expect(matchVoiceCommand('asdfghjkl zxcvbnm')).toBeNull());
-  it('numbers → null', () => expect(matchVoiceCommand('12345')).toBeNull());
-  it('emoji no crash', () => {
-    expect(() => matchVoiceCommand('play 🎮')).not.toThrow();
-    expect(matchVoiceCommand('play 🎮')?.command.action).toBe('play');
-  });
-  it('regex chars no injection', () => {
-    expect(() => matchVoiceCommand('play.*test')).not.toThrow();
-    expect(() => matchVoiceCommand('(play)')).not.toThrow();
-    expect(() => matchVoiceCommand('[stop]')).not.toThrow();
-  });
-});
+    it('matches English commands', () => {
+      expect(matchVoiceCommand('play').command.action).toBe('play');
+      expect(matchVoiceCommand('stop').command.action).toBe('stop');
+      expect(matchVoiceCommand('next').command.action).toBe('nextStep');
+    });
 
-describe('executeVoiceCommand', () => {
-  it('play calls API.play()', () => {
-    executeVoiceCommand(matchVoiceCommand('play').command);
-    expect(mockAPI.play).toHaveBeenCalledOnce();
-  });
-  it('stop calls API.pause()', () => {
-    executeVoiceCommand(matchVoiceCommand('stop').command);
-    expect(mockAPI.pause).toHaveBeenCalledOnce();
-  });
-  it('reset calls pause + reset', () => {
-    executeVoiceCommand(matchVoiceCommand('reset').command);
-    expect(mockAPI.pause).toHaveBeenCalledOnce();
-    expect(mockAPI.reset).toHaveBeenCalledOnce();
-  });
-  it('compile gets code then compiles', () => {
-    executeVoiceCommand(matchVoiceCommand('compila').command);
-    expect(mockAPI.getEditorCode).toHaveBeenCalledOnce();
-    expect(mockAPI.compile).toHaveBeenCalledWith('void setup(){}');
-  });
-  it('compile no code → no compile call', () => {
-    mockAPI.getEditorCode.mockReturnValueOnce(null);
-    executeVoiceCommand(matchVoiceCommand('compila').command);
-    expect(mockAPI.compile).not.toHaveBeenCalled();
-  });
-  it('addLed calls addComponent("led")', () => {
-    executeVoiceCommand(matchVoiceCommand('aggiungi led').command);
-    expect(mockAPI.addComponent).toHaveBeenCalledWith('led');
-  });
-  it('addResistor calls addComponent("resistor")', () => {
-    executeVoiceCommand(matchVoiceCommand('aggiungi resistore').command);
-    expect(mockAPI.addComponent).toHaveBeenCalledWith('resistor');
-  });
-  it('clearCircuit calls API', () => {
-    executeVoiceCommand(matchVoiceCommand('pulisci circuito').command);
-    expect(mockAPI.clearCircuit).toHaveBeenCalledOnce();
-  });
-  it('describeCircuit returns dynamic text', () => {
-    const fb = executeVoiceCommand(matchVoiceCommand('descrivi circuito').command);
-    expect(fb).toBe('2 LED, 1 resistore');
-  });
-  it('describeCircuit fallback when null', () => {
-    mockAPI.getCircuitDescription.mockReturnValueOnce(null);
-    const fb = executeVoiceCommand(matchVoiceCommand('descrivi circuito').command);
-    expect(fb).toBe('Circuito vuoto.');
-  });
-  it('undo calls API', () => {
-    executeVoiceCommand(matchVoiceCommand('annulla').command);
-    expect(mockAPI.undo).toHaveBeenCalledOnce();
-  });
-  it('redo calls API', () => {
-    executeVoiceCommand(matchVoiceCommand('ripeti').command);
-    expect(mockAPI.redo).toHaveBeenCalledOnce();
-  });
-  it('returns error feedback on throw', () => {
-    mockAPI.play.mockImplementationOnce(() => { throw new Error('fail'); });
-    const fb = executeVoiceCommand(matchVoiceCommand('play').command);
-    expect(fb).toBe('Comando non riuscito.');
-  });
-  it('no crash without API', () => {
-    delete window.__ELAB_API;
-    expect(() => executeVoiceCommand(matchVoiceCommand('play').command)).not.toThrow();
-  });
-});
+    it('matches multi-word patterns', () => {
+      expect(matchVoiceCommand('fai partire').command.action).toBe('play');
+      expect(matchVoiceCommand('mostra codice').command.action).toBe('showEditor');
+      expect(matchVoiceCommand('monitor seriale').command.action).toBe('showSerial');
+    });
 
-describe('executeVoiceCommand — mount experiments', () => {
-  it('mounts first experiment', () => {
-    executeVoiceCommand(matchVoiceCommand('monta esperimento uno').command);
-    expect(mockAPI.mountExperiment).toHaveBeenCalledWith('v1-cap1-esp1');
-  });
-  it('mounts LED experiment', () => {
-    executeVoiceCommand(matchVoiceCommand('monta circuito led').command);
-    expect(mockAPI.mountExperiment).toHaveBeenCalledWith('v1-cap1-esp1');
-  });
-  it('mounts semaforo', () => {
-    executeVoiceCommand(matchVoiceCommand('monta semaforo').command);
-    expect(mockAPI.mountExperiment).toHaveBeenCalledWith('v2-cap1-esp1');
-  });
-  it('no mount if not found', () => {
-    mockAPI.getExperimentList.mockReturnValueOnce({ vol1: [], vol2: [], vol3: [] });
-    executeVoiceCommand(matchVoiceCommand('monta circuito led').command);
-    expect(mockAPI.mountExperiment).not.toHaveBeenCalled();
-  });
-});
+    it('is case-insensitive', () => {
+      expect(matchVoiceCommand('AVVIA').command.action).toBe('play');
+      expect(matchVoiceCommand('Ferma').command.action).toBe('stop');
+    });
 
-describe('executeVoiceCommand — build mode', () => {
-  it('sets sandbox', () => {
-    executeVoiceCommand(matchVoiceCommand('modalita libera').command);
-    expect(mockAPI.setBuildMode).toHaveBeenCalledWith('sandbox');
-  });
-  it('sets guided', () => {
-    executeVoiceCommand(matchVoiceCommand('passo passo').command);
-    expect(mockAPI.setBuildMode).toHaveBeenCalledWith('guided');
-  });
-});
+    it('strips punctuation', () => {
+      expect(matchVoiceCommand('avvia!').command.action).toBe('play');
+      expect(matchVoiceCommand('ferma.').command.action).toBe('stop');
+    });
 
-describe('getAvailableCommands', () => {
-  it('returns 24+ commands', () => expect(getAvailableCommands().length).toBeGreaterThanOrEqual(24));
-  it('all have action+patterns+feedback', () => {
-    for (const c of getAvailableCommands()) {
-      expect(c.action).toBeTruthy();
-      expect(c.patterns.length).toBeGreaterThan(0);
-      expect(c.feedback).toBeTruthy();
-    }
+    it('matches within longer phrases', () => {
+      expect(matchVoiceCommand('per favore avvia la simulazione').command.action).toBe('play');
+      expect(matchVoiceCommand('per favore mostra codice').command.action).toBe('showEditor');
+    });
+
+    it('returns null for unrecognized text', () => {
+      expect(matchVoiceCommand('come funziona un resistore')).toBeNull();
+      expect(matchVoiceCommand('cosa succede se collego il LED al contrario')).toBeNull();
+    });
+
+    it('does not match patterns inside other words (word boundary)', () => {
+      // "play" should NOT match inside "display"
+      expect(matchVoiceCommand('display')).toBeNull();
+      // "fit" should NOT match inside "profitto"
+      expect(matchVoiceCommand('profitto')).toBeNull();
+      // "back" should NOT match inside "feedback"
+      expect(matchVoiceCommand('feedback')).toBeNull();
+      // "start" should NOT match inside "restart"
+      expect(matchVoiceCommand('restart')).toBeNull();
+    });
+
+    it('handles accented Italian STT output', () => {
+      // Italian STT sometimes returns accented variants
+      expect(matchVoiceCommand('avvià').command.action).toBe('play');
+      expect(matchVoiceCommand('indìetro').command.action).toBe('prevStep');
+    });
+
+    it('returns null for empty/short text', () => {
+      expect(matchVoiceCommand('')).toBeNull();
+      expect(matchVoiceCommand('a')).toBeNull();
+      expect(matchVoiceCommand(null)).toBeNull();
+    });
+
+    // ── Principio Zero: nuovi comandi ──
+
+    it('matches "monta il circuito"', () => {
+      const m = matchVoiceCommand('monta il circuito');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('mountCircuit');
+    });
+
+    it('matches "monta passo passo"', () => {
+      const m = matchVoiceCommand('monta passo passo');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('mountStepByStep');
+    });
+
+    it('matches "prossimo esperimento" (not nextStep)', () => {
+      const m = matchVoiceCommand('prossimo esperimento');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('nextExperiment');
+    });
+
+    it('matches "esperimento successivo"', () => {
+      const m = matchVoiceCommand('esperimento successivo');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('nextExperiment');
+    });
+
+    it('matches "esperimento precedente"', () => {
+      const m = matchVoiceCommand('esperimento precedente');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('prevExperiment');
+    });
+
+    it('matches "prepara la lezione"', () => {
+      const m = matchVoiceCommand('prepara la lezione');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('prepareLesson');
+    });
+
+    it('matches "compila il codice" (longer than "compila")', () => {
+      const m = matchVoiceCommand('compila il codice');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('compileCode');
+    });
+
+    it('matches "nascondi il codice"', () => {
+      const m = matchVoiceCommand('nascondi il codice');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('hideEditor');
+    });
+
+    it('matches "fai il quiz"', () => {
+      const m = matchVoiceCommand('fai il quiz');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('startQuiz');
+    });
+
+    it('matches "crea il report"', () => {
+      const m = matchVoiceCommand('crea il report');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('createReport');
+    });
+
+    it('matches "volume 1"', () => {
+      const m = matchVoiceCommand('volume 1');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('selectVolume1');
+    });
+
+    it('matches "volume due"', () => {
+      const m = matchVoiceCommand('volume due');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('selectVolume2');
+    });
+
+    it('matches "volume tre"', () => {
+      const m = matchVoiceCommand('volume tre');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('selectVolume3');
+    });
+
+    it('matches "capitolo 3" with chapter-map', () => {
+      const m = matchVoiceCommand('capitolo 3');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('selectChapter');
+      expect(m.matched).toBe('capitolo 3');
+    });
+
+    it('matches "capitolo cinque"', () => {
+      const m = matchVoiceCommand('capitolo cinque');
+      expect(m).toBeTruthy();
+      expect(m.command.action).toBe('selectChapter');
+      expect(m.matched).toBe('capitolo cinque');
+    });
+
+    it('prefers longer pattern: "prossimo esperimento" over "prossimo"', () => {
+      const m = matchVoiceCommand('prossimo esperimento');
+      expect(m.command.action).toBe('nextExperiment');
+    });
+
+    it('prefers longer pattern: "compila il codice" over "compila"', () => {
+      const m = matchVoiceCommand('compila il codice');
+      expect(m.command.action).toBe('compileCode');
+    });
+
+    it('"prossimo" alone still matches nextStep', () => {
+      const m = matchVoiceCommand('prossimo');
+      expect(m.command.action).toBe('nextStep');
+    });
   });
-  it('describeCircuit feedback is readable', () => {
-    const d = getAvailableCommands().find(c => c.action === 'describeCircuit');
-    expect(d.feedback).not.toBe('__CIRCUIT_DESCRIPTION__');
+
+  describe('executeVoiceCommand', () => {
+    it('calls __ELAB_API.play for play command', () => {
+      const match = matchVoiceCommand('avvia');
+      const feedback = executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.play).toHaveBeenCalled();
+      expect(feedback).toBe('Simulazione avviata!');
+    });
+
+    it('calls __ELAB_API.pause for stop command', () => {
+      const match = matchVoiceCommand('ferma');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.pause).toHaveBeenCalled();
+    });
+
+    it('calls __ELAB_API.compile with editor code for compile command', () => {
+      const match = matchVoiceCommand('compila');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.getEditorCode).toHaveBeenCalled();
+      expect(window.__ELAB_API.compile).toHaveBeenCalledWith('void setup() {} void loop() {}');
+    });
+
+    it('returns feedback even when __ELAB_API is undefined', () => {
+      delete window.__ELAB_API;
+      const match = matchVoiceCommand('avvia');
+      const feedback = executeVoiceCommand(match.command, match.matched);
+      expect(feedback).toBe('Simulazione avviata!');
+    });
+
+    it('returns fallback feedback on error', () => {
+      window.__ELAB_API.play = () => { throw new Error('test'); };
+      const match = matchVoiceCommand('play');
+      const feedback = executeVoiceCommand(match.command, match.matched);
+      expect(feedback).toBe('Comando non riuscito.');
+    });
+
+    // ── Principio Zero: execute tests ──
+
+    it('mountCircuit sets build mode and mounts experiment', () => {
+      const match = matchVoiceCommand('monta il circuito');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.setBuildMode).toHaveBeenCalledWith('complete');
+      expect(window.__ELAB_API.mountExperiment).toHaveBeenCalledWith('v1-cap6-esp1');
+    });
+
+    it('mountStepByStep sets guided mode and mounts', () => {
+      const match = matchVoiceCommand('monta passo passo');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.setBuildMode).toHaveBeenCalledWith('guided');
+      expect(window.__ELAB_API.mountExperiment).toHaveBeenCalledWith('v1-cap6-esp1');
+    });
+
+    it('nextExperiment mounts the next experiment in list', () => {
+      const match = matchVoiceCommand('prossimo esperimento');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.mountExperiment).toHaveBeenCalledWith('v1-cap6-esp2');
+    });
+
+    it('prevExperiment does nothing when at first experiment', () => {
+      const match = matchVoiceCommand('esperimento precedente');
+      executeVoiceCommand(match.command, match.matched);
+      // v1-cap6-esp1 is first in list, so mountExperiment should not be called
+      expect(window.__ELAB_API.mountExperiment).not.toHaveBeenCalled();
+    });
+
+    it('prepareLesson dispatches custom event', () => {
+      const listener = vi.fn();
+      window.addEventListener('elab-voice-command', listener);
+      const match = matchVoiceCommand('prepara la lezione');
+      executeVoiceCommand(match.command, match.matched);
+      expect(listener).toHaveBeenCalled();
+      expect(listener.mock.calls[0][0].detail.action).toBe('prepareLesson');
+      window.removeEventListener('elab-voice-command', listener);
+    });
+
+    it('hideEditor calls __ELAB_API.hideEditor', () => {
+      const match = matchVoiceCommand('nascondi il codice');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.hideEditor).toHaveBeenCalled();
+    });
+
+    it('startQuiz dispatches custom event', () => {
+      const listener = vi.fn();
+      window.addEventListener('elab-voice-command', listener);
+      const match = matchVoiceCommand('fai il quiz');
+      executeVoiceCommand(match.command, match.matched);
+      expect(listener).toHaveBeenCalled();
+      expect(listener.mock.calls[0][0].detail.action).toBe('startQuiz');
+      window.removeEventListener('elab-voice-command', listener);
+    });
+
+    it('createReport dispatches custom event', () => {
+      const listener = vi.fn();
+      window.addEventListener('elab-voice-command', listener);
+      const match = matchVoiceCommand('crea il report');
+      executeVoiceCommand(match.command, match.matched);
+      expect(listener).toHaveBeenCalled();
+      expect(listener.mock.calls[0][0].detail.action).toBe('createReport');
+      window.removeEventListener('elab-voice-command', listener);
+    });
+
+    it('selectVolume1 mounts first vol1 experiment', () => {
+      const match = matchVoiceCommand('volume 1');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.mountExperiment).toHaveBeenCalledWith('v1-cap6-esp1');
+    });
+
+    it('selectVolume3 mounts first vol3 experiment', () => {
+      const match = matchVoiceCommand('volume tre');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.mountExperiment).toHaveBeenCalledWith('v3-cap5-esp1');
+    });
+
+    it('selectChapter returns dynamic chapter feedback', () => {
+      const match = matchVoiceCommand('capitolo 3');
+      const feedback = executeVoiceCommand(match.command, match.matched);
+      expect(feedback).toBe('Capitolo 3!');
+    });
+
+    it('compileCode compiles via explicit pattern', () => {
+      const match = matchVoiceCommand('compila il codice');
+      executeVoiceCommand(match.command, match.matched);
+      expect(window.__ELAB_API.getEditorCode).toHaveBeenCalled();
+      expect(window.__ELAB_API.compile).toHaveBeenCalledWith('void setup() {} void loop() {}');
+    });
   });
-  it('all actions unique', () => {
-    const actions = getAvailableCommands().map(c => c.action);
-    expect(new Set(actions).size).toBe(actions.length);
+
+  describe('getAvailableCommands', () => {
+    it('returns all commands with action, patterns, feedback', () => {
+      const cmds = getAvailableCommands();
+      expect(cmds.length).toBeGreaterThan(30);
+      for (const cmd of cmds) {
+        expect(cmd.action).toBeTruthy();
+        expect(cmd.patterns.length).toBeGreaterThan(0);
+        expect(cmd.feedback).toBeTruthy();
+      }
+    });
+
+    it('includes all Principio Zero commands', () => {
+      const cmds = getAvailableCommands();
+      const actions = cmds.map(c => c.action);
+      expect(actions).toContain('mountCircuit');
+      expect(actions).toContain('mountStepByStep');
+      expect(actions).toContain('nextExperiment');
+      expect(actions).toContain('prevExperiment');
+      expect(actions).toContain('prepareLesson');
+      expect(actions).toContain('compileCode');
+      expect(actions).toContain('hideEditor');
+      expect(actions).toContain('startQuiz');
+      expect(actions).toContain('createReport');
+      expect(actions).toContain('selectVolume1');
+      expect(actions).toContain('selectVolume2');
+      expect(actions).toContain('selectVolume3');
+      expect(actions).toContain('selectChapter');
+    });
   });
 });

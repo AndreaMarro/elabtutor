@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL1 = {
           targetPins: { "led1:anode": "bb1:f2", "led1:cathode": "bb1:f3" },
           hint: "L'anodo (+) va in F2, il catodo (−) va in F3. Nella sezione inferiore della breadboard!"
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 2,
           text: "Collega un filo ROSSO dal polo positivo della batteria al bus + (colonna 1)",
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL1 = {
     // ═══════════════════════════════════════════════════
     {
       id: "v1-cap7-esp1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       title: "Cap. 7 Esp. 1 - Accendi il rosso del RGB",
       desc: "Collega solo il pin rosso del LED RGB alla batteria tramite un resistore.",
       chapter: "Capitolo 7 - Cos'è il LED RGB?",
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL1 = {
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il filo rosso porta i 9V dalla batteria."
         },
         {
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL1 = {
         { type: "battery9v", id: "bat1" },
         { type: "breadboard-half", id: "bb1" },
         { type: "resistor", id: "r1", value: 470 },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "resistor", id: "r2", value: 470 },
         { type: "rgb-led", id: "rgb1" }
       ],
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL1 = {
       steps: [
         "Inserisci il LED RGB nei fori F2-F5",
         "Inserisci tre resistori da 470Ω: E8-E2, E10-E4, E12-E6",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Collega il bus + alle colonne 8, 10 e 12",
         "Collega E2→F2 (rosso), E4→F4 (verde), E6→F5 (blu)",
         "Collega il catodo comune (J3) al bus − e chiudi con la batteria"
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL1 = {
       concept: "Bilanciamento RGB tramite valori di resistenza",
       layer: "schema",
       note: "Prova varianti di resistori (mai sotto 100Ω).",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -1391,7 +1391,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "La batteria 9V alimenta il circuito."
         },
         {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 3,
           text: "Collega un filo ROSSO dal polo + della batteria al bus + (striscia rossa).",
           wireFrom: "bat1:positive",
@@ -1564,7 +1564,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Prendi il LED verde e inserisci la gambetta lunga (anodo) in F9 e la gambetta corta (catodo) in F10.",
           componentId: "led1",
           componentType: "led",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "led1:anode": "bb1:f9", "led1:cathode": "bb1:f10" },
           hint: "La gambetta lunga (+) va in F9 e quella corta (−) in F10."
         },
@@ -1749,7 +1749,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Inserisci il LED RGB nella sezione inferiore: Rosso in F15, Catodo in F16, Verde in F17, Blu in F18.",
           componentId: "rgb1",
           componentType: "rgb-led",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "rgb1:red": "bb1:f15", "rgb1:common": "bb1:f16", "rgb1:green": "bb1:f17", "rgb1:blue": "bb1:f18" },
           hint: "I 4 piedini: Rosso in F15, Catodo (gambetta lunga) in F16, Verde in F17, Blu in F18."
         },
@@ -1967,7 +1967,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL1 = {
           step: 6,
           text: "Inserisci il pulsante BTN3 (blu) a cavallo del canale nei fori E10/F12.",
           componentId: "btn3",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "push-button",
           targetPins: { "btn3:pin1": "bb1:e10", "btn3:pin2": "bb1:f12" },
           hint: "BTN3 controllerà il canale BLU del LED RGB."
@@ -2200,7 +2200,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "bat1",
           componentType: "battery9v",
           hint: "La batteria 9V alimenta il circuito."
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL1 = {
         "Gira la manopola del potenziometro e osserva!"
       ],
       observe: "Girando la manopola il LED cambia luminosit\u00e0! Il pot agisce come un dimmer regolabile.",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Dimmer LED con potenziometro'. Il potenziometro è come un rubinetto girevole che controlla quanta corrente passa. Girando la manopola si cambia la resistenza da 0 a 10000 ohm. Spiega il concetto di partitore di tensione e come il pot funziona come un dimmer (regolatore di luminosità). Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
@@ -2418,7 +2418,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -2573,7 +2573,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "L'anodo (+, gamba lunga) va in D17 e il catodo (−, gamba corta) in D18."
         },
         {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 6,
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
           wireFrom: "bat1:positive",
@@ -2729,7 +2729,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL1 = {
           wireFrom: "bb1:bus-top-minus-1",
           wireTo: "bat1:negative",
           wireColor: "black",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo chiude il circuito riportando la corrente alla batteria."
         }
       ],
@@ -2890,7 +2890,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL1 = {
           question: "Che colore ottieni mescolando luce blu e verde?",
           options: ["Viola", "Ciano (azzurrino)", "Giallo"],
           correct: 1,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           explanation: "Nella sintesi additiva della luce, blu + verde = ciano! È il colore dell'acqua del mare tropicale."
         },
         {
@@ -3081,7 +3081,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL1 = {
       difficulty: 2,
       icon: "\u{1F4A1}",
       simulationMode: "circuit",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
       components: [
         { type: "battery9v", id: "bat1" },
         { type: "breadboard-half", id: "bb1" },
@@ -3292,7 +3292,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL1 = {
           wireFrom: "bb1:a13",
           wireTo: "bb1:f17",
           wireColor: "yellow",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo collega due parti del circuito."
         },
         {
@@ -3571,7 +3571,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL1 = {
           targetPins: { "rgb1:red": "bb1:d22", "rgb1:common": "bb1:d23", "rgb1:green": "bb1:d24", "rgb1:blue": "bb1:d25" },
           hint: "I 4 piedini: Rosso in D22, Catodo comune in D23, Verde in D24, Blu in D25."
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 7,
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
@@ -3777,7 +3777,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 6,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori G12 e G19.",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "r2",
           componentType: "resistor",
           targetPins: { "r2:pin1": "bb1:g12", "r2:pin2": "bb1:g19" },
@@ -4003,7 +4003,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -4017,7 +4017,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 3,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il potenziometro da 10kΩ dalla palette e posizionalo nei fori E7, E8 e E9.",
           componentId: "pot1",
           componentType: "potentiometer",
@@ -4194,7 +4194,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -4218,7 +4218,7 @@ const EXPERIMENTS_VOL1 = {
           step: 4,
           text: "Inserisci il resistore da 220Ω nei fori D7 e D9. Protegge il LED dalla troppa corrente!",
           componentId: "r1",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:d7", "r1:pin2": "bb1:d9" },
           hint: "Il resistore limita la corrente: anche con tanta luce sull'LDR, il LED non si brucia."
@@ -4346,7 +4346,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -4419,7 +4419,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo NERO dal foro A11 al foro bus − superiore (col. 11).",
           wireFrom: "bb1:a11",
           wireTo: "bb1:bus-top-minus-11",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "black",
           hint: "Questo filo riporta la corrente al bus negativo."
         },
@@ -4518,7 +4518,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -4620,7 +4620,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 14,
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ARANCIONE dal foro A4 al foro A5 (LDR1 → R1).",
           wireFrom: "bb1:a4",
           wireTo: "bb1:a5",
@@ -4762,7 +4762,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -4821,7 +4821,7 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "bb1:a5",
           wireColor: "red",
           hint: "Questo filo porta la corrente dal bus positivo al componente."
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 9,
@@ -4973,7 +4973,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5022,7 +5022,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Prendi il LED blu dalla palette e posizionalo nei fori H14 e H15.",
           componentId: "led2",
           componentType: "led",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "led2:anode": "bb1:h14", "led2:cathode": "bb1:h15" },
           hint: "L'anodo (+, gamba lunga) va in H14 e il catodo (−, gamba corta) in H15."
         },
@@ -5202,7 +5202,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5223,7 +5223,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "Il pulsante va a cavallo della scanalatura centrale della breadboard."
         },
         {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 4,
           text: "Prendi il fotoresistore (LDR) dalla palette e posizionalo nei fori D7 e D8.",
           componentId: "ldr1",
@@ -5368,7 +5368,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5424,7 +5424,7 @@ const EXPERIMENTS_VOL1 = {
           step: 8,
           text: "Collega il buzzer: bus + destro al pin positivo e bus − destro al pin negativo.",
           wireFrom: "bb1:bus-bot-plus-27",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "buz1:positive",
           wireColor: "red",
           hint: "Se inverti polarità il cicalino non suona correttamente."
@@ -5502,7 +5502,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5625,7 +5625,7 @@ const EXPERIMENTS_VOL1 = {
         "reed1:pin2": "bb1:c11",
         "r1:pin1": "bb1:e14",
         "r1:pin2": "bb1:e21",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "led1:anode": "bb1:d21",
         "led1:cathode": "bb1:d22"
       },
@@ -5661,7 +5661,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5805,7 +5805,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -5826,7 +5826,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "Il reed switch si chiude con il magnete. Come un interruttore invisibile!"
         },
         {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 4,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E14 e E21.",
           componentId: "r1",
@@ -5956,7 +5956,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -6027,7 +6027,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 10,
           text: "Collega un filo NERO dal foro A25 al foro bus − superiore (col. 25).",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:a25",
           wireTo: "bb1:bus-top-minus-25",
           wireColor: "black",
@@ -6122,7 +6122,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
@@ -6228,7 +6228,7 @@ const EXPERIMENTS_VOL1 = {
           wireFrom: "bb1:bus-top-minus-1",
           wireTo: "bat1:negative",
           wireColor: "black",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Questo filo chiude il circuito riportando la corrente alla batteria."
         }
       ],
@@ -6257,6 +6257,8 @@ const EXPERIMENTS_VOL1 = {
       desc: "Primo circuito con plastilina conduttiva: batteria e LED senza breadboard.",
       chapter: "Capitolo 13 - Cos'è l'elettropongo?",
       difficulty: 1,
+      simulable: false,
+      simulableReason: "Richiede pasta conduttiva (elettropongo) - solo kit fisico",
       icon: "''",
       simulationMode: "circuit",
       components: [
@@ -6291,7 +6293,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la batteria 9V nell'area di lavoro",
+          text: "Posiziona la batteria 9V a sinistra della breadboard",
           componentId: "bat1",
           componentType: "battery9v",
           hint: "La batteria alimenta il circuito."
@@ -6343,6 +6345,8 @@ const EXPERIMENTS_VOL1 = {
       desc: "Usa l'elettropongo per creare forme e accendere più LED dello stesso colore.",
       chapter: "Capitolo 13 - Cos'è l'elettropongo?",
       difficulty: 2,
+      simulable: false,
+      simulableReason: "Richiede pasta conduttiva (elettropongo) - solo kit fisico",
       icon: "''",
       simulationMode: "circuit",
       components: [
@@ -6389,7 +6393,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la batteria 9V nell'area di lavoro",
+          text: "Posiziona la batteria 9V a sinistra della breadboard",
           componentId: "bat1",
           componentType: "battery9v",
           hint: "Definisce la polarità del circuito artistico."
@@ -6425,11 +6429,11 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "led1:anode",
           wireColor: "red",
           hint: "Tutti gli anodi vanno nella stessa zona positiva."
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 6,
           text: "Collega il polo positivo all'anodo del secondo LED",
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bat1:positive",
           wireTo: "led2:anode",
           wireColor: "red",
@@ -6490,6 +6494,8 @@ const EXPERIMENTS_VOL1 = {
       desc: "Il progetto finale! Un robot con occhi verdi LED, mano RGB colorata e sensore magnetico.",
       chapter: "Capitolo 14 - Costruiamo il nostro primo robot",
       difficulty: 3,
+      simulable: false,
+      simulableReason: "Richiede kit robot fisico",
       icon: "\u{1F916}",
       simulationMode: "circuit",
       components: [
@@ -6594,7 +6600,7 @@ const EXPERIMENTS_VOL1 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (full-size) nell'area di lavoro. Sarà la base del tuo circuito!",
+          text: "Posiziona la breadboard (full-size) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-full",
           hint: "La breadboard full-size ha più spazio per i componenti."
@@ -6624,13 +6630,13 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 5,
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il potenziometro da 10kΩ dalla palette e posizionalo nei fori E38, E39 e E40.",
           componentId: "pot3",
           componentType: "potentiometer",
           targetPins: { "pot3:vcc": "bb1:e38", "pot3:signal": "bb1:e39", "pot3:gnd": "bb1:e40" },
           hint: "I 3 pin: VCC in E38, Signal in E39, GND in E40."
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 6,
           text: "Prendi il resistore da 220Ω dalla palette e posizionalo nei fori C14 e C21.",
@@ -6825,13 +6831,13 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 31,
+// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo NERO dal foro A30 al foro bus − (riga 30).",
           wireFrom: "bb1:a30",
           wireTo: "bb1:bus-minus-30",
           wireColor: "black",
           hint: "Questo filo riporta la corrente al bus negativo."
         },
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 32,
           text: "Collega un filo NERO dal foro A35 al foro bus − (riga 35).",

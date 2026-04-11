@@ -198,12 +198,13 @@ async function _syncToServer(userId, studentData) {
         try {
             const resp = await fetch(url, {
                 method: 'POST',
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ studentData }),
+                signal: AbortSignal.timeout(10000),
             });
             if (resp.ok) {
                 _lastSyncSource = 'server';
@@ -258,6 +259,7 @@ async function fetchStudentsFromServer(classId) {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` },
+                signal: AbortSignal.timeout(10000),
             });
             if (!response.ok) continue;
             const result = await response.json();
@@ -397,9 +399,9 @@ const studentService = {
             durata: 0,
             attivita: [],
         };
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
         data.sessioni.push(sessione);
         saveStudentData(userId, data);
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         return sessione.id;
     },
 
@@ -598,9 +600,9 @@ const studentService = {
 
         if (studenti.length === 0) return null;
 
+// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
         // Concetti con più confusione
         const concettiConfusione = {};
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         studenti.forEach(s => {
             s.confusione.forEach(c => {
                 if (c.concettoId) {
