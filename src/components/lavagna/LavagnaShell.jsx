@@ -594,26 +594,38 @@ export default function LavagnaShell() {
   }, []);
 
   // Bentornati: teacher clicks "Inizia" → load suggested experiment + open UNLIM
+  // Handles race condition: if __ELAB_API is not ready yet, retries with polling
   const handleBentornatiStart = useCallback((suggestion) => {
     if (!suggestion?.experimentId) {
-      // No suggestion available — fall back to picker
       setBentornatiVisible(false);
       return;
     }
-    const api = typeof window !== 'undefined' && window.__ELAB_API;
-    if (api?.loadExperiment) {
-      api.loadExperiment(suggestion.experimentId);
-    }
+    // Update UI immediately — no waiting
     setExperimentName(suggestion.title || suggestion.experimentId);
     setHasExperiment(true);
     setBentornatiVisible(false);
     setPickerOpen(false);
-    // Detect volume from experiment ID prefix
     const volMatch = (suggestion.experimentId || '').match(/^v(\d)/);
     if (volMatch) setCurrentVolume(Number(volMatch[1]));
-    // Open UNLIM so the teacher sees the AI assistant immediately
     setGalileoOpen(true);
     manualOverridesRef.current = {};
+
+    // Load experiment via API — with retry if API not ready yet
+    const tryLoad = () => {
+      const api = typeof window !== 'undefined' && window.__ELAB_API;
+      if (api?.loadExperiment) {
+        api.loadExperiment(suggestion.experimentId);
+        return true;
+      }
+      return false;
+    };
+    if (!tryLoad()) {
+      // API not ready — poll every 300ms, up to 10 attempts (3s)
+      let attempts = 0;
+      const poll = setInterval(() => {
+        if (tryLoad() || ++attempts >= 10) clearInterval(poll);
+      }, 300);
+    }
   }, []);
 
   // Bentornati: teacher clicks "Scegli altro" → dismiss overlay, open picker
