@@ -18,6 +18,9 @@ import { searchKnowledgeBase } from '../data/unlim-knowledge-base';
 const _SUPABASE_EDGE = (import.meta.env.VITE_SUPABASE_EDGE_URL || 'https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1').trim();
 const _SUPABASE_ANON = (import.meta.env.VITE_SUPABASE_EDGE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1cXBkdWVvcG1sbGxxam1xbnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDI3MDksImV4cCI6MjA5MDcxODcwOX0.289s8NklODdiXDVc_sXBb_Y7SGMgWSOss70iKQRVpjQ').trim();
 const NANOBOT_URL = (import.meta.env.VITE_NANOBOT_URL || '').trim() || _SUPABASE_EDGE; // Supabase Edge primary, Render legacy
+// Andrea Marro 12/04/2026 — Render Nanobot legacy come secondary fallback
+// Se Supabase Edge fallisce (es. GEMINI_API_KEY non settata), proviamo Render prima del webhook n8n
+const _RENDER_NANOBOT = 'https://elab-galileo.onrender.com';
 const CHAT_WEBHOOK = (import.meta.env.VITE_N8N_CHAT_URL || '').trim();
 const COMPILE_URL = (import.meta.env.VITE_COMPILE_URL || '').trim() || null; // Server standalone (priorità)
 const COMPILE_WEBHOOK = (import.meta.env.VITE_COMPILE_WEBHOOK_URL || '').trim() || null; // Backend fallback
@@ -226,8 +229,10 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
  * Returns null if unavailable — caller falls through to backend webhook.
  * Uses /tutor-chat endpoint with experiment context and persistent session.
  */
-async function tryNanobot(message, circuitState, externalSignal, experimentId, images = [], simulatorContext = null) {
-    if (!NANOBOT_URL) return null;
+async function tryNanobot(message, circuitState, externalSignal, experimentId, images = [], simulatorContext = null, urlOverride = null) {
+    // Andrea Marro 12/04/2026 — urlOverride permette fallback a Render dopo Supabase Edge
+    const activeUrl = urlOverride || NANOBOT_URL;
+    if (!activeUrl) return null;
 
     const controller = new AbortController();
     // Vision requests need more time (image upload + processing)
@@ -257,14 +262,27 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
                 mimeType: img.mimeType || 'image/png',
             }));
         }
-        const res = await fetch(nanobotEndpoint(endpoint), {
+        // isEdge vero solo se l'URL punta davvero a supabase.co/functions (come old _isSupabaseEdge)
+        const isEdge = activeUrl && activeUrl.includes('supabase.co/functions');
+        const edgeMap = { '/chat': '/unlim-chat', '/tutor-chat': '/unlim-chat', '/diagnose': '/unlim-diagnose', '/hints': '/unlim-hints' };
+        const finalPath = isEdge ? (edgeMap[endpoint] || endpoint) : endpoint;
+        const fullUrl = `${activeUrl}${finalPath}`;
+        const headers = { 'Content-Type': 'application/json' };
+        if (isEdge && _SUPABASE_ANON) {
+            headers['apikey'] = _SUPABASE_ANON;
+            headers['Authorization'] = `Bearer ${_SUPABASE_ANON}`;
+        }
+        const res = await fetch(fullUrl, {
             method: 'POST',
-            headers: nanobotHeaders(),
+            headers,
             signal: controller.signal,
             body: JSON.stringify(payload),
         });
 
-        if (!res.ok) return null;
+        if (!res.ok) {
+            if (typeof console !== 'undefined') console.warn('[UNLIM] Nanobot', activeUrl, 'returned', res.status);
+            return null;
+        }
 
         const data = await res.json();
         if (data.success && data.response) {
@@ -272,12 +290,13 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
             return {
                 success: true,
                 response: safeContent,
-                source: 'nanobot',
+                source: urlOverride ? 'nanobot-render' : 'nanobot',
                 actions: extractActions(safeContent),
             };
         }
         return null;
-    } catch {
+    } catch (err) {
+        if (typeof console !== 'undefined') console.warn('[UNLIM] Nanobot', activeUrl, 'error:', err?.message);
         return null; // Nanobot unavailable — fall through
     } finally {
         clearTimeout(timeoutId);
@@ -611,10 +630,18 @@ export async function sendChat(message, images = [], options = {}) {
     const localResult = await tryLocalServer(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext);
     if (localResult) return localResult;
 
-    // 1. Try nanobot cloud (text + vision via Gemini, circuit-aware, parallel racing)
+    // 1. Try nanobot cloud primary (Supabase Edge — Gemini)
     if (NANOBOT_URL) {
         const nanobotResult = await tryNanobot(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext);
         if (nanobotResult) return nanobotResult;
+    }
+
+    // 1b. Andrea Marro 12/04/2026 — Fallback Render (Nanobot legacy) se primario fallisce.
+    // Render e' diverso da Supabase Edge e spesso funziona anche quando Edge ha problemi
+    // di env (GEMINI_API_KEY) o rate limit. NON tentiamo se l'URL primario E' gia Render.
+    if (NANOBOT_URL !== _RENDER_NANOBOT && !NANOBOT_URL.includes('onrender.com')) {
+        const renderResult = await tryNanobot(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext, _RENDER_NANOBOT);
+        if (renderResult) return renderResult;
     }
 
     // 2. Fall through to backend webhook
