@@ -114,7 +114,7 @@ export function useTTS() {
         setSelectedVoice(bestVoice);
 
         if (ranked[0]) {
-          logger.log(`TTS: voce selezionata "${ranked[0].voice.name}" (score ${ranked[0].score})`);
+          logger.info(`TTS: voce selezionata "${ranked[0].voice.name}" (score ${ranked[0].score})`);
         }
       };
 
@@ -198,7 +198,7 @@ export function useTTS() {
       setIsPaused(false);
     };
 
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     utterance.onerror = (event) => {
       if (event.error !== 'interrupted' && event.error !== 'canceled') {
         logger.error('TTS Error:', event.error);

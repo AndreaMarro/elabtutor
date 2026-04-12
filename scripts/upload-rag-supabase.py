@@ -17,7 +17,7 @@ SUPABASE_URL = 'https://euqpdueopmlllqjmqnyb.supabase.co'
 SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1cXBkdWVvcG1sbGxxam1xbnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDI3MDksImV4cCI6MjA5MDcxODcwOX0.289s8NklODdiXDVc_sXBb_Y7SGMgWSOss70iKQRVpjQ'
 SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')  # Need service role for inserts
 
-CHUNKS_FILE = '/Users/andreamarro/VOLUME 3/PRODOTTO/elab-builder/data/rag/all-chunks.json'
+CHUNKS_FILE = '/Users/andreamarro/VOLUME 3/PRODOTTO/elab-builder/data/rag/all-chunks-expanded.json'
 EMBEDDINGS_CACHE = '/Users/andreamarro/VOLUME 3/PRODOTTO/elab-builder/data/rag/embeddings-cache.json'
 
 EMBEDDING_MODEL = 'gemini-embedding-001'

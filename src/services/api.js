@@ -14,7 +14,10 @@ import { searchKnowledgeBase } from '../data/unlim-knowledge-base';
 // Set VITE_N8N_CHAT_URL as environment variable on Vercel.
 // CRITICAL FIX S62: .trim() prevents trailing whitespace/newline in Vercel env vars
 // Without this, URLs like "https://example.com\n" cause silent fetch failures
-const NANOBOT_URL = (import.meta.env.VITE_NANOBOT_URL || '').trim() || null; // Nanobot server (priorità)
+// Nanobot: Supabase Edge Functions (SOLO Gemini — directive 11/04/2026)
+const _SUPABASE_EDGE = (import.meta.env.VITE_SUPABASE_EDGE_URL || 'https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1').trim();
+const _SUPABASE_ANON = (import.meta.env.VITE_SUPABASE_EDGE_KEY || '').trim();
+const NANOBOT_URL = (import.meta.env.VITE_NANOBOT_URL || '').trim() || _SUPABASE_EDGE; // Supabase Edge primary, Render legacy
 const CHAT_WEBHOOK = (import.meta.env.VITE_N8N_CHAT_URL || '').trim();
 const COMPILE_URL = (import.meta.env.VITE_COMPILE_URL || '').trim() || null; // Server standalone (priorità)
 const COMPILE_WEBHOOK = (import.meta.env.VITE_COMPILE_WEBHOOK_URL || '').trim() || null; // Backend fallback
@@ -92,6 +95,27 @@ const SOCRATIC_INSTRUCTION = [
     'Puoi combinare più tag. Se non conosci l\'ID ma lo puoi dedurre dal contesto → deducilo.',
     'Es: "Ecco, avvio la simulazione! [AZIONE:play]" | "Evidenzio il LED rosso [AZIONE:highlight:led1]"',
 ].join('\n');
+
+// Nanobot endpoint resolver: maps logical endpoints to actual URLs
+// Supabase Edge uses /unlim-chat, /unlim-diagnose, /unlim-hints
+// Render legacy uses /chat, /tutor-chat, /diagnose, /hints
+const _isSupabaseEdge = NANOBOT_URL && NANOBOT_URL.includes('supabase.co/functions');
+function nanobotEndpoint(path) {
+    if (!NANOBOT_URL) return null;
+    if (_isSupabaseEdge) {
+        const map = { '/chat': '/unlim-chat', '/tutor-chat': '/unlim-chat', '/diagnose': '/unlim-diagnose', '/hints': '/unlim-hints' };
+        return `${NANOBOT_URL}${map[path] || path}`;
+    }
+    return `${NANOBOT_URL}${path}`;
+}
+function nanobotHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    if (_isSupabaseEdge && _SUPABASE_ANON) {
+        h['apikey'] = _SUPABASE_ANON;
+        h['Authorization'] = `Bearer ${_SUPABASE_ANON}`;
+    }
+    return h;
+}
 
 const API = {
     nanobot: NANOBOT_URL,
@@ -174,6 +198,7 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
                 signal: controller.signal,
             });
 
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
             if (!resp.ok) return null;
 
             const data = await resp.json();
@@ -198,7 +223,6 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
 
 /**
  * Try nanobot server first (lower latency, circuit-aware MCP).
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Returns null if unavailable — caller falls through to backend webhook.
  * Uses /tutor-chat endpoint with experiment context and persistent session.
  */
@@ -233,9 +257,9 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
                 mimeType: img.mimeType || 'image/png',
             }));
         }
-        const res = await fetch(`${NANOBOT_URL}${endpoint}`, {
+        const res = await fetch(nanobotEndpoint(endpoint), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: nanobotHeaders(),
             signal: controller.signal,
             body: JSON.stringify(payload),
         });
@@ -270,9 +294,9 @@ async function tryNanobot(message, circuitState, externalSignal, experimentId, i
 export async function diagnoseCircuit(circuitState, experimentId) {
     if (!NANOBOT_URL) return null;
     try {
-        const res = await fetch(`${NANOBOT_URL}/diagnose`, {
+        const res = await fetch(nanobotEndpoint('/diagnose'), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: nanobotHeaders(),
             signal: AbortSignal.timeout(API_TIMEOUT),
             body: JSON.stringify({ circuitState, experimentId: experimentId || null }),
         });
@@ -295,9 +319,9 @@ export async function diagnoseCircuit(circuitState, experimentId) {
 export async function getExperimentHints(experimentId, currentStep = 0, difficulty = 'base') {
     if (!NANOBOT_URL) return null;
     try {
-        const res = await fetch(`${NANOBOT_URL}/hints`, {
+        const res = await fetch(nanobotEndpoint('/hints'), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: nanobotHeaders(),
             signal: AbortSignal.timeout(API_TIMEOUT),
             body: JSON.stringify({ experimentId, currentStep, difficulty }),
         });
@@ -375,6 +399,7 @@ export function checkRateLimit() {
             message: 'Facciamo una pausa! Riprova tra un minuto.',
             waitMs: Math.max(0, waitMs),
         };
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // OK: registra il messaggio
@@ -399,7 +424,6 @@ function friendlyError(error) {
 
     if (error?.name === 'AbortError' || msg.includes('timeout')) {
         return 'UNLIM ci sta mettendo un po\' troppo. Riprova tra qualche secondo.';
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
     if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
         return 'Sembra che la connessione internet non funzioni. Controlla e riprova.';
@@ -576,6 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
 
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
     const nanobotMessage = experimentContext
         ? `${BREVITY_RULE}\n${experimentContext}\n\nMessaggio studente:\n${message}`
@@ -600,7 +625,6 @@ export async function sendChat(message, images = [], options = {}) {
 
         // Se ci sono immagini, invia al backend con l'immagine in base64
         if (images.length > 0) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
             // Image analysis via backend Vision
 
             // Security: sessionStorage instead of localStorage — session IDs must not
@@ -777,6 +801,7 @@ export async function sendChat(message, images = [], options = {}) {
                 };
             }
         }
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
         return {
             success: false,
@@ -801,7 +826,6 @@ function extractActions(text, userMessage = '') {
     if (!text) return { commands: [], buttons: [], route: null };
 
     const actions = {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         commands: [],  // Azioni eseguite automaticamente
         buttons: [],   // Pulsanti mostrati all'utente (solo se utili!)
         route: null    // Routing suggerito: 'simulator' | 'canvas' | 'manual' | 'page' | null
@@ -978,6 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
                     data = data[0];
                 }
             } catch {
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 throw new Error('Risposta non valida dal compilatore');
             }
 
@@ -1002,7 +1027,6 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     // 2. Fallback: backend webhook
     if (COMPILE_WEBHOOK) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
         const result = await tryCompile(COMPILE_WEBHOOK, 'Backend webhook');
         if (result) return result;
     }

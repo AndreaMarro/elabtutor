@@ -1616,7 +1616,7 @@ REGOLE CRITICHE PER QUESTA RISPOSTA:
         if (_simpleActionRe.test(userMessage) && !_hasComponentWords.test(userMessage)) {
             const hallucinatedIntents = extractIntentTags(aiResponse);
             if (hallucinatedIntents.length > 0) {
-                logger.log('[S116] Stripping', hallucinatedIntents.length, 'hallucinated INTENT tags for simple action:', userMessage.substring(0, 60));
+                logger.info('[S116] Stripping', hallucinatedIntents.length, 'hallucinated INTENT tags for simple action:', userMessage.substring(0, 60));
                 for (const { fullMatch } of hallucinatedIntents) {
                     effectiveResponse = effectiveResponse.replace(fullMatch, '');
                 }
