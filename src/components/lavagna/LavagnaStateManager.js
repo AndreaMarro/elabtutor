@@ -23,31 +23,31 @@ export const STATE_PANELS = {
   [STATES.CLEAN]: {
     leftPanel: false,
     bottomPanel: false,
-    galileo: true,       // Galileo sempre disponibile (Principio Zero: docente ha sempre accesso)
+    galileo: false,      // P0 fix: UNLIM parte chiuso — docente vede prima il circuito, click mascotte per aprire
     toolbar: true,
   },
   [STATES.BUILD]: {
     leftPanel: true,      // Componenti aperti per drag
     bottomPanel: false,    // Codice chiuso durante montaggio
-    galileo: true,         // Galileo disponibile per il docente (Principio Zero)
+    galileo: false,        // P0: UNLIM non si auto-apre — mascotte sempre visibile per click manuale
     toolbar: true,
   },
   [STATES.CODE]: {
     leftPanel: false,      // Componenti chiusi
     bottomPanel: true,     // Editor codice aperto
-    galileo: true,         // Galileo disponibile durante coding
+    galileo: false,        // P0: UNLIM non si auto-apre durante coding
     toolbar: false,        // Non serve durante coding
   },
   [STATES.RUN]: {
     leftPanel: false,
     bottomPanel: true,     // Monitor seriale visibile
-    galileo: true,         // Galileo disponibile durante simulazione
+    galileo: false,        // P0: UNLIM non si auto-apre durante simulazione
     toolbar: false,
   },
   [STATES.STUCK]: {
     leftPanel: false,
     bottomPanel: false,
-    galileo: true,         // Galileo si espande per aiutare
+    galileo: true,         // ECCEZIONE: STUCK auto-apre UNLIM per aiutare (Principio Zero)
     toolbar: true,
   },
 };
@@ -60,7 +60,7 @@ export const STATE_PANELS = {
 export function deriveState(context) {
   const { hasExperiment, isPlaying, isEditing, idleSeconds = 0, hasError = false } = context;
 
-  if (hasError || idleSeconds > 60) return STATES.STUCK;
+  if (hasError || idleSeconds > 120) return STATES.STUCK; // 120s idle → UNLIM si auto-apre per aiutare
   if (!hasExperiment) return STATES.CLEAN;
   if (isPlaying) return STATES.RUN;
   if (isEditing) return STATES.CODE;

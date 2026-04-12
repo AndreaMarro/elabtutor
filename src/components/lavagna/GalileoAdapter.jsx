@@ -555,9 +555,9 @@ export default function GalileoAdapter({ visible, onClose, onSpeakingChange, act
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Tab bar */}
         <div style={tabBarStyle}>
-          <button style={tabStyle(activeTab === 'chat')} onClick={() => setActiveTab('chat')}>Chat</button>
-          <button style={tabStyle(activeTab === 'percorso')} onClick={() => setActiveTab('percorso')}>Percorso</button>
-          <button style={tabStyle(activeTab === 'guida')} onClick={() => setActiveTab('guida')}>Passo Passo</button>
+          <button style={tabStyle(activeTab === 'chat')} onClick={() => setActiveTab('chat')}>CHAT</button>
+          <button style={tabStyle(activeTab === 'percorso')} onClick={() => setActiveTab('percorso')}>PERCORSO</button>
+          <button style={tabStyle(activeTab === 'guida')} onClick={() => setActiveTab('guida')}>GUIDA</button>
         </div>
 
         {/* Tab content */}

@@ -334,7 +334,7 @@ export default function LavagnaShell() {
   const { user, isDocente, isStudente } = useAuth();
   const [activeTab, setActiveTab] = useState('lavagna'); // 'lavagna' | 'classe' | 'progressi'
   const [activeTool, setActiveTool] = useState('select');
-  const [galileoOpen, setGalileoOpen] = useState(true);
+  const [galileoOpen, setGalileoOpen] = useState(false); // P0 fix: UNLIM parte minimizzato — il docente vede prima il circuito
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoMinimized, setVideoMinimized] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(false);
@@ -444,7 +444,7 @@ export default function LavagnaShell() {
   }, []);
 
   // Track current panel values in refs (avoids putting them in useEffect deps)
-  const panelStateRef = useRef({ leftPanel: false, bottomPanel: false, galileo: true });
+  const panelStateRef = useRef({ leftPanel: false, bottomPanel: false, galileo: false });
   useEffect(() => {
     panelStateRef.current = { leftPanel: leftPanelOpen, bottomPanel: bottomPanelOpen, galileo: galileoOpen };
   });

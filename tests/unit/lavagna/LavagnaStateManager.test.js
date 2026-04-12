@@ -19,8 +19,12 @@ describe('LavagnaStateManager', () => {
       expect(deriveState({ hasExperiment: true, isPlaying: true, isEditing: false })).toBe(STATES.RUN);
     });
 
-    it('returns STUCK when idle > 60s', () => {
-      expect(deriveState({ hasExperiment: true, idleSeconds: 90 })).toBe(STATES.STUCK);
+    it('returns STUCK when idle > 120s', () => {
+      expect(deriveState({ hasExperiment: true, idleSeconds: 130 })).toBe(STATES.STUCK);
+    });
+
+    it('returns BUILD (not STUCK) when idle 90s (under 120s threshold)', () => {
+      expect(deriveState({ hasExperiment: true, idleSeconds: 90 })).toBe(STATES.BUILD);
     });
 
     it('returns STUCK when error present', () => {
@@ -37,7 +41,7 @@ describe('LavagnaStateManager', () => {
       const result = computePanelActions(STATES.CLEAN, {}, {});
       expect(result.leftPanel).toBe(false);
       expect(result.bottomPanel).toBe(false);
-      expect(result.galileo).toBe(true);
+      expect(result.galileo).toBe(false); // P0: UNLIM parte chiuso, mascotte per accesso
       expect(result.toolbar).toBe(true);
     });
 

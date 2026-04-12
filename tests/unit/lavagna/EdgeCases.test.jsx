@@ -57,8 +57,12 @@ describe('LavagnaStateManager edge cases', () => {
     expect(deriveState({ hasExperiment: undefined })).toBe(STATES.CLEAN);
   });
 
-  it('STUCK overrides all other states including RUN', () => {
-    expect(deriveState({ hasExperiment: true, isPlaying: true, idleSeconds: 90 })).toBe(STATES.STUCK);
+  it('STUCK overrides all other states including RUN (at 130s)', () => {
+    expect(deriveState({ hasExperiment: true, isPlaying: true, idleSeconds: 130 })).toBe(STATES.STUCK);
+  });
+
+  it('90s idle does NOT trigger STUCK (threshold is 120s)', () => {
+    expect(deriveState({ hasExperiment: true, isPlaying: true, idleSeconds: 90 })).toBe(STATES.RUN);
   });
 
   it('error takes priority over idle', () => {
@@ -86,11 +90,11 @@ describe('LavagnaStateManager edge cases', () => {
     expect(deriveState({ hasExperiment: true, idleSeconds: 0 })).toBe(STATES.BUILD);
   });
 
-  it('exactly 60 seconds idle does not trigger STUCK', () => {
-    expect(deriveState({ hasExperiment: true, idleSeconds: 60 })).toBe(STATES.BUILD);
+  it('exactly 120 seconds idle does not trigger STUCK', () => {
+    expect(deriveState({ hasExperiment: true, idleSeconds: 120 })).toBe(STATES.BUILD);
   });
 
-  it('61 seconds idle triggers STUCK', () => {
-    expect(deriveState({ hasExperiment: true, idleSeconds: 61 })).toBe(STATES.STUCK);
+  it('121 seconds idle triggers STUCK', () => {
+    expect(deriveState({ hasExperiment: true, idleSeconds: 121 })).toBe(STATES.STUCK);
   });
 });
