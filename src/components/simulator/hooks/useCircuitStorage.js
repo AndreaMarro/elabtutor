@@ -20,26 +20,41 @@ export default function useCircuitStorage(experimentId, getState, restoreState) 
   const lastSavedRef = useRef('');
 
   // ─── Auto-save to localStorage every 5 seconds ───
+  // Andrea Marro 12/04/2026 — aggiunto flush sincrono su pagehide/beforeunload/visibilitychange
+  // per evitare di perdere le ultime modifiche se l'utente chiude nei 5s dopo un cambiamento.
   useEffect(() => {
     if (!experimentId) return;
+    const key = `${STORAGE_KEY}-${experimentId}`;
 
-    const timer = setInterval(() => {
-      const state = getState();
-      const key = `${STORAGE_KEY}-${experimentId}`;
-      const json = JSON.stringify(state);
-
-      // Only write if changed
-      if (json !== lastSavedRef.current) {
-        try {
+    const flush = () => {
+      try {
+        const state = getState();
+        const json = JSON.stringify(state);
+        if (json !== lastSavedRef.current) {
           localStorage.setItem(key, json);
           lastSavedRef.current = json;
-        } catch (e) {
-          // localStorage full — silently fail
         }
-      }
-    }, AUTO_SAVE_INTERVAL);
+      } catch { /* silent — quota or serialization */ }
+    };
 
-    return () => clearInterval(timer);
+    const timer = setInterval(flush, AUTO_SAVE_INTERVAL);
+
+    // Flush on page visibility change (iOS Safari friendly)
+    const onVisibility = () => { if (document.hidden) flush(); };
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+      document.removeEventListener('visibilitychange', onVisibility);
+      // NB: niente flush() in cleanup — quando experimentId cambia, la cleanup
+      // gira dopo che lo state e' gia' transitato al nuovo esperimento, quindi
+      // un flush finale contaminerebbe il salvataggio dell'esperimento vecchio.
+      // Gli eventi pagehide/beforeunload/visibilitychange coprono i casi reali.
+    };
   }, [experimentId, getState]);
 
   // ─── Load from localStorage on experiment change ───

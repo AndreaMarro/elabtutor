@@ -472,6 +472,26 @@ export default function LavagnaShell() {
         api.on?.('stateChange', (data) => {
           if (data?.running != null) setIsPlaying(data.running);
         });
+
+        // Andrea Marro 12/04/2026 — Restore last experiment on mount
+        // Completa il fix "Lavagna non persiste su uscita": ora oltre a salvare
+        // l'id, al rientro lo ricarichiamo automaticamente se l'utente non ha
+        // ancora scelto un esperimento.
+        try {
+          const lastId = localStorage.getItem('elab-lavagna-last-experiment');
+          if (lastId && api.loadExperiment) {
+            // Small delay to let simulator fully mount before loading
+            setTimeout(() => {
+              try {
+                // Only restore if user hasn't actively chosen one in the meantime
+                const current = api.getCurrentExperiment?.();
+                if (!current?.id) {
+                  api.loadExperiment(lastId);
+                }
+              } catch { /* silent — just a restore convenience */ }
+            }, 500);
+          }
+        } catch { /* silent */ }
       }
     }, 500);
     return () => clearInterval(check);
