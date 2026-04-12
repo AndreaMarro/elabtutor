@@ -27,16 +27,19 @@
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │
 └─────────────────────────────────────────────────────────┘
 
-┌──────────────────────┐  ┌──────────────────────┐
-│   CLAUDE WEB #1      │  │   CLAUDE WEB #2      │
-│   (andrea marro)     │  │   (progettibelli)    │
-│                      │  │                      │
-│ Task:                │  │ Task:                │
-│ - Scaletta demo      │  │ - Prototipi CSS      │
-│ - Analisi costi      │  │ - Parita volumi      │
-│ - Test UNLIM 30 Q&A  │  │ - Proposta UI        │
-│ - Pacchetti prezzo   │  │ - Cap1 breadboard    │
-└──────────────────────┘  └──────────────────────┘
+┌────────────────────────────────────────────────┐
+│           CLAUDE WEB (andrea marro)             │
+│  PRIORITA MASSIMA nelle prime 3 ore             │
+│                                                 │
+│ Task:                                           │
+│ - Scaletta demo lunedi (P0)                     │
+│ - Analisi costi OGNI combinazione (P0)          │
+│ - Test UNLIM 30 Q&A via curl (P1)              │
+│ - Pacchetti prezzo (P0)                         │
+│ - CSS prototipi (P2)                            │
+│ - Parita volumi + esperimenti superflui (P1)    │
+│ - Cap1 breadboard prototipo (P2)                │
+└────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────┐
 │              3 WORKER PROGRAMMATI (ogni ora)              │
@@ -152,15 +155,15 @@ Scrivi test per voiceCommands con "ehi unlim" pattern.
 Output: docs/sprint/AGENT5-VOICE-WAKEWORD.md
 ```
 
-### Agent 6: Analisi Costi + Pacchetti
+### Agent 6: Verifica Costi (cross-check del lavoro Claude Web)
 ```
-Analisi ESTREMAMENTE dettagliata dei costi per OGNI combinazione:
-- 1/10/50/100/500 scuole
-- 4 pacchetti (Base/Standard/Premium/Enterprise)
-- 4 opzioni voce (Edge/Kokoro/OpenAI/ElevenLabs)
-- Con e senza caching Gemini
-Calcola margine per ogni combinazione.
-Output: docs/presentazione/ANALISI-COSTI-COMPLETA.md
+Leggi docs/presentazione/ANALISI-COSTI-COMPLETA.md (scritto da Claude Web).
+RICONTROLLA tutti i calcoli. Verifica:
+- I prezzi API sono aggiornati (Gemini, ElevenLabs, OpenAI)
+- I margini sono calcolati correttamente
+- Il break-even e realistico
+Se trovi errori: correggi e documenta.
+Output: docs/sprint/AGENT6-COST-VERIFICATION.md
 ```
 
 ### Agent 7: Playwright 50 Utenti
@@ -223,34 +226,6 @@ Push su origin main. Test >= 3674.
 
 ---
 
-## CLAUDE WEB #2 — Account Progettibelli
-
-### Prompt
-```
-Pull da main. Leggi docs/plans/2026-04-13-PIANO-ORCHESTRATO-COMPLETO.md.
-
-I tuoi 3 task:
-
-1. PROTOTIPI CSS FIX (P1)
-   Leggi docs/sprint/DESIGN-CRITIQUE-12-APR-2026.md
-   Proponi fix CSS per: header troncato, mobile UNLIM, breadcrumb.
-   Lavora su branch proposal/css-fixes.
-   NON mergiare su main.
-
-2. PARITA VOLUMI (P1)
-   Leggi docs/volumi-originali/ e confronta con experiments-vol*.js
-   Identifica esperimenti superflui (reiterazioni).
-   Scrivi docs/sprint/PROPOSTA-ACCORPAMENTO-ESPERIMENTI.md
-
-3. PROTOTIPO CAP1 BENVENUTO (P2)
-   Migliora docs/prototipi/Cap1_Benvenuto_Breadboard.jsx
-   Il Cap1 introduce la breadboard — deve essere il primo contatto del bambino.
-
-Lavora su branch proposal/. Push su origin. NON mergiare su main.
-```
-
-### Durata: sessione media (2-3 ore)
-
 ---
 
 ## 3 WORKER PROGRAMMATI (già attivi)
@@ -265,23 +240,47 @@ Lavora su branch proposal/. Push su origin. NON mergiare su main.
 
 ## TIMELINE SESSIONE (stimata 6-8 ore)
 
-| Ora | Terminal (Ralph Loop) | Claude Web #1 | Claude Web #2 | Worker |
-|-----|----------------------|---------------|---------------|--------|
-| 0:00 | (forse offline) | Scaletta demo P0 | CSS prototipi | — |
-| 0:20 | (forse offline) | Analisi costi P0 | Parita volumi | Audit :17 |
-| 0:40 | (forse offline) | Analisi costi (verifica) | Parita volumi | Debugger :32 |
-| 1:00 | (forse offline) | Test UNLIM 30 Q&A | Cap1 prototipo | Critic :47 |
-| 1:20 | (forse offline) | Test UNLIM (continua) | Esperimenti superflui | Audit :17 |
-| 1:40 | (forse offline) | Pacchetti prezzo | Push proposte | Debugger :32 |
-| 2:00 | Setup se disponibile | Pacchetti (verifica) | — | Critic :47 |
-| 2:20 | Pull tutto + merge | Rilettura finale docs | — | Audit :17 |
-| 2:40 | Ralph Loop: agent 1-8 | — | — | Debugger :32 |
-| 3:00 | Test Chrome + UNLIM | — | — | Critic :47 |
-| 3:20 | Fix bug trovati | — | — | Audit :17 |
-| 3:40 | Deploy + test live | — | — | Debugger :32 |
-| 4:00 | Audit finale + PDR | — | — | Critic :47 |
+| Ora | Terminal (Ralph Loop) | Claude Web (andrea) | Worker |
+|-----|----------------------|---------------------|--------|
+| 0:00 | (forse offline) | Scaletta demo + analisi costi | — |
+| 0:30 | (forse offline) | Analisi costi (ricontrolla!) + pacchetti | Audit :17 |
+| 1:00 | (forse offline) | Parita volumi + esperimenti superflui | Debugger :32 |
+| 1:30 | (forse offline) | CSS fix proposte + test (200+ nuovi) | Critic :47 |
+| 2:00 | Setup se disponibile | Rilettura e push tutto | Audit :17 |
+| 2:30 | Pull + merge + test anti-regressione | — | Debugger :32 |
+| 3:00 | Agent 1-4 (simulatore, UNLIM, UX, voce) | — | Critic :47 |
+| 3:30 | Agent 5-8 (Playwright, critic, costi verifica) | — | Audit :17 |
+| 4:00 | Merge agent + test UNLIM 30 Q&A via curl | — | Debugger :32 |
+| 4:30 | Fix bug trovati + wake word "Ehi UNLIM" | — | Critic :47 |
+| 5:00 | Deploy + test live Chrome | — | Audit :17 |
+| 5:30 | Audit finale + benchmark aggiornato | — | Debugger :32 |
+| 6:00 | PDR + prompt sessione dopo + checklist pre-demo | — | Critic :47 |
 
-**NOTA**: Le prime 2 ore sono dominate da Claude Web. Il Terminal si inserisce quando disponibile e fa merge + test + deploy. Tutto il lavoro "documentale" (costi, scaletta, pacchetti) lo fa Claude Web. Il Terminal fa il lavoro "tecnico" (bug fix, test Chrome, deploy).
+**STRATEGIA**: Claude Web fa lavoro documentale (prime 2 ore). Terminal fa lavoro tecnico (ore 2-6). Worker colmano gap test continuamente. Test UNLIM via curl lo fa il Terminal (Claude Web non puo fare HTTPS esterno).
+
+---
+
+## PIANO B — Se qualcosa non funziona alla demo
+
+| Problema | Piano B |
+|----------|---------|
+| UNLIM non risponde (rate limit Gemini) | Mostra screenshot risposte pre-registrate |
+| Sito non carica | Demo da localhost (npm run dev) |
+| Scratch non si apre | Salta, mostra solo circuiti analogici Vol1-Vol2 |
+| Voce non funziona | Disattiva TTS, usa solo chat testuale |
+| Build fallisce | Deploy precedente e ancora LIVE |
+
+## CHECKLIST PRE-DEMO (1 ora prima di lunedi)
+
+- [ ] `curl https://www.elabtutor.school` → 200 OK
+- [ ] Apri Chrome → inserisci ELAB2026 → Lavagna carica
+- [ ] UNLIM minimizzato (mascotte in basso)
+- [ ] Click mascotte → UNLIM apre → scrivi "Come funziona il LED?"
+- [ ] UNLIM risponde con parole dei volumi
+- [ ] "Passo Passo" → circuito si monta
+- [ ] Batteria sufficiente laptop
+- [ ] WiFi stabile o hotspot telefono pronto
+- [ ] Documenti presentazione pronti in docs/presentazione/
 
 ---
 
