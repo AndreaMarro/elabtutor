@@ -18,6 +18,47 @@ const WELCOME_MSG = {
   content: 'Ciao! Sono **UNLIM**, il tuo assistente per l\'elettronica. Cosa costruiamo oggi?',
 };
 
+// ── Persistent memory (localStorage) — Andrea Marro 12/04/2026 ──
+// Persiste la conversazione tra reload e sessioni. Cap a 100 messaggi per evitare quota.
+const MEMORY_KEY = 'elab-unlim-chat-history-v1';
+const MEMORY_CAP = 100;
+
+function loadPersistedMessages() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return [WELCOME_MSG];
+    const raw = window.localStorage.getItem(MEMORY_KEY);
+    if (!raw) return [WELCOME_MSG];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return [WELCOME_MSG];
+    // Validate shape: each msg must have id, role, content
+    const valid = parsed.filter(m => m && typeof m === 'object' && m.role && typeof m.content === 'string');
+    if (valid.length === 0) return [WELCOME_MSG];
+    return valid.slice(-MEMORY_CAP);
+  } catch {
+    return [WELCOME_MSG];
+  }
+}
+
+function persistMessages(messages) {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    if (!Array.isArray(messages) || messages.length === 0) return;
+    // Only persist last MEMORY_CAP messages to respect quota
+    const toSave = messages.slice(-MEMORY_CAP).map(m => ({
+      id: m.id,
+      role: m.role,
+      content: m.content,
+      isRateLimit: m.isRateLimit,
+      isError: m.isError,
+    }));
+    window.localStorage.setItem(MEMORY_KEY, JSON.stringify(toSave));
+  } catch { /* quota exceeded or private mode — silent fail */ }
+}
+
+export function clearUnlimMemory() {
+  try { window.localStorage.removeItem(MEMORY_KEY); } catch { /* silent */ }
+}
+
 // ── Quick actions (Socratic mode) ──
 // Quick actions rimossi — il docente usa il Percorso strutturato + domanda libera
 const QUICK_ACTIONS = [];
@@ -157,6 +198,7 @@ async function executeIntentTags(rawResponse) {
           for (const action of result.actions) {
             if (action.type === 'addcomponent') {
               const tagMatch = action.tag.match(/addcomponent:([^:]+):(-?\d+):(-?\d+)/);
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
               if (tagMatch && api.addComponent) {
                 api.addComponent(tagMatch[1], { x: parseInt(tagMatch[2], 10), y: parseInt(tagMatch[3], 10) });
                 executed.push('addcomponent:' + tagMatch[1]);
@@ -198,7 +240,6 @@ function detectImplicitActions(userMessage, aiResponse) {
   if (/\[azione:/i.test(aiResponse) || /\[INTENT:\{/.test(aiResponse)) return [];
 
   const combined = (userMessage + ' ' + aiResponse).toLowerCase();
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
   const executed = [];
 
   // Play / run simulation
@@ -327,10 +368,15 @@ function buildTutorContext() {
 // HOOK: useGalileoChat
 // ══════════════════════════════════════
 export default function useGalileoChat() {
-  const [messages, setMessages] = useState([WELCOME_MSG]);
+  const [messages, setMessages] = useState(loadPersistedMessages);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const circuitStateRef = useRef(null);
+
+  // Persist messages to localStorage on every change (Andrea Marro 12/04/2026)
+  useEffect(() => {
+    persistMessages(messages);
+  }, [messages]);
 
   // Auto-reset loading if stuck > 30s
   useEffect(() => {
@@ -353,6 +399,7 @@ export default function useGalileoChat() {
 
   // ── Send message ──
   const handleSend = useCallback(async (messageOverride) => {
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     const userMessage = messageOverride || input;
     if (!userMessage.trim() || isLoading) return;
 
@@ -399,7 +446,6 @@ export default function useGalileoChat() {
         // Fast local summary first
         const summary = getLessonSummary(expId);
         if (summary) {
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
           const introMsg = summary.isFirstTime
             ? `Preparo la lezione "${summary.title}"! Prima volta con questo esperimento.`
             : summary.needsReview
@@ -554,6 +600,7 @@ export default function useGalileoChat() {
           id: Date.now(), role: 'user',
           content: 'Analizza questa schermata del simulatore',
           image: dataUrl,
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         }]);
 
         const result = await analyzeImage(images, 'Analizza questa schermata del simulatore e dimmi se vedi qualcosa di sbagliato o se va tutto bene.', {

@@ -16,11 +16,28 @@
  *   onClose: () => void
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ovStyles from '../overlays.module.css';
 
 // Simple step number used instead of emoji per component type
 const STEP_ICONS = {};
+
+// Size presets for resizable panel (Andrea Marro 12/04/2026)
+// Rende il pannello Passo Passo piu leggibile e allargabile
+const SIZE_PRESETS = {
+  S: { width: 240, fontSize: 14, stepFontSize: 16 },
+  M: { width: 360, fontSize: 15, stepFontSize: 18 },
+  L: { width: 520, fontSize: 17, stepFontSize: 20 },
+};
+const SIZE_KEY = 'elab-buildguide-size-v1';
+
+function loadSize() {
+  try {
+    const v = typeof window !== 'undefined' && window.localStorage?.getItem(SIZE_KEY);
+    if (v === 'S' || v === 'M' || v === 'L') return v;
+  } catch { /* silent */ }
+  return 'M';
+}
 
 const BuildModeGuide = React.memo(function BuildModeGuide({
   experiment,
@@ -29,6 +46,15 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
   onClose,
 }) {
   const [expanded, setExpanded] = useState(true);
+  const [size, setSize] = useState(loadSize);
+
+  // Persist size choice
+  useEffect(() => {
+    try { window.localStorage.setItem(SIZE_KEY, size); } catch { /* silent */ }
+  }, [size]);
+
+  const preset = SIZE_PRESETS[size] || SIZE_PRESETS.M;
+  const cycleSize = () => setSize(prev => (prev === 'S' ? 'M' : prev === 'M' ? 'L' : 'S'));
 
   if (!experiment) return null;
   const buildSteps = experiment.buildSteps || [];
@@ -66,14 +92,26 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
   const progressPct = isIntro ? 0 : ((currentStep + 1) / buildSteps.length) * 100;
 
   return (
-    <div className={ovStyles.guideRoot}>
-      {/* S74 B1: removed inline width:270 so CSS responsive widths apply (240px desktop, 220px tablet, 200px mobile-landscape, 100% mobile-portrait) */}
+    <div
+      className={ovStyles.guideRoot}
+      style={{ width: preset.width, maxWidth: '92vw', fontSize: preset.fontSize }}
+    >
+      {/* Andrea Marro 12/04/2026: pannello Passo Passo allargabile (S/M/L) per leggibilita */}
       {/* Header */}
       <div className={ovStyles.guideHeader} style={{ background: 'linear-gradient(135deg, rgba(124,179,66,0.15), rgba(30,77,140,0.05))' }}>
         <span className={ovStyles.guideIcon}>{'\u2261'}</span>
         <span className={ovStyles.guideTitle}>Montalo Tu!</span>
-        <button onClick={() => setExpanded(false)} className={ovStyles.guideCloseBtn}>{'\u2212'}</button>
-        <button onClick={onClose} className={ovStyles.guideCloseBtn}>{'\u2715'}</button>
+        <button
+          onClick={cycleSize}
+          className={ovStyles.guideCloseBtn}
+          title={`Dimensione pannello: ${size} (clic per cambiare)`}
+          aria-label={`Cambia dimensione pannello, attuale ${size}`}
+          style={{ fontWeight: 700, minWidth: 24 }}
+        >
+          {size}
+        </button>
+        <button onClick={() => setExpanded(false)} className={ovStyles.guideCloseBtn} aria-label="Minimizza">{'\u2212'}</button>
+        <button onClick={onClose} className={ovStyles.guideCloseBtn} aria-label="Chiudi">{'\u2715'}</button>
       </div>
 
       {/* Progress bar */}
@@ -90,15 +128,16 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
       </div>
 
       {/* Current step content — key forces re-mount for fade-in animation */}
-      <div key={currentStep} style={stepContentStyle} className={ovStyles.buildStepFadeIn}>
+      {/* Andrea Marro 12/04/2026: fontSize dinamico da size preset per leggibilita */}
+      <div key={currentStep} style={{ ...stepContentStyle, fontSize: preset.stepFontSize }} className={ovStyles.buildStepFadeIn}>
         {isIntro ? (
           /* Intro screen: empty board */
           <div style={introStyle}>
-            <span style={{ fontSize: 20, display: 'block', textAlign: 'center', marginBottom: 6, fontWeight: 700, color: 'var(--color-primary)' }}>{'\u25B6'}</span>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5, color: 'var(--color-text-gray-700)', textAlign: 'center', fontWeight: 500 }}>
+            <span style={{ fontSize: preset.stepFontSize + 4, display: 'block', textAlign: 'center', marginBottom: 6, fontWeight: 700, color: 'var(--color-primary)' }}>{'\u25B6'}</span>
+            <p style={{ margin: 0, fontSize: preset.stepFontSize, lineHeight: 1.5, color: 'var(--color-text-gray-700)', textAlign: 'center', fontWeight: 500 }}>
               Davanti a te c'è il banco vuoto con la breadboard e la batteria.
             </p>
-            <p style={{ margin: '6px 0 0', fontSize: 16, lineHeight: 1.4, color: 'var(--color-text-gray-400)', textAlign: 'center' }}>
+            <p style={{ margin: '6px 0 0', fontSize: preset.stepFontSize, lineHeight: 1.4, color: 'var(--color-text-gray-400)', textAlign: 'center' }}>
               Premi <strong>Avanti</strong> per iniziare a montare il circuito pezzo per pezzo!
             </p>
           </div>
@@ -106,17 +145,17 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
           /* Regular step */
           <>
             <div style={stepIconRow}>
-              <span style={{ fontSize: 22 }}>{stepIcon}</span>
-              <span style={stepTextStyle}>{step.text}</span>
+              <span style={{ fontSize: preset.stepFontSize + 4 }}>{stepIcon}</span>
+              <span style={{ ...stepTextStyle, fontSize: preset.stepFontSize }}>{step.text}</span>
             </div>
             {step.hint && (
-              <div style={hintStyle}>
+              <div style={{ ...hintStyle, fontSize: Math.max(14, preset.stepFontSize - 2) }}>
                 {step.hint}
               </div>
             )}
             {/* Breadboard pin hint: show pin locations if available */}
             {step.pinHint && (
-              <div style={pinHintStyle}>
+              <div style={{ ...pinHintStyle, fontSize: Math.max(13, preset.stepFontSize - 3) }}>
                 {step.pinHint}
               </div>
             )}

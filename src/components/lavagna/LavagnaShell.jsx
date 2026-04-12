@@ -391,6 +391,40 @@ export default function LavagnaShell() {
     try { localStorage.setItem('elab-lavagna-page', String(currentVolumePage)); } catch {}
   }, [currentVolumePage]);
 
+  // Andrea Marro 12/04/2026 — Persiste ultimo esperimento (id) cosi all'uscita
+  // l'utente ritrova il suo lavoro, non ripartire da zero.
+  useEffect(() => {
+    try {
+      if (currentExperiment?.id) {
+        localStorage.setItem('elab-lavagna-last-experiment', currentExperiment.id);
+      }
+    } catch { /* silent */ }
+  }, [currentExperiment]);
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-current-step', String(currentStep)); } catch {}
+  }, [currentStep]);
+  useEffect(() => {
+    try { localStorage.setItem('elab-lavagna-unlim-tab', unlimTab); } catch {}
+  }, [unlimTab]);
+
+  // Flush state on page hide/unload (mobile Safari + pagehide)
+  useEffect(() => {
+    const flush = () => {
+      try {
+        if (currentExperiment?.id) localStorage.setItem('elab-lavagna-last-experiment', currentExperiment.id);
+        localStorage.setItem('elab-lavagna-current-step', String(currentStep));
+        localStorage.setItem('elab-lavagna-unlim-tab', unlimTab);
+      } catch { /* silent */ }
+    };
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+    };
+  }, [currentExperiment, currentStep, unlimTab]);
+
   // Principio Zero: Bentornati flow replaces the old auto-open picker.
   // The BentornatiOverlay handles first-time vs returning users.
   // Fallback: if bentornati is dismissed without loading, open picker.

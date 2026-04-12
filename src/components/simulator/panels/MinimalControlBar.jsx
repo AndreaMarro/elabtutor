@@ -206,9 +206,11 @@ const MinimalControlBar = (props) => {
 
   return (
     <div className="minimal-toolbar" role="toolbar" aria-label="Controlli simulatore">
-      {/* ── 1. PLAY/PAUSE — big, lime ── */}
+      {/* ── 1. PLAY/PAUSE — big, lime ──
+           Fix Andrea Marro 12/04/2026: mostrato per OGNI esperimento attivo
+           (non solo Arduino). handlePlay gestisce sia AVR sia solver DC. */}
       <div className="minimal-toolbar__primary">
-        {isArduinoExperiment && (
+        {experiment && (
           isRunning ? (
             <button
               className="minimal-toolbar__btn minimal-toolbar__btn--play minimal-toolbar__btn--pause-state"
@@ -222,7 +224,7 @@ const MinimalControlBar = (props) => {
             <button
               className="minimal-toolbar__btn minimal-toolbar__btn--play"
               onClick={onPlay}
-              title="Avvia simulazione (Spazio)"
+              title={isArduinoExperiment ? "Compila e avvia (Spazio)" : "Avvia simulazione (Spazio)"}
               aria-label="Avvia"
             >
               <PlayIcon />
@@ -311,6 +313,7 @@ function buildOverflowItems(props) {
     onToggleBottomPanel, showBottomPanel,
     onExportPng,
     onGenerateReport, isGeneratingReport,
+    onOpenFumetto,
     onToggleWhiteboard, showWhiteboard,
     onToggleDrawingOverlay, showDrawingOverlay,
 
@@ -364,6 +367,8 @@ function buildOverflowItems(props) {
   items.push({ type: 'separator', label: 'Avanzato' });
   if (onExportPng) items.push({ label: 'Cattura Immagine', action: onExportPng });
   if (onGenerateReport) items.push({ label: isGeneratingReport ? 'Generazione...' : 'Report PDF', action: onGenerateReport, disabled: isGeneratingReport });
+  // Fumetto ELAB — Andrea Marro 12/04/2026: entry point reso visibile nell'overflow
+  if (onOpenFumetto) items.push({ label: 'Fumetto Lezione', action: onOpenFumetto });
   if (onToggleWhiteboard) items.push({ label: 'Lavagna', checked: showWhiteboard, action: onToggleWhiteboard });
   if (onToggleDrawingOverlay) items.push({ label: 'Penna Circuito', checked: showDrawingOverlay, action: onToggleDrawingOverlay });
 
