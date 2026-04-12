@@ -339,6 +339,39 @@ const NewElabSimulator = ({
     return step.componentId ? [step.componentId] : [];
   }, [currentExperiment, buildStepIndex]);
 
+  // Andrea Marro 12/04/2026 — Persist buildStepIndex per esperimento
+  // Solo in modalita guided/sandbox (complete inizia a Infinity e non deve essere salvato).
+  // Ripristina alla prima apertura di quell'esperimento; non sovrascrive scelte utente.
+  useEffect(() => {
+    const expId = currentExperiment?.id;
+    const buildMode = currentExperiment?.buildMode;
+    if (!expId || !buildMode) return;
+    if (buildMode !== 'guided' && buildMode !== 'sandbox') return;
+    try {
+      const saved = localStorage.getItem(`elab-sim-buildstep-${expId}`);
+      if (saved == null) return;
+      const idx = parseInt(saved, 10);
+      const maxIdx = (currentExperiment?.buildSteps?.length || 0) - 1;
+      if (!Number.isFinite(idx)) return;
+      if (idx < -1 || idx > maxIdx) return;
+      // Applica solo se siamo all'inizio (evita override se utente ha gia navigato)
+      if (buildStepIndex === -1 || buildStepIndex === 0) {
+        setBuildStepIndex(idx);
+      }
+    } catch { /* silent */ }
+    // Volutamente SOLO su cambio esperimento, non su cambio buildStepIndex
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentExperiment?.id]);
+
+  useEffect(() => {
+    const expId = currentExperiment?.id;
+    const buildMode = currentExperiment?.buildMode;
+    if (!expId || !buildMode) return;
+    if (buildMode !== 'guided' && buildMode !== 'sandbox') return;
+    if (!Number.isFinite(buildStepIndex)) return;
+    try { localStorage.setItem(`elab-sim-buildstep-${expId}`, String(buildStepIndex)); } catch { /* silent */ }
+  }, [buildStepIndex, currentExperiment?.id, currentExperiment?.buildMode]);
+
   useEffect(() => {
     if (!currentExperiment?.buildMode || currentExperiment.buildMode !== 'guided') return;
     if (buildStepIndex < 0) return;

@@ -198,7 +198,7 @@ textarea:focus-visible,
   border: 0 !important;
 }
 
-/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 /* ═══════════════════════════════════════════════════════════════ */
 /* FIX 6: CHAT OVERLAY — CSS hover/focus instead of DOM mutations */
 /* ═══════════════════════════════════════════════════════════════ */
@@ -317,5 +317,29 @@ textarea:focus-visible,
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------- *
+ * Touch targets >= 44x44 px (Apple HIG + WCAG 2.5.5 AAA)
+ * Andrea Marro — 12/04/2026
+ * Applicato SOLO a dispositivi puntatore "coarse" (iPad/iPhone/touch).
+ * Non tocchiamo il desktop mouse per non alterare il layout denso.
+ * Escape hatch: aggiungi classe .elab-no-touch-fix per bypassare.
+ * ------------------------------------------------------------- */
+@media (pointer: coarse) {
+  button:not([aria-hidden="true"]):not(.elab-no-touch-fix),
+  [role="button"]:not(.elab-no-touch-fix),
+  a.btn:not(.elab-no-touch-fix),
+  input[type="button"]:not(.elab-no-touch-fix),
+  input[type="submit"]:not(.elab-no-touch-fix) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  /* Bottoni toolbar icona-only: forza 44x44 */
+  button.minimal-toolbar__btn,
+  button.sim-icon-btn {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
