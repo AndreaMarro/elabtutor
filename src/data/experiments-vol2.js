@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL2 = {
         "r1": { x: 15, y: 60 },
         "mm1": { x: 120, y: 40 }
       },
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       code: null,
       hexFile: null,
       concept: "Ohmmetro, bande colorate, tolleranza resistenza, verifica pratica",
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Sulla breadboard i fori della stessa colonna (a-e) sono collegati tra loro."
         },
         {
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 2,
           text: "Inserisci il primo resistore da 1k\u03A9 nei fori A6 e A13 della breadboard (fila A).",
           componentId: "r1",
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL2 = {
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "Il partitore di tensione divide la tensione in parti proporzionali."
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 2,
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 3,
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il multimetro e impostalo su V (Volt).",
           componentId: "mm1",
           componentType: "multimeter",
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL2 = {
     // v2-cap6-esp2: LED in serie colori diversi
     // Same layout pattern as esp1 — R on e5-e12, LED1 on f14, LED2 on f20
     // -----------------------------------------------
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     {
       id: "v2-cap6-esp2",
       title: "Cap. 6 Esp. 2 - LED in serie colori diversi",
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL2 = {
       },
       steps: [
         "Posiziona il resistore da 330\u03A9 tra i fori e3 e e10.",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Inserisci il primo LED rosso con l'anodo in d10 e il catodo in d11.",
         "Inserisci il secondo LED rosso con l'anodo in d17 e il catodo in d18.",
         "Inserisci il terzo LED rosso con l'anodo in d22 e il catodo in d23.",
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 3,
           text: "Prendi il LED rosso e posizionalo sui fori F9 (anodo) e F10 (catodo).",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "led1",
           componentType: "led",
           targetPins: { "led1:anode": "bb1:f9", "led1:cathode": "bb1:f10" },
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Posiziona il multimetro accanto al circuito. Ti servirà per misurare!",
           componentId: "mm1",
           componentType: "multimeter",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "Il multimetro misura tensione, corrente e resistenza."
         },
         {
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL2 = {
           step: 6,
           text: "Prendi il resistore da 1kΩ dalla palette e posizionalo nei fori E15 e E22.",
           componentId: "r1",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e15", "r1:pin2": "bb1:e22" },
           hint: "Il resistore limita la corrente nel circuito."
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL2 = {
           step: 3,
           text: "Prendi il condensatore da 1000µF dalla palette e posizionalo nei fori E3 e E4.",
           componentId: "c1",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "capacitor",
           targetPins: { "c1:positive": "bb1:e3", "c1:negative": "bb1:e4" },
           hint: "Il polo + in E3, il polo − in E4. Attenzione alla polarità!"
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL2 = {
         "r1": { x: 249, y: 73.75 },
         "led1": { x: 286.5, y: 43.75 },
         "mm1": { x: 340, y: 20 }
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       },
       steps: [
         "Costruisci il circuito come nell'esperimento precedente (Cap.7 Esp.2).",
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-5", to: "bb1:a5", color: "red" },
         { from: "bb1:a12", to: "bb1:a14", color: "orange" },
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:a15", to: "bb1:g18", color: "yellow" },
         { from: "bb1:g19", to: "bb1:bus-top-minus-19", color: "black" },
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" },
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Il resistore limita la corrente nel circuito."
         },
         {
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 6,
           text: "Prendi il LED rosso dalla palette e posizionalo nei fori D12 e D13.",
           componentId: "led1",
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 5,
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona il multimetro accanto al circuito. Ti servirà per misurare!",
           componentId: "mm1",
           componentType: "multimeter",
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL2 = {
           hint: "Il resistore limita la corrente nel circuito."
         },
         {
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 6,
           text: "Prendi il resistore da 10kΩ dalla palette e posizionalo nei fori F11 e F18.",
           componentId: "r2",
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL2 = {
       hexFile: null,
       concept: "Motore DC, collegamento diretto, conversione energia elettrica in meccanica",
       layer: "terra",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bb1:bus-top-plus-10", to: "bb1:a10", color: "red" },
         { from: "bb1:g12", to: "mot1:positive", color: "yellow" },
         { from: "mot1:negative", to: "bb1:bus-top-minus-12", color: "black" },
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" }
       ],
       layout: {
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL2 = {
           step: 5,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E16 e E23.",
           componentId: "r1",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "resistor",
           targetPins: { "r1:pin1": "bb1:e16", "r1:pin2": "bb1:e23" },
           hint: "Il resistore limita la corrente nel circuito."
@@ -4017,7 +4017,7 @@ const EXPERIMENTS_VOL2 = {
       concept: "Robot analogico: cross-connection fototransistor\u2192MOSFET\u2192motore, diodi flyback di protezione",
       layer: "cielo",
       note: "Cross-connection: fototransistor DX pilota motore SX e viceversa. I diodi proteggono i MOSFET dalla forza controelettromotrice dei motori.",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -4218,7 +4218,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 26,
           text: "Collega un filo VIOLA dal foro G12 al foro G8.",
-// © Andrea Marro — 11/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:g12",
           wireTo: "bb1:g8",
           wireColor: "purple",

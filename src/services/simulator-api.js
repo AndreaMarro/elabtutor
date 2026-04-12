@@ -198,7 +198,7 @@ function createPublicAPI() {
     /**
      * Move a component to new coordinates
      * @param {string} componentId
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
      * @param {number} x - horizontal position
      * @param {number} y - vertical position
      */
@@ -399,7 +399,7 @@ function createPublicAPI() {
       // Try to capture screenshot
       const screenshot = await this.captureScreenshot();
       const images = screenshot
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
         ? [{ base64: screenshot.split(',')[1], mimeType: 'image/png' }]
         : [];
 
@@ -600,7 +600,7 @@ function createPublicAPI() {
         // If build step index exceeds hardware steps count, we're in code phase
         buildPhase = 'hardware'; // default — could be refined with scratchSteps info
       }
-// © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
       // Compact component list
       const components = (circuitState.components || []).map(c => ({

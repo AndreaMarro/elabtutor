@@ -198,7 +198,7 @@ const VOICE_COMMANDS = [
       const all = window.__ELAB_API?.getExperimentList?.();
       const exps = [...(all?.vol1 || []), ...(all?.vol2 || []), ...(all?.vol3 || [])];
       const match = exps.find(e => e.title?.toLowerCase().includes('semafor'));
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       if (match) window.__ELAB_API?.mountExperiment?.(match.id);
     },
     feedback: 'Sto montando il semaforo!',
@@ -399,7 +399,7 @@ const VOICE_COMMANDS = [
       const chapter = chapters.find(c => c.displayChapter === num);
       if (!chapter) return;
 
-// © Andrea Marro — 10/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
       // Find first experiment matching this chapter key
       const all = window.__ELAB_API?.getExperimentList?.();
       const volKey = `vol${volume}`;

@@ -198,10 +198,10 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 signal: controller.signal,
             });
 
-// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
             if (!resp.ok) return null;
 
             const data = await resp.json();
@@ -399,6 +399,7 @@ export function checkRateLimit() {
         const waitMs = RATE_LIMIT.minIntervalMs - elapsed;
         return {
             allowed: false,
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
             message: 'Aspetta qualche secondo...',
             waitMs,
         };
@@ -418,7 +419,6 @@ export function checkRateLimit() {
             message: 'Facciamo una pausa! Riprova tra un minuto.',
             waitMs: Math.max(0, waitMs),
         };
-// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // OK: registra il messaggio
@@ -600,6 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
     // ── G25: Master AbortController — hard timeout for entire sendChat() ──
     // 30s for text, 45s for images. Render cold-start can take 15-30s.
     const MASTER_TIMEOUT_TEXT = 30000;
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     const MASTER_TIMEOUT_IMAGE = 45000;
     const masterTimeout = images.length > 0 ? MASTER_TIMEOUT_IMAGE : MASTER_TIMEOUT_TEXT;
     const masterController = new AbortController();
@@ -619,7 +620,6 @@ export async function sendChat(message, images = [], options = {}) {
 
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
-// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
     const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
     const nanobotMessage = experimentContext
         ? `${BREVITY_RULE}\n${experimentContext}\n\nMessaggio studente:\n${message}`
@@ -801,6 +801,7 @@ export async function sendChat(message, images = [], options = {}) {
                         response: answer,
                         source: 'local-rag',
                         actions: extractActions(answer)
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
                     };
                 }
             } catch {
@@ -828,7 +829,6 @@ export async function sendChat(message, images = [], options = {}) {
                 };
             }
         }
-// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
         return {
             success: false,
@@ -1002,6 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     /**
      * Helper: chiama un endpoint di compilazione e ritorna il risultato
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
      */
     async function tryCompile(url, label) {
         const controller = new AbortController();
@@ -1029,7 +1030,6 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
                     data = data[0];
                 }
             } catch {
-// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 throw new Error('Risposta non valida dal compilatore');
             }
 

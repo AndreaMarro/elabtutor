@@ -198,8 +198,8 @@ async function requestDataCorrection(userId, corrections) {
         logger.error('[GDPR] Errore rettifica:', error);
         throw error;
     }
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
 }
-// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
 /**
  * Revoca consenso (Art. 7)
@@ -399,8 +399,8 @@ function getCOPPARequirements(age) {
 // PRIVACY BY DESIGN
 // ============================================
 
+// © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati
 /**
-// © Andrea Marro — 09/04/2026 — ELAB Tutor — Tutti i diritti riservati
  * Minimizza dati raccolti
  * @param {Object} data - Dati originali
  * @param {Array} allowedFields - Campi consentiti

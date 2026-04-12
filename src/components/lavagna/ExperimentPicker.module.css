@@ -198,7 +198,7 @@
 
 .card:active {
   transform: translateY(0) scale(0.98);
-/* © Andrea Marro — 04/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 12/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   transition-duration: 80ms;
 }
 .card:focus-visible {
