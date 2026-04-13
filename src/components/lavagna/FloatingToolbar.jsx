@@ -88,24 +88,22 @@ export default function FloatingToolbar({
   const dragRef = useRef(null);
   const barRef = useRef(null);
 
+  // Drag only from the drag handle area — buttons work normally
   const handleDragStart = useCallback((e) => {
+    // If user clicked a button, let the button handle it — no drag
+    if (e.target.closest('button')) return;
     e.preventDefault();
+    e.stopPropagation();
     const rect = barRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const startX = e.clientX;
-    const startY = e.clientY;
     const offsetX = e.clientX - rect.left;
     const offsetY = e.clientY - rect.top;
-    let dragging = false;
+    // Capture pointer so we don't lose it
+    if (barRef.current?.setPointerCapture) {
+      barRef.current.setPointerCapture(e.pointerId);
+    }
 
     const onMove = (ev) => {
-      // Start dragging only after 4px of movement (distinguishes click from drag)
-      if (!dragging) {
-        const dx = ev.clientX - startX;
-        const dy = ev.clientY - startY;
-        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
-        dragging = true;
-      }
       const x = ev.clientX - offsetX;
       const y = ev.clientY - offsetY;
       setPos({
@@ -113,15 +111,10 @@ export default function FloatingToolbar({
         y: Math.max(48, Math.min(window.innerHeight - rect.height, y)),
       });
     };
-    const onUp = (ev) => {
+    const onUp = () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
-      if (dragging) {
-        // Was a drag — save position, prevent the click on buttons
-        setPos(prev => { if (prev) savePos(prev); return prev; });
-        ev.stopPropagation();
-      }
-      // If not dragging, the click passes through to buttons normally
+      setPos(prev => { if (prev) savePos(prev); return prev; });
     };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
