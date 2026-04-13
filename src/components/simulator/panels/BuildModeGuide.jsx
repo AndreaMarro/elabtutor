@@ -22,6 +22,16 @@ import ovStyles from '../overlays.module.css';
 // Simple step number used instead of emoji per component type
 const STEP_ICONS = {};
 
+const SIZE_STORAGE_KEY = 'elab-build-guide-size';
+
+function loadSavedSize() {
+  try {
+    const raw = localStorage.getItem(SIZE_STORAGE_KEY);
+    if (raw) { const s = JSON.parse(raw); if (s.w && s.h) return s; }
+  } catch { /* */ }
+  return { w: 300, h: 350 };
+}
+
 const BuildModeGuide = React.memo(function BuildModeGuide({
   experiment,
   currentStep = -1,
@@ -29,6 +39,32 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
   onClose,
 }) {
   const [expanded, setExpanded] = useState(true);
+  const [size, setSize] = useState(loadSavedSize);
+  const resizeRef = React.useRef(null);
+
+  const handleResizeStart = React.useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startW = size.w;
+    const startH = size.h;
+    const onMove = (ev) => {
+      const newW = Math.max(220, Math.min(600, startW - (ev.clientX - startX)));
+      const newH = Math.max(200, Math.min(700, startH + (ev.clientY - startY)));
+      setSize({ w: newW, h: newH });
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      setSize(prev => {
+        try { localStorage.setItem(SIZE_STORAGE_KEY, JSON.stringify(prev)); } catch { /* */ }
+        return prev;
+      });
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, [size]);
 
   if (!experiment) return null;
   const buildSteps = experiment.buildSteps || [];
@@ -66,8 +102,15 @@ const BuildModeGuide = React.memo(function BuildModeGuide({
   const progressPct = isIntro ? 0 : ((currentStep + 1) / buildSteps.length) * 100;
 
   return (
-    <div className={ovStyles.guideRoot}>
-      {/* S74 B1: removed inline width:270 so CSS responsive widths apply (240px desktop, 220px tablet, 200px mobile-landscape, 100% mobile-portrait) */}
+    <div className={ovStyles.guideRoot} style={{ width: size.w, maxHeight: size.h }}>
+      {/* Resize handle — bottom-left corner (panel is anchored to right) */}
+      <div onPointerDown={handleResizeStart} ref={resizeRef}
+        style={{ position: 'absolute', bottom: 0, left: 0, width: 18, height: 18, cursor: 'nesw-resize', zIndex: 5, touchAction: 'none' }}
+        title="Trascina per ridimensionare">
+        <svg width="14" height="14" viewBox="0 0 14 14" style={{ position: 'absolute', bottom: 2, left: 2, opacity: 0.35 }}>
+          <path d="M12 2L2 12M12 6L6 12M12 10L10 12" stroke="#666" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </div>
       {/* Header */}
       <div className={ovStyles.guideHeader} style={{ background: 'linear-gradient(135deg, rgba(124,179,66,0.15), rgba(30,77,140,0.05))' }}>
         <span className={ovStyles.guideIcon}>{'\u2261'}</span>

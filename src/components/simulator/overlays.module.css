@@ -166,8 +166,7 @@
   color: var(--color-text, #333);
   overflow: auto;
   z-index: 20;
-  resize: both;
-  transition: box-shadow var(--transition-base, 200ms ease);
+  transition: width 200ms ease, box-shadow 200ms ease;
 }
 
 .guideHeader {
@@ -198,7 +197,7 @@
 }
 
 .guideCloseBtn {
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   border: none;
   background: none;
   cursor: pointer;
