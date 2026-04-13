@@ -60,13 +60,22 @@
   align-items: center;
   justify-content: center;
   cursor: grab;
-  padding: 0 2px;
+  padding: 4px 6px;
+  min-width: 20px;
+  min-height: 44px;
   color: var(--color-primary, #1E4D8C);
   flex-shrink: 0;
+  border-radius: 6px;
+  transition: background 150ms ease;
+}
+
+.dragHandle:hover {
+  background: rgba(30, 77, 140, 0.08);
 }
 
 .dragHandle:active {
   cursor: grabbing;
+  background: rgba(30, 77, 140, 0.15);
 }
 
 .divider {

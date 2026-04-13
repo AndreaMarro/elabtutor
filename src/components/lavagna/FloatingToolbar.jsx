@@ -136,12 +136,15 @@ export default function FloatingToolbar({
       onPointerDown={handleDragStart}
       onDoubleClick={handleDoubleClick}
     >
-      {/* Drag indicator */}
-      <div className={css.dragHandle} aria-hidden="true">
-        <svg width="6" height="20" viewBox="0 0 6 20" fill="none">
-          <circle cx="2" cy="4" r="1.2" fill="currentColor" opacity="0.3"/>
-          <circle cx="2" cy="10" r="1.2" fill="currentColor" opacity="0.3"/>
-          <circle cx="2" cy="16" r="1.2" fill="currentColor" opacity="0.3"/>
+      {/* Drag handle — area di presa ampia */}
+      <div className={css.dragHandle} aria-hidden="true" title="Trascina per spostare">
+        <svg width="8" height="28" viewBox="0 0 8 28" fill="none">
+          <circle cx="2.5" cy="6" r="1.5" fill="currentColor" opacity="0.35"/>
+          <circle cx="5.5" cy="6" r="1.5" fill="currentColor" opacity="0.35"/>
+          <circle cx="2.5" cy="14" r="1.5" fill="currentColor" opacity="0.35"/>
+          <circle cx="5.5" cy="14" r="1.5" fill="currentColor" opacity="0.35"/>
+          <circle cx="2.5" cy="22" r="1.5" fill="currentColor" opacity="0.35"/>
+          <circle cx="5.5" cy="22" r="1.5" fill="currentColor" opacity="0.35"/>
         </svg>
       </div>
       {tools.map((tool) => {
