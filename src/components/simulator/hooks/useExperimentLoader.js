@@ -17,6 +17,7 @@ import { inferParentFromPinAssignments } from '../utils/parentChild';
 import { hasLessonPath } from '../../../data/lesson-paths';
 import logger from '../../../utils/logger';
 
+import { importWithRetry } from '../../../utils/importWithRetry.js';
 /**
  * @param {object} params
  */
@@ -254,7 +255,7 @@ export default function useExperimentLoader({
 
     if (experiment.simulationMode === 'avr') {
       try {
-        const { default: AVRBridge } = await import('../engine/AVRBridge');
+        const { default: AVRBridge } = await importWithRetry(() => import('../engine/AVRBridge'));
         const bridge = new AVRBridge();
 
         bridge.onSerialOutput = (char) => {

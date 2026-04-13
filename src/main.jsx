@@ -28,6 +28,19 @@ initCodeProtection()
 // Student activity tracker — persiste dati reali in localStorage
 studentTracker.init()
 
+
+// Recupero automatico dopo un deploy: se un chunk Vite non si trova più
+// (index.html in cache punta a hash vecchi) ricarichiamo una sola volta
+// invece di mostrare l'error boundary all'utente.
+window.addEventListener('vite:preloadError', (event) => {
+  try { event.preventDefault(); } catch (e) { }
+  const KEY = 'elab_chunk_reloaded';
+  if (!sessionStorage.getItem(KEY)) {
+    sessionStorage.setItem(KEY, '1');
+    window.location.reload();
+  }
+});
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
 )

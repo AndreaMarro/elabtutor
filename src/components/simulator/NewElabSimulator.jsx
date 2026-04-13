@@ -42,7 +42,8 @@ import useExperimentLoader from './hooks/useExperimentLoader';
 import useCircuitHandlers from './hooks/useCircuitHandlers';
 import CodeEditorCM6 from './panels/CodeEditorCM6';
 import ScratchCompileBar, { ScratchErrorBoundary } from './panels/ScratchCompileBar';
-const ScratchEditor = lazy(() => import('./panels/ScratchEditor'));
+import { importWithRetry } from '../../utils/importWithRetry.js';
+const ScratchEditor = lazy(() => importWithRetry(() => import('./panels/ScratchEditor')));
 
 import PotOverlay from './overlays/PotOverlay';
 import LdrOverlay from './overlays/LdrOverlay';
