@@ -494,5 +494,189 @@
     "title": "Simon Says — Gioco di Memoria",
     "content": "ESPERIMENTO: Simon Says — Gioco di Memoria\nVolume: Volume 3 - Arduino\nCapitolo: Extra\nDescrizione: Costruisci il classico gioco Simon con 4 LED colorati, 4 pulsanti e un cicalino che suona 4 note diverse! Arduino genera una sequenza luminosa e sonora sempre più lunga: ripetila premendo i pulsanti giusti!\nContesto pedagogico: Questo esperimento implementa il gioco Simon Says con feedback sonoro. 4 LED colorati (rosso D9, verde D10, blu D11, giallo D12) + un cicalino piezo (D8) mostrano una sequenza di luci e suoni che si allunga ad ogni turno. Ogni colore ha la sua nota: rosso=Do(262Hz), verde=Mi(330Hz), blu=Sol(392Hz), giallo=Do alto(523Hz). 4 pulsanti (rosso D3, verde D5, blu D6, giallo D13) in INPUT_PULLUP permettono al giocatore di ripetere la sequenza. Un array seq[] memorizza fino a 100 elementi. La funzione accendi() usa tone() e noTone() per abbinare suono e luce. gameOver() suona un tono grave (150Hz) durante il lampeggio. Usa randomSeed(analogRead(A0)) per sequenze diverse ad ogni partita.\nComponenti: breadboard-half, nano-r4, resistor(470), resistor(470), resistor(470), resistor(470), led, led, led, led, push-button, push-button, push-button, push-button, buzzer-piezo\nPassi:\n  1. Passo 1\n  2. Passo 2\n  3. Passo 3\n  4. Passo 4\n  5. Passo 5\n  6. Passo 6\n  7. Passo 7\n  8. Passo 8",
     "token_estimate": 327
+  },
+  {
+    "id": "v3-cap5-esp1",
+    "volume": 3,
+    "chapter": "Capitolo 5 - Il nostro primo programma",
+    "title": "Cap. 5 Esp. 1 - Blink con LED_BUILTIN",
+    "content": "ESPERIMENTO: Cap. 5 Esp. 1 - Blink con LED_BUILTIN\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 5 - Il nostro primo programma\nDifficoltà: 1/5\nDescrizione: Il primo programma in assoluto! Facciamo lampeggiare il LED integrato sulla scheda Arduino, quello collegato al pin 13. Si accende per 1 secondo, si spegne per 1 secondo, e ripete all'infinito.\nConcetti chiave: pinMode, digitalWrite, delay, LED_BUILTIN, ciclo loop infinito\nComponenti utilizzati: bb1, nano1\nCosa osservare: Il LED integrato sulla scheda Arduino (vicino al pin 13) si accende per 1 secondo e si spegne per 1 secondo, all'infinito. Non serve nessun componente esterno!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta facendo il primo programma in assoluto: il Blink! Fa lampeggiare il LED integrato sulla scheda Arduino (pin 13). Il codice e semplicissimo: setup() configura il pin 13 come OUTPUT, poi loop() lo accende (HIGH), aspetta 1 secondo (delay 1000), lo spegne (LOW), aspetta ancora 1 secondo. Spiega con entusiasmo, e il primo traguardo! Rispondi in italiano.",
+    "token_estimate": 269
+  },
+  {
+    "id": "v3-cap5-esp2",
+    "volume": 3,
+    "chapter": "Capitolo 5 - Il nostro primo programma",
+    "title": "Cap. 5 Esp. 2 - Modifica tempi del Blink",
+    "content": "ESPERIMENTO: Cap. 5 Esp. 2 - Modifica tempi del Blink\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 5 - Il nostro primo programma\nDifficoltà: 1/5\nDescrizione: Cambiamo i tempi del Blink! Prova a modificare i valori dentro delay() per far lampeggiare il LED piu veloce o piu lento. Cosa succede con delay(100)? E con delay(2000)?\nConcetti chiave: Parametri delay, sperimentazione, millisecondi vs secondi\nComponenti utilizzati: bb1, nano1\nCosa osservare: Con delay(200) il LED lampeggia 5 volte al secondo invece di 1. Provate valori diversi per il tempo di accensione e spegnimento: con numeri diversi ottenete effetti asimmetrici!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta modificando i tempi del Blink. Incoraggialo a sperimentare con diversi valori di delay: cosa succede con delay(50)? E con delay(5000)? Spiega che i millisecondi sono millesimi di secondo. Rispondi in italiano.",
+    "token_estimate": 231
+  },
+  {
+    "id": "v3-cap6-esp1",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 1 - Circuito AND/OR con pulsanti",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 1 - Circuito AND/OR con pulsanti\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 1/5\nDescrizione: Costruiamo un circuito logico con due pulsanti e un LED, SENZA programmare Arduino! Se colleghiamo i pulsanti in serie serve premerli entrambi (AND), se li colleghiamo in parallelo basta uno qualsiasi (OR).\nConcetti chiave: Logica AND/OR, circuiti serie/parallelo, elettronica senza codice\nComponenti utilizzati: bb1, nano1, btn1, btn2, r1, led1\nCosa osservare: Con i pulsanti in serie (AND) il LED si accende SOLO quando li premi entrambi. Con i pulsanti in parallelo (OR) basta premerne uno qualsiasi. Questa e la logica booleana!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta esplorando i circuiti AND e OR con pulsanti fisici, SENZA codice Arduino. Spiega la differenza tra serie (AND - servono tutti) e parallelo (OR - basta uno). Usa analogie semplici: AND e come due porte in corridoio, OR e come due porte di una stanza. Rispondi in italiano.",
+    "token_estimate": 260
+  },
+  {
+    "id": "v3-cap6-esp2",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 1 - Colleghiamo la resistenza",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 1 - Colleghiamo la resistenza\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 1/5\nDescrizione: Colleghiamo un LED esterno al pin 13 con un resistore da 470 ohm. Usiamo lo stesso programma Blink, ma ora vediamo lampeggiare un LED sulla breadboard!\nConcetti chiave: LED esterno, resistore di protezione, circuito su breadboard\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED esterno sulla breadboard lampeggia insieme al LED integrato sulla scheda, perche entrambi sono collegati al pin 13. Il resistore da 470 ohm protegge il LED dalla troppa corrente.\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente ha collegato un LED esterno al pin 13 con un resistore. E lo stesso programma Blink ma ora il LED e sulla breadboard! Spiega perche serve il resistore (limita la corrente, senza il LED si brucia). Rispondi in italiano.",
+    "token_estimate": 231
+  },
+  {
+    "id": "v3-cap6-morse",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 3 - SOS in codice Morse",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 3 - SOS in codice Morse\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 2/5\nDescrizione: Modifichiamo il programma Blink per far lampeggiare il LED in codice Morse! S = tre lampi brevi, O = tre lampi lunghi. Il nostro Arduino manda un messaggio SOS!\nConcetti chiave: Funzioni personalizzate, temporizzazione, codice Morse\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED lampeggia in un ritmo riconoscibile: tre lampi brevi (S), tre lampi lunghi (O), tre lampi brevi (S), poi una pausa lunga. Questo e il segnale di soccorso universale SOS in codice Morse!\nContesto pedagogico: Lo studente sta facendo l'esperimento del codice Morse SOS con un LED. Spiega cos'e il codice Morse (inventato nel 1838, lettere come combinazioni di punti e linee). Perche SOS? Non e un'abbreviazione ma un segnale facile da ricordare e trasmettere. Rispondi in italiano.",
+    "token_estimate": 234
+  },
+  {
+    "id": "v3-cap6-esp3",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 2 - Cambia il numero di pin",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 2 - Cambia il numero di pin\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 1/5\nDescrizione: Spostiamo il LED su un pin diverso! Cambiamo il numero del pin nel codice e ricolleghiamo il filo. Cosi impariamo che possiamo usare QUALSIASI pin digitale.\nConcetti chiave: Pin digitali intercambiabili, configurazione flessibile\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED lampeggia esattamente come prima, ma ora e controllato dal pin 5 invece che dal 13. Tutti i pin digitali di Arduino funzionano allo stesso modo!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta imparando che i pin digitali sono intercambiabili. Il LED ora e sul pin 5 invece del 13. Spiega che Arduino ha tanti pin e possiamo scegliere quale usare, basta cambiare il numero nel codice. Rispondi in italiano.",
+    "token_estimate": 222
+  },
+  {
+    "id": "v3-cap6-esp4",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 4 - Due LED: effetto polizia",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 4 - Due LED: effetto polizia\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 2/5\nDescrizione: Due LED che si alternano come le luci della polizia! Quando uno e acceso l'altro e spento. Usiamo due pin digitali per controllare due LED separatamente.\nConcetti chiave: Piu pin OUTPUT, sequenza di stati, semaforo\nComponenti utilizzati: bb1, nano1, r1, r2, r3, led1, led2, led3\nCosa osservare: I 3 LED si accendono in sequenza come un semaforo: verde 3 secondi, giallo 1 secondo, rosso 3 secondi. Solo un LED alla volta e acceso!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta facendo il semaforo con 3 LED sui pin 5, 6 e 9. Spiega come il codice accende un solo LED alla volta: prima mette tutti LOW tranne quello che vuole accendere. Rispondi in italiano.",
+    "token_estimate": 211
+  },
+  {
+    "id": "v3-cap6-esp5",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 7 Ese. 7.3 - Pulsante con INPUT_PULLUP",
+    "content": "ESPERIMENTO: Cap. 7 Ese. 7.3 - Pulsante con INPUT_PULLUP\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 2/5\nDescrizione: Collegamento semplicissimo del pulsante con INPUT_PULLUP! Solo 1 filo + GND. Arduino attiva una resistenza interna. Quando premi, il LED si accende.\nConcetti chiave: digitalRead, INPUT_PULLUP, variabile booleana, toggle semplice\nComponenti utilizzati: bb1, nano1, btn1, r1, led1\nCosa osservare: Ogni volta che premi il pulsante, il LED cambia stato: se era spento si accende, se era acceso si spegne. La variabile statoLED ricorda lo stato tra un ciclo e l'altro!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando digitalRead per leggere un pulsante. Spiega INPUT_PULLUP: Arduino ha una resistenza interna che tiene il pin HIGH quando il pulsante non e premuto. Quando lo premi, il pin va LOW perche si collega a GND. Il codice usa una variabile booleana per ricordare lo stato. Rispondi in italiano.",
+    "token_estimate": 248
+  },
+  {
+    "id": "v3-cap6-esp6",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 7 Mini-progetto - Due LED, un pulsante",
+    "content": "ESPERIMENTO: Cap. 7 Mini-progetto - Due LED, un pulsante\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 2/5\nDescrizione: Se premi il pulsante il LED verde si accende, se non premi si accende il rosso. Arduino sceglie quale LED attivare in base allo stato del pulsante!\nConcetti chiave: Toggle, debounce, variabili di stato, 2 output\nComponenti utilizzati: bb1, nano1, btn1, r1, r2, led1, led2\nCosa osservare: All'avvio il LED verde è acceso e il rosso spento. Ogni volta che premi il pulsante, si scambiano: il verde si spegne e il rosso si accende, o viceversa. Il codice usa il debounce per evitare rimbalzi meccanici del pulsante.\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento '2 LED + Pulsante (toggle)' del Volume 3 — Arduino Programmato. Questo è l'esperimento più avanzato del capitolo 7! Il codice usa variabili booleane (statoVerde e ultimoPulsante) per ricordare lo stato tra un ciclo e l'altro. Rileva la transizione HIGH->LOW del pulsante (il momento esatto della pressione) e usa il debounce con delay(50) per evitare falsi contatti. Poi con if/else alterna quale LED è acceso. È come un interruttore che ogni volta che lo premi cambia stanza! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+    "token_estimate": 342
+  },
+  {
+    "id": "v3-cap6-esp7",
+    "volume": 3,
+    "chapter": "Capitolo 6 - I pin digitali",
+    "title": "Cap. 6 Esp. 7 - Debounce del pulsante",
+    "content": "ESPERIMENTO: Cap. 6 Esp. 7 - Debounce del pulsante\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 6 - I pin digitali\nDifficoltà: 2/5\nDescrizione: Miglioriamo il toggle! Il debounce con while aspetta che il pulsante venga rilasciato prima di continuare. Cosi evitiamo che un solo tocco venga letto come tante pressioni.\nConcetti chiave: Debounce con while, rimbalzo meccanico, attesa rilascio\nComponenti utilizzati: bb1, nano1, btn1, r1, led1\nCosa osservare: Rispetto all'Es. 6.5, il LED cambia stato in modo piu pulito. Il while aspetta che rilasci il pulsante, e il delay(300) dopo aggiunge un po di tempo per evitare i rimbalzi meccanici.\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta imparando il debounce con while. Il while(digitalRead(10)==LOW){} e un ciclo vuoto che BLOCCA il programma finche il pulsante resta premuto. Solo quando lo rilasci il programma continua. Poi delay(300) aspetta ancora 300ms per sicurezza. Spiega perche i pulsanti rimbalzano meccanicamente. Rispondi in italiano.",
+    "token_estimate": 259
+  },
+  {
+    "id": "v3-cap7-esp1",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 1 - analogRead base",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 1 - analogRead base\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Leggiamo un trimmer (potenziometro) con analogRead! Se il valore supera 511, il LED si accende. Il trimmer restituisce valori da 0 a 1023.\nConcetti chiave: analogRead, valori 0-1023, soglia, confronto\nComponenti utilizzati: bb1, nano1, pot1, r1, led1\nCosa osservare: Girando il potenziometro, il LED si accende quando superi la meta della rotazione (valore > 511 su 1023). E come un interruttore controllato dalla posizione della manopola!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando analogRead per la prima volta. Spiega che i pin analogici leggono valori da 0 a 1023 (10 bit), non solo HIGH/LOW come i digitali. Il trimmer e come una manopola del volume: girandolo cambia la tensione che Arduino legge. 511 e la meta. Rispondi in italiano.",
+    "token_estimate": 232
+  },
+  {
+    "id": "v3-cap7-esp2",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 2 - analogRead con tensione",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 2 - analogRead con tensione\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Convertiamo il valore del trimmer in Volt veri! Con una formula semplice, Arduino ci dice quanti Volt sta leggendo sul pin A0.\nConcetti chiave: Conversione ADC-Volt, float, formula proporzionale\nComponenti utilizzati: bb1, nano1, pot1, r1, led1\nCosa osservare: Il LED si accende sopra 2.5V (meta di 5V). La formula (valore * 5.0) / 1023 converte il numero grezzo in Volt reali. E la stessa cosa dell'Es. 7.1 ma ora ragioniamo in Volt!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta convertendo valori analogici in Volt. La formula e semplice: (valore * 5.0) / 1023. Il 5.0 e la tensione massima, 1023 e il valore massimo dell'ADC. float serve perche i Volt hanno i decimali! Rispondi in italiano.",
+    "token_estimate": 220
+  },
+  {
+    "id": "v3-cap7-esp3",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 3 - Trimmer controlla 3 LED",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 3 - Trimmer controlla 3 LED\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Il trimmer controlla 3 LED diversi! Poco girato = LED 1, a meta = LED 2, tutto girato = LED 3. Dividiamo il range 0-1023 in 3 zone.\nConcetti chiave: Intervalli, if-else if-else, range analogico diviso in zone\nComponenti utilizzati: bb1, nano1, pot1, r1, r2, r3, led1, led2, led3\nCosa osservare: Il range 0-1023 e diviso in 3 zone uguali: 0-340 accende il primo LED, 341-681 il secondo, 682-1023 il terzo. Girando il trimmer passi da un LED all'altro!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta dividendo il range analogico in 3 intervalli. 1023/3 = 341, quindi: zona 1 (0-340), zona 2 (341-681), zona 3 (682-1023). if-else if-else e come un semaforo con 3 condizioni. Rispondi in italiano.",
+    "token_estimate": 220
+  },
+  {
+    "id": "v3-cap7-esp4",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 4 - analogWrite (PWM fade)",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 4 - analogWrite (PWM fade)\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Facciamo crescere la luminosita del LED gradualmente! analogWrite non e analogico vero, ma usa il PWM (Pulse Width Modulation) per simulare valori intermedi.\nConcetti chiave: analogWrite, PWM, for loop, luminosita graduale\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED si accende piano piano, da spento a piena luminosita. analogWrite(5, i) manda un valore PWM da 0 (spento) a 255 (pieno). Il delay(10) rallenta l'effetto perche possiamo vederlo!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando analogWrite e PWM per la prima volta. Spiega che PWM accende e spegne il LED velocissimamente: 0=sempre spento, 128=acceso meta del tempo, 255=sempre acceso. L'occhio vede una luminosita media! Solo i pin con ~ funzionano (3,5,6,9,10,11). Rispondi in italiano.",
+    "token_estimate": 242
+  },
+  {
+    "id": "v3-cap7-esp5",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 5 - PWM con valori manuali",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 5 - PWM con valori manuali\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 1/5\nDescrizione: Proviamo valori PWM specifici per capire la relazione tra numero e luminosita. 0 = spento, 64 = debole, 128 = meta, 255 = massimo.\nConcetti chiave: Valori PWM discreti, relazione numero-luminosita\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED mostra 4 livelli di luminosita chiaramente diversi, da spento a piena potenza. 0-255 sono 256 possibili livelli: e come avere un dimmer digitale!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta esplorando i valori PWM manualmente. Incoraggialo a sperimentare: cosa succede con analogWrite(5, 1)? Si vede appena! E con 250 vs 255? Quasi nessuna differenza. La percezione umana non e lineare! Rispondi in italiano.",
+    "token_estimate": 215
+  },
+  {
+    "id": "v3-cap7-esp6",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 6 - Fade up/down con for",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 6 - Fade up/down con for\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Il LED si accende gradualmente e poi si spegne gradualmente, all'infinito! Due cicli for: uno che sale da 0 a 255 e uno che scende da 255 a 0.\nConcetti chiave: Due cicli for, fade up e down, effetto respiro\nComponenti utilizzati: bb1, nano1, r1, led1\nCosa osservare: Il LED fa un bellissimo effetto respiro: si accende piano, raggiunge il massimo, e poi si spegne piano. I due for lavorano in sequenza, uno dopo l'altro, all'infinito nel loop!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta facendo il fade up/down. Spiega che i due for sono speculari: il primo sale (i = i + 5) e il secondo scende (i = i - 5). Insieme creano un ciclo continuo. Si puo cambiare la velocita modificando delay o il passo (5). Rispondi in italiano.",
+    "token_estimate": 228
+  },
+  {
+    "id": "v3-cap7-esp7",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 7 - Trimmer controlla luminosita",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 7 - Trimmer controlla luminosita\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 2/5\nDescrizione: Il trimmer controlla la luminosita del LED in tempo reale! Usiamo map() per convertire il range 0-1023 del trimmer nel range 0-255 del PWM.\nConcetti chiave: map(), conversione range, trimmer come controller, analogRead+analogWrite\nComponenti utilizzati: bb1, nano1, pot1, r1, led1\nCosa osservare: Girando il potenziometro da un estremo all'altro, il LED passa da spento a piena luminosita in modo fluido. La funzione map() fa la conversione automatica: non serve fare calcoli a mano!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando map() per collegare trimmer e LED. map(valore, 0, 1023, 0, 255) converte proporzionalmente: se il trimmer e a meta (511), il PWM sara circa 127. E come tradurre da una scala all'altra! Rispondi in italiano.",
+    "token_estimate": 234
+  },
+  {
+    "id": "v3-cap7-esp8",
+    "volume": 3,
+    "chapter": "Capitolo 7 - I pin analogici",
+    "title": "Cap. 7 Esp. 8 - DAC reale (10 bit)",
+    "content": "ESPERIMENTO: Cap. 7 Esp. 8 - DAC reale (10 bit)\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 7 - I pin analogici\nDifficoltà: 3/5\nDescrizione: Il Nano R4 ha un vero DAC (Digital-to-Analog Converter) sul pin A0! Con analogWriteResolution(10) possiamo scrivere valori da 0 a 1023 con uscita analogica vera, non PWM.\nConcetti chiave: DAC, analogWriteResolution, 10 bit vs 8 bit, uscita analogica vera\nComponenti utilizzati: bb1, nano1, pot1\nCosa osservare: Il valore letto dal trimmer su A1 viene copiato direttamente sull'uscita A0. A differenza del PWM, il DAC produce una tensione vera e continua! Con un multimetro si puo misurare.\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando il DAC del Nano R4. Spiega la differenza: PWM accende/spegne velocemente (onda quadra), DAC produce una tensione VERA e continua. analogWriteResolution(10) usa 10 bit = 1024 livelli (0-1023), molto piu fine degli 8 bit standard (0-255). Rispondi in italiano.",
+    "token_estimate": 246
+  },
+  {
+    "id": "v3-cap8-esp1",
+    "volume": 3,
+    "chapter": "Capitolo 8 - Comunicazione Seriale",
+    "title": "Cap. 8 Esp. 1 - Serial.println in setup",
+    "content": "ESPERIMENTO: Cap. 8 Esp. 1 - Serial.println in setup\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 8 - Comunicazione Seriale\nDifficoltà: 1/5\nDescrizione: Il primo messaggio da Arduino al computer! Scriviamo 'Ciao dal Team di ELAB!' una sola volta nel setup, e lo vediamo apparire nel Serial Monitor.\nConcetti chiave: Serial.begin, Serial.println, Serial Monitor, comunicazione USB\nComponenti utilizzati: bb1, nano1\nCosa osservare: Nel Serial Monitor appare una sola volta 'Ciao dal Team di ELAB!'. Perche? Perche Serial.println e nel setup(), che si esegue UNA SOLA VOLTA all'accensione. Il loop() e vuoto!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando Serial per la prima volta! Serial e come un tubo che collega Arduino al computer via USB. Serial.begin(9600) apre il tubo a velocita 9600. while(!Serial) aspetta che il tubo sia pronto. println stampa una riga. Rispondi in italiano.",
+    "token_estimate": 233
+  },
+  {
+    "id": "v3-cap8-esp2",
+    "volume": 3,
+    "chapter": "Capitolo 8 - Comunicazione Seriale",
+    "title": "Cap. 8 Esp. 2 - Serial.println in loop",
+    "content": "ESPERIMENTO: Cap. 8 Esp. 2 - Serial.println in loop\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 8 - Comunicazione Seriale\nDifficoltà: 1/5\nDescrizione: Ora il messaggio si ripete all'infinito! Spostando Serial.println nel loop(), Arduino scrive il messaggio continuamente. Attenzione: senza delay va velocissimo!\nConcetti chiave: Differenza setup vs loop, flusso continuo, velocita seriale\nComponenti utilizzati: bb1, nano1\nCosa osservare: Il Serial Monitor si riempie di messaggi velocissimamente! Senza delay, Arduino stampa migliaia di righe al secondo. Aggiungendo delay(1000) il messaggio appare una volta al secondo.\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta confrontando setup vs loop per Serial. Spiega che il loop si ripete all'infinito: senza delay, Arduino e molto veloce e stampa tantissimo. Questo e utile per leggere sensori in tempo reale! Rispondi in italiano.",
+    "token_estimate": 230
+  },
+  {
+    "id": "v3-cap8-esp3",
+    "volume": 3,
+    "chapter": "Capitolo 8 - Comunicazione Seriale",
+    "title": "Cap. 8 Esp. 3 - analogRead + Serial Monitor",
+    "content": "ESPERIMENTO: Cap. 8 Esp. 3 - analogRead + Serial Monitor\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 8 - Comunicazione Seriale\nDifficoltà: 2/5\nDescrizione: Leggi il valore del potenziometro su A0 e stampalo sul Serial Monitor! Valori 0-1023.\nConcetti chiave: analogRead, Serial Monitor, ADC 10 bit (0-1023)\nComponenti utilizzati: bb1, nano1, pot1\nCosa osservare: Sul Serial Monitor appaiono numeri che cambiano in tempo reale quando giri la manopola. Il valore va da 0 (manopola tutta a sinistra, 0V) a 1023 (tutta a destra, 5V). Questo è il convertitore analogico-digitale (ADC) a 10 bit dell'Arduino: trasforma una tensione analogica in un numero digitale!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'analogRead + Serial Monitor' del Volume 3 — Arduino Programmato. Questo è il primo esperimento con i pin analogici E il Serial Monitor! Il codice usa Serial.begin(9600) nel setup per aprire la comunicazione seriale. Nel loop(), analogRead(A0) legge il valore del potenziometro come un numero da 0 a 1023 (ADC a 10 bit), poi Serial.println(valore) lo stampa sul monitor. Il delay(200) evita di stampare troppo velocemente. È come un termometro digitale che legge la temperatura e la mostra sullo schermo! Spiega il codice riga per riga in modo semplice, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
+    "token_estimate": 348
+  },
+  {
+    "id": "v3-cap8-esp4",
+    "volume": 3,
+    "chapter": "Capitolo 8 - Comunicazione Seriale",
+    "title": "Cap. 8 Esp. 4 - Serial Plotter con 2 pot",
+    "content": "ESPERIMENTO: Cap. 8 Esp. 4 - Serial Plotter con 2 pot\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 8 - Comunicazione Seriale\nDifficoltà: 2/5\nDescrizione: Due potenziometri collegati ai pin A3 e A4, con i valori stampati nel formato giusto per il Serial Plotter di Arduino IDE. Si vedono due grafici in tempo reale!\nConcetti chiave: Serial Plotter, formato label:valore, grafici in tempo reale, 2 canali\nComponenti utilizzati: bb1, nano1, pot1, pot2\nCosa osservare: Nel Serial Plotter si vedono due grafici colorati che si muovono in tempo reale quando giri i potenziometri. Il formato A3:valore A4:valore crea automaticamente la legenda!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta usando il Serial Plotter con 2 potenziometri. Il formato e importante: 'etichetta:valore spazio etichetta:valore' con println alla fine. Il Plotter crea automaticamente un grafico con 2 linee colorate. delay(100) campiona 10 volte al secondo. Rispondi in italiano.",
+    "token_estimate": 247
+  },
+  {
+    "id": "v3-cap8-esp5",
+    "volume": 3,
+    "chapter": "Capitolo 8 - Comunicazione Seriale",
+    "title": "Cap. 8 Esp. 5 - Pot + 3 LED + Serial",
+    "content": "ESPERIMENTO: Cap. 8 Esp. 5 - Pot + 3 LED + Serial\nVolume: Volume 3 - Arduino Programmato\nCapitolo: Capitolo 8 - Comunicazione Seriale\nDifficoltà: 3/5\nDescrizione: Combiniamo tutto! Un potenziometro controlla 3 LED E stampa i valori sul Serial Monitor. E il progetto finale del Volume 3!\nConcetti chiave: Progetto combinato, analogRead + digitalOutput + Serial, intervalli\nComponenti utilizzati: bb1, nano1, pot1, r1, r2, r3, led1, led2, led3\nCosa osservare: Girando il trimmer si vedono i valori cambiare nel Serial Monitor E i LED si accendono in base alla zona: sotto 300 il primo, tra 300 e 700 il secondo, sopra 700 il terzo. Combina input analogico, output digitale e comunicazione seriale!\nContesto pedagogico: Sei Galileo, il tutor AI di ELAB. Lo studente sta facendo il progetto finale del Volume 3! Combina analogRead (trimmer su A3), 3 LED digitali (pin 12, 11, 10) e Serial Monitor. E come un dashboard: vedi i numeri E il risultato sui LED. Congratulati per essere arrivato alla fine del volume! Rispondi in italiano.",
+    "token_estimate": 258
   }
 ]
