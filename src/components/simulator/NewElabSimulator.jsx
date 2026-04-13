@@ -835,7 +835,7 @@ const NewElabSimulator = ({
             {[
               { key: 'complete', label: 'Già Montato', icon: '\uD83D\uDD27', color: 'var(--color-primary, #1E4D8C)', title: 'Circuito già pronto — osserva e sperimenta' },
               { key: 'guided', label: 'Passo Passo', icon: '\uD83D\uDC63', color: 'var(--color-accent, #4A7A25)', title: 'Costruisci il circuito un pezzo alla volta' },
-              { key: 'sandbox', label: 'Percorso', icon: '\uD83C\uDFA8', color: 'var(--color-primary, #1E4D8C)', title: 'Segui il percorso dell\'esperimento' },
+              { key: 'sandbox', label: 'Libero', icon: '\uD83C\uDFA8', color: 'var(--color-primary, #1E4D8C)', title: 'Breadboard libera — sperimenta come vuoi' },
             ].map(m => {
               const isActive = (m.key === 'complete' && !currentExperiment.buildMode) || currentExperiment.buildMode === m.key;
               return (<button key={m.key} onClick={() => handleBuildModeSwitch(m.key)} title={m.title} style={{ border: 'none', borderRadius: 'var(--radius-md, 10px)', padding: '8px 24px', fontSize: 15, fontWeight: isActive ? 700 : 500, fontFamily: "var(--font-sans)", background: isActive ? m.color : 'transparent', color: isActive ? 'var(--color-text-inverse, #fff)' : 'var(--color-text-secondary, #6B6B80)', cursor: 'pointer', transition: 'all 200ms cubic-bezier(0.16, 1, 0.3, 1)', display: 'flex', alignItems: 'center', gap: 8, minHeight: 'var(--touch-min, 56px)', boxShadow: isActive ? 'var(--shadow-md, 0 4px 8px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03))' : 'none', letterSpacing: isActive ? '0.3px' : '0', transform: isActive ? 'scale(1.02)' : 'scale(1)' }}><span style={{ fontSize: 17 }}>{m.icon}</span>{m.label}</button>);
