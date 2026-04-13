@@ -1,1 +1,1 @@
-{"status":"running","currentCycle":1,"completedCycles":[1],"lastUpdate":"2026-04-14T04:30:00Z","notes":"CICLO 1: Edge TTS già attivo su VPS 72.60.129.50:8880 e collegato al frontend. Kokoro richiede SSH access (non disponibile). Score ciclo: 7/10 — TTS funziona ma non è Kokoro."}
+{"status":"running","currentCycle":5,"completedCycles":[1,2,3,4],"lastUpdate":"2026-04-14T04:40:00Z","notes":"C1: Edge TTS attivo VPS, Kokoro richiede SSH+Python3.12. C2: ScratchXml 100% (26/26 avr). C3: 5 abilità UNLIM + 30 test. C4: Elimina toast feedback. Next: Dashboard."}
