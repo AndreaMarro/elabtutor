@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-04-14T05:20:00Z",
+  "ralphLoop": {"iteration": 2, "status": "running", "completedCycles": [1,2,3,4,5,6,7,8]},
+  "build": {"pass": true, "tests": 3804},
+  "unlim": {"actions": 17, "skills": 5, "tests": 30},
+  "critic": {"credentials_exposed": 0, "console_logs": 2, "todos": 0, "alert": false},
+  "scratch": {"complete": true, "notes": "Vol1+Vol2=circuit mode, no Scratch needed. Vol3=26/26."},
+  "parita": {"score": 7.5, "checked": 15, "topIssue": "4 esp Vol2 non simulabili (multimetro)"},
+  "touch": {"p0_fixed": 5, "p1_remaining": 12, "p2_remaining": 11},
+  "kokoro": {"localHealthy": true, "vpsHealthy": true, "chain": "Kokoro→EdgeTTS→Nanobot"},
+  "recommendations": [
+    "Fix P1 touch targets (12 undersized in ChatOverlay/TutorTools)",
+    "Implementare Hei UNLIM wake word via browser SpeechRecognition",
+    "Multimetro virtuale per Vol2 esperimenti 1-4",
+    "Test UNLIM con 30 domande reali via Nanobot live"
+  ],
+  "blockers": []
+}
