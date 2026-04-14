@@ -228,6 +228,11 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
                       {exp.desc && <p className={css.cardDesc}>{exp.desc}</p>}
                       {/* Metadata row: type badge, difficulty, time, components */}
                       <div className={css.cardMeta}>
+                        {exp.advancedProject && (
+                          <span className={css.advancedBadge} title="Progetto avanzato capstone">
+                            Progetto avanzato
+                          </span>
+                        )}
                         {exp.simulationMode === 'avr' && (
                           <span className={css.typeBadge} title="Richiede codice Arduino">
                             Arduino
@@ -243,9 +248,9 @@ export default function ExperimentPicker({ open, onClose, onSelect, completedIds
                             {exp.components.length} pz
                           </span>
                         )}
-                        {exp.steps?.length > 0 && (
-                          <span className={css.metaItem} title="Tempo stimato">
-                            ~{Math.max(3, exp.steps.length * 2)} min
+                        {exp.estimatedMinutes && (
+                          <span className={css.metaItem} title="Durata stimata">
+                            ~{exp.estimatedMinutes} min
                           </span>
                         )}
                       </div>

@@ -82,9 +82,12 @@ const ComponentPalette = ({
   onWireModeToggle,
   wireMode = false,
   volumeFilter = 0,
+  experimentComponents = null,
   className = '',
   style = {},
 }) => {
+  const [showAll, setShowAll] = useState(false);
+
   const registryMap = useMemo(() => {
     const all = getAllComponents();
     const map = {};
@@ -93,6 +96,19 @@ const ComponentPalette = ({
     }
     return map;
   }, []);
+
+  // Set of component types used in the current experiment
+  const experimentTypeSet = useMemo(() => {
+    if (!experimentComponents || experimentComponents.length === 0) return null;
+    return new Set(experimentComponents);
+  }, [experimentComponents]);
+
+  // When experimentComponents changes (new experiment selected), reset to filtered view
+  React.useEffect(() => {
+    setShowAll(false);
+  }, [experimentComponents]);
+
+  const isFiltered = experimentTypeSet && !showAll;
 
   const filteredCategories = useMemo(() => {
     return CATEGORIES.map((cat) => {
@@ -108,11 +124,12 @@ const ComponentPalette = ({
         })
         .filter((item) => {
           if (volumeFilter > 0 && item.volumeAvailableFrom > volumeFilter) return false;
+          if (isFiltered && !experimentTypeSet.has(item.type)) return false;
           return true;
         });
       return { ...cat, items };
     }).filter((cat) => cat.items.length > 0);
-  }, [registryMap, volumeFilter]);
+  }, [registryMap, volumeFilter, isFiltered, experimentTypeSet]);
 
   return (
     <div
@@ -122,7 +139,9 @@ const ComponentPalette = ({
     >
       {/* Compact header */}
       <div style={S.header}>
-        <span style={S.headerTitle}>Componenti</span>
+        <span style={S.headerTitle}>
+          {isFiltered ? 'Componenti esperimento' : 'Componenti'}
+        </span>
         <span style={S.headerCount}>
           {filteredCategories.reduce((sum, c) => sum + c.items.length, 0)}
         </span>
@@ -148,6 +167,19 @@ const ComponentPalette = ({
           </div>
         ))}
       </div>
+
+      {/* Show all / Show experiment toggle */}
+      {experimentTypeSet && (
+        <div style={S.filterToggleWrap}>
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            style={S.filterToggleBtn}
+            aria-label={showAll ? 'Mostra solo componenti esperimento' : 'Mostra tutti i componenti'}
+          >
+            {showAll ? 'Solo esperimento' : 'Mostra tutti i componenti'}
+          </button>
+        </div>
+      )}
 
       {/* Wire mode toggle — compact */}
       <div style={S.footer}>
@@ -273,6 +305,26 @@ const S = {
     textOverflow: 'ellipsis',
     color: 'var(--color-text-gray-700, #333)',
     lineHeight: 1.2,
+  },
+
+  filterToggleWrap: {
+    padding: '4px 10px 0',
+  },
+
+  filterToggleBtn: {
+    width: '100%',
+    padding: '5px 0',
+    border: '1px dashed var(--color-primary, #1E4D8C)',
+    borderRadius: 8,
+    background: 'var(--color-bg-secondary, #FAFAFA)',
+    color: 'var(--color-primary, #1E4D8C)',
+    fontFamily: 'var(--font-sans, "Open Sans", sans-serif)',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    textAlign: 'center',
+    transition: 'all 150ms ease',
+    minHeight: 36,
   },
 
   footer: {

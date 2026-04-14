@@ -198,7 +198,7 @@ export function useTTS() {
       setIsPaused(false);
     };
 
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
     utterance.onerror = (event) => {
       if (event.error !== 'interrupted' && event.error !== 'canceled') {
         logger.error('TTS Error:', event.error);

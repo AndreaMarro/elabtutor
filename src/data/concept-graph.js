@@ -198,7 +198,7 @@ export const CONCEPTS = {
 // Each concept lists what must be understood BEFORE it
 export const PREREQUISITES = {
   'circuito-chiuso': [],
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
   'polarita-led': ['circuito-chiuso'],
   'breadboard': ['circuito-chiuso'],
   'resistenza-protezione': ['circuito-chiuso', 'polarita-led'],

@@ -9,6 +9,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { sendChat, analyzeImage, checkRateLimit } from '../../services/api';
 import { validateMessage, sanitizeOutput } from '../../utils/contentFilter';
 import { isLessonPrepCommand, getLessonSummary, prepareLesson } from '../../services/lessonPrepService';
+import { collectFullContext } from '../../services/unlimContextCollector';
 import logger from '../../utils/logger';
 
 // ── Welcome message ──
@@ -197,8 +198,8 @@ async function executeIntentTags(rawResponse) {
           }
         }
       } catch (err) {
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
         logger.warn('[Lavagna] INTENT parse error:', err.message);
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
       }
     }
   } catch (err) {
@@ -398,8 +399,8 @@ export default function useGalileoChat() {
     return () => api.off?.('circuitChange', handler);
   }, []);
 
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
   // ── Send message ──
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
   const handleSend = useCallback(async (messageOverride) => {
     const userMessage = messageOverride || input;
     if (!userMessage.trim() || isLoading) return;
@@ -512,10 +513,11 @@ export default function useGalileoChat() {
 
     const experimentContext = buildTutorContext();
     const api = typeof window !== 'undefined' && window.__ELAB_API;
-    let simulatorContext = null;
-    try { simulatorContext = api?.getSimulatorContext?.(); } catch { /* silent */ }
 
-    const activeExp = api?.getActiveExperiment?.();
+    // UNLIM vede TUTTO: raccolta contesto completo prima di ogni sendChat
+    const simulatorContext = collectFullContext();
+
+    const activeExp = api?.getActiveExperiment?.() || api?.getCurrentExperiment?.();
     const result = await sendChat(userMessage, [], {
       socraticMode: true,
       experimentContext: experimentContext || null,
@@ -598,9 +600,9 @@ export default function useGalileoChat() {
         const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '');
         const images = [{ base64, mimeType: 'image/png' }];
         setMessages(prev => [...prev, {
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
           id: Date.now(), role: 'user',
           content: 'Analizza questa schermata del simulatore',
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
           image: dataUrl,
         }]);
 

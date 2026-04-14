@@ -228,6 +228,12 @@ const ExperimentPicker = ({ onSelectExperiment, currentExperimentId = null, user
                     {hasBuildSteps && (
                       <span style={S.buildBadge}>Passo-Passo</span>
                     )}
+                    {exp.advancedProject && (
+                      <span style={S.advancedBadge}>Progetto avanzato</span>
+                    )}
+                    {exp.estimatedMinutes && (
+                      <span style={S.timeBadge}>~{exp.estimatedMinutes} min</span>
+                    )}
                   </div>
                 </button>
               );
@@ -502,6 +508,26 @@ const S = {
     color: 'var(--color-success, #2E7D32)',
     fontFamily: 'var(--font-sans)',
     fontWeight: 600,
+  },
+
+  advancedBadge: {
+    fontSize: 14,
+    padding: '3px 10px',
+    borderRadius: 12,
+    background: '#FFF3E0',
+    color: '#E65100',
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 600,
+  },
+
+  timeBadge: {
+    fontSize: 14,
+    padding: '3px 10px',
+    borderRadius: 12,
+    background: 'var(--color-bg-tertiary, #F5F5F5)',
+    color: 'var(--color-text-gray-400, #666)',
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 500,
   },
 };
 

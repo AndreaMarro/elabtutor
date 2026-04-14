@@ -198,7 +198,7 @@ export default function useExperimentLoader({
     sessionMetrics.trackExperimentLoad(experiment.id);
     recordEvent('experiment_loaded', { experimentId: experiment.id, experimentName: experiment.name || experiment.id });
     if (onExperimentChangeRef.current) onExperimentChangeRef.current(experiment);
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
     setIsRunning(false);
     setSimulationTime(0);
     setSerialOutput('');
@@ -399,7 +399,7 @@ export default function useExperimentLoader({
 
       // TX/RX LED pulse
       const currentSerial = avrRef.current.serialBuffer;
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
       if (currentSerial.length > (avrTxLenRef.current || 0)) {
         newStates._txActive = true;
         avrTxLenRef.current = currentSerial.length;

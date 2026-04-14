@@ -198,7 +198,7 @@ export const TRIMMER_3LED_SCRATCH = `<xml xmlns="https://developers.google.com/b
 </statement>
 <statement name="ELSE">
 <block type="arduino_digital_write"><field name="PIN">3</field><field name="STATE">LOW</field>
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
 <next><block type="arduino_digital_write"><field name="PIN">5</field><field name="STATE">LOW</field>
 <next><block type="arduino_digital_write"><field name="PIN">6</field><field name="STATE">HIGH</field>
 </block></next></block></next></block>

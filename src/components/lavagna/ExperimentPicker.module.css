@@ -198,7 +198,7 @@
 
 .card:active {
   transform: translateY(0) scale(0.98);
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   transition-duration: 80ms;
 }
 .card:focus-visible {
@@ -253,6 +253,18 @@
   color: var(--color-primary, #1E4D8C);
   background: rgba(30, 77, 140, 0.1);
   padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.advancedBadge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #E65100;
+  background: #FFF3E0;
+  padding: 2px 8px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.3px;

@@ -198,7 +198,7 @@
   font-weight: 600;
   margin-top: 8px;
   min-height: 44px;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 }
 
 /* ─── TABLE ──────────────────────────────────── */
@@ -399,7 +399,7 @@
 .stickyStudentTh {
   position: sticky;
   left: 0;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   top: 28px;
   background: #FFFFFF;
   z-index: 3;
@@ -600,7 +600,7 @@
 }
 
 .errorCode {
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   font-size: 14px;
   color: #1a1a2e;
   font-family: monospace;
@@ -801,7 +801,7 @@
 
 .textMuted {
   color: #64748B;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   font-size: 14px;
 }
 
@@ -1002,7 +1002,7 @@
   margin-top: 8px;
 }
 
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 .legendItem {
   font-size: 14px;
   display: flex;

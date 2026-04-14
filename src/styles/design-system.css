@@ -198,7 +198,7 @@
   --color-code-cursor: #F59E0B;
   --color-code-selection: rgba(124, 179, 66, 0.2);
   --color-code-line-active: rgba(124, 179, 66, 0.06);
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   --color-code-gutter: #45475A;
   --color-code-comment: #6B7280;
 
@@ -399,7 +399,7 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   text-decoration: none;
   transition: top var(--transition-fast);

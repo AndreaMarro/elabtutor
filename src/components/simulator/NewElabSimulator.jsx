@@ -850,7 +850,7 @@ const NewElabSimulator = ({
         {showSidebar && (
           <div ref={sidebarRef} className="elab-simulator__sidebar">
             {leftPanelMode === 'palette' && currentExperiment && (currentExperiment.buildMode !== 'guided') && (
-              <ComponentPalette wireMode={wireMode} onWireModeToggle={() => setWireMode(prev => !prev)} volumeFilter={selectedVolume} style={{ height: '100%', border: 'none', borderRadius: 0 }} />
+              <ComponentPalette wireMode={wireMode} onWireModeToggle={() => setWireMode(prev => !prev)} volumeFilter={selectedVolume} experimentComponents={currentExperiment?.components ? [...new Set(currentExperiment.components.map(c => c.type))] : null} style={{ height: '100%', border: 'none', borderRadius: 0 }} />
             )}
             <div style={{ display: leftPanelMode === 'palette' && currentExperiment && currentExperiment.buildMode !== 'guided' ? 'none' : 'block', height: '100%' }}>
               <ExperimentPicker onSelectExperiment={(exp) => { handleSelectExperiment(exp); if (window.innerWidth <= 1365) setShowSidebar(false); }} currentExperimentId={currentExperiment?.id} userKits={volumeUserKits} />

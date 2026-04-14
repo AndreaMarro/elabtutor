@@ -198,7 +198,7 @@
 .statusDot {
   width: 7px;
   height: 7px;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   border-radius: 50%;
   background: var(--color-accent);
   display: inline-block;
@@ -399,7 +399,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   transition: all 150ms;
   flex-shrink: 0;
   border: none;
@@ -600,7 +600,7 @@
 .bubbleRateLimit {
   composes: bubble;
   background: rgba(245, 166, 35, 0.1);
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   color: #92600a;
   border: 1px solid rgba(245, 166, 35, 0.3);
   border-radius: 16px 16px 16px 4px;
@@ -801,7 +801,7 @@
 /* ── New Message Badge ── */
 .newMessageBadge {
   position: absolute;
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
