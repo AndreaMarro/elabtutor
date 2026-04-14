@@ -1,1 +1,1 @@
-{"status":"running","iteration":3,"completedIter3":["accenti-vol2","abilita-unlim-6-7","kokoro-test-8"],"testCount":3815,"buildPass":true,"lastUpdate":"2026-04-14T06:00:00Z"}
+{"status":"running","iteration":5,"testCount":3857,"buildPass":true,"lastUpdate":"2026-04-14T06:20:00Z","notes":"Iter5: verificati 3 bug audit parita — tutti falsi positivi. Console.log sono intenzionali. ScratchXml 100%. 7 abilita UNLIM. Wake word attivo. Kokoro locale OK.","score":"7.2/10"}
