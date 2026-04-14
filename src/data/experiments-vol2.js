@@ -47,7 +47,7 @@ const EXPERIMENTS_VOL2 = {
     {
       id: "v2-cap3-esp1",
       title: "Cap. 3 Esp. 1 - Controlliamo la carica della batteria",
-      desc: "Usiamo il multimetro per misurare quanti Volt ha la nostra batteria da 9V. Scopriamo se e carica!",
+      desc: "Usiamo il multimetro per misurare quanti Volt ha la nostra batteria da 9V. Scopriamo se è carica!",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 1,
       simulable: false,
@@ -152,7 +152,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 2,
-          text: "Posiziona il multimetro e impostalo su V (Volt). Sara il nostro strumento di misura quotidiano.",
+          text: "Posiziona il multimetro e impostalo su V (Volt). Sarà il nostro strumento di misura quotidiano.",
           componentId: "mm1",
           componentType: "multimeter",
           hint: "Il multimetro ci dice quanta energia ha ancora la batteria."
@@ -167,11 +167,11 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 4,
-          text: "Collega il puntale nero al polo negativo (-). Segna il valore sul quaderno: questa e la misura del Giorno 1!",
+          text: "Collega il puntale nero al polo negativo (-). Segna il valore sul quaderno: questa è la misura del Giorno 1!",
           wireFrom: "mm1:negative",
           wireTo: "bat1:negative",
           wireColor: "black",
-          hint: "Ripeti ogni giorno alla stessa ora e confronta i valori. La tensione scendera piano piano!"
+          hint: "Ripeti ogni giorno alla stessa ora e confronta i valori. La tensione scenderà piano piano!"
         }
       ],
       quiz: [
@@ -182,7 +182,7 @@ const EXPERIMENTS_VOL2 = {
     {
       id: "v2-cap3-esp3",
       title: "Cap. 3 Esp. 3 - Misuriamo una resistenza",
-      desc: "Impariamo a misurare il valore di una resistenza con il multimetro. Le bande colorate dicono la verita?",
+      desc: "Impariamo a misurare il valore di una resistenza con il multimetro. Le bande colorate dicono la verità?",
       chapter: "Capitolo 3 - Il Multimetro",
       difficulty: 1,
       simulable: false,
@@ -209,8 +209,8 @@ const EXPERIMENTS_VOL2 = {
         "Tocca i terminali del resistore con i puntali.",
         "Confronta il valore misurato con quello delle bande: sono uguali?"
       ],
-      observe: "Il multimetro misura ~328-332 Ohm per un resistore da 330 Ohm. La differenza e normale: ogni resistore ha una tolleranza del 5% (tra 313 e 347 Ohm).",
-      unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta misurando una resistenza con il multimetro in modalita Ohm. Le bande colorate indicano il valore nominale (330 Ohm), ma il valore reale puo variare del 5%. Il multimetro manda una piccola corrente e calcola R = V/I. Spiega la tolleranza con un'analogia semplice. Rispondi in italiano.",
+      observe: "Il multimetro misura ~328-332 Ohm per un resistore da 330 Ohm. La differenza è normale: ogni resistore ha una tolleranza del 5% (tra 313 e 347 Ohm).",
+      unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta misurando una resistenza con il multimetro in modalita Ohm. Le bande colorate indicano il valore nominale (330 Ohm), ma il valore reale puo variare del 5%. Il multimetro manda una piccola corrente è calcola R = V/I. Spiega la tolleranza con un'analogia semplice. Rispondi in italiano.",
       buildSteps: [
         {
           step: 1,
@@ -221,7 +221,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 2,
-          text: "Posiziona il multimetro accanto al resistore e impostalo sulla modalita Ohm (il simbolo omega).",
+          text: "Posiziona il multimetro accanto al resistore e impostalo sulla modalità Ohm (il simbolo omega).",
           componentId: "mm1",
           componentType: "multimeter",
           hint: "La modalita Ohm serve per misurare le resistenze."
@@ -236,7 +236,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 4,
-          text: "Collega l'altro puntale all'altro terminale del resistore. Leggi il valore: e vicino a 330 Ohm?",
+          text: "Collega l'altro puntale all'altro terminale del resistore. Leggi il valore: è vicino a 330 Ohm?",
           wireFrom: "mm1:negative",
           wireTo: "r1:pin2",
           wireColor: "black",
@@ -244,7 +244,7 @@ const EXPERIMENTS_VOL2 = {
         }
       ],
       quiz: [
-        { question: "In che modalita devi mettere il multimetro per misurare una resistenza?", options: ["V (Volt)", "A (Ampere)", "Ohm (simbolo omega)"], correct: 2, explanation: "Per misurare le resistenze serve la modalita Ohm, indicata dal simbolo greco omega. Il multimetro manda una piccola corrente e calcola la resistenza!" },
+        { question: "In che modalita devi mettere il multimetro per misurare una resistenza?", options: ["V (Volt)", "A (Ampere)", "Ohm (simbolo omega)"], correct: 2, explanation: "Per misurare le resistenze serve la modalità Ohm, indicata dal simbolo greco omega. Il multimetro manda una piccola corrente è calcola la resistenza!" },
         { question: "Se le bande dicono 330 Ohm e il multimetro misura 328 Ohm, è un problema?", options: ["Si, la resistenza e rotta", "No, e normale — le resistenze hanno una tolleranza del 5%", "Si, bisogna cambiarla"], correct: 1, explanation: "Le resistenze hanno una tolleranza (di solito +-5%). Quindi 330 Ohm puo misurare da 313 a 347 Ohm. 328 e perfettamente nella norma!" },
       ],
     },
@@ -335,7 +335,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 7,
-          text: "Collega un filo nero dall'altro terminale del resistore al polo negativo della batteria. Il circuito e chiuso! Leggi: circa 9mA.",
+          text: "Collega un filo nero dall'altro terminale del resistore al polo negativo della batteria. Il circuito è chiuso! Leggi: circa 9mA.",
           wireFrom: "r1:pin2",
           wireTo: "bat1:negative",
           wireColor: "black",
@@ -354,7 +354,7 @@ const EXPERIMENTS_VOL2 = {
     {
       id: "v2-cap4-esp1",
       title: "Cap. 4 Esp. 1 - Due resistori in parallelo",
-      desc: "Mettiamo due resistori da 1kOhm in parallelo e misuriamo. Il risultato e la metà!",
+      desc: "Mettiamo due resistori da 1kOhm in parallelo e misuriamo. Il risultato è la metà!",
       chapter: "Capitolo 4 - Approfondiamo le Resistenze",
       difficulty: 2,
       icon: "\u{1F500}",
@@ -393,7 +393,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Ci servira per collegare i resistori in parallelo.",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Ci servirà per collegare i resistori in parallelo.",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "Sulla breadboard i fori della stessa colonna (a-e) sono collegati tra loro."
@@ -490,7 +490,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
-          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Ci servira per mettere i resistori in fila.",
+          text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Ci servirà per mettere i resistori in fila.",
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "La breadboard collega automaticamente i fori nella stessa colonna."
@@ -650,7 +650,7 @@ const EXPERIMENTS_VOL2 = {
         },
         {
           step: 8,
-          text: "Collega un filo nero dalla fine dell'ultimo resistore al polo - della batteria. Il circuito e chiuso!",
+          text: "Collega un filo nero dalla fine dell'ultimo resistore al polo - della batteria. Il circuito è chiuso!",
           wireFrom: "r3:pin2",
           wireTo: "bat1:negative",
           wireColor: "black",
@@ -1487,7 +1487,7 @@ const EXPERIMENTS_VOL2 = {
           question: "Cos'è la tensione forward (Vf) di un LED?",
           options: ["La tensione minima che il LED richiede per accendersi", "La tensione massima prima che il LED esploda", "La tensione della batteria"],
           correct: 0,
-          explanation: "Vf è come una 'quota di pedaggio': il LED richiede questa tensione minima per far passare la corrente e produrre luce. Ogni colore ha un Vf diverso!"
+          explanation: "Vf è come una 'quota di pedaggio': il LED richiede questa tensione minima per far passare la corrente è produrre luce. Ogni colore ha un Vf diverso!"
         },
         {
           question: "Perché un LED rosso è un LED verde hanno Vf diversi?",
