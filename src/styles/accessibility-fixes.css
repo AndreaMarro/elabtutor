@@ -85,6 +85,34 @@
   min-height: 44px !important;
 }
 
+/* Tutor/Chat overlay buttons — forced minimum touch targets (P1 audit 13/04) */
+@media (pointer: coarse) {
+  /* Chat send/attach/voice buttons */
+  [class*="ChatOverlay"] button,
+  [class*="chatOverlay"] button,
+  [class*="TutorTools"] button,
+  [class*="tutorTools"] button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  /* Tutor V4 tab buttons and controls */
+  .v4-tab-btn,
+  .v4-close-btn,
+  .v4-mascot,
+  [class*="ElabTutor"] button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  /* GalileoAdapter tab buttons */
+  [class*="GalileoAdapter"] button,
+  [class*="galileoAdapter"] button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════ */
 /* FIX 3: FOCUS INDICATORS - Visible focus rings on all interactive */
 /* ═══════════════════════════════════════════════════════════════ */
@@ -170,6 +198,7 @@ textarea:focus-visible,
   left: -9999px;
   speak: always;
 }
+/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 .control-btn:not([aria-label]):not([aria-labelledby])::before {
   content: "Controllo simulatore";
@@ -198,7 +227,6 @@ textarea:focus-visible,
   border: 0 !important;
 }
 
-/* © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 /* ═══════════════════════════════════════════════════════════════ */
 /* FIX 6: CHAT OVERLAY — CSS hover/focus instead of DOM mutations */
 /* ═══════════════════════════════════════════════════════════════ */
