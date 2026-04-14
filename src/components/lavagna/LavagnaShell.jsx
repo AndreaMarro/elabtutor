@@ -19,6 +19,7 @@ import ErrorToast from './ErrorToast';
 import { soundTick, soundPlay, soundPause } from './lavagnaSounds';
 import { buildClassProfile, getNextLessonSuggestion } from '../../services/classProfile';
 import { HandWaveIcon, PartyIcon, FlaskIcon } from '../common/ElabIcons';
+import { isWakeWordSupported, startWakeWordListener, stopWakeWordListener } from '../../services/wakeWord';
 import css from './LavagnaShell.module.css';
 
 const NewElabSimulator = lazy(() => import('../simulator/NewElabSimulator'));
@@ -374,6 +375,27 @@ export default function LavagnaShell() {
   }); // complete | guided | sandbox
   const [drawingEnabled, setDrawingEnabled] = useState(false);
   const [bentornatiVisible, setBentornatiVisible] = useState(true);
+  const [wakeWordActive, setWakeWordActive] = useState(false);
+
+  // "Ehi UNLIM" wake word — ascolta in background, apre UNLIM e manda il comando
+  useEffect(() => {
+    if (!isWakeWordSupported()) return;
+    const started = startWakeWordListener({
+      onWake: () => {
+        setGalileoOpen(true);
+        setToolToast('Ti ascolto!');
+        setTimeout(() => setToolToast(null), 2000);
+      },
+      onCommand: (text) => {
+        const api = typeof window !== 'undefined' && window.__ELAB_API;
+        if (api?.galileo?.sendMessage) {
+          api.galileo.sendMessage(text);
+        }
+      },
+    });
+    setWakeWordActive(started);
+    return () => stopWakeWordListener();
+  }, []);
 
   // Persist layout sizes and volume navigation to localStorage
   useEffect(() => {
