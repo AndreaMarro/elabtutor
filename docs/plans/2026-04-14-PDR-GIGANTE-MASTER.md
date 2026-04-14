@@ -325,6 +325,21 @@ SESSIONI WEB (se avviate)
 
 ---
 
+## PRIORITÀ ASSOLUTA PROSSIMA SESSIONE (parole di Andrea)
+
+> "UNLIM deve uscire una volta per tutte! Onnipotente!"
+
+1. **UNLIM contesto circuito COMPLETO** — errori, codice, step, tutto
+2. **UNLIM vision** — screenshot + analisi incrociata
+3. **RAG allargato** — volumi PDF chunked, 500+ chunk
+4. **UNLIM linguaggio naturale** — 50 formulazioni testate con multi-analisi incrociata
+5. **Algoritmi incrociati** — combinare contesto + vision + RAG + NL per risposta ottimale
+6. **Struttura esperimenti vs libri** — i libri raggruppano per CONCETTO con variazioni, il simulatore ha lista piatta. DEVE cambiare. Un esperimento nel libro può avere più casistiche/variazioni che sono "più eleganti e compatte" di come le abbiamo implementate.
+
+> "hai interpretato troppo alla lettera e hai spiattellato le cose tutte di fila"
+
+Questo è il feedback più importante: l'organizzazione degli esperimenti deve riflettere la struttura dei LIBRI FISICI, non essere una lista sequenziale meccanica.
+
 ## MASSIMA ONESTÀ — Cosa NON funziona ancora
 
 1. **Dashboard docente** — shell con pochi dati reali, grafici assenti
