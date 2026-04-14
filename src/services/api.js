@@ -18,6 +18,7 @@ import { searchKnowledgeBase } from '../data/unlim-knowledge-base';
 const _SUPABASE_EDGE = (import.meta.env.VITE_SUPABASE_EDGE_URL || 'https://euqpdueopmlllqjmqnyb.supabase.co/functions/v1').trim();
 const _SUPABASE_ANON = (import.meta.env.VITE_SUPABASE_EDGE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1cXBkdWVvcG1sbGxxam1xbnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDI3MDksImV4cCI6MjA5MDcxODcwOX0.289s8NklODdiXDVc_sXBb_Y7SGMgWSOss70iKQRVpjQ').trim();
 const NANOBOT_URL = (import.meta.env.VITE_NANOBOT_URL || '').trim() || _SUPABASE_EDGE; // Supabase Edge primary, Render legacy
+const RENDER_FALLBACK = 'https://elab-galileo.onrender.com'; // Fallback se Edge e webhook falliscono
 const CHAT_WEBHOOK = (import.meta.env.VITE_N8N_CHAT_URL || '').trim();
 const COMPILE_URL = (import.meta.env.VITE_COMPILE_URL || '').trim() || null; // Server standalone (priorità)
 const COMPILE_WEBHOOK = (import.meta.env.VITE_COMPILE_WEBHOOK_URL || '').trim() || null; // Backend fallback
@@ -197,8 +198,8 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
                 body: JSON.stringify(body),
                 signal: controller.signal,
             });
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
             if (!resp.ok) return null;
 
             const data = await resp.json();
@@ -398,8 +399,8 @@ export function checkRateLimit() {
             allowed: false,
             message: 'Facciamo una pausa! Riprova tra un minuto.',
             waitMs: Math.max(0, waitMs),
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
         };
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     // OK: registra il messaggio
@@ -599,8 +600,8 @@ export async function sendChat(message, images = [], options = {}) {
     try {
 
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
     const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
     const nanobotMessage = experimentContext
         ? `${BREVITY_RULE}\n${experimentContext}\n\nMessaggio studente:\n${message}`
@@ -615,6 +616,32 @@ export async function sendChat(message, images = [], options = {}) {
     if (NANOBOT_URL) {
         const nanobotResult = await tryNanobot(nanobotMessage, circuitState, combinedSignal, experimentId, images, simulatorContext);
         if (nanobotResult) return nanobotResult;
+    }
+
+    // 1b. Fallback: Try Render Nanobot (5 provider AI, V5 routing) if Edge failed
+    if (RENDER_FALLBACK && (!NANOBOT_URL || NANOBOT_URL.includes('supabase.co'))) {
+        try {
+            const renderResp = await fetch(`${RENDER_FALLBACK}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: AbortSignal.timeout(25000), // Render cold start ~15s
+                body: JSON.stringify({ message: nanobotMessage, sessionId: getTutorSessionId(), experimentId }),
+            });
+            if (renderResp.ok) {
+                const renderData = await renderResp.json();
+                if (renderData.success && renderData.response) {
+                    // Render fallback success
+                    return {
+                        success: true,
+                        response: renderData.response,
+                        source: 'render-fallback',
+                        actions: extractActions(renderData.response),
+                    };
+                }
+            }
+        } catch (renderErr) {
+            // Render fallback failed — fall through to webhook
+        }
     }
 
     // 2. Fall through to backend webhook
@@ -774,6 +801,7 @@ export async function sendChat(message, images = [], options = {}) {
                         response: answer,
                         source: 'local-rag',
                         actions: extractActions(answer)
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
                     };
                 }
             } catch {
@@ -801,7 +829,6 @@ export async function sendChat(message, images = [], options = {}) {
                 };
             }
         }
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
         return {
             success: false,
@@ -975,6 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     /**
      * Helper: chiama un endpoint di compilazione e ritorna il risultato
+// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
      */
     async function tryCompile(url, label) {
         const controller = new AbortController();
@@ -1002,7 +1030,6 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
                     data = data[0];
                 }
             } catch {
-// © Andrea Marro — 13/04/2026 — ELAB Tutor — Tutti i diritti riservati
                 throw new Error('Risposta non valida dal compilatore');
             }
 
