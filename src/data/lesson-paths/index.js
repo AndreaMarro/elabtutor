@@ -198,7 +198,7 @@ const LESSON_PATHS = {
   'v3-cap7-esp8': v3Cap7Esp8,
   'v3-cap7-mini': v3Cap7Mini,
   'v3-cap8-esp1': v3Cap8Esp1,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
   'v3-cap8-esp2': v3Cap8Esp2,
   'v3-cap8-esp3': v3Cap8Esp3,
   'v3-cap8-esp4': v3Cap8Esp4,

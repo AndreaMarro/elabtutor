@@ -198,7 +198,7 @@ class LicenseService {
     }
 
     // Logout con rilascio device
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
     async logout() {
         await this.releaseLicense();
         this.cachedLicense = null;

@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL1 = {
           componentId: "led1",
           componentType: "led",
           targetPins: { "led1:anode": "bb1:f2", "led1:cathode": "bb1:f3" },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "L'anodo (+) va in F2, il catodo (−) va in F3. Nella sezione inferiore della breadboard!"
         },
         {
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL1 = {
 
     // ═══════════════════════════════════════════════════
     // CAPITOLO 7 — Cos'è il LED RGB? (6 esperimenti)
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
     // ═══════════════════════════════════════════════════
     {
       id: "v1-cap7-esp1",
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "Il resistore protegge il canale verde del LED RGB. Copre 7 fori nella fila a."
         },
         {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 3,
           text: "Collega un filo ROSSO dal polo + della batteria al bus + (colonna 1)",
           wireFrom: "bat1:positive",
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL1 = {
       desc: "Accendi insieme il rosso e il blu del LED RGB usando due resistori da 470Ω.",
       chapter: "Capitolo 7 - Cos'è il LED RGB?",
       difficulty: 2,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
       icon: "\u26A0\uFE0F",
       simulationMode: "circuit",
       components: [
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL1 = {
         "bat1": { x: 30, y: 55 },
         "bb1": { x: 100, y: 10 },
         "r1": { x: 151.5, y: 73.75 },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "r2": { x: 166.5, y: 73.75 },
         "r3": { x: 181.5, y: 73.75 },
         "rgb1": { x: 136.5, y: 68.75 }
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL1 = {
       steps: [
         "Ripeti il circuito RGB dell'esperimento 5",
         "Imposta un resistore più basso sul canale rosso (220Ω)",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Lascia verde e blu a 470Ω",
         "Osserva come cambia la tonalità finale del colore"
       ],
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "La breadboard collega i componenti senza saldature."
         },
         {
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 5,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ROSSO dal bus + (col. 2) al foro A2, per alimentare il resistore.",
           wireFrom: "bb1:bus-top-plus-2",
           wireTo: "bb1:a2",
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "Il resistore protegge il LED limitando la corrente del canale blu."
         },
         {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 7,
           text: "Collega un filo ROSSO dal bus + (col. 11) al foro A11, per alimentare R2.",
           wireFrom: "bb1:bus-top-plus-11",
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL1 = {
           componentType: "push-button",
           targetPins: { "btn1:pin1": "bb1:e2", "btn1:pin2": "bb1:f4" },
           hint: "BTN1 controllerà il canale ROSSO del LED RGB."
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 5,
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL1 = {
       code: null,
       hexFile: null,
       concept: "Resistori diversi = luminosità diverse per canale",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
       layer: "schema",
       note: "R diversi cambiano l'intensità di ogni colore. Sperimenta!",
       estimatedMinutes: 45,
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL1 = {
       ],
       layout: {
         "bat1": { x: 15, y: 60 },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "bb1": { x: 100, y: 10 },
         "pot1": { x: 155.25, y: 51.25 },
         "r1": { x: 211.5, y: 73.75 },
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "I 3 pin: VCC in E5, Signal in E6, GND in E7."
         },
         {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 4,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori E10 e E17.",
           componentId: "r1",
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo NERO dal foro A7 al foro bus − superiore (col. 7).",
           wireFrom: "bb1:a7",
           wireTo: "bb1:bus-top-minus-7",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "black",
           hint: "Questo filo riporta la corrente al bus negativo."
         },
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL1 = {
           step: 14,
           text: "Collega un filo NERO dal foro A19 al foro bus − superiore (col. 19).",
           wireFrom: "bb1:a19",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireTo: "bb1:bus-top-minus-19",
           wireColor: "black",
           hint: "Questo filo riporta la corrente al bus negativo."
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL1 = {
         {
           question: "Come funziona il miscelatore blu/rosso con il potenziometro?",
           options: ["Girando la manopola, la corrente si sposta gradualmente dal blu al rosso", "Il pot accende un colore alla volta", "Il pot cambia la batteria"],
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           correct: 0,
           explanation: "Il potenziometro divide la corrente tra i due canali: da un lato tutto blu, dall'altro tutto rosso, nel mezzo il viola!"
         },
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL1 = {
           hint: "Questo filo porta la corrente dal bus positivo al componente."
         },
         {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 14,
           text: "Collega un filo GIALLO dal foro A3 al foro A17.",
           wireFrom: "bb1:a3",
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 4,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Prendi il pulsante dalla palette e posizionalo nei fori E2 e F4.",
           componentId: "btn1",
           componentType: "push-button",
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL1 = {
           step: 3,
           text: "Prendi il potenziometro da 10kΩ dalla palette e posizionalo nei fori E2, E3 e E4.",
           componentId: "pot1",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "potentiometer",
           targetPins: { "pot1:vcc": "bb1:e2", "pot1:signal": "bb1:e3", "pot1:gnd": "bb1:e4" },
           hint: "I 3 pin: VCC in E2, Signal in E3, GND in E4."
@@ -4017,7 +4017,7 @@ const EXPERIMENTS_VOL1 = {
         "Sfida: cosa succede se metti il pulsante DOPO il pot?"
       ],
       observe: "Pulsante = ON/OFF, potenziometro = regola luminosit\u00e0. Una catena di controllo a 2 livelli!",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Sfida: aggiungi pulsante all'esp 8'. Il pulsante funge da ON/OFF generale, il potenziometro regola la luminosità, e il LED mostra il risultato. È una catena di controllo: pulsante -> pot -> resistore -> LED. Sfida lo studente a pensare: cosa succede se il pulsante viene messo DOPO il pot invece che prima? Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
@@ -4218,7 +4218,7 @@ const EXPERIMENTS_VOL1 = {
       estimatedMinutes: 30,
       buildSteps: [
         {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           step: 1,
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
@@ -4419,7 +4419,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 7,
           text: "Collega un filo ROSSO dal foro bus + superiore (col. 5) al foro A5.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireFrom: "bb1:bus-top-plus-5",
           wireTo: "bb1:a5",
           wireColor: "red",
@@ -4620,7 +4620,7 @@ const EXPERIMENTS_VOL1 = {
           wireTo: "bb1:bus-top-plus-1",
           wireColor: "red",
           hint: "Questo filo porta la corrente dalla batteria al bus positivo della breadboard."
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 11,
@@ -4821,7 +4821,7 @@ const EXPERIMENTS_VOL1 = {
         {
           step: 5,
           text: "Prendi il fotoresistore (LDR) dalla palette e posizionalo nei fori H5 e H6.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "ldr1",
           componentType: "photo-resistor",
           targetPins: { "ldr1:pin1": "bb1:h5", "ldr1:pin2": "bb1:h6" },
@@ -5022,7 +5022,7 @@ const EXPERIMENTS_VOL1 = {
           targetPins: { "pot1:vcc": "bb1:e2", "pot1:signal": "bb1:e3", "pot1:gnd": "bb1:e4" },
           hint: "I 3 pin: VCC in E2, Signal in E3, GND in E4."
         },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 4,
           text: "Prendi il resistore da 470Ω dalla palette e posizionalo nei fori C7 e C14.",
@@ -5223,7 +5223,7 @@ const EXPERIMENTS_VOL1 = {
         "Premi il pulsante E illumina l'LDR: servono entrambe le condizioni!"
       ],
       observe: "Servono DUE condizioni: pulsante premuto E luce sull'LDR. \u00c8 come una porta con 2 serrature! Il resistore da 220\u03A9 protegge il LED.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Aggiungi pulsante al circuito LDR'. Il pulsante e l'LDR sono in serie: entrambi devono 'dire si' per accendere il LED. Il pulsante deve essere premuto E ci deve essere luce sull'LDR. Spiega il concetto di AND logico: servono due condizioni vere contemporaneamente. È come una porta con due serrature: servono entrambe le chiavi. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
       code: null,
       hexFile: null,
@@ -5424,7 +5424,7 @@ const EXPERIMENTS_VOL1 = {
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + inferiore (col. 1).",
           wireFrom: "bat1:positive",
           wireTo: "bb1:bus-bot-plus-1",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           wireColor: "red",
           hint: "Alimentazione positiva della breadboard."
         },
@@ -5625,7 +5625,7 @@ const EXPERIMENTS_VOL1 = {
           correct: 0,
           explanation: "È proprio un campanello! Quando premi il pulsante, il circuito si chiude e il buzzer suona. Quando rilasci, il circuito si apre e il suono si ferma!"
         },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           question: "Qual è la somiglianza tra questo circuito e quello con LED + pulsante?",
           options: ["Non hanno nulla in comune", "Usano entrambi un fotoresistore", "In entrambi, il pulsante controlla l'accensione di un componente"],
@@ -5826,7 +5826,7 @@ const EXPERIMENTS_VOL1 = {
       steps: [
         "Ripeti il circuito dell'esperimento 1 con reed switch, resistore e LED",
         "Avvicina il magnete per chiudere il contatto del reed switch",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "Sperimenta diversi valori di resistore per aumentare o ridurre la luminosità",
         "Confronta l'intensità del LED tra un valore e l'altro"
       ],
@@ -6027,7 +6027,7 @@ const EXPERIMENTS_VOL1 = {
           targetPins: { "rgb1:red": "bb1:d24", "rgb1:common": "bb1:d25", "rgb1:green": "bb1:d26", "rgb1:blue": "bb1:d27" },
           hint: "I 4 piedini: Rosso in D24, Catodo comune in D25, Verde in D26, Blu in D27."
         },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 6,
           text: "Collega un filo ROSSO dal polo + della batteria al foro bus + superiore (col. 1).",
@@ -6228,7 +6228,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 10,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo VERDE dal foro A13 al foro A17.",
           wireFrom: "bb1:a13",
           wireTo: "bb1:a17",
@@ -6429,7 +6429,7 @@ const EXPERIMENTS_VOL1 = {
       note: "Circuito creativo senza breadboard.",
       estimatedMinutes: 30,
       buildSteps: [
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 1,
           text: "Posiziona la batteria 9V a sinistra della breadboard",
@@ -6630,7 +6630,7 @@ const EXPERIMENTS_VOL1 = {
       ],
       observe: "Il magnete accende il robot! Gli occhi verdi si illuminano e la mano RGB cambia colore con le 3 manopole. Complimenti, hai costruito il tuo primo robot!",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta guardando l'esperimento 'Il Primo Robot ELAB'. Questo è il progetto finale del Volume 1! Il robot ha: occhi verdi (2 LED), mano colorata (LED RGB con 3 potenziometri per controllare il colore), e un sensore magnetico (reed switch) come interruttore generale. Il magnete accende tutto il robot! Spiega come tutti i concetti imparati nel volume si uniscono qui. Complimentati con lo studente per essere arrivato fin qui. Spiega in modo semplice e coinvolgente, usando analogie adatte a bambini di 8-12 anni. Rispondi in italiano.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
       code: null,
       hexFile: null,
       concept: "Progetto finale: integrazione tutti i componenti del volume",
@@ -6831,7 +6831,7 @@ const EXPERIMENTS_VOL1 = {
         },
         {
           step: 26,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Collega un filo ARANCIONE dal foro A50 al foro A53.",
           wireFrom: "bb1:a50",
           wireTo: "bb1:a53",

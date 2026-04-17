@@ -198,7 +198,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   gap: 6px;
   padding: 6px 10px;
   background: rgba(255, 255, 255, 0.1);
@@ -399,7 +399,7 @@
 /* ═══════════════════════════════════════════════
    CHAT OVERLAY — Floating Panel
    ═══════════════════════════════════════════════ */
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 .chat-overlay {
   position: fixed;
@@ -600,7 +600,7 @@
 }
 
 .chat-msg.assistant .chat-bubble {
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
   background: var(--color-bg-cool);
   color: var(--color-code-bg);
   border-bottom-left-radius: 4px;
@@ -801,7 +801,7 @@
 .chat-confusion-input-row button:disabled {
   opacity: 0.4;
 }
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 /* Quick Actions */
 .chat-quick-actions {
@@ -1002,7 +1002,7 @@
   /* TopBar compact */
   .tutor-topbar {
     padding: 0 10px;
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
     height: var(--tutor-topbar-height);
   }
 
@@ -1203,7 +1203,7 @@
 /* ═══════════════════════════════════════════════════════════════
    S91: iPad 10th Gen Specific (810px viewport, pointer: coarse)
    Touch-optimized: larger targets, no hover dependencies,
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 17/04/2026 — ELAB Tutor — Tutti i diritti riservati */
    Apple Pencil USB C compatible with precise and coarse pointer
    ═══════════════════════════════════════════════════════════════ */
 @media (pointer: coarse) and (min-width: 768px) and (max-width: 1023px) {
