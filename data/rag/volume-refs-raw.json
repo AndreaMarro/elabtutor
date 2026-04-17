@@ -1,0 +1,418 @@
+{
+  "v1": {
+    "volume": 1,
+    "totalPages": 114,
+    "experimentsFound": 40,
+    "experiments": [
+      {
+        "chapter": null,
+        "experiment": 3,
+        "page": 1,
+        "bookText": "Per rendere il led più luminoso, ci basta partire dal circuito che abbiamo realizzato! Basta cambiare il resistore da 470 Ohm con uno da 220 Ohm! Ti ricordi i colori delle resistenze? Con un resistore più basso, passa più corrente quindi il LED si illumina di più. Rendiamo il LED meno luminoso Per rendere il led meno l"
+      },
+      {
+        "chapter": 6,
+        "experiment": 1,
+        "page": 29,
+        "bookText": "Tutto bellissimo, tante parole, ma ora siamo arrivati alla domanda che ti stai ponendo dall'inizio: come lo accendo? Per accendere il LED e fare il nostro primo esperimento abbiamo bisogno di: • Un LED, sceglilo del colore che ti piace di più! • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resisto"
+      },
+      {
+        "chapter": 6,
+        "experiment": 2,
+        "page": 32,
+        "bookText": "Il nostro circuito include un resistore, ma perché? Abbiamo detto che i resistori servono per limitare la corrente te lo ricordi? Ogni LED può sopportare una corrente massima che non deve essere superata altrimenti il led si rompe. Il resistore serve proprio ad evitare di rompere il led perché limita la corrente. Se in"
+      },
+      {
+        "chapter": 6,
+        "experiment": 3,
+        "page": 33,
+        "bookText": "Per rendere il led più luminoso ci basta partire dal circuito che abbiamo realizzato. Basta cambiare il resistore da 470 Ohm con uno da 220 Ohm. Ti ricordi i colori delle resistenze? Con un resistore più basso, passa più corrente quindi il LED si illumina di più. Rendiamo il LED meno luminoso Per rendere il led meno lu"
+      },
+      {
+        "chapter": 7,
+        "experiment": 1,
+        "page": 36,
+        "bookText": "Accendiamo il LED rosso! Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resistore da 470 Ohm • Un filo colorato Collega la clip della batteria alla batteria Collega il positivo della batteria alla striscia rossa della breadboard 36 Laboratori"
+      },
+      {
+        "chapter": 7,
+        "experiment": 2,
+        "page": 38,
+        "bookText": "Scollega il resistore da 470 Ohm dal rosso e collegalo al verde 38 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 7,
+        "experiment": 3,
+        "page": 39,
+        "bookText": "Scollega il resistore da 470 Ohm dal rosso e collegalo al blu ESPERIMENTO 4 Abbiamo a disposizione tre colori dentro lo stesso involucro quindi è arrivato il momento di unirli. Prendi un altro resistore da 470 Ohm e prova ad accendere insieme due colori che preferisci per creare un colore nuovo. Utilizza l'immagine sot"
+      },
+      {
+        "chapter": 7,
+        "experiment": 4,
+        "page": 39,
+        "bookText": "Abbiamo a disposizione tre colori dentro lo stesso involucro quindi è arrivato il momento di unirli. Prendi un altro resistore da 470 Ohm e prova ad accendere insieme due colori che preferisci per creare un colore nuovo. Utilizza l'immagine sotto per avere qualche spunto. Proviamo ad esempio a mettere insieme il rosso "
+      },
+      {
+        "chapter": 7,
+        "experiment": 5,
+        "page": 41,
+        "bookText": "Prendi un altro resistore da 470 Ohm per accendere tutti i colori contemporaneamente Accendendo tutti i colori contemporaneamente, dovresti in teoria ottenere il bianco! Molto probabilmente il colore che ottieni risulta leggermente azzurrino, questo perché per ottenere un bel bianco hai bisogno che il rosso sia più lum"
+      },
+      {
+        "chapter": 7,
+        "experiment": 6,
+        "page": 42,
+        "bookText": "Ora dovresti aver capito che puoi anche cambiare quanto è luminoso il singolo colore del LED RGB, quindi prova a giocare con i valori di resistenza dei colori per creare il colore che più ti piace! NOTE 42 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 8,
+        "experiment": 1,
+        "page": 44,
+        "bookText": "In questo esperimento ripeteremo quanto fatto con il LED singolo ma aggiungeremo un pulsante per accendere il LED solo quando vogliamo noi. Per questo esperimento abbiamo bisogno di: • Un LED.Sceglilo del colore che ti piace di più! • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resistore da 470 O"
+      },
+      {
+        "chapter": 8,
+        "experiment": 2,
+        "page": 47,
+        "bookText": "Partendo dall'esperimento appena finito, cambia colore del LED o valore del resistore per rendere il LED più o meno luminoso. ESPERIMENTO 3 Proviamo a sostituire il LED monocolore con uno RGB. L'idea è quella di usare un solo pulsante per accendere o spegnere i colori che preferisci del LED. Diciamo che vogliamo accend"
+      },
+      {
+        "chapter": 8,
+        "experiment": 3,
+        "page": 47,
+        "bookText": "Proviamo a sostituire il LED monocolore con uno RGB. L'idea è quella di usare un solo pulsante per accendere o spegnere i colori che preferisci del LED. Diciamo che vogliamo accendere insieme il blu e il rosso per fare un led viola. Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria"
+      },
+      {
+        "chapter": 8,
+        "experiment": 4,
+        "page": 51,
+        "bookText": "Proviamo ora ad utilizzare tre pulsanti diversi ognuno per ogni colore del LED RGB. Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Tre resistori da 470 Ohm • Tre pulsanti • Quattro fili colorati Collega la clip della batteria alla batteria. Coll"
+      },
+      {
+        "chapter": 8,
+        "experiment": 5,
+        "page": 56,
+        "bookText": "Giocando con l'esperimento 4 prova a cambiare i valori di resistenza dei vari colori così da ottenere colori diversi quando premi più pulsanti contemporaneamente! RICORDA: non scendere mai sotto i 100 Ohm altrimenti rischi di bruciare il LED! NOTE 56 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 9,
+        "experiment": 1,
+        "page": 58,
+        "bookText": "In questo esperimento useremo il potenziometro come resistore variabile per cambiare l'intensità luminosa di un LED per renderlo più o meno luminoso semplicemente ruotando l'alberino del potenziometro. Per questo esperimento abbiamo bisogno di: 58 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 9,
+        "experiment": 2,
+        "page": 62,
+        "bookText": "Nell'esperimento 1 l'intensità luminosa diminuisce ruotando verso destra, come facciamo invece a farla aumentare? Facile! Basta . In questo modo la resistenza parte alta e diminuisce man mano che giri verso destra quindi il LED diventa più luminoso 62 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 9,
+        "experiment": 3,
+        "page": 63,
+        "bookText": "Cambia colore del LED, noti differenze di luminosità man mano che giri il cursore? ESPERIMENTO 4 Modifichiamo l'intensità luminosa di un LED RGB utilizzando un potenziometro Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resistore da 470 Ohm "
+      },
+      {
+        "chapter": 9,
+        "experiment": 4,
+        "page": 63,
+        "bookText": "Modifichiamo l'intensità luminosa di un LED RGB utilizzando un potenziometro Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resistore da 470 Ohm • Un potenziometro da 10 kOhm • Tre fili colorati Collega la clip della batteria alla batteria. L"
+      },
+      {
+        "chapter": 9,
+        "experiment": 5,
+        "page": 67,
+        "bookText": "In questo esperimento utilizzeremo tutti i pin del potenziometro per sfruttare il principio secondo cui la resistenza tra il pin 2 e gli altri due aumenta o diminuisce a seconda del verso di rotazione. Questo ci consentirà di avere il LED RGB colorato di BLU quando il potenziometro è tutto girato verso sinistra e di RO"
+      },
+      {
+        "chapter": 9,
+        "experiment": 6,
+        "page": 71,
+        "bookText": "Costruiamo una lampada avendo la possibilità di poter scegliere abbastanza facilmente quanto colore aggiungere per ogni luce colorata presente nel LED RGB. Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Tre resistori da 470 Ohm • Tre potenziomet"
+      },
+      {
+        "chapter": 9,
+        "experiment": 5,
+        "page": 73,
+        "bookText": "Prendi un altro resistore da 470 Ohm e accendere tutti i colori contemporaneamente Accendendo tutti i colori contemporaneamente, dovresti in teoria ottenere il bianco! Molto, ma molto probabilmente il colore che ottieni risulta leggermente azzurrino, questo perché per ottenere un bel bianco hai bisogno Abbiamo ottenuto"
+      },
+      {
+        "chapter": 9,
+        "experiment": 7,
+        "page": 78,
+        "bookText": "Vuoi provare ad aggiungere qualche pulsante? 78 Laboratorio di elettronica: Impara e sperimenta COSTRUIAMO IL NOSTRO PRIMO ROBOT 5° PASSO: Ora inserisci il nostro amico ELAB sulla breadboard centrando i due verdi. Se hai collegato tutto correttamente ora puoi inserire il RGB nei quattro fori sulla pancia di ELAB. RICOR"
+      },
+      {
+        "chapter": 9,
+        "experiment": 8,
+        "page": 79,
+        "bookText": "Prova a fare insieme l'esperimento 6 e l'esperimento 5 ESPERIMENTO 9 Aggiungi un pulsante per accendere e spegnere il LED all'esperimento 8! Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 79"
+      },
+      {
+        "chapter": 9,
+        "experiment": 9,
+        "page": 79,
+        "bookText": "Aggiungi un pulsante per accendere e spegnere il LED all'esperimento 8! Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 79"
+      },
+      {
+        "chapter": 10,
+        "experiment": 1,
+        "page": 82,
+        "bookText": "Proviamo ad accendere un LED utilizzando un fotoresistore. Vogliamo che il LED sia spento se facciamo ombra al fotoresistore e acceso se invece è esposto alla luce. Per questo esperimento abbiamo bisogno di: • Un LED. Sceglilo del colore che ti piace di più! • Una breadboard • Una batteria 9V • La clip per la batteria "
+      },
+      {
+        "chapter": 10,
+        "experiment": 2,
+        "page": 84,
+        "bookText": "Prova adesso a cambiare il LED con uno di un colore diverso e osserva come cambia il comportamento! 84 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 10,
+        "experiment": 3,
+        "page": 85,
+        "bookText": "In questo esperimento utilizzeremo un LED RGB e tre fotoresistori per far cambiare con la luce il colore generato dal LED RGB. Per questo esperimento abbiamo bisogno di: • Un LED RGB • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Tre fotoresistori • Tre fili colorati Collega la clip della batteria al"
+      },
+      {
+        "chapter": 10,
+        "experiment": 4,
+        "page": 88,
+        "bookText": "In questo esperimento useremo un LED bianco per illuminare un fotoresistore e quindi cambiare la luminosità di un LED blu collegato al fotoresistore Per questo esperimento abbiamo bisogno di: • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un LED bianco • Un LED blu • Un fotoresistore • Un resistore d"
+      },
+      {
+        "chapter": 10,
+        "experiment": 5,
+        "page": 91,
+        "bookText": "Partendo dall'esperimento 4 aggiungiamo un potenziometro per cambiare l'intensità luminosa del LED bianco. Prova a cambiare l'inclinazione del LED e del fotoresistore per avere più luminosità. Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 91"
+      },
+      {
+        "chapter": 10,
+        "experiment": 6,
+        "page": 92,
+        "bookText": "Partendo dall'esperimento 4 aggiungiamo un pulsante per cambiare l'intensità luminosa del LED blu solo quando premiamo il pulsante. Prova a cambiare l'inclinazione del LED e del fotoresistore per avere più luminosità. NOTE 92 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 11,
+        "experiment": 1,
+        "page": 94,
+        "bookText": "Per questo esperimento abbiamo bisogno di: • Un cicalino • Una breadboard • Una batteria 9V • La clip per la batteria 9V Collega la clip della batteria alla batteria. Collega il positivo e il negativo della batteria alla striscia rossa e nera della breadboard 94 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 11,
+        "experiment": 2,
+        "page": 95,
+        "bookText": "Prova ora a realizzare un circuito in cui il cicalino suona solo se premi un pulsante. Ti ricordi come fare? Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 95"
+      },
+      {
+        "chapter": 12,
+        "experiment": 1,
+        "page": 98,
+        "bookText": "In questo esperimento applicheremo quanto fatto prima, ma anziché utilizzare il pulsante, utilizzeremo un interruttore magnetico. Per questo esperimento abbiamo bisogno di: • Un LED, sceglilo del colore che ti piace di più! • Una breadboard • Una batteria 9V • La clip per la batteria 9V • Un resistore da 470 Ohm • Un i"
+      },
+      {
+        "chapter": 12,
+        "experiment": 2,
+        "page": 100,
+        "bookText": "Come fatto con il pulsante, prova a sperimentare con i valori di resistenza per rendere più o meno luminoso il LED. 100 Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 12,
+        "experiment": 3,
+        "page": 101,
+        "bookText": "Prova a realizzare un circuito che accenda un LED RGB del colore che preferisci utilizzando un interruttore magnetico ESPERIMENTO 4 Prova ad utilizzare insieme potenziometri, LED RGB e un interruttore magnetico Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 101"
+      },
+      {
+        "chapter": 12,
+        "experiment": 4,
+        "page": 101,
+        "bookText": "Prova ad utilizzare insieme potenziometri, LED RGB e un interruttore magnetico Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 101"
+      },
+      {
+        "chapter": 13,
+        "experiment": 1,
+        "page": 104,
+        "bookText": "Questo esperimento serve per capire il principio di funzionamento base dell'elettropongo. Per questo esperimento abbiamo bisogno di: • Un LED, sceglilo del colore che ti piace di più! • Una batteria 9V • L'elettropongo Stacca due pezzettini di elettropongo, forma due striscettine e appoggiale sul tavolo Allarga le gamb"
+      },
+      {
+        "chapter": 13,
+        "experiment": 2,
+        "page": 105,
+        "bookText": "Dai sfogo alla tua fantasia e prova a creare un circuiti artistico utilizzando l'elettropongo e i LED! Non è obbligatorio, ma i risultati migliori si ottengono utilizzando LED dello stesso colore e scegliendo una zona in cui colleghi sempre il negativo e una in cui colleghi sempre il positivo. Laboratorio di elettronic"
+      },
+      {
+        "chapter": 14,
+        "experiment": 7,
+        "page": 111,
+        "bookText": "Vuoi provare ad aggiungere qualche pulsante? Laboratorio di elettronica: Impara e sperimenta 77 78 Laboratorio di elettronica: Impara e sperimenta COSTRUIAMO IL NOSTRO PRIMO ROBOT 5° PASSO: Ora inserisci il nostro amico ELAB sulla breadboard centrando i due verdi. Se hai collegato tutto correttamente ora puoi inserire "
+      }
+    ]
+  },
+  "v2": {
+    "volume": 2,
+    "totalPages": 116,
+    "experimentsFound": 26,
+    "experiments": [
+      {
+        "chapter": 3,
+        "experiment": 1,
+        "page": 17,
+        "bookText": "Controlliamo la carica della tua batteria da 9V! Oggi usiamo il multimetro per scoprire quanta carica c'è in una batteria da 9V. È come dare un'occhiata dentro per vedere se è ancora \"piena\" o se sta per \"esaurirsi\"! Cosa ti serve: Il multimetro Una batteria da 9 Volt Preparazione del multimetro: Prendi il cavo nero e "
+      },
+      {
+        "chapter": 3,
+        "experiment": 2,
+        "page": 20,
+        "bookText": "Ora che hai imparato ad utilizzare il multimetro, passiamo dalla teoria alla pratica: misuriamo la tua batteria da 9V presente nel Kit! Ogni volta che userai il kit e misurerai la batteria, segna qui sotto la data e il valore in Volt che leggi sul multimetro. Così potrai tenerne d'occhio la carica e capire quando è il "
+      },
+      {
+        "chapter": 3,
+        "experiment": 3,
+        "page": 22,
+        "bookText": "Misuriamo una Resistenza da 330 Ohm! Ora mettiamo in pratica quello che abbiamo imparato e misuriamo una vera resistenza. Useremo il nostro multimetro per scoprire se quella resistenza ha davvero il valore che ci aspettiamo: 330 Ohm! Per questo esperimento hai bisogno di: -Il multimetro -Un resistore da 330 Ohm. Aiutat"
+      },
+      {
+        "chapter": 3,
+        "experiment": 4,
+        "page": 28,
+        "bookText": "Fantastico! Ora che il multimetro è impostato correttamente per misurare la corrente, vediamo come fare praticamente la misurazione sul circuito con il resistore e la batteria 9V. Costruiamo insieme il circuito di base e poi capiremo come inserire il multimetro. Collega la clip della batteria alla batteria Collega il p"
+      },
+      {
+        "chapter": 4,
+        "experiment": 1,
+        "page": 43,
+        "bookText": "Utilizzando la breadboard metti in parallelo due resistori da 1kΩ. Che valore deve avere il resistore equivalente?Utilizza il multimetro per controllare qual è il vero valore! Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta 43"
+      },
+      {
+        "chapter": 4,
+        "experiment": 2,
+        "page": 44,
+        "bookText": "Utilizzando la breadboard metti in serie tre resistori da 1kΩ. Che valore deve avere il resistore equivalente?Utilizza il multimetro per controllare qual è il vero valore! Ora misura ogni resistore singolarmente e prendi nota del valore di ognuno. Sono molto simili o differenti? Scrivi qui i loro valori Valore 1: -----"
+      },
+      {
+        "chapter": 4,
+        "experiment": 3,
+        "page": 45,
+        "bookText": "Sulla base del circuito dell'esperimento 2, aggiungi la batteria come indicato in figura. Posiziona il coccodrillo nero sul negativo della batteria e il coccodrillo rosso nei punti: J9, J5, J1 Prendi nota della tre tensioni: V (J1): ___________________ V (J5): ___________________ V (J9): ___________________ Succede que"
+      },
+      {
+        "chapter": 5,
+        "experiment": 1,
+        "page": 49,
+        "bookText": "Batterie in Serie (Più \"Spinta\"!) Obiettivo: Capire come le batterie in serie aumentano la tensione (i Volt) e misurarla con il multimetro. Cosa ti serve: • 3 o 4 batterie AA/AAA (quelle da 1.5V) • Il tuo multimetro Passo 1: Misuriamo una singola batteria 1. Prendi il tuo multimetro 2. Ruota la manopola sul simbolo \"V\""
+      },
+      {
+        "chapter": 5,
+        "experiment": 2,
+        "page": 51,
+        "bookText": "Abbiamo detto che le batterie in serie si sommano e abbiamo anche effettuato un esperimento per dimostrarlo. Ma cosa succede se anziché collegare il positivo di una batteria con il negativo della successiva lo collegassimo con il positivo? Se colleghiamo il tester invertendo il positivo e il negativo sulla batteria ott"
+      },
+      {
+        "chapter": 6,
+        "experiment": 1,
+        "page": 56,
+        "bookText": "In questo esperimento vedremo come utilizzare più LED in serie avendo un solo resistore di protezione del LED. Per questo esperimento abbiamo bisogno di: • una breadboard • la clip per la batteria 9V e la batteria • un resistore da 330 Ω • due LED del colore che preferisci Collega il positivo della batteria alla parte "
+      },
+      {
+        "chapter": 6,
+        "experiment": 2,
+        "page": 58,
+        "bookText": "Sulla base dell'esperimento 1, prova a modificare il colore del secondo LED (ad esempio utilizzandone uno blu) per apprezzare come cambia l'intensità luminosa Ti sembra che il LED rosso sia meno luminoso? Prova a modificare i colori di entrambi i LED e tenere traccia di come si modifica l'intensità luminosa a seconda d"
+      },
+      {
+        "chapter": 6,
+        "experiment": 3,
+        "page": 59,
+        "bookText": "Proviamo ora ad aggiungere ancora un LED per averne tre collegati in serie. Per fare questo, partendo dall'esperimento 2, rimuovi il resistore Posiziona un LED di un altro colore (usiamo il giallo) con il catodo rivolto verso l'anodo del LED rosso e il suo anodo collegato in un punto qualsiasi della breadboard Collega "
+      },
+      {
+        "chapter": 6,
+        "experiment": 4,
+        "page": 60,
+        "bookText": "Abbiamo detto che il multimetro ha la funzione prova diodi e continuità. Come dice il nome della funzione, può essere usato per provare i diodi (per vedere se sono funzionanti o rotti) e come bonus ci dice quanto vale la sua Vf. Sapendo qual è la Vf esatta del nostro diodo, siamo in grado di individuare il valore esatt"
+      },
+      {
+        "chapter": 7,
+        "experiment": 1,
+        "page": 67,
+        "bookText": "In questo esperimento osserveremo l'effetto di scarica del condensatore elettrolitico. Abbiamo bisogno di: • un condensatore da 1000uF • un pulsante • il multimetro • un filo colorato • un resistore da 1kΩ Imposta il multimetro su 20V in continua come fondo scala Inserisci il condensatore a cavallo della separazione ce"
+      },
+      {
+        "chapter": 7,
+        "experiment": 2,
+        "page": 69,
+        "bookText": "In questo esperimento continueremo ad osservare l'effetto di scarica del condensatore. Per questo esperimento abbiamo bisogno di: • un condensatore da 1000uF • un pulsante • un LED rosso • il multimetro • tre fili colorati • un resistore da 1kΩ Inserisci il pulsante a cavallo della divisione centrale della breadboard e"
+      },
+      {
+        "chapter": 7,
+        "experiment": 3,
+        "page": 72,
+        "bookText": "Nel kit sono presenti 3 condensatori da 1000uF 25V. Al contrario di quanto visto per i resistori, per sommare la capacità dei condensatori bisogna connetterli in parallelo. Così facendo, proprio come visto per le batterie, riescono a rimanere carichi per più tempo osservando una scarica più lenta. Ora prova ad aggiunge"
+      },
+      {
+        "chapter": 7,
+        "experiment": 4,
+        "page": 73,
+        "bookText": "Sulla base dell'esperimento 2 prova ora a cambiare il valore di resistenza aumentandolo o diminuendolo e osserva come cambia la scarica del condensatore. Prova a fare la stessa cosa anche sulla base dell'esperimento 3. Vedrai che con valori di capacità più alti e con valori di resistenza più alti, la scarica del conden"
+      },
+      {
+        "chapter": 8,
+        "experiment": 1,
+        "page": 78,
+        "bookText": "In questo esperimento vedremo come utilizzare il MOSFET come interruttore comandato da una tensione. Per farlo abbiamo bisogno di: • 1 transistor • 1 LED: sceglilo del colore che ti piace di più) • Una breadboard • Una batteria 9V • La clip per la pila 9V • 1 resistore da 470 Ohm • 4 fili colorati Collega la clip alla "
+      },
+      {
+        "chapter": 8,
+        "experiment": 2,
+        "page": 81,
+        "bookText": "Sulla base dell'esperimento 1 scollega il lato collegato al positivo della batteria del cavetto connesso sul gate del MOSFET e collegalo al negativo della batteria. Questo spegne il circuito perché scarica il gate. Ora solleva il cavetto e prova a toccare l'estremità col dito: la carica del tuo corpo consente al MOSFET"
+      },
+      {
+        "chapter": 8,
+        "experiment": 2,
+        "page": 81,
+        "bookText": "Abbiamo detto che sia il MOSFET che il BJT hanno bisogno di una tensione di comando sul Gate o sulla Base per accendersi. Non abbiamo però detto che questa tensione deve avere un valore minimo. Questo valore si chiama tensione di soglia Vth (perché in inglese soglia si dice threshold) e vale circa 1V per i BJT e 2V per"
+      },
+      {
+        "chapter": 9,
+        "experiment": 1,
+        "page": 86,
+        "bookText": "In questo esperimento utilizzeremo un fotoresistore come sensore controllando con il multimetro quanto vale la tensione ai capi di una resistenza in base a quanta luce colpisce il fotoresistore. 86 Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta"
+      },
+      {
+        "chapter": 9,
+        "experiment": 2,
+        "page": 89,
+        "bookText": "In questo esperimento useremo un fototransistor per accendere una luce quando è buio e spegnerla quando c'è luce. Per farlo abbiamo bisogno di: • Una breadboard • Una batteria 9V • La clip per la pila 9V • 4 resistori da 10 kOhm • 1 resistore da 470 Ohm • 1 fototransistor • 1 LED (del colore che preferisci) • 1 Transis"
+      },
+      {
+        "chapter": 10,
+        "experiment": 1,
+        "page": 95,
+        "bookText": "In questo semplice esperimento vedremo come far girare il motore presente all'interno del kit. Per farlo abbiamo bisogno di: • Una breadboard • Una batteria 9V • La clip per la pila 9V • Un motore Utilizzando la breadboard solo per effettuare i collegamenti, connetti il filo rosso del motore al positivo della batteria "
+      },
+      {
+        "chapter": 10,
+        "experiment": 2,
+        "page": 96,
+        "bookText": "Prova a invertire il filo rosso e il filo nero, puoi farlo anche con i fili della batteria oquelli del motore. In che verso gira ora il motore? ESPERIMENTO 3 Prova a inserire un pulsante per comandare il motore acceso e spento ESPERIMENTO 4 Prova a inserire un pulsante per comandare il motore aggiungendo anche una resi"
+      },
+      {
+        "chapter": 10,
+        "experiment": 3,
+        "page": 96,
+        "bookText": "Prova a inserire un pulsante per comandare il motore acceso e spento ESPERIMENTO 4 Prova a inserire un pulsante per comandare il motore aggiungendo anche una resistenza e un led in modo che quando il motore inizia a girare il led si accenda. 96 Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica:"
+      },
+      {
+        "chapter": 10,
+        "experiment": 4,
+        "page": 96,
+        "bookText": "Prova a inserire un pulsante per comandare il motore aggiungendo anche una resistenza e un led in modo che quando il motore inizia a girare il led si accenda. 96 Laboratorio di elettronica: Impara e sperimenta Laboratorio di elettronica: Impara e sperimenta"
+      }
+    ]
+  },
+  "v3": {
+    "volume": 3,
+    "totalPages": 91,
+    "experimentsFound": 0,
+    "experiments": []
+  }
+}
