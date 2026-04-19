@@ -30,7 +30,7 @@ jobs:
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           # Aggiungi qui i login GitHub autorizzati (separati da spazio)
-          ALLOWED_AUTHORS: "tea-bot tea andreamarro"
+          ALLOWED_AUTHORS: "Tea26-lea AndreaMarro"
         run: |
           if echo " $ALLOWED_AUTHORS " | grep -q " $PR_AUTHOR "; then
             echo "allowed=true" >> "$GITHUB_OUTPUT"
