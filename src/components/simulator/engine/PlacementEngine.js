@@ -198,7 +198,7 @@ export class OccupancyMap {
         }
       }
     }
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     return null;
   }
 
@@ -399,7 +399,7 @@ export function placeComponent(compIntent, compId, occupancy, snapshot) {
         }
       }
       if (startCol !== null) break;
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     if (startCol === null) {
@@ -600,7 +600,7 @@ const WIRING_TEMPLATES = {
       { pin: 'negative', connectTo: 'bus-minus' },
     ],
   },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
 };
 
 /**
@@ -801,7 +801,7 @@ export function resolvePlacement(intent, circuitSnapshot) {
       );
 
       for (const wire of wires) {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         actions.push({
           type: 'addwire',
           tag: generateAddWireTag(wire.from, wire.to, wire.color),

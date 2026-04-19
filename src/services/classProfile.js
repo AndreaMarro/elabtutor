@@ -198,7 +198,7 @@ export function getNextLessonSuggestion() {
   if (!profile.nextSuggested) return null;
 
   const nextPath = getLessonPath(profile.nextSuggested);
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
   if (!nextPath) return null;
 
   return {

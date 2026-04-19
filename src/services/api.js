@@ -198,7 +198,7 @@ async function tryLocalServer(message, circuitState, externalSignal, experimentI
                 body: JSON.stringify(body),
                 signal: controller.signal,
             });
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
 
             if (!resp.ok) return null;
 
@@ -399,7 +399,7 @@ export function checkRateLimit() {
             allowed: false,
             message: 'Facciamo una pausa! Riprova tra un minuto.',
             waitMs: Math.max(0, waitMs),
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         };
     }
 
@@ -600,7 +600,7 @@ export async function sendChat(message, images = [], options = {}) {
     try {
 
     // Nanobot message: experiment context + brevity rule (nanobot.yml ha il suo system prompt)
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     // Webhook message: con SOCRATIC_INSTRUCTION (n8n non ha un system prompt proprio)
     const BREVITY_RULE = 'REGOLA: Rispondi in MASSIMO 3 frasi + 1 analogia. Mai superare 60 parole. I tag [AZIONE:...] non contano.';
     const nanobotMessage = experimentContext
@@ -801,7 +801,7 @@ export async function sendChat(message, images = [], options = {}) {
                         response: answer,
                         source: 'local-rag',
                         actions: extractActions(answer)
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
                     };
                 }
             } catch {
@@ -1002,7 +1002,7 @@ export async function compileCode(code, board = 'arduino:avr:nano:cpu=atmega328o
 
     /**
      * Helper: chiama un endpoint di compilazione e ritorna il risultato
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
      */
     async function tryCompile(url, label) {
         const controller = new AbortController();

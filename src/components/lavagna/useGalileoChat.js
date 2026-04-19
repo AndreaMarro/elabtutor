@@ -198,7 +198,7 @@ async function executeIntentTags(rawResponse) {
           }
         }
       } catch (err) {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         logger.warn('[Lavagna] INTENT parse error:', err.message);
       }
     }
@@ -399,7 +399,7 @@ export default function useGalileoChat() {
     return () => api.off?.('circuitChange', handler);
   }, []);
 
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
   // ── Send message ──
   const handleSend = useCallback(async (messageOverride) => {
     const userMessage = messageOverride || input;
@@ -600,7 +600,7 @@ export default function useGalileoChat() {
         const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '');
         const images = [{ base64, mimeType: 'image/png' }];
         setMessages(prev => [...prev, {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           id: Date.now(), role: 'user',
           content: 'Analizza questa schermata del simulatore',
           image: dataUrl,

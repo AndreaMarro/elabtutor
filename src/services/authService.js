@@ -198,7 +198,7 @@ export async function register(data) {
             success: false,
             error: `Troppi tentativi. Riprova tra ${Math.ceil(rateCheck.waitSec / 60)} minuti.`,
         };
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     }
 
     try {
@@ -399,7 +399,7 @@ export function stopAutoRefresh() {
  * @returns {Promise<{success: boolean, classCode?: string, className?: string, volumes?: string[], error?: string}>}
  */
 export async function createClass(name) {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     try {
         const result = await apiCall('/auth-create-class', {
             method: 'POST',

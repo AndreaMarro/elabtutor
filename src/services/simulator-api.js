@@ -198,7 +198,7 @@ function createPublicAPI() {
      * @returns {string|null} component ID or null
      */
     getSelectedComponent() {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       return _simulatorRef?.getSelectedComponent?.() || null;
     },
 
@@ -399,7 +399,7 @@ function createPublicAPI() {
      * @param {string} customPrompt - Optional custom prompt (overrides unlimPrompt)
      * @returns {Promise<Object>} { success, response, source }
      */
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
     async askUNLIM(customPrompt = null) {
       const exp = _simulatorRef?.getCurrentExperiment?.();
       const prompt = customPrompt || exp?.unlimPrompt ||
@@ -600,7 +600,7 @@ function createPublicAPI() {
       const compilationSnapshot = _simulatorRef?.getCompilationSnapshot?.() || {};
       const exp = circuitState.experiment || {};
 
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       // Build step phase detection (hardware vs code)
       const buildStepIndex = circuitState.buildStepIndex ?? -1;
       const buildStepTotal = circuitState.buildStepTotal ?? 0;

@@ -198,7 +198,7 @@ textarea:focus-visible,
   left: -9999px;
   speak: always;
 }
-/* © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati */
+/* © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati */
 
 .control-btn:not([aria-label]):not([aria-labelledby])::before {
   content: "Controllo simulatore";

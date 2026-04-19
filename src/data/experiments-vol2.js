@@ -198,7 +198,7 @@ const EXPERIMENTS_VOL2 = {
       connections: [],
       layout: {
         "r1": { x: 15, y: 60 },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "mm1": { x: 120, y: 40 }
       },
       code: null,
@@ -399,7 +399,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 1,
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Ci servirà per collegare i resistori in parallelo.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "bb1",
           componentType: "breadboard-half",
           hint: "Sulla breadboard i fori della stessa colonna (a-e) sono collegati tra loro."
@@ -600,7 +600,7 @@ const EXPERIMENTS_VOL2 = {
       observe: "Con 3 resistori uguali e 9V, ogni resistore ha 3V ai capi. Tra il primo e il secondo punto: 3V. Tra il primo e il terzo: 6V. La tensione si divide proporzionalmente!",
       unlimPrompt: "Sei Galileo, il tutor AI di ELAB. Lo studente sta costruendo un partitore di tensione con 3 resistori uguali e 9V. Ogni resistore ha 3V ai capi (9V / 3). Il partitore serve per ottenere tensioni intermedie da una sorgente fissa. E usato ovunque in elettronica! Rispondi in italiano.",
       estimatedMinutes: 15,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       buildSteps: [
         {
           step: 1,
@@ -801,7 +801,7 @@ const EXPERIMENTS_VOL2 = {
           componentType: "battery9v",
           hint: "Questa batteria spinge la corrente in un verso. Posizionala in alto a sinistra."
         },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 2,
           text: "Posiziona la seconda batteria 9V sotto la prima. Questa volta la collegheremo AL CONTRARIO!",
@@ -1002,7 +1002,7 @@ const EXPERIMENTS_VOL2 = {
         {
           question: "Cosa succede alle tensioni dei LED in un circuito serie?",
           options: ["Si dividono a metà", "Si sommano: V_totale = Vf_LED1 + Vf_LED2", "Restano uguali alla batteria"],
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           correct: 1,
           explanation: "In serie le tensioni si sommano! Con due LED rossi: 1.8V + 1.8V = 3.6V. I restanti 5.4V cadono sul resistore (9V - 3.6V = 5.4V)."
         }
@@ -1203,7 +1203,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bb1:a18", to: "bb1:a22", color: "green" },
         { from: "bb1:a23", to: "bb1:bus-top-minus-23", color: "black" },
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" }
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       ],
       layout: {
         "bat1": { x: 30, y: 55 },
@@ -1404,7 +1404,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
           componentType: "battery9v",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           hint: "La batteria 9V alimenta il circuito."
         },
         {
@@ -1605,7 +1605,7 @@ const EXPERIMENTS_VOL2 = {
           componentType: "push-button",
           targetPins: { "btn1:pin1": "bb1:e10", "btn1:pin2": "bb1:f12" },
           hint: "Il pulsante va a cavallo della scanalatura centrale della breadboard."
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 5,
@@ -1806,7 +1806,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il pulsante dalla palette e posizionalo nei fori E10 e F12.",
           componentId: "btn1",
           componentType: "push-button",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "btn1:pin1": "bb1:e10", "btn1:pin2": "bb1:f12" },
           hint: "Il pulsante va a cavallo della scanalatura centrale della breadboard."
         },
@@ -2007,7 +2007,7 @@ const EXPERIMENTS_VOL2 = {
       buildSteps: [
         {
           step: 1,
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           text: "Posiziona la breadboard (mezza) al centro del piano di lavoro. Sarà la base del tuo circuito!",
           componentId: "bb1",
           componentType: "breadboard-half",
@@ -2208,7 +2208,7 @@ const EXPERIMENTS_VOL2 = {
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-10", to: "bb1:a10", color: "red" },
         { from: "bb1:a6", to: "bb1:bus-top-minus-6", color: "black" },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { from: "bb1:bus-top-minus-1", to: "bat1:negative", color: "black" },
         { from: "bb1:g12", to: "bb1:c5", color: "yellow" },
         { from: "bb1:a5", to: "bb1:a15", color: "green" },
@@ -2409,7 +2409,7 @@ const EXPERIMENTS_VOL2 = {
       components: [
         { type: "battery9v", id: "bat1" },
         { type: "breadboard-half", id: "bb1" },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         { type: "mosfet-n", id: "mos1" },
         { type: "resistor", id: "r1", value: 470 },
         { type: "led", id: "led1", color: "red" }
@@ -2610,7 +2610,7 @@ const EXPERIMENTS_VOL2 = {
         "led1": { x: 204, y: 43.75 },
         "mos1": { x: 252.75, y: 91.25 }
       },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       steps: [
         "Costruisci lo stesso circuito dell'Esp. 1, ma SENZA collegare il filo al Gate.",
         "Il Gate del MOSFET (f18) deve restare scollegato (flottante).",
@@ -2811,7 +2811,7 @@ const EXPERIMENTS_VOL2 = {
           text: "Prendi il MOSFET dalla palette e posizionalo nei fori F17, F18 e F19.",
           componentId: "mos1",
           componentType: "mosfet-n",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           targetPins: { "mos1:gate": "bb1:f17", "mos1:drain": "bb1:f18", "mos1:source": "bb1:f19" },
           hint: "I 3 pin: Gate in F17, Drain in F18, Source in F19."
         },
@@ -3012,7 +3012,7 @@ const EXPERIMENTS_VOL2 = {
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
           componentId: "bat1",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentType: "battery9v",
           hint: "La batteria 9V alimenta il circuito."
         },
@@ -3213,7 +3213,7 @@ const EXPERIMENTS_VOL2 = {
         {
           step: 3,
           text: "Prendi il fototransistor dalla palette e posizionalo nei fori D10 e D11.",
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
           componentId: "pt1",
           componentType: "phototransistor",
           targetPins: { "pt1:collector": "bb1:d10", "pt1:emitter": "bb1:d11" },
@@ -3414,7 +3414,7 @@ const EXPERIMENTS_VOL2 = {
         "mot1:positive": "bb1:a5",
         "mot1:negative": "bb1:a10"
       },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       connections: [
         { from: "bat1:positive", to: "bb1:bus-top-plus-1", color: "red" },
         { from: "bb1:bus-top-plus-5", to: "bb1:a5", color: "red" },
@@ -3615,7 +3615,7 @@ const EXPERIMENTS_VOL2 = {
     },
 
     {
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
       id: "v2-cap10-esp3",
       title: "Cap. 10 Esp. 3 - Motore con pulsante",
       desc: "Aggiungi un pulsante: il motore gira solo quando premi!",
@@ -3816,7 +3816,7 @@ const EXPERIMENTS_VOL2 = {
           componentType: "breadboard-half",
           hint: "La breadboard collega i componenti senza saldature."
         },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         {
           step: 2,
           text: "Posiziona la batteria 9V accanto alla breadboard. È la fonte di energia del circuito!",
@@ -4017,7 +4017,7 @@ const EXPERIMENTS_VOL2 = {
         "pt1": { x: 132.75, y: 73.75 },
         "r1": { x: 189, y: 73.75 },
         "mos1": { x: 162.75, y: 91.25 },
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         "d1": { x: 200.25, y: 91.25 },
         "mot1": { x: 215, y: 30 },
         "pt2": { x: 237.75, y: 73.75 },
@@ -4218,7 +4218,7 @@ const EXPERIMENTS_VOL2 = {
           wireTo: "bb1:g7",
           wireColor: "green",
           hint: "Questo filo collega due parti del circuito."
-// © Andrea Marro — 14/04/2026 — ELAB Tutor — Tutti i diritti riservati
+// © Andrea Marro — 19/04/2026 — ELAB Tutor — Tutti i diritti riservati
         },
         {
           step: 23,
